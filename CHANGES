@@ -1,4 +1,6 @@
-[1.7.1-SNAPSHOT]
+[1.7.2-SNAPSHOT]
+
+[1.7.1]
 - Added TypingTextAnimation#getCurrentCharacterIndex
 
 [1.7.0]

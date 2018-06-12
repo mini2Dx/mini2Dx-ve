@@ -1,4 +1,5 @@
 [1.7.1-SNAPSHOT]
+- Added TypingTextAnimation#getCurrentCharacterIndex
 
 [1.7.0]
 - [BREAKING] LayoutRuleset is now applied to both horizontal and vertical calculations

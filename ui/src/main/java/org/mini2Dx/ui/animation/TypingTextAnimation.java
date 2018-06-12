@@ -90,4 +90,12 @@ public class TypingTextAnimation extends BaseTextAnimation {
 	protected void resetState() {
 		timer = 0f;
 	}
+
+	/**
+	 * Returns the current index of the animation
+	 * @return The index of the most recently displayed character
+	 */
+	public int getCurrentCharacterIndex() {
+		return characterIndex;
+	}
 }

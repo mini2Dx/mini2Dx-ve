@@ -68,7 +68,7 @@ def docProjects() {
 	subprojects.findAll { !it.name.contains('uat') }
 }
 
-def projectVersion = '1.7.2';
+def projectVersion = '1.7.3-SNAPSHOT';
 
 configure(docProjects()) {
 	apply plugin: "signing"
@@ -354,17 +354,22 @@ project(":" + rootProject.name + "-uats") {
 		from '../tiled/src/test/resources'
 		into '../uats-android/assets'
 	}
-	
-	task docs(type: Javadoc) {
-		failOnError = false
-		title = 'mini2Dx'
-		source docProjects().collect {p -> p.name.contains("android") ? p.android.sourceSets.main.java.srcDirs : p.sourceSets.main.allJava }
-		classpath = files(docProjects().collect {p -> p.name.contains("android") ? p.configurations.compile : p.sourceSets.main.compileClasspath})
-		destinationDir = new File(project.parent.projectDir, "docs/javadoc/${projectVersion}")
+
+	if(!projectVersion.contains("SNAPSHOT")) {
+		def docDirectory = new File(project.parent.projectDir.getParentFile(), "mini2Dx/docs/javadoc/${projectVersion}");
+		println docDirectory.absolutePath
+
+		task docs(type: Javadoc) {
+			failOnError = false
+			title = 'mini2Dx'
+			source docProjects().collect {p -> p.name.contains("android") ? p.android.sourceSets.main.java.srcDirs : p.sourceSets.main.allJava }
+			classpath = files(docProjects().collect {p -> p.name.contains("android") ? p.configurations.compile : p.sourceSets.main.compileClasspath})
+			destinationDir = docDirectory
+		}
+
+		docs.dependsOn docProjects().build
 	}
-	
 	processResources.dependsOn copyTiledAssets
-	docs.dependsOn docProjects().build
 }
 
 project(":" + rootProject.name + "-uats-desktop") {

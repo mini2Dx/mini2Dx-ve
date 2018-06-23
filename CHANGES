@@ -1,4 +1,5 @@
-[1.7.2-SNAPSHOT]
+[1.7.2]
+- Significant memory performance improvements across all geometry classes
 
 [1.7.1]
 - Added TypingTextAnimation#getCurrentCharacterIndex

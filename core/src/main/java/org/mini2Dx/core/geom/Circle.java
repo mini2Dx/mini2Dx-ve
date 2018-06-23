@@ -23,10 +23,11 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class Circle extends Shape {
 	private static final long serialVersionUID = 7900371446650127192L;
-	
-	private final Vector2 centerTmp = new Vector2();
-	private final Vector2 tmp1 = new Vector2();
-	private final Vector2 tmp2 = new Vector2();
+
+	private static final Vector2 TMP_VECTOR1 = new Vector2();
+	private static final Vector2 TMP_VECTOR2 = new Vector2();
+	private static final Vector2 CENTER_TMP = new Vector2();
+
 	private final Rectangle boundingBox = new Rectangle();
 	
 	private final CircleEdgeIterator edgeIterator = new CircleEdgeIterator();
@@ -158,16 +159,16 @@ public class Circle extends Shape {
 	
 	@Override
 	public boolean intersectsLineSegment(Vector2 pointA, Vector2 pointB) {
-		centerTmp.set(circle.x, circle.y);
-		return Intersector.intersectSegmentCircle(pointA, pointB, centerTmp, circle.radius * circle.radius);
+		CENTER_TMP.set(circle.x, circle.y);
+		return Intersector.intersectSegmentCircle(pointA, pointB, CENTER_TMP, circle.radius * circle.radius);
 	}
 
 	@Override
 	public boolean intersectsLineSegment(float x1, float y1, float x2, float y2) {
-		tmp1.set(x1, y1);
-		tmp2.set(x2, y2);
-		centerTmp.set(circle.x, circle.y);
-		return Intersector.intersectSegmentCircle(tmp1, tmp2, centerTmp, circle.radius * circle.radius);
+		TMP_VECTOR1.set(x1, y1);
+		TMP_VECTOR2.set(x2, y2);
+		CENTER_TMP.set(circle.x, circle.y);
+		return Intersector.intersectSegmentCircle(TMP_VECTOR1, TMP_VECTOR2, CENTER_TMP, circle.radius * circle.radius);
 	}
 	
 	/**

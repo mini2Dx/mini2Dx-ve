@@ -32,11 +32,12 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class CollisionPoint extends Point implements Positionable {
 	private static final long serialVersionUID = -7752697723641315393L;
+
+	private static final Vector2 TMP_SOURCE_VECTOR = new Vector2();
+	private static final Vector2 TMP_TARGET_VECTOR = new Vector2();
 	
 	private final int id;
 	private final ReadWriteLock positionChangeListenerLock;
-	private final Vector2 tmpSourceVector = new Vector2();
-	private final Vector2 tmpTargetVector = new Vector2();
 	
 	private List<PositionChangeListener> positionChangeListeners;
 	
@@ -160,15 +161,15 @@ public class CollisionPoint extends Point implements Positionable {
 	
 	@Override
 	public void moveTowards(float x, float y, float speed) {
-		tmpSourceVector.set(getX(), getY());
-		tmpTargetVector.set(x, y);
-		Vector2 direction = tmpTargetVector.sub(tmpSourceVector).nor();
+		TMP_SOURCE_VECTOR.set(getX(), getY());
+		TMP_TARGET_VECTOR.set(x, y);
+		Vector2 direction = TMP_TARGET_VECTOR.sub(TMP_SOURCE_VECTOR).nor();
 		
 		float xComponent = speed * MathUtils.cosDeg(direction.angle());
 		float yComponent = speed * MathUtils.sinDeg(direction.angle());
-		tmpSourceVector.add(xComponent, yComponent);
+		TMP_SOURCE_VECTOR.add(xComponent, yComponent);
 		
-		set(tmpSourceVector.x, tmpSourceVector.y);
+		set(TMP_SOURCE_VECTOR.x, TMP_SOURCE_VECTOR.y);
 	}
 
 	@Override

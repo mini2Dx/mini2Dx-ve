@@ -20,7 +20,7 @@ import com.badlogic.gdx.math.Vector2;
  * Base class for shapes
  */
 public abstract class Shape {
-	private final Vector2 tmpVector = new Vector2();
+	private static final Vector2 TMP_VECTOR = new Vector2();
 	
 	/**
 	 * Returns an exact copy of this {@link Shape}
@@ -132,9 +132,9 @@ public abstract class Shape {
 	 * @param y The y component
 	 */
 	public void add(float x, float y) {
-		tmpVector.set(getX(), getY());
-		tmpVector.add(x, y);
-		set(tmpVector.x, tmpVector.y);
+		TMP_VECTOR.set(getX(), getY());
+		TMP_VECTOR.add(x, y);
+		set(TMP_VECTOR.x, TMP_VECTOR.y);
 	}
 	
 	/**
@@ -143,9 +143,9 @@ public abstract class Shape {
 	 * @param y The y component
 	 */
 	public void subtract(float x, float y) {
-		tmpVector.set(getX(), getY());
-		tmpVector.sub(x, y);
-		set(tmpVector.x, tmpVector.y);
+		TMP_VECTOR.set(getX(), getY());
+		TMP_VECTOR.sub(x, y);
+		set(TMP_VECTOR.x, TMP_VECTOR.y);
 	}
 
 	/**

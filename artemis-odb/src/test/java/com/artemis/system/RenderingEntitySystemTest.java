@@ -18,6 +18,7 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
+import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
 
 import com.artemis.Aspect;
@@ -48,9 +49,8 @@ public class RenderingEntitySystemTest extends RenderingEntitySystem {
 	public void setUp() {
 		renderedIds = new HashSet<Integer>();
 		system = new RenderingEntitySystemTest();
-		
+
 		mockery = new Mockery();
-		mockery.setImposteriser(ClassImposteriser.INSTANCE);
 		graphics = mockery.mock(Graphics.class);
 		
 		WorldConfiguration configuration = new WorldConfiguration();

@@ -15,7 +15,8 @@ package org.mini2Dx.core.geom;
  * Represents a segment of a line (the space between two points)
  */
 public class LineSegment {
-	private Point intersection;
+	private static final Point TMP_INTERSECTION = new Point();
+
 	protected Point pointA, pointB;
 
 	/**
@@ -45,7 +46,6 @@ public class LineSegment {
 	public LineSegment(Point pA, Point pB) {
 		this.pointA = pA;
 		this.pointB = pB;
-		intersection = new Point();
 	}
 
 	/**
@@ -111,14 +111,29 @@ public class LineSegment {
 	 *            The {@link LineSegment} to check for intersection with
 	 * @return Null if the {@link LineSegment}s don't intersect
 	 */
+	@Deprecated
 	public Point getIntersection(LineSegment lineSegment) {
-		if (!Intersector.intersectLines(pointA, pointB, lineSegment.getPointA(), lineSegment.getPointB(),
-				intersection)) {
-			return null;
+		if(getIntersection(lineSegment, TMP_INTERSECTION)) {
+			return TMP_INTERSECTION;
 		}
-		if (!intersection.isOnLineBetween(pointA, pointB))
-			return null;
-		return intersection;
+		return null;
+	}
+
+	/**
+	 * Returns the point at which this {@link LineSegment} intersects with another
+	 * @param lineSegment The {@link LineSegment} to check for intersection with
+	 * @param result The {@link Point} at which the lines intersect
+	 * @return True if the lines intersect, false otherwise
+	 */
+	public boolean getIntersection(LineSegment lineSegment, Point result) {
+		if (!Intersector.intersectLines(pointA, pointB, lineSegment.getPointA(), lineSegment.getPointB(),
+				result)) {
+			return false;
+		}
+		if (!result.isOnLineBetween(pointA, pointB)) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

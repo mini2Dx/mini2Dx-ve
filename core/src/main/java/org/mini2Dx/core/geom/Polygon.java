@@ -31,13 +31,13 @@ import com.badlogic.gdx.utils.ShortArray;
  */
 public class Polygon extends Shape {
 	private static final String LOGGING_TAG = Polygon.class.getSimpleName();
-	
+	private static final LineSegment INTERNAL_EDGE_LINE_SEGMENT = new LineSegment(0f, 0f, 1f, 1f);
+	private static final Vector2 TMP_VECTOR1 = new Vector2();
+	private static final Vector2 TMP_VECTOR2 = new Vector2();
+
 	private final EarClippingTriangulator triangulator;
 	private final PolygonEdgeIterator edgeIterator = new PolygonEdgeIterator();
-	private final PolygonEdgeIterator internalEdgeIterator = new PolygonEdgeIterator();
-
-	private final Vector2 tmp1 = new Vector2();
-	private final Vector2 tmp2 = new Vector2();
+	private final PolygonEdgeIterator internalEdgeIterator = new PolygonEdgeIterator(INTERNAL_EDGE_LINE_SEGMENT);
 
 	private final Vector2 centroid = new Vector2();
 	private float[] vertices;
@@ -322,9 +322,9 @@ public class Polygon extends Shape {
 
 	@Override
 	public boolean intersectsLineSegment(float x1, float y1, float x2, float y2) {
-		tmp1.set(x1, y1);
-		tmp2.set(x2, y2);
-		return Intersector.intersectSegmentPolygon(tmp1, tmp2, vertices);
+		TMP_VECTOR1.set(x1, y1);
+		TMP_VECTOR2.set(x2, y2);
+		return Intersector.intersectSegmentPolygon(TMP_VECTOR1, TMP_VECTOR2, vertices);
 	}
 
 	@Override
@@ -740,8 +740,8 @@ public class Polygon extends Shape {
 	
 	@Override
 	public void setRadius(float radius) {
-		tmp1.set(vertices[0], vertices[1]);
-		scale(radius / tmp1.dst(getCenterX(), getCenterY()));
+		TMP_VECTOR1.set(vertices[0], vertices[1]);
+		scale(radius / TMP_VECTOR1.dst(getCenterX(), getCenterY()));
 	}
 	
 	@Override
@@ -752,12 +752,12 @@ public class Polygon extends Shape {
 		}
 		
 		for(int i = 0; i < vertices.length; i += 2) {
-			tmp1.set(vertices[i], vertices[i + 1]);
-			tmp1.sub(getCenterX(), getCenterY());
-			tmp1.scl(scale);
-			tmp1.add(vertices[i], vertices[i + 1]);
-			vertices[i] = tmp1.x;
-			vertices[i + 1] = tmp1.y;
+			TMP_VECTOR1.set(vertices[i], vertices[i + 1]);
+			TMP_VECTOR1.sub(getCenterX(), getCenterY());
+			TMP_VECTOR1.scl(scale);
+			TMP_VECTOR1.add(vertices[i], vertices[i + 1]);
+			vertices[i] = TMP_VECTOR1.x;
+			vertices[i + 1] = TMP_VECTOR1.y;
 		}
 		
 		setDirty();
@@ -919,7 +919,15 @@ public class Polygon extends Shape {
 
 	private class PolygonEdgeIterator extends EdgeIterator {
 		private int edge = 0;
-		private LineSegment edgeLineSegment = new LineSegment(0f, 0f, 1f, 1f);
+		private final LineSegment edgeLineSegment;
+
+		public PolygonEdgeIterator() {
+			this(new LineSegment(0f, 0f, 1f, 1f));
+		}
+
+		public PolygonEdgeIterator(LineSegment edgeLineSegment) {
+			this.edgeLineSegment = edgeLineSegment;
+		}
 
 		@Override
 		protected void beginIteration() {

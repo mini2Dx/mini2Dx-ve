@@ -22,11 +22,14 @@ import com.badlogic.gdx.math.Vector2;
 public class Rectangle extends Shape implements
 		Parallelogram {
 	private static final long serialVersionUID = 4016090439885217620L;
-	
+
+	private static final Vector2 [] TMP_VERTICES = new Vector2[] {
+			new Vector2(), new Vector2(), new Vector2(), new Vector2()
+	};
+	private static final Rectangle TMP_RECTANGLE = new Rectangle();
+
 	final Polygon polygon;
 	private float width, height;
-	private Rectangle tmp = null;
-	private Vector2 [] tmpVectors = null;
 	
 	/**
 	 * Default constructor. Creates a {@link Rectangle} at 0,0 with a width and
@@ -49,6 +52,7 @@ public class Rectangle extends Shape implements
 	 *            The height of the {@link Rectangle}
 	 */
 	public Rectangle(float x, float y, float width, float height) {
+		super();
 		this.width = width;
 		this.height = height;
 		polygon = new Polygon(determineVertices(x, y, width, height));
@@ -59,6 +63,7 @@ public class Rectangle extends Shape implements
 	 * @param rectangle The {@link Rectangle} to copy
 	 */
 	public Rectangle(Rectangle rectangle) {
+		super();
 		this.width = rectangle.getWidth();
 		this.height = rectangle.getHeight();
 		this.polygon = (Polygon) rectangle.polygon.copy();
@@ -70,24 +75,11 @@ public class Rectangle extends Shape implements
 	}
 	
 	private Vector2 [] determineVertices(float x, float y, float width, float height) {
-		if(tmpVectors == null) {
-			Vector2 topLeft = new Vector2(x, y);
-			Vector2 topRight = new Vector2(x + width, y);
-			Vector2 bottomLeft = new Vector2(x, y + height);
-			Vector2 bottomRight = new Vector2(x + width, y + height);
-			tmpVectors = new Vector2[] {
-					topLeft,
-					topRight,
-					bottomRight,
-					bottomLeft
-				};
-		} else {
-			tmpVectors[0].set(x, y);
-			tmpVectors[1].set(x + width, y);
-			tmpVectors[2].set(x + width, y + height);
-			tmpVectors[3].set(x, y + height);
-		}
-		return tmpVectors;
+		TMP_VERTICES[0].set(x, y);
+		TMP_VERTICES[1].set(x + width, y);
+		TMP_VERTICES[2].set(x + width, y + height);
+		TMP_VERTICES[3].set(x, y + height);
+		return TMP_VERTICES;
 	}
 	
 	@Override
@@ -106,18 +98,11 @@ public class Rectangle extends Shape implements
 	}
 	
 	public boolean contains(Parallelogram parallelogram) {
-		if(tmp == null) {
-			tmp = new Rectangle(parallelogram.getX(),
-					parallelogram.getY(), parallelogram.getWidth(),
-					parallelogram.getHeight());
-			tmp.setRotation(parallelogram.getRotation());
-		} else {
-			tmp.set(parallelogram.getX(),
-					parallelogram.getY(), parallelogram.getWidth(),
-					parallelogram.getHeight());
-			tmp.setRotation(parallelogram.getRotation());
-		}
-		return contains(tmp);
+		TMP_RECTANGLE.set(parallelogram.getX(),
+				parallelogram.getY(), parallelogram.getWidth(),
+				parallelogram.getHeight());
+		TMP_RECTANGLE.setRotation(parallelogram.getRotation());
+		return contains(TMP_RECTANGLE);
 	}
 	
 	public boolean contains(Rectangle rectangle) {
@@ -172,28 +157,18 @@ public class Rectangle extends Shape implements
 	}
 	
 	public boolean intersects(Parallelogram parallelogram) {
-		if(tmp == null) {
-			tmp = new Rectangle(parallelogram.getX(),
-					parallelogram.getY(), parallelogram.getWidth(),
-					parallelogram.getHeight());
-			tmp.setRotation(parallelogram.getRotation());
-		} else {
-			tmp.set(parallelogram.getX(),
-					parallelogram.getY(), parallelogram.getWidth(),
-					parallelogram.getHeight());
-			tmp.setRotation(parallelogram.getRotation());
-		}
-		return intersects(tmp);
+		TMP_RECTANGLE.set(parallelogram.getX(),
+				parallelogram.getY(), parallelogram.getWidth(),
+				parallelogram.getHeight());
+		TMP_RECTANGLE.setRotation(parallelogram.getRotation());
+		return intersects(TMP_RECTANGLE);
 	}
 	
 	@Override
 	public boolean intersects(float x, float y, float width, float height) {
-		if(tmp == null) {
-			tmp = new Rectangle(x, y, width, height);
-		} else {
-			tmp.set(x, y, width, height);
-		}
-		return intersects(tmp);
+		TMP_RECTANGLE.set(x, y, width, height);
+		TMP_RECTANGLE.setRotation(0f);
+		return intersects(TMP_RECTANGLE);
 	}
 	
 	/**

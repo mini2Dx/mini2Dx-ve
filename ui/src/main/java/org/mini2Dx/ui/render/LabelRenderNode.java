@@ -33,6 +33,8 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 	protected final NullTextAnimation nullAnimation = new NullTextAnimation();
 	protected BitmapFontCache bitmapFontCache = DEFAULT_FONT.newFontCache();
 
+	protected boolean bitmapCacheReset = false;
+
 	public LabelRenderNode(ParentRenderNode<?, ?> parent, Label element) {
 		super(parent, element);
 	}
@@ -40,6 +42,17 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 	@Override
 	public void update(UiContainerRenderTree uiContainer, float delta) {
 		super.update(uiContainer, delta);
+
+		if(bitmapCacheReset) {
+			bitmapFontCache.clear();
+			nullAnimation.reset();
+
+			if(element.getTextAnimation() != null) {
+				element.getTextAnimation().reset();;
+			}
+			bitmapCacheReset = false;
+		}
+
 		if (element.getTextAnimation() == null) {
 			nullAnimation.update(bitmapFontCache, element.getText(), preferredContentWidth,
 					element.getHorizontalAlignment().getAlignValue(), delta);
@@ -122,6 +135,7 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 				element.getTextAnimation().reset();
 			}
 		}
+		bitmapCacheReset = true;
 
 		LabelStyleRule result = layoutState.getTheme().getStyleRule(element, layoutState.getScreenSize());
 		if (result.getBitmapFont() == null) {
@@ -145,8 +159,7 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 		if (style == null) {
 			return;
 		}
-		bitmapFontCache.clear();
-		nullAnimation.reset();
+		bitmapCacheReset = true;
 
 		GLYPH_LAYOUT.setText(bitmapFontCache.getFont(), element.getText(), Color.WHITE, preferredContentWidth,
 				element.getHorizontalAlignment().getAlignValue(), true);

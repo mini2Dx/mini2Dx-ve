@@ -1,4 +1,5 @@
-[1.7.4-SNAPSHOT]
+[1.7.4]
+- Fixed LabelRenderNode not updating text if updated from its own defer call
 
 [1.7.3]
 - Added additional assert in DisperedIntervalEntitySystemTest

@@ -80,6 +80,7 @@ public class DisperedIntervalEntitySystemTest extends DispersedIntervalEntitySys
 	protected void update(int entityId, float delta) {
 		totalEntitiesUpdated++;
 		Assert.assertEquals(true, delta >= INTERVAL);
+		Assert.assertEquals(true, delta < INTERVAL * 2f);
 	}
 
 }

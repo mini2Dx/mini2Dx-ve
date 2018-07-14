@@ -120,7 +120,7 @@ public abstract class UiElement implements Hoverable {
 	 */
 	public DeferredRunnable defer(Runnable runnable, float duration) {
 		DeferredRunnable result = DeferredRunnable.allocate(runnable, duration);
-		deferred.add(0, result);
+		deferred.add(result);
 		Collections.sort(deferred);
 		return result;
 	}

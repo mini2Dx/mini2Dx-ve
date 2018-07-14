@@ -13,6 +13,7 @@ package org.mini2Dx.ui.util;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.badlogic.gdx.Gdx;
 
@@ -21,9 +22,11 @@ import com.badlogic.gdx.Gdx;
  */
 public class DeferredRunnable implements Comparable<DeferredRunnable> {
 	private static final Queue<DeferredRunnable> POOL = new ConcurrentLinkedQueue<DeferredRunnable>();
+	private static final AtomicInteger DEFER_ID_ALLOCATOR = new AtomicInteger();
 
 	private Runnable runnable;
 	private float timer;
+	private int deferId;
 	private boolean cancelled = false, completed = false;
 
 	/**
@@ -58,6 +61,10 @@ public class DeferredRunnable implements Comparable<DeferredRunnable> {
 		cancelled = true;
 	}
 
+	public int getDeferId() {
+		return deferId;
+	}
+
 	/**
 	 * Allocates a new {@link DeferredRunnable} instance from the instance pool
 	 * and assigns the duration and {@link Runnable} to it
@@ -73,6 +80,7 @@ public class DeferredRunnable implements Comparable<DeferredRunnable> {
 		}
 		result.runnable = runnable;
 		result.timer = duration;
+		result.deferId = DEFER_ID_ALLOCATOR.incrementAndGet();
 		result.cancelled = false;
 		result.completed = false;
 		return result;
@@ -80,6 +88,10 @@ public class DeferredRunnable implements Comparable<DeferredRunnable> {
 
 	@Override
 	public int compareTo(DeferredRunnable o) {
-		return Float.compare(o.timer, timer);
+		final int result = Float.compare(o.timer, timer);
+		if(result == 0) {
+			return Integer.compare(o.deferId, deferId);
+		}
+		return result;
 	}
 }

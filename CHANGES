@@ -1,3 +1,5 @@
+[1.7.4-SNAPSHOT]
+
 [1.7.3]
 - Added additional assert in DisperedIntervalEntitySystemTest
 - Fixed multiple UiElement defer ordering when durations are same

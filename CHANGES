@@ -1,4 +1,5 @@
 [1.7.5-SNAPSHOT]
+- Changed ImageRenderNode textureRegion field visibility to protected
 
 [1.7.4]
 - Fixed LabelRenderNode not updating text if updated from its own defer call

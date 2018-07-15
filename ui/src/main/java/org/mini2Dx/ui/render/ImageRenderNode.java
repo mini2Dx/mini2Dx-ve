@@ -21,7 +21,7 @@ import org.mini2Dx.ui.style.StyleRule;
  * {@link RenderNode} implementation for {@link Image}
  */
 public class ImageRenderNode extends RenderNode<Image, StyleRule> {
-	private TextureRegion textureRegion;
+	protected TextureRegion textureRegion;
 
 	public ImageRenderNode(ParentRenderNode<?, ?> parent, Image element) {
 		super(parent, element);

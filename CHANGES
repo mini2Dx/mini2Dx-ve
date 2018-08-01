@@ -1,4 +1,4 @@
-[1.7.6-SNAPSHOT]
+[1.7.6]
 - Changed RenderLayer#render to public method
 - Reduce memory usage of ParentRenderNode by sharing clip cache across instances
 

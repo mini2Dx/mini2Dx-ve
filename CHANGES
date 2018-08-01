@@ -1,5 +1,6 @@
 [1.7.6-SNAPSHOT]
 - Changed RenderLayer#render to public method
+- Reduce memory usage of ParentRenderNode by sharing clip cache across instances
 
 [1.7.5]
 - Changed ImageRenderNode textureRegion field visibility to protected

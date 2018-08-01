@@ -29,8 +29,9 @@ import com.badlogic.gdx.math.MathUtils;
  * Base class for {@link RenderNode} implementations that contains child nodes
  */
 public abstract class ParentRenderNode<T extends ParentUiElement, S extends ParentStyleRule> extends RenderNode<T, S> {
+	private static final Rectangle CACHED_CLIP = new Rectangle();
+
 	protected final NavigableMap<Integer, RenderLayer> layers = new TreeMap<Integer, RenderLayer>();
-	protected final Rectangle cachedClip = new Rectangle();
 	
 	protected boolean childDirty = false;
 	protected FlexDirection flexDirection = FlexDirection.COLUMN;
@@ -61,7 +62,7 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 	@Override
 	protected void renderElement(Graphics g) {
 		boolean overflowClipped = element.isOverflowClipped();
-		g.peekClip(cachedClip);
+		g.peekClip(CACHED_CLIP);
 		if (overflowClipped) {
 			g.setClip(outerArea);
 		}
@@ -73,7 +74,7 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 			layer.render(g);
 		}
 		if (overflowClipped) {
-			g.setClip(cachedClip);
+			g.setClip(CACHED_CLIP);
 		}
 	}
 

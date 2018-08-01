@@ -1,4 +1,5 @@
 [1.7.6-SNAPSHOT]
+- Changed RenderLayer#render to public method
 
 [1.7.5]
 - Changed ImageRenderNode textureRegion field visibility to protected

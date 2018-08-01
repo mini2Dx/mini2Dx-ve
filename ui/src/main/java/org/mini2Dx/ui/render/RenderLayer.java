@@ -50,7 +50,7 @@ public class RenderLayer implements Comparable<RenderLayer> {
 		}
 	}
 	
-	protected void render(Graphics g) {
+	public void render(Graphics g) {
 		for (int i = 0; i < children.size(); i++) {
 			children.get(i).render(g);
 		}

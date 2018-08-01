@@ -1,3 +1,5 @@
+[1.7.6-SNAPSHOT]
+
 [1.7.5]
 - Changed ImageRenderNode textureRegion field visibility to protected
 - Fixed TypingTextAnimation not resetting after initially skipped

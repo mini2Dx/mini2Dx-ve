@@ -1,4 +1,5 @@
 [1.7.7-SNAPSHOT]
+- Added Select#getOption(index) method
 - Fixed nested defer() tasks immediately completing with parent
 
 [1.7.6]

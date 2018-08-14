@@ -192,6 +192,15 @@ public class Select<V> extends UiElement implements Actionable {
 	}
 
 	/**
+	 * Returns the option at the specified index
+	 * @param index The index to get
+	 * @return The {@link SelectOption} instance
+	 */
+	public SelectOption<V> getOption(int index) {
+		return options.get(index);
+	}
+
+	/**
 	 * Returns the currently selected option
 	 * 
 	 * @return The selected {@link SelectOption}

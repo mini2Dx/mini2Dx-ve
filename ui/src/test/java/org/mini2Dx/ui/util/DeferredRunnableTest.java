@@ -11,10 +11,36 @@
  */
 package org.mini2Dx.ui.util;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mini2Dx.ui.dummy.DummyUiElement;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DeferredRunnableTest {
+    private final Mockery mockery = new Mockery();
+
+    private Graphics graphics;
+
+    @Before
+    public void setUp() {
+        mockery.setImposteriser(ClassImposteriser.INSTANCE);
+
+        graphics = mockery.mock(Graphics.class);
+        Gdx.graphics = graphics;
+    }
+
+    @After
+    public void teardown() {
+        mockery.assertIsSatisfied();
+    }
 
     @Test
     public void testDeferredRunnableCompare() {
@@ -32,5 +58,56 @@ public class DeferredRunnableTest {
         final DeferredRunnable runnable6 = DeferredRunnable.allocate(null, 2.0f);
         Assert.assertEquals(1, runnable5.compareTo(runnable6));
         Assert.assertEquals(-1, runnable6.compareTo(runnable5));
+    }
+
+    @Test
+    public void testDeferredRunnableProcessOrder() {
+        mockery.checking(new Expectations() {
+            {
+                atLeast(1).of(graphics).getDeltaTime();
+                will(returnValue(0.16f));
+            }
+        });
+
+        final DummyUiElement element = new DummyUiElement();
+
+        final AtomicBoolean flag1 = new AtomicBoolean(false);
+        final AtomicBoolean flag2 = new AtomicBoolean(false);
+        final AtomicBoolean flag3 = new AtomicBoolean(false);
+
+        element.defer(new Runnable() {
+            @Override
+            public void run() {
+                flag1.set(true);
+                element.defer(new Runnable() {
+                    @Override
+                    public void run() {
+                        flag2.set(true);
+                    }
+                });
+            }
+        });
+        element.defer(new Runnable() {
+            @Override
+            public void run() {
+                flag3.set(true);
+            }
+        });
+
+        Assert.assertEquals(false, flag1.get());
+        Assert.assertEquals(false, flag2.get());
+        Assert.assertEquals(false, flag3.get());
+
+        element.syncWithRenderNode();
+
+        Assert.assertEquals(true, flag1.get());
+        Assert.assertEquals(false, flag2.get());
+        Assert.assertEquals(true, flag3.get());
+
+        element.syncWithRenderNode();
+
+        Assert.assertEquals(true, flag1.get());
+        Assert.assertEquals(true, flag2.get());
+        Assert.assertEquals(true, flag3.get());
     }
 }

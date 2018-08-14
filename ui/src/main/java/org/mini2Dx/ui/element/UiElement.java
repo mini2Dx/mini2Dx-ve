@@ -49,6 +49,7 @@ public abstract class UiElement implements Hoverable {
 	private List<UiEffectListener> effectListeners;
 	private List<HoverListener> hoverListeners;
 	private boolean debugEnabled = false;
+	private boolean deferredSortRequired = true;
 
 	/**
 	 * Constructor. Generates a unique ID for this element.
@@ -121,7 +122,7 @@ public abstract class UiElement implements Hoverable {
 	public DeferredRunnable defer(Runnable runnable, float duration) {
 		DeferredRunnable result = DeferredRunnable.allocate(runnable, duration);
 		deferred.add(result);
-		Collections.sort(deferred);
+		deferredSortRequired = true;
 		return result;
 	}
 	
@@ -129,6 +130,11 @@ public abstract class UiElement implements Hoverable {
 	 * Processes all deferred actions
 	 */
 	protected void processDeferred() {
+		if(deferredSortRequired) {
+			Collections.sort(deferred);
+			deferredSortRequired = false;
+		}
+
 		for(int i = deferred.size() - 1; i >= 0; i--) {
 			DeferredRunnable runnable = deferred.get(i);
 			if(runnable.run()) {

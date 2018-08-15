@@ -13,6 +13,7 @@ package org.mini2Dx.core.engine.geom;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.mini2Dx.core.engine.PositionChangeListener;
@@ -418,5 +419,19 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 	@Override
 	public Shape getShape() {
 		return this;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		CollisionPolygon that = (CollisionPolygon) o;
+		return id == that.id;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), id);
 	}
 }

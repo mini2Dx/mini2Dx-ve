@@ -155,6 +155,19 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 	}
 
 	public void debugRender(Graphics g) {
+		if(getX() - g.getTranslationX() > g.getViewportWidth()) {
+			return;
+		}
+		if(getY() - g.getTranslationY() > g.getViewportHeight()) {
+			return;
+		}
+		if(getMaxX() - g.getTranslationX() < 0f) {
+			return;
+		}
+		if(getMaxY() - g.getTranslationY() < 0f) {
+			return;
+		}
+		
 		Color tmp = g.getColor();
 
 		if (topLeft != null) {

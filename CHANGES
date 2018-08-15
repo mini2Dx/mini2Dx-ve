@@ -1,4 +1,6 @@
 [1.7.8-SNAPSHOT]
+- Fix collisions not using IDs for equals/hashcode
+- Optimise debug rendering of QuadTrees
 
 [1.7.7]
 - Added Select#getOption(index) method

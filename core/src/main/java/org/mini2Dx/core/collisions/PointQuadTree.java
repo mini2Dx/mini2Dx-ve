@@ -167,7 +167,7 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 		if(getMaxY() - g.getTranslationY() < 0f) {
 			return;
 		}
-		
+
 		Color tmp = g.getColor();
 
 		if (topLeft != null) {

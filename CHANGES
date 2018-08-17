@@ -1,4 +1,5 @@
 [1.7.9-SNAPSHOT]
+- Fix interpolation and rendering systems not checking disabled flag
 
 [1.7.8]
 - Fix collisions not using IDs for equals/hashcode

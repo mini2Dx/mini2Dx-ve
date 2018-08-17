@@ -11,30 +11,35 @@
  */
 package com.artemis;
 
-import org.mini2Dx.core.graphics.Graphics;
-
 import com.artemis.system.InterpolatingSystem;
 import com.artemis.system.RenderingSystem;
 import com.artemis.utils.Bag;
+import org.mini2Dx.core.graphics.Graphics;
 
 /**
  * Extends {@link InvocationStrategy} to allow for interpolation and rendering
  */
 public class MdxInvocationStrategy extends InvocationStrategy {
-	
-	protected void interpolate(Bag<InterpolatingSystem> systemsBag) {
-		Object[] systems = systemsBag.getData();
-		for (int i = 0, s = systemsBag.size(); s > i; i++) {
-			InterpolatingSystem system = (InterpolatingSystem) systems[i];
-			system.interpolateSystem();
-		}
+
+    protected void interpolate(Bag<InterpolatingSystem> systemsBag) {
+	Object[] systems = systemsBag.getData();
+	for (int i = 0, s = systemsBag.size(); s > i; i++) {
+	    if (disabled.get(i)) {
+		continue;
+	    }
+	    InterpolatingSystem system = (InterpolatingSystem) systems[i];
+	    system.interpolateSystem();
 	}
-	
-	protected void render(Bag<RenderingSystem> systemsBag, Graphics g) {
-		Object[] systems = systemsBag.getData();
-		for (int i = 0, s = systemsBag.size(); s > i; i++) {
-			RenderingSystem system = (RenderingSystem) systems[i];
-			system.renderSystem(g);
-		}
+    }
+
+    protected void render(Bag<RenderingSystem> systemsBag, Graphics g) {
+	Object[] systems = systemsBag.getData();
+	for (int i = 0, s = systemsBag.size(); s > i; i++) {
+	    if (disabled.get(i)) {
+		continue;
+	    }
+	    RenderingSystem system = (RenderingSystem) systems[i];
+	    system.renderSystem(g);
 	}
+    }
 }

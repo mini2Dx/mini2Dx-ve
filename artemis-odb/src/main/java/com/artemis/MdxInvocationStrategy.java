@@ -11,8 +11,6 @@
  */
 package com.artemis;
 
-import com.artemis.system.InterpolatingSystem;
-import com.artemis.system.RenderingSystem;
 import com.artemis.utils.Bag;
 import org.mini2Dx.core.graphics.Graphics;
 

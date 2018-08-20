@@ -17,10 +17,6 @@ import java.util.List;
 import org.mini2Dx.core.graphics.Graphics;
 
 import com.artemis.listener.WorldListener;
-import com.artemis.system.InterpolatingEntitySystem;
-import com.artemis.system.InterpolatingSystem;
-import com.artemis.system.RenderingEntitySystem;
-import com.artemis.system.RenderingSystem;
 import com.artemis.utils.Bag;
 
 /**

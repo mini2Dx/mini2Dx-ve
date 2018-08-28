@@ -1,4 +1,4 @@
-[1.7.10-SNAPSHOT]
+[1.7.10]
 - Significantly reduce memory usage of XML and JSON serializers
 
 [1.7.9]

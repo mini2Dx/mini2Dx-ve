@@ -47,6 +47,9 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
  */
 @SuppressWarnings("unchecked")
 public class JsonSerializer {
+	private final Map<String, Method[]> methodCache = new HashMap<String, Method[]>();
+	private final Map<String, Field[]> fieldCache = new HashMap<String, Field[]>();
+
 	/**
 	 * Reads a JSON document and converts it into an object of the specified
 	 * type
@@ -161,7 +164,13 @@ public class JsonSerializer {
 	private <T> void callPostDeserializeMethods(T object, Class<?> clazz) throws SerializationException {
 		Class<?> currentClass = clazz;
 		while (currentClass != null && !currentClass.equals(Object.class)) {
-			for(Method method : ClassReflection.getDeclaredMethods(currentClass)) {
+			final String className = currentClass.getName();
+			if(!methodCache.containsKey(className)) {
+				methodCache.put(className, ClassReflection.getDeclaredMethods(currentClass));
+			}
+			final Method [] methods = methodCache.get(className);
+
+			for(Method method : methods) {
 				if(method.isAnnotationPresent(PostDeserialize.class)) {
 					try {
 						method.invoke(object);
@@ -333,7 +342,18 @@ public class JsonSerializer {
 
 			Class<?> currentClass = clazz;
 			while (currentClass != null && !currentClass.equals(Object.class)) {
-				for (Field field : ClassReflection.getDeclaredFields(currentClass)) {
+				final String className = currentClass.getName();
+				if(!fieldCache.containsKey(className)) {
+					fieldCache.put(className, ClassReflection.getDeclaredFields(currentClass));
+				}
+				if(!methodCache.containsKey(className)) {
+					methodCache.put(className, ClassReflection.getDeclaredMethods(currentClass));
+				}
+
+				final Method [] methods = methodCache.get(className);
+				final Field [] fields = fieldCache.get(className);
+
+				for (Field field : fields) {
 					field.setAccessible(true);
 					Annotation annotation = field
 							.getDeclaredAnnotation(org.mini2Dx.core.serialization.annotation.Field.class);
@@ -349,7 +369,7 @@ public class JsonSerializer {
 					}
 					writeObject(field, field.get(object), field.getName(), json);
 				}
-				for(Method method : ClassReflection.getDeclaredMethods(currentClass)) {
+				for(Method method : methods) {
 					if(method.getParameterTypes().length > 0) {
 						continue;
 					}
@@ -366,7 +386,13 @@ public class JsonSerializer {
 			//Check for @ConstructorArg annotations in interface methods
 			Class<?> [] interfaces = clazz.getInterfaces();
 			for(int i = 0; i < interfaces.length; i++) {
-				for(Method method : ClassReflection.getDeclaredMethods(interfaces[i])) {
+				final String className = interfaces[i].getName();
+				if(!methodCache.containsKey(className)) {
+					methodCache.put(className, ClassReflection.getDeclaredMethods(interfaces[i]));
+				}
+				final Method [] methods = methodCache.get(className);
+
+				for(Method method : methods) {
 					if(method.getParameterTypes().length > 0) {
 						continue;
 					}

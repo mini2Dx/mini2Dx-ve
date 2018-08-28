@@ -58,6 +58,9 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 public class DesktopXmlSerializer implements XmlSerializer {
 	private static final String LOGGING_TAG = DesktopXmlSerializer.class.getSimpleName();
 
+	private final Map<String, Method[]> methodCache = new HashMap<String, Method[]>();
+	private final Map<String, Field[]> fieldCache = new HashMap<String, Field[]>();
+
 	@Override
 	public <T> T fromXml(String xml, Class<T> clazz) throws SerializationException {
 		return fromXml(new StringReader(xml), clazz);
@@ -116,7 +119,13 @@ public class DesktopXmlSerializer implements XmlSerializer {
 	private <T> void callPostDeserializeMethods(T object, Class<?> clazz) throws SerializationException {
 		Class<?> currentClass = clazz;
 		while (currentClass != null && !currentClass.equals(Object.class)) {
-			for(Method method : ClassReflection.getDeclaredMethods(currentClass)) {
+			final String className = currentClass.getName();
+			if(!methodCache.containsKey(className)) {
+				methodCache.put(className, ClassReflection.getDeclaredMethods(currentClass));
+			}
+			final Method [] methods = methodCache.get(className);
+
+			for(Method method : methods) {
 				if(method.isAnnotationPresent(PostDeserialize.class)) {
 					try {
 						method.invoke(object);
@@ -239,7 +248,13 @@ public class DesktopXmlSerializer implements XmlSerializer {
 				//Check for @ConstructorArg annotations in interface methods
 				Class<?> [] interfaces = clazz.getInterfaces();
 				for(int i = 0; i < interfaces.length; i++) {
-					for(Method method : ClassReflection.getDeclaredMethods(interfaces[i])) {
+					final String className = interfaces[i].getName();
+					if(!methodCache.containsKey(className)) {
+						methodCache.put(className, ClassReflection.getDeclaredMethods(interfaces[i]));
+					}
+					final Method [] methods = methodCache.get(className);
+
+					for(Method method : methods) {
 						if(method.getParameterTypes().length > 0) {
 							continue;
 						}
@@ -255,7 +270,13 @@ public class DesktopXmlSerializer implements XmlSerializer {
 
 			Class<?> currentClass = clazz;
 			while (currentClass != null && !currentClass.equals(Object.class)) {
-				for (Method method : ClassReflection.getDeclaredMethods(currentClass)) {
+				final String className = currentClass.getName();
+				if(!methodCache.containsKey(className)) {
+					methodCache.put(className, ClassReflection.getDeclaredMethods(currentClass));
+				}
+				final Method [] methods = methodCache.get(className);
+
+				for (Method method : methods) {
 					if (method.getParameterTypes().length > 0) {
 						continue;
 					}
@@ -270,7 +291,13 @@ public class DesktopXmlSerializer implements XmlSerializer {
 			}
 			currentClass = clazz;
 			while(currentClass != null && !currentClass.equals(Object.class)) {
-				for (Field field : ClassReflection.getDeclaredFields(currentClass)) {
+				final String className = currentClass.getName();
+				if(!fieldCache.containsKey(className)) {
+					fieldCache.put(className, ClassReflection.getDeclaredFields(currentClass));
+				}
+				final Field [] fields = fieldCache.get(className);
+
+				for (Field field : fields) {
 					field.setAccessible(true);
 					Annotation annotation = field
 							.getDeclaredAnnotation(org.mini2Dx.core.serialization.annotation.Field.class);

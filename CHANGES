@@ -1,4 +1,5 @@
 [1.7.10-SNAPSHOT]
+- Significantly reduce memory usage of XML and JSON serializers
 
 [1.7.9]
 - [BREAKING] mini2Dx artemis systems moved from package com.artemis.system to com.artemis to provide access to artemis-odb scopes

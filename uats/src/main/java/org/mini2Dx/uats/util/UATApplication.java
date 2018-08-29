@@ -60,10 +60,13 @@ public class UATApplication extends ScreenBasedGame {
 		assetManager.setLoader(UiTheme.class, new UiThemeLoader(fallbackFileHandleResolver));
 		assetManager.setLoader(TiledMap.class, new TiledMapLoader(fallbackFileHandleResolver));
 
+		assetManager.load(UiTheme.DEFAULT_THEME_FILENAME, UiTheme.class);
+		assetManager.finishLoading();
+
 		addScreen(new LoadingScreen(assetManager));
 		addScreen(new UATSelectionScreen(assetManager));
-		addScreen(new BlendingUAT());
-		addScreen(new ClippingUAT());
+		addScreen(new BlendingUAT(assetManager));
+		addScreen(new ClippingUAT(assetManager));
 		addScreen(new GeometryUAT());
 		addScreen(new GraphicsUAT(assetManager));
 		addScreen(new TextureRegionUAT());

@@ -20,6 +20,7 @@ import org.mini2Dx.core.screen.Transition;
 import org.mini2Dx.core.screen.transition.FadeInTransition;
 import org.mini2Dx.core.screen.transition.FadeOutTransition;
 import org.mini2Dx.tiled.TiledMap;
+import org.mini2Dx.tiled.TiledMapLoader;
 import org.mini2Dx.tiled.exception.TiledException;
 import org.mini2Dx.uats.util.ScreenIds;
 import org.mini2Dx.uats.util.UATSelectionScreen;
@@ -40,7 +41,12 @@ public class OrthogonalTiledMapWithCachingUAT extends BasicGameScreen {
 	public OrthogonalTiledMapWithCachingUAT(AssetManager assetManager) {
     	super();
 		this.assetManager = assetManager;
-		assetManager.load("orthogonal_tsx.tmx", TiledMap.class);
+
+		final TiledMapLoader.TiledMapParameter loadMapParameter = new TiledMapLoader.TiledMapParameter();
+        loadMapParameter.cacheLayers = true;
+        loadMapParameter.loadTilesets = true;
+
+		assetManager.load("orthogonal_tsx.tmx", TiledMap.class, loadMapParameter);
 	}
 
     @Override

@@ -27,3 +27,8 @@ uats-android/assets/sound.ogg
 uats-android/assets/texture-region-uat.atlas
 uats-android/assets/texture-region-uat.png
 *.bak
+uats-android/assets/default-mdx-theme.atlas
+uats-android/assets/default-mdx-theme.json
+uats-android/assets/default-mdx-theme.png
+uats-android/assets/kenvector_future.ttf
+uats-android/assets/orthogonal_no_cache.tmx

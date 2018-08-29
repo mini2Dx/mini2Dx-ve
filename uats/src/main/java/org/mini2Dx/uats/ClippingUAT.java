@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.uats;
 
+import com.badlogic.gdx.assets.AssetManager;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.screen.BasicGameScreen;
@@ -20,6 +21,7 @@ import org.mini2Dx.core.screen.Transition;
 import org.mini2Dx.core.screen.transition.FadeInTransition;
 import org.mini2Dx.core.screen.transition.FadeOutTransition;
 import org.mini2Dx.tiled.TiledMap;
+import org.mini2Dx.tiled.TiledMapLoader;
 import org.mini2Dx.tiled.exception.TiledException;
 import org.mini2Dx.uats.util.ScreenIds;
 import org.mini2Dx.uats.util.UATSelectionScreen;
@@ -32,12 +34,26 @@ import com.badlogic.gdx.graphics.Color;
  * {@link Graphics} clipping functionality
  */
 public class ClippingUAT extends BasicGameScreen {
+    private final AssetManager assetManager;
+
 	private TiledMap tiledMap;
+
+    public ClippingUAT(AssetManager assetManager) {
+        super();
+        this.assetManager = assetManager;
+
+        final TiledMapLoader.TiledMapParameter loadMapParameter = new TiledMapLoader.TiledMapParameter();
+        loadMapParameter.cacheLayers = false;
+        loadMapParameter.loadTilesets = true;
+
+        assetManager.load("orthogonal_no_cache.tmx", TiledMap.class, loadMapParameter);
+    }
 
     @Override
     public void initialise(GameContainer gc) {
+        assetManager.finishLoading();
         try {
-            tiledMap = new TiledMap(Gdx.files.internal("orthogonal.tmx"));
+            tiledMap = assetManager.get("orthogonal_no_cache.tmx", TiledMap.class);
         } catch (TiledException e) {
             e.printStackTrace();
         }

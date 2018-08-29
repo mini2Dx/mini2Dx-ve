@@ -45,7 +45,11 @@ public class TiledMapLoader extends AsynchronousAssetLoader<TiledMap, TiledMapPa
 		if(parameter == null) {
 			parameter = DEFAULT_PARAMETERS;
 		}
-		nextTiledMap = new TiledMap(getTiledMapData(fileName, file), false, parameter.cacheLayers);
+		if(parameter.cacheLayers) {
+			nextTiledMap = null;
+			return;
+		}
+		loadNextTiledMap(fileName, file, parameter);
 	}
 
 	@Override
@@ -53,8 +57,10 @@ public class TiledMapLoader extends AsynchronousAssetLoader<TiledMap, TiledMapPa
 		if(parameter == null) {
 			parameter = DEFAULT_PARAMETERS;
 		}
-		nextTiledMap.loadTilesetTextures(manager);
-		return nextTiledMap;
+		final TiledMap result = loadNextTiledMap(fileName, file, parameter);
+		result.loadTilesetTextures(manager);
+		this.nextTiledMap = null;
+		return result;
 	}
 
 	@Override
@@ -67,6 +73,13 @@ public class TiledMapLoader extends AsynchronousAssetLoader<TiledMap, TiledMapPa
 		}
 		return getTiledMapData(fileName, file).getDependencies();
 	}
+
+	private TiledMap loadNextTiledMap(String fileName, FileHandle file, TiledMapParameter parameter) {
+		if(nextTiledMap == null) {
+			nextTiledMap = new TiledMap(getTiledMapData(fileName, file), false, parameter.cacheLayers);
+		}
+		return nextTiledMap;
+	}
 	
 	private TiledMapData getTiledMapData(String fileName, FileHandle file) {
 		if(!tiledMapData.containsKey(fileName)) {
@@ -76,7 +89,7 @@ public class TiledMapLoader extends AsynchronousAssetLoader<TiledMap, TiledMapPa
 	}
 	
 	static public class TiledMapParameter extends AssetLoaderParameters<TiledMap> {
-		boolean loadTilesets = true;
-		boolean cacheLayers = false;
+		public boolean loadTilesets = true;
+		public boolean cacheLayers = false;
 	}
 }

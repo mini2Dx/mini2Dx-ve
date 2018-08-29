@@ -349,9 +349,9 @@ project(":" + rootProject.name + "-uats") {
     	compile project(":" + rootProject.name + "-tiled")
 		compile project(":" + rootProject.name + "-ui")
     }
-	
-	task copyTiledAssets(type: Copy) {
-		from '../tiled/src/test/resources'
+
+	task copyUatResources(type: Copy) {
+		from '../uats/src/main/resources', '../tiled/src/test/resources', '../ui/src/main/resources'
 		into '../uats-android/assets'
 	}
 
@@ -369,13 +369,14 @@ project(":" + rootProject.name + "-uats") {
 
 		docs.dependsOn docProjects().build
 	}
-	processResources.dependsOn copyTiledAssets
+	processResources.dependsOn copyUatResources
 }
 
 project(":" + rootProject.name + "-uats-desktop") {
 	description = "mini2Dx desktop UATs launcher"
 	
     apply plugin: "java"
+	apply plugin: "application"
     
     sourceCompatibility = 1.7
     targetCompatibility = 1.7

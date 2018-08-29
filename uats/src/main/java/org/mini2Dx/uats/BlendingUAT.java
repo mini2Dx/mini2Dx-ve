@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.uats;
 
+import com.badlogic.gdx.assets.AssetManager;
 import org.mini2Dx.core.Mdx;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
@@ -36,12 +37,22 @@ import com.badlogic.gdx.math.MathUtils;
  */
 public class BlendingUAT extends BasicGameScreen {
 	private static final Color WHITE = ColorUtils.rgbToColor("254,254,254");
-	
+
+    private final AssetManager assetManager;
+
 	private Sprite sprite;
+
+    public BlendingUAT(AssetManager assetManager) {
+        super();
+        this.assetManager = assetManager;
+
+        assetManager.load("unsealed.png", Texture.class);
+    }
 
     @Override
     public void initialise(GameContainer gc) {
-        sprite = new Sprite(new Texture(Gdx.files.internal("unsealed.png")));
+        assetManager.finishLoading();
+        sprite = new Sprite(assetManager.get("unsealed.png", Texture.class));
     }
 
     @Override

@@ -1,5 +1,6 @@
 [1.7.11-SNAPSHOT]
 - Fixed inverted back/pause button bindings on Xbox360 controller
+- Fixed UiUtils#setUpControllerInput not initializing PS4 controller correctly
 - Removed PS3 controller support due to inconsistent support across platforms
 
 [1.7.10]

@@ -14,15 +14,13 @@ package org.mini2Dx.uats.util;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.mini2Dx.core.controller.ControllerMapping;
-import org.mini2Dx.core.controller.MdxController;
-import org.mini2Dx.core.controller.Xbox360Controller;
-import org.mini2Dx.core.controller.XboxOneController;
+import org.mini2Dx.core.controller.*;
 import org.mini2Dx.core.controller.deadzone.RadialDeadZone;
 import org.mini2Dx.core.exception.ControllerPlatformException;
 import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.animation.TextAnimation;
 import org.mini2Dx.ui.controller.ControllerUiInput;
+import org.mini2Dx.ui.controller.PS4UiInput;
 import org.mini2Dx.ui.controller.Xbox360UiInput;
 import org.mini2Dx.ui.controller.XboxOneUiInput;
 import org.mini2Dx.ui.element.Checkbox;
@@ -52,7 +50,19 @@ public class UiUtils {
 		}
 		switch(ControllerMapping.getControllerType(controller)) {
 		case PS4:
-			break;
+			PS4Controller ps4Controller = null;
+			if(MAPPED_CONTROLLERS.containsKey(controller.getName())) {
+				ps4Controller = (PS4Controller) MAPPED_CONTROLLERS.get(controller.getName());
+			} else {
+				ps4Controller = ControllerMapping.ps4(controller, new RadialDeadZone(), new RadialDeadZone());
+				MAPPED_CONTROLLERS.put(controller.getName(), ps4Controller);
+			}
+			PS4UiInput ps4UiInput = new PS4UiInput(uiContainer);
+			ps4Controller.addListener(ps4UiInput);
+
+			MAPPED_CONTROLLER_INPUT.put(uiContainer.getId(), ps4UiInput);
+			Gdx.app.log(UiUtils.class.getSimpleName(), "Set up PS4 controller UI input");
+			return ps4UiInput;
 		case XBOX_360:
 			Xbox360Controller xbox360Controller = null;
 			if(MAPPED_CONTROLLERS.containsKey(controller.getName())) {

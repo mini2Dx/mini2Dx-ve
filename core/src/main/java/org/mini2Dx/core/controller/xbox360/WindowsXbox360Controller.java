@@ -30,7 +30,7 @@ public class WindowsXbox360Controller extends Xbox360Controller {
 	
 	public static final int BUTTON_LEFT_SHOULDER = 4;
 	public static final int BUTTON_RIGHT_SHOULDER = 5;
-	
+
 	public static final int BUTTON_BACK = 6;
 	public static final int BUTTON_START = 7;
 	

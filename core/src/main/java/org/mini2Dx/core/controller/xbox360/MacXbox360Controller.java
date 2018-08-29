@@ -27,9 +27,9 @@ public class MacXbox360Controller extends Xbox360Controller {
 	public static final int BUTTON_DOWN = 1;
 	public static final int BUTTON_LEFT = 2;
 	public static final int BUTTON_RIGHT = 3;
-	
-	public static final int BUTTON_BACK = 4;
-	public static final int BUTTON_START = 5;
+
+	public static final int BUTTON_START = 4;
+	public static final int BUTTON_BACK = 5;
 	
 	public static final int BUTTON_LEFT_STICK = 6;
 	public static final int BUTTON_RIGHT_STICK = 7;

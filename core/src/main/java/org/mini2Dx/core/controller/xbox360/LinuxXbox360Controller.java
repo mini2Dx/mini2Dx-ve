@@ -27,17 +27,17 @@ public class LinuxXbox360Controller extends Xbox360Controller {
 	public static final int BUTTON_DOWN = 1;
 	public static final int BUTTON_LEFT = 2;
 	public static final int BUTTON_RIGHT = 3;
-	
-	public static final int BUTTON_BACK = 4;
-	public static final int BUTTON_START = 5;
-	
-	public static final int BUTTON_LEFT_STICK = 6;
-	public static final int BUTTON_RIGHT_STICK = 7;
-	
-	public static final int BUTTON_LEFT_SHOULDER = 8;
-	public static final int BUTTON_RIGHT_SHOULDER = 9;
-	
-	public static final int BUTTON_GUIDE = 10;
+
+	public static final int BUTTON_LEFT_SHOULDER = 4;
+	public static final int BUTTON_RIGHT_SHOULDER = 5;
+
+	public static final int BUTTON_BACK = 6;
+	public static final int BUTTON_START = 7;
+
+	public static final int BUTTON_GUIDE = 8;
+
+	public static final int BUTTON_LEFT_STICK = 9;
+	public static final int BUTTON_RIGHT_STICK = 10;
 	
 	public static final int BUTTON_A = 11;
 	public static final int BUTTON_B = 12;

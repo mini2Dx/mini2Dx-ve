@@ -1,4 +1,5 @@
 [1.7.11-SNAPSHOT]
+- Fixed inverted back/pause button bindings on Xbox360 controller
 
 [1.7.10]
 - Significantly reduce memory usage of XML and JSON serializers

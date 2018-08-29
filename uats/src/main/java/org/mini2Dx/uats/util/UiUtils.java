@@ -51,10 +51,6 @@ public class UiUtils {
 			return MAPPED_CONTROLLER_INPUT.get(uiContainer.getId());
 		}
 		switch(ControllerMapping.getControllerType(controller)) {
-		case OUYA:
-			break;
-		case PS3:
-			break;
 		case PS4:
 			break;
 		case XBOX_360:

@@ -18,8 +18,6 @@ import com.badlogic.gdx.controllers.Controller;
  */
 public enum ControllerType {
 	UNKNOWN("unknown"),
-	OUYA("ouya"),
-	PS3("ps3"),
 	PS4("ps4"),
 	XBOX_360("xbox360"),
 	XBOX_ONE("xboxone");
@@ -38,10 +36,6 @@ public enum ControllerType {
 		switch(value.toLowerCase()) {
 		case "unknown":
 			return ControllerType.UNKNOWN;
-		case "ouya":
-			return ControllerType.OUYA;
-		case "ps3":
-			return ControllerType.PS3;
 		case "ps4":
 			return ControllerType.PS4;
 		case "xbox360":

@@ -11,16 +11,14 @@
  */
 package org.mini2Dx.core.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.badlogic.gdx.controllers.Controller;
 import org.mini2Dx.core.controller.button.Xbox360Button;
 import org.mini2Dx.core.controller.deadzone.DeadZone;
 import org.mini2Dx.core.controller.deadzone.NoopDeadZone;
-import org.mini2Dx.core.controller.ps3.PS3ControllerListener;
 import org.mini2Dx.core.controller.xbox360.Xbox360ControllerListener;
 
-import com.badlogic.gdx.controllers.Controller;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base class for Xbox 360 controller mapping implementations

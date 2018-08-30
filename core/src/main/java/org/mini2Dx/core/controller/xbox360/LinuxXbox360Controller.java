@@ -23,10 +23,15 @@ import com.badlogic.gdx.math.Vector3;
  * Linux bindings for Xbox 360 controller
  */
 public class LinuxXbox360Controller extends Xbox360Controller {
-	public static final int BUTTON_UP = 0;
-	public static final int BUTTON_DOWN = 1;
-	public static final int BUTTON_LEFT = 2;
-	public static final int BUTTON_RIGHT = 3;
+	public static final int BUTTON_UP = -1;
+	public static final int BUTTON_DOWN = -2;
+	public static final int BUTTON_LEFT = -3;
+	public static final int BUTTON_RIGHT = -4;
+
+	public static final int BUTTON_A = 0;
+	public static final int BUTTON_B = 1;
+	public static final int BUTTON_X = 2;
+	public static final int BUTTON_Y = 3;
 
 	public static final int BUTTON_LEFT_SHOULDER = 4;
 	public static final int BUTTON_RIGHT_SHOULDER = 5;
@@ -38,20 +43,16 @@ public class LinuxXbox360Controller extends Xbox360Controller {
 
 	public static final int BUTTON_LEFT_STICK = 9;
 	public static final int BUTTON_RIGHT_STICK = 10;
+
+	public static final int AXIS_LEFT_STICK_X = 0;
+	public static final int AXIS_LEFT_STICK_Y = 1;
 	
-	public static final int BUTTON_A = 11;
-	public static final int BUTTON_B = 12;
-	public static final int BUTTON_X = 13;
-	public static final int BUTTON_Y = 14;
+	public static final int AXIS_LEFT_TRIGGER = 2;
 	
-	public static final int AXIS_LEFT_TRIGGER = 0;
-	public static final int AXIS_RIGHT_TRIGGER = 1;
-	
-	public static final int AXIS_LEFT_STICK_X = 2;
-	public static final int AXIS_LEFT_STICK_Y = 3;
-	
-	public static final int AXIS_RIGHT_STICK_X = 4;
-	public static final int AXIS_RIGHT_STICK_Y = 5;
+	public static final int AXIS_RIGHT_STICK_X = 3;
+	public static final int AXIS_RIGHT_STICK_Y = 4;
+
+	public static final int AXIS_RIGHT_TRIGGER = 5;
 	
 	public LinuxXbox360Controller(Controller controller) {
 		super(controller);

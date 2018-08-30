@@ -139,7 +139,11 @@ public class WindowsXbox360Controller extends Xbox360Controller {
 		case AXIS_RIGHT_STICK_Y:
 			return notifyRightStickYMoved(value);
 		case AXIS_RIGHT_TRIGGER:
-			return notifyRightTriggerMoved(value);
+			if(value > 0f) {
+				return notifyLeftTriggerMoved(value);
+			} else {
+				return notifyRightTriggerMoved(value);
+			}
 		}
 		return false;
 	}

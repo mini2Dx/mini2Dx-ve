@@ -1,4 +1,6 @@
-[1.7.11-SNAPSHOT]
+[1.7.12-SNAPSHOT]
+
+[1.7.11]
 - Fixed Xbox360 controller left/right trigger detection on Windows
 - Fixed incorrect Mac/Linux key bindings on Xbox360 controller
 - Fixed UiUtils#setUpControllerInput not initializing PS4 controller correctly

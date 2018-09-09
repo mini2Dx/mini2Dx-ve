@@ -1,4 +1,5 @@
 [1.7.12-SNAPSHOT]
+- Reduced memory usage by switching to IntMap where appropriate
 
 [1.7.11]
 - Fixed Xbox360 controller left/right trigger detection on Windows

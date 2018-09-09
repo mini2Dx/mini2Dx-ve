@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.screen.transition.NullTransition;
@@ -25,7 +26,7 @@ import org.mini2Dx.core.screen.transition.NullTransition;
  */
 public class BasicScreenManager<T extends GameScreen> implements
 		ScreenManager<T> {
-	private final Map<Integer, T> gameScreens = new ConcurrentHashMap<Integer, T>();
+	private final IntMap<T> gameScreens = new IntMap<T>();
 	protected T currentScreen, nextScreen;
 	protected Transition transitionIn, transitionOut;
 

@@ -14,6 +14,7 @@ package org.mini2Dx.tiled.renderer;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.utils.IntIntMap;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.tiled.TileLayer;
@@ -29,7 +30,7 @@ import com.badlogic.gdx.math.MathUtils;
 public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 	private TiledMapRenderArea mapClip, tmpClip;
 	private SpriteCache layerCache;
-	private Map<Integer, Integer> layerCacheIds;
+	private IntIntMap layerCacheIds;
 
 	private final boolean cacheLayers;
 	private final TiledMap tiledMap;
@@ -42,7 +43,7 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 
 		if (cacheLayers) {
 			layerCache = new SpriteCache(5000, true);
-			layerCacheIds = new HashMap<Integer, Integer>();
+			layerCacheIds = new IntIntMap();
 		}
 		mapClip = new TiledMapRenderArea();
 		tmpClip = new TiledMapRenderArea();
@@ -94,11 +95,14 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 			layerCache.clear();
 			mapClip.set(startTileX, startTileY, widthInTiles, heightInTiles);
 		}
-		if (!layerCacheIds.containsKey(layer)) {
+		if (!layerCacheIds.containsKey(layer.getIndex())) {
 			renderLayerToCache(g, layer, renderX, renderY, startTileX, startTileY, widthInTiles, heightInTiles);
 		}
 
-		int cacheId = layerCacheIds.get(layer.getIndex());
+		int cacheId = layerCacheIds.get(layer.getIndex(), -1);
+		if(cacheId < 0) {
+			return;
+		}
 		g.drawSpriteCache(layerCache, cacheId);
 	}
 

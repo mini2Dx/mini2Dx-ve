@@ -14,6 +14,7 @@ package org.mini2Dx.tiled.tileset;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.Sprite;
 import org.mini2Dx.tiled.Tile;
@@ -33,7 +34,7 @@ import com.badlogic.gdx.utils.Array;
  */
 public class ImageTilesetSource extends TilesetSource {
 	private final Tile[][] tiles;
-	private final Map<Integer, Sprite> tileImages = new HashMap<Integer, Sprite>();
+	private final IntMap<Sprite> tileImages = new IntMap<Sprite>();
 	private final int width, height;
 	private final int tileWidth, tileHeight;
 	private final int spacing, margin;

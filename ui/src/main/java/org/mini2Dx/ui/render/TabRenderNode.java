@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
+import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.ui.element.Actionable;
 import org.mini2Dx.ui.element.Tab;
@@ -17,7 +18,7 @@ import org.mini2Dx.ui.navigation.KeyboardHotKeyOperation;
  * {@link RenderNode} implementation for {@link Tab}
  */
 public class TabRenderNode extends RowRenderNode implements NavigatableRenderNode {
-	private Map<Integer, String> keyboardHotkeys = new HashMap<Integer, String>();
+	private IntMap<String> keyboardHotkeys = new IntMap<String>();
 	private Map<String, String> controllerHotkeys = new HashMap<String, String>();
 
 	public TabRenderNode(ParentRenderNode<?, ?> parent, Tab tab) {

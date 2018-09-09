@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
+import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.ui.element.Actionable;
 import org.mini2Dx.ui.element.Column;
@@ -28,7 +29,7 @@ import org.mini2Dx.ui.style.ContainerStyleRule;
  * Base class for {@link Modal} {@link RenderNode} implementations
  */
 public abstract class ModalRenderNode extends ContainerRenderNode implements NavigatableRenderNode {
-	private final Map<Integer, String> keyboardHotkeys = new HashMap<Integer, String>();
+	private final IntMap<String> keyboardHotkeys = new IntMap<String>();
 	private final Map<String, String> controllerHotkeys = new HashMap<String, String>();
 
 	public ModalRenderNode(ParentRenderNode<?, ?> parent, Column column) {

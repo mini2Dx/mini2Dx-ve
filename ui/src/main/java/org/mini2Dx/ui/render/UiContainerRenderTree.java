@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.controller.ControllerType;
 import org.mini2Dx.ui.InputSource;
 import org.mini2Dx.ui.UiContainer;
@@ -77,7 +78,11 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 		yOffset = determineYOffset(layoutState);
 		outerArea.forceTo(xOffset, yOffset, preferredContentWidth, preferredContentHeight);
 
-		for (RenderLayer layer : layers.values()) {
+		final IntMap.Keys keys = layers.ascendingKeys();
+		keys.reset();
+		while(keys.hasNext) {
+			final int layerIndex = keys.next();
+			final RenderLayer layer = layers.get(layerIndex);
 			layer.layout(layoutState);
 		}
 

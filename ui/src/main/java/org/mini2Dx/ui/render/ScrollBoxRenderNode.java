@@ -13,6 +13,8 @@ package org.mini2Dx.ui.render;
 
 import java.util.NavigableSet;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.engine.geom.CollisionBox;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
@@ -35,6 +37,8 @@ import com.badlogic.gdx.math.MathUtils;
  */
 public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxStyleRule>
 		implements ActionableRenderNode {
+	private static final String LOGGING_TAG = ScrollBoxRenderNode.class.getSimpleName();
+
 	private final CollisionBox topScrollButton = new CollisionBox();
 	private final CollisionBox bottomScrollButton = new CollisionBox();
 	private final CollisionBox scrollThumb = new CollisionBox();
@@ -109,7 +113,11 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 		g.setClip(getInnerRenderX(), getInnerRenderY() + scrollTranslationY, getInnerRenderWidth(),
 				getInnerRenderHeight());
 
-		for (RenderLayer layer : layers.values()) {
+		final IntMap.Keys keys = layers.ascendingKeys();
+		keys.reset();
+		while(keys.hasNext) {
+			final int layerIndex = keys.next();
+			final RenderLayer layer = layers.get(layerIndex);
 			layer.render(g);
 		}
 
@@ -231,8 +239,10 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 		result |= handleBottomScrollButtonMouseMoved(outerAreaContains, screenX, screenY);
 
 		if (!result) {
-			NavigableSet<Integer> descendingLayerKeys = layers.descendingKeySet();
-			for (Integer layerIndex : descendingLayerKeys) {
+			final IntMap.Keys keys = layers.descendingKeys();
+			keys.reset();
+			while(keys.hasNext) {
+				final int layerIndex = keys.next();
 				if (layers.get(layerIndex).mouseMoved(screenX, screenY + scrollTranslationY)) {
 					result = true;
 				}
@@ -323,8 +333,10 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 			return this;
 		}
 
-		NavigableSet<Integer> descendingLayerKeys = layers.descendingKeySet();
-		for (Integer layerIndex : descendingLayerKeys) {
+		final IntMap.Keys keys = layers.descendingKeys();
+		keys.reset();
+		while(keys.hasNext) {
+			final int layerIndex = keys.next();
 			ActionableRenderNode result = layers.get(layerIndex).mouseDown(screenX, screenY + scrollTranslationY,
 					pointer, button);
 			if (result != null) {

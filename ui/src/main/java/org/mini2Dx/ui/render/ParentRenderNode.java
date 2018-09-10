@@ -15,8 +15,10 @@ import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.TreeMap;
 
+import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.core.util.IntTreeMap;
 import org.mini2Dx.ui.element.ParentUiElement;
 import org.mini2Dx.ui.layout.FlexDirection;
 import org.mini2Dx.ui.layout.LayoutState;
@@ -29,13 +31,13 @@ import com.badlogic.gdx.math.MathUtils;
  * Base class for {@link RenderNode} implementations that contains child nodes
  */
 public abstract class ParentRenderNode<T extends ParentUiElement, S extends ParentStyleRule> extends RenderNode<T, S> {
-	private static final Rectangle CACHED_CLIP = new Rectangle();
-
-	protected final NavigableMap<Integer, RenderLayer> layers = new TreeMap<Integer, RenderLayer>();
+	protected final IntTreeMap<RenderLayer> layers = new IntTreeMap<RenderLayer>();
 	
 	protected boolean childDirty = false;
 	protected FlexDirection flexDirection = FlexDirection.COLUMN;
 	protected LayoutRuleset horizontalLayoutRuleset, verticalLayoutRuleset;
+
+	private Rectangle cachedClip;
 
 	public ParentRenderNode(ParentRenderNode<?, ?> parent, T element) {
 		super(parent, element);
@@ -46,7 +48,11 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 	@Override
 	public void update(UiContainerRenderTree uiContainer, float delta) {
 		super.update(uiContainer, delta);
-		for (RenderLayer layer : layers.values()) {
+		final IntMap.Keys keys = layers.ascendingKeys();
+		keys.reset();
+		while(keys.hasNext) {
+			final int layerIndex = keys.next();
+			final RenderLayer layer = layers.get(layerIndex);
 			layer.update(uiContainer, delta);
 		}
 	}
@@ -54,7 +60,11 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 	@Override
 	public void interpolate(float alpha) {
 		super.interpolate(alpha);
-		for (RenderLayer layer : layers.values()) {
+		final IntMap.Keys keys = layers.ascendingKeys();
+		keys.reset();
+		while(keys.hasNext) {
+			final int layerIndex = keys.next();
+			final RenderLayer layer = layers.get(layerIndex);
 			layer.interpolate(alpha);
 		}
 	}
@@ -62,19 +72,26 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 	@Override
 	protected void renderElement(Graphics g) {
 		boolean overflowClipped = element.isOverflowClipped();
-		g.peekClip(CACHED_CLIP);
 		if (overflowClipped) {
+			if(cachedClip == null) {
+				cachedClip = new Rectangle();
+			}
+			g.peekClip(cachedClip);
 			g.setClip(outerArea);
 		}
 		if (style.getBackgroundNinePatch() != null) {
 			g.drawNinePatch(style.getBackgroundNinePatch(), getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
 					getInnerRenderHeight());
 		}
-		for (RenderLayer layer : layers.values()) {
+		final IntMap.Keys keys = layers.ascendingKeys();
+		keys.reset();
+		while(keys.hasNext) {
+			final int layerIndex = keys.next();
+			final RenderLayer layer = layers.get(layerIndex);
 			layer.render(g);
 		}
 		if (overflowClipped) {
-			g.setClip(CACHED_CLIP);
+			g.setClip(cachedClip);
 		}
 	}
 
@@ -110,7 +127,11 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 			preferredContentHeight = determinePreferredContentHeight(layoutState);
 		}
 
-		for (RenderLayer layer : layers.values()) {
+		final IntMap.Keys keys = layers.ascendingKeys();
+		keys.reset();
+		while(keys.hasNext) {
+			final int layerIndex = keys.next();
+			final RenderLayer layer = layers.get(layerIndex);
 			layer.layout(layoutState);
 		}
 
@@ -185,8 +206,11 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 		if (outerArea.contains(screenX, screenY)) {
 			setState(NodeState.HOVER);
 			boolean result = false;
-			NavigableSet<Integer> descendingLayerKeys = layers.descendingKeySet();
-			for (Integer layerIndex : descendingLayerKeys) {
+
+			final IntMap.Keys keys = layers.descendingKeys();
+			keys.reset();
+			while(keys.hasNext) {
+				final int layerIndex = keys.next();
 				if (layers.get(layerIndex).mouseMoved(screenX, screenY)) {
 					result = true;
 				}
@@ -202,8 +226,11 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 	public boolean mouseScrolled(int screenX, int screenY, float amount) {
 		if (outerArea.contains(screenX, screenY)) {
 			boolean result = false;
-			NavigableSet<Integer> descendingLayerKeys = layers.descendingKeySet();
-			for (Integer layerIndex : descendingLayerKeys) {
+
+			final IntMap.Keys keys = layers.descendingKeys();
+			keys.reset();
+			while(keys.hasNext) {
+				final int layerIndex = keys.next();
 				if (layers.get(layerIndex).mouseScrolled(screenX, screenY, amount)) {
 					result = true;
 				}
@@ -218,8 +245,10 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 		if (!isIncludedInRender()) {
 			return null;
 		}
-		NavigableSet<Integer> descendingLayerKeys = layers.descendingKeySet();
-		for (Integer layerIndex : descendingLayerKeys) {
+		final IntMap.Keys keys = layers.descendingKeys();
+		keys.reset();
+		while(keys.hasNext) {
+			final int layerIndex = keys.next();
 			ActionableRenderNode result = layers.get(layerIndex).mouseDown(screenX, screenY, pointer, button);
 			if (result != null) {
 				return result;
@@ -257,7 +286,7 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 
 	@Override
 	public void setDirty(boolean dirty) {
-		if (layers == null || layers.size() == 0) {
+		if (layers == null || layers.size == 0) {
 			super.setDirty(dirty);
 		} else {
 			for (RenderLayer layer : layers.values()) {

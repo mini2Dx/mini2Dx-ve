@@ -14,6 +14,7 @@ package org.mini2Dx.ui.render;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.ui.layout.LayoutState;
 
@@ -21,7 +22,7 @@ import org.mini2Dx.ui.layout.LayoutState;
  * Represents a layer of {@link RenderNode}s on the z axis of a {@link ParentRenderNode}
  */
 public class RenderLayer implements Comparable<RenderLayer> {
-	protected final List<RenderNode<?, ?>> children = new ArrayList<RenderNode<?, ?>>(1);
+	protected final Array<RenderNode<?, ?>> children = new Array<RenderNode<?, ?>>(1);
 	protected final ParentRenderNode<?, ?> owner;
 	protected final int zIndex;
 	
@@ -35,23 +36,23 @@ public class RenderLayer implements Comparable<RenderLayer> {
 	}
 	
 	public void remove(RenderNode<?, ?> child) {
-		children.remove(child);
+		children.removeValue(child, false);
 	}
 	
 	public void update(UiContainerRenderTree uiContainer, float delta) {
-		for (int i = 0; i < children.size(); i++) {
+		for (int i = 0; i < children.size; i++) {
 			children.get(i).update(uiContainer, delta);
 		}
 	}
 	
 	public void interpolate(float alpha) {
-		for (int i = 0; i < children.size(); i++) {
+		for (int i = 0; i < children.size; i++) {
 			children.get(i).interpolate(alpha);
 		}
 	}
 	
 	public void render(Graphics g) {
-		for (int i = 0; i < children.size(); i++) {
+		for (int i = 0; i < children.size; i++) {
 			children.get(i).render(g);
 		}
 	}
@@ -62,7 +63,7 @@ public class RenderLayer implements Comparable<RenderLayer> {
 	
 	public boolean mouseScrolled(int screenX, int screenY, float amount) {
 		boolean result = false;
-		for(int i = children.size() - 1; i >= 0; i--) {
+		for(int i = children.size - 1; i >= 0; i--) {
 			if(children.get(i).mouseScrolled(screenX, screenY, amount)) {
 				result = true;
 			}
@@ -72,7 +73,7 @@ public class RenderLayer implements Comparable<RenderLayer> {
 	
 	public boolean mouseMoved(int screenX, int screenY) {
 		boolean result = false;
-		for(int i = children.size() - 1; i >= 0; i--) {
+		for(int i = children.size - 1; i >= 0; i--) {
 			if(children.get(i).mouseMoved(screenX, screenY)) {
 				result = true;
 			}
@@ -81,7 +82,7 @@ public class RenderLayer implements Comparable<RenderLayer> {
 	}
 	
 	public ActionableRenderNode mouseDown(int screenX, int screenY, int pointer, int button) {
-		for (int i = children.size() - 1; i >= 0; i--) {
+		for (int i = children.size - 1; i >= 0; i--) {
 			if(!children.get(i).isIncludedInRender()) {
 				continue;
 			}
@@ -96,7 +97,7 @@ public class RenderLayer implements Comparable<RenderLayer> {
 	public float determinePreferredContentHeight(LayoutState layoutState) {
 		float maxHeight = 0f;
 
-		for (int i = 0; i < children.size(); i++) {
+		for (int i = 0; i < children.size; i++) {
 			if(!children.get(i).isIncludedInLayout()) {
 				continue;
 			}
@@ -109,7 +110,7 @@ public class RenderLayer implements Comparable<RenderLayer> {
 	}
 	
 	public boolean isDirty() {
-		for (int i = children.size() - 1; i >= 0; i--) {
+		for (int i = children.size - 1; i >= 0; i--) {
 			if(children.get(i).isDirty()) {
 				return true;
 			}
@@ -118,13 +119,13 @@ public class RenderLayer implements Comparable<RenderLayer> {
 	}
 	
 	public void setDirty(boolean dirty) {
-		for (int i = children.size() - 1; i >= 0; i--) {
+		for (int i = children.size - 1; i >= 0; i--) {
 			children.get(i).setDirty(dirty);
 		}
 	}
 	
 	public void setState(NodeState state) {
-		for (int i = children.size() - 1; i >= 0; i--) {
+		for (int i = children.size - 1; i >= 0; i--) {
 			children.get(i).setState(NodeState.NORMAL);
 		}
 	}
@@ -140,17 +141,17 @@ public class RenderLayer implements Comparable<RenderLayer> {
 	}
 	
 	public RenderNode<?, ?> getFirstChild() {
-		if(children.isEmpty()) {
+		if(children.size == 0) {
 			return null;
 		}
 		return children.get(0);
 	}
 	
 	public RenderNode<?, ?> getLastChild() {
-		if(children.isEmpty()) {
+		if(children.size == 0) {
 			return null;
 		}
-		return children.get(children.size() - 1);
+		return children.get(children.size - 1);
 	}
 	
 	public RenderNode<?, ?> getChild(int index) {
@@ -158,7 +159,7 @@ public class RenderLayer implements Comparable<RenderLayer> {
 	}
 	
 	public int getTotalChildren() {
-		return children.size();
+		return children.size;
 	}
 
 	@Override

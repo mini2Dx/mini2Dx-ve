@@ -1,7 +1,7 @@
-[1.7.12-SNAPSHOT]
+[1.7.12]
 - Added IntTreeMap implementation
 - Fixed incorrect clip caching between scrollbox and other elements
-- Reduced UI ParentRenderNode memory usage by using IntTreeMap
+- Reduced UI render node + layer memory usage
 - Reduced memory usage by switching to IntMap where appropriate
 
 [1.7.11]

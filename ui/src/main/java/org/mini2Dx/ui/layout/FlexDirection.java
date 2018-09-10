@@ -13,6 +13,7 @@ package org.mini2Dx.ui.layout;
 
 import java.util.List;
 
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.RenderNode;
 
@@ -27,11 +28,11 @@ public enum FlexDirection {
 	 */
 	COLUMN {
 		@Override
-		public void layout(LayoutState layoutState, ParentRenderNode<?, ?> parentNode, List<RenderNode<?, ?>> children) {
+		public void layout(LayoutState layoutState, ParentRenderNode<?, ?> parentNode, Array<RenderNode<?, ?>> children) {
 			float startX = parentNode.getStyle().getPaddingLeft();
 			float startY = parentNode.getStyle().getPaddingTop();
 			
-			for (int i = 0; i < children.size(); i++) {
+			for (int i = 0; i < children.size; i++) {
 				RenderNode<?, ?> node = children.get(i);
 				node.layout(layoutState);
 				if (!node.isIncludedInLayout()) {
@@ -68,11 +69,11 @@ public enum FlexDirection {
 	COLUMN_REVERSE {
 		@Override
 		public void layout(LayoutState layoutState, ParentRenderNode<?, ?> parentNode,
-				List<RenderNode<?, ?>> children) {
+						   Array<RenderNode<?, ?>> children) {
 			float startX = parentNode.getStyle().getPaddingLeft() + parentNode.getPreferredContentWidth();
 			float startY = parentNode.getStyle().getPaddingTop();
 			
-			for (int i = 0; i < children.size(); i++) {
+			for (int i = 0; i < children.size; i++) {
 				RenderNode<?, ?> node = children.get(i);
 				node.layout(layoutState);
 				if (!node.isIncludedInLayout()) {
@@ -109,11 +110,11 @@ public enum FlexDirection {
 	ROW {
 		@Override
 		public void layout(LayoutState layoutState, ParentRenderNode<?, ?> parentNode,
-				List<RenderNode<?, ?>> children) {
+						   Array<RenderNode<?, ?>> children) {
 			float startX = parentNode.getStyle().getPaddingLeft();
 			float startY = parentNode.getStyle().getPaddingTop();
 			
-			for (int i = 0; i < children.size(); i++) {
+			for (int i = 0; i < children.size; i++) {
 				RenderNode<?, ?> node = children.get(i);
 				node.layout(layoutState);
 				if (!node.isIncludedInLayout()) {
@@ -132,12 +133,12 @@ public enum FlexDirection {
 	ROW_REVERSE {
 		@Override
 		public void layout(LayoutState layoutState, ParentRenderNode<?, ?> parentNode,
-				List<RenderNode<?, ?>> children) {
+						   Array<RenderNode<?, ?>> children) {
 			final float startX = parentNode.getStyle().getPaddingLeft();
 			if(parentNode.getVerticalLayoutRuleset().getCurrentSizeRule().isAutoSize()) {
 				float startY = parentNode.getStyle().getPaddingTop();
 				
-				for (int i = children.size() - 1; i >= 0; i--) {
+				for (int i = children.size - 1; i >= 0; i--) {
 					RenderNode<?, ?> node = children.get(i);
 					node.layout(layoutState);
 					if (!node.isIncludedInLayout()) {
@@ -151,7 +152,7 @@ public enum FlexDirection {
 			} else {
 				float startY = parentNode.getPreferredContentHeight();
 				
-				for (int i = 0; i < children.size(); i++) {
+				for (int i = 0; i < children.size; i++) {
 					RenderNode<?, ?> node = children.get(i);
 					node.layout(layoutState);
 					if (!node.isIncludedInLayout()) {
@@ -171,7 +172,7 @@ public enum FlexDirection {
 	CENTER {
 		@Override
 		public void layout(LayoutState layoutState, ParentRenderNode<?, ?> parentNode,
-				List<RenderNode<?, ?>> children) {
+						   Array<RenderNode<?, ?>> children) {
 			final float paddingLeft = parentNode.getStyle().getPaddingLeft();
 			final float paddingRight = parentNode.getStyle().getPaddingRight();
 			final float paddingTop = parentNode.getStyle().getPaddingTop();
@@ -179,7 +180,7 @@ public enum FlexDirection {
 			
 			int maxHeight = 0;
 			if(parentNode.getVerticalLayoutRuleset().getCurrentSizeRule().isAutoSize()) {
-				for (int i = 0; i < children.size(); i++) {
+				for (int i = 0; i < children.size; i++) {
 					RenderNode<?, ?> node = children.get(i);
 					node.layout(layoutState);
 					if (!node.isIncludedInLayout()) {
@@ -190,7 +191,7 @@ public enum FlexDirection {
 					}
 				}
 			} else {
-				for (int i = 0; i < children.size(); i++) {
+				for (int i = 0; i < children.size; i++) {
 					RenderNode<?, ?> node = children.get(i);
 					node.layout(layoutState);
 				}
@@ -199,7 +200,7 @@ public enum FlexDirection {
 			
 			int centerX = MathUtils.round((paddingLeft + paddingRight + parentNode.getPreferredContentWidth()) / 2f);
 			int centerY = MathUtils.round((paddingTop + paddingBottom + maxHeight) / 2);
-			for (int i = 0; i < children.size(); i++) {
+			for (int i = 0; i < children.size; i++) {
 				RenderNode<?, ?> node = children.get(i);
 				if (!node.isIncludedInLayout()) {
 					continue;
@@ -217,5 +218,5 @@ public enum FlexDirection {
 	 * @param parentNode The parent render node
 	 * @param children The children of the parent that require layout
 	 */
-	public abstract void layout(LayoutState layoutState, ParentRenderNode<?, ?> parentNode, List<RenderNode<?, ?>> children);
+	public abstract void layout(LayoutState layoutState, ParentRenderNode<?, ?> parentNode, Array<RenderNode<?, ?>> children);
 }

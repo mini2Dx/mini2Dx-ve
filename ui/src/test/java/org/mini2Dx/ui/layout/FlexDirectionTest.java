@@ -6,6 +6,7 @@ package org.mini2Dx.ui.layout;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.utils.Array;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -34,7 +35,7 @@ public class FlexDirectionTest {
 	
 	private final DummyParentUiElement parentElement = new DummyParentUiElement();
 	private final List<DummyUiElement> children = new ArrayList<DummyUiElement>(1);
-	private final List<RenderNode<?, ?>> childrenRenderNodes = new ArrayList<RenderNode<?, ?>>(1);
+	private final Array<RenderNode<?, ?>> childrenRenderNodes = new Array<RenderNode<?, ?>>(1);
 	
 	private DummyParentRenderNode parentRenderNode;
 	
@@ -67,7 +68,7 @@ public class FlexDirectionTest {
 		
 		float relativeX = childrenRenderNodes.get(0).getRelativeX();
 		float relativeY = childrenRenderNodes.get(0).getRelativeY();
-		for(int i = 1; i < childrenRenderNodes.size(); i++) {
+		for(int i = 1; i < childrenRenderNodes.size; i++) {
 			RenderNode<?, ?> nextNode = childrenRenderNodes.get(i);
 			if(nextNode.getRelativeY() == relativeY) {
 				Assert.assertEquals(true, nextNode.getRelativeX() > relativeX);
@@ -90,7 +91,7 @@ public class FlexDirectionTest {
 		float relativeX = childrenRenderNodes.get(0).getRelativeX();
 		float relativeY = childrenRenderNodes.get(0).getRelativeY();
 		
-		for(int i = 1; i < childrenRenderNodes.size(); i++) {
+		for(int i = 1; i < childrenRenderNodes.size; i++) {
 			RenderNode<?, ?> nextNode = childrenRenderNodes.get(i);
 			if(nextNode.getRelativeY() == relativeY) {
 				Assert.assertEquals(true, relativeX > nextNode.getRelativeX());

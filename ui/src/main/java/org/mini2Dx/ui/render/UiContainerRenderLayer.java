@@ -25,7 +25,7 @@ public class UiContainerRenderLayer extends RenderLayer {
 
 	@Override
 	public void layout(LayoutState layoutState) {
-		for (int i = 0; i < children.size(); i++) {
+		for (int i = 0; i < children.size; i++) {
 			RenderNode<?, ?> node = children.get(i);
 			node.layout(layoutState);
 			

@@ -1,4 +1,5 @@
 [1.7.13-SNAPSHOT]
+- Fixed out of bounds exception when switch between TabView and another navigation type
 
 [1.7.12]
 - Added IntTreeMap implementation

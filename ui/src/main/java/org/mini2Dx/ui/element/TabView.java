@@ -424,10 +424,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * @return Null if no {@link Tab} is visible
 	 */
 	public Tab getCurrentTab() {
-		if (currentTabIndex >= tabs.size()) {
-			return null;
-		}
-		return tabs.get(currentTabIndex);
+		return tabs.get(getCurrentTabIndex());
 	}
 
 	/**
@@ -452,6 +449,11 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * @return 0 by default
 	 */
 	public int getCurrentTabIndex() {
+		if(currentTabIndex < 0) {
+			currentTabIndex = 0;
+		} else if(currentTabIndex >= tabs.size()) {
+			currentTabIndex = 0;
+		}
 		return currentTabIndex;
 	}
 

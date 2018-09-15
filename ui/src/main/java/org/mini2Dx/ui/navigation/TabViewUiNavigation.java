@@ -36,6 +36,9 @@ public class TabViewUiNavigation implements UiNavigation {
 	
 	@Override
 	public Actionable getCursor() {
+		if(tabs.isEmpty()) {
+			return null;
+		}
 		UiNavigation navigation = tabs.get(tabView.getCurrentTabIndex()).getNavigation();
 		if(navigation == null) {
 			return null;
@@ -45,6 +48,9 @@ public class TabViewUiNavigation implements UiNavigation {
 
 	@Override
 	public Actionable resetCursor() {
+		if(tabs.isEmpty()) {
+			return null;
+		}
 		UiNavigation navigation = tabs.get(tabView.getCurrentTabIndex()).getNavigation();
 		if(navigation == null) {
 			return null;
@@ -74,6 +80,9 @@ public class TabViewUiNavigation implements UiNavigation {
 
 	@Override
 	public Actionable navigate(int keycode) {
+		if(tabs.isEmpty()) {
+			return null;
+		}
 		UiNavigation navigation = tabs.get(tabView.getCurrentTabIndex()).getNavigation();
 		if(navigation == null) {
 			return null;

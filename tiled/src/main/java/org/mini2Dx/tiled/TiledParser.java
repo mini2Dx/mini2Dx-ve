@@ -435,6 +435,7 @@ public class TiledParser implements TiledParserNotifier {
 
 	protected TiledObject loadObject(Element element) {
 		if (element.getName().equals("object")) {
+			int id = element.getIntAttribute("id", -1);
 			float x = element.getFloatAttribute("x", 0);
 			float y = element.getFloatAttribute("y", 0);
 
@@ -447,7 +448,7 @@ public class TiledParser implements TiledParserNotifier {
 				y -= height;
 			}
 
-			TiledObject object = new TiledObject(x, y, width, height);
+			TiledObject object = new TiledObject(id, x, y, width, height);
 
 			object.setName(element.getAttribute("name", null));
 			String type = element.getAttribute("type", null);
@@ -477,6 +478,23 @@ public class TiledParser implements TiledParserNotifier {
 					}
 					object.setProperty(propertyName, propertyValue);
 				}
+			}
+
+			Element point = element.getChildByName("point");
+			if(point != null) {
+				object.setAsPoint();
+			}
+			Element ellipse = element.getChildByName("ellipse");
+			if(ellipse != null) {
+				object.setAsEllipse();
+			}
+			Element polygon = element.getChildByName("polygon");
+			if(polygon != null) {
+				object.setAsPolygon(polygon.getAttribute("points", ""));
+			}
+			Element text = element.getChildByName("text");
+			if(text != null) {
+				object.setAsText(text.getText(), text.getIntAttribute("wrap", 1) == 1);
 			}
 			return object;
 		}

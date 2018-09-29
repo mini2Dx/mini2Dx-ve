@@ -15,6 +15,7 @@ import junit.framework.Assert;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mini2Dx.core.geom.Polygon;
 import org.mini2Dx.tiled.exception.TiledException;
 
 import com.badlogic.gdx.files.FileHandle;
@@ -106,12 +107,52 @@ public class TiledMapTest {
 		Assert.assertEquals(2, tiledMap.getTileLayer("Collisions").getIndex());
 		
 		Assert.assertEquals(true, tiledMap.getTileLayer("Higher") != null);
-		Assert.assertEquals(4, tiledMap.getTileLayer("Higher").getIndex());
+		Assert.assertEquals(5, tiledMap.getTileLayer("Higher").getIndex());
+	}
+
+	@Test
+	public void testShapes() {
+		Assert.assertEquals(2, tiledMap.getTotalObjectGroups());
+
+		TiledObjectGroup group = tiledMap.getObjectGroup("Shapes");
+
+		final TiledObject point = group.getObjectByName("point");
+		Assert.assertEquals(TiledObjectShape.POINT, point.getObjectShape());
+		Assert.assertEquals(64f, point.toPoint().x, 0.1f);
+		Assert.assertEquals(160f, point.toPoint().y, 0.1f);
+
+		final TiledObject rectangle = group.getObjectByName("rectangle");
+		Assert.assertEquals(TiledObjectShape.RECTANGLE, rectangle.getObjectShape());
+		Assert.assertEquals(32f, rectangle.toRectangle().getX(), 0.1f);
+		Assert.assertEquals(192f, rectangle.toRectangle().getY(), 0.1f);
+		Assert.assertEquals(64f, rectangle.toRectangle().getWidth(), 0.1f);
+		Assert.assertEquals(32f, rectangle.toRectangle().getHeight(), 0.1f);
+
+		final TiledObject circle = group.getObjectByName("circle");
+		Assert.assertEquals(TiledObjectShape.ELLIPSE, circle.getObjectShape());
+		Assert.assertEquals(112f, circle.toCircle().getX(), 0.1f);
+		Assert.assertEquals(144f, circle.toCircle().getY(), 0.1f);
+		Assert.assertEquals(16f, circle.toCircle().getRadius(), 0.1f);
+
+		final TiledObject polygon = group.getObjectByName("polygon");
+		Assert.assertEquals(TiledObjectShape.POLYGON, polygon.getObjectShape());
+		final Polygon polygon1 = polygon.toPolygon();
+		Assert.assertEquals(128f, polygon1.getX(0), 0.1f);
+		Assert.assertEquals(224f, polygon1.getY(0), 0.1f);
+		Assert.assertEquals(160f, polygon1.getX(1), 0.1f);
+		Assert.assertEquals(160f, polygon1.getY(1), 0.1f);
+		Assert.assertEquals(192f, polygon1.getX(2), 0.1f);
+		Assert.assertEquals(192f, polygon1.getY(2), 0.1f);
+
+		final TiledObject text = group.getObjectByName("text");
+		Assert.assertEquals(TiledObjectShape.TEXT, text.getObjectShape());
+		Assert.assertEquals("Hello World", text.getText());
+		Assert.assertEquals(true, text.isWrapText());
 	}
 
 	@Test
 	public void testGetObjectGroups() {
-		Assert.assertEquals(1, tiledMap.getTotalObjectGroups());
+		Assert.assertEquals(2, tiledMap.getTotalObjectGroups());
 
 		TiledObjectGroup group = tiledMap.getObjectGroup("Objects");
 		Assert.assertEquals("Objects", group.getName());
@@ -157,6 +198,6 @@ public class TiledMapTest {
 		Assert.assertEquals(group.getIndex(), tiledMap.getLayerIndex(group.getName()));
 		
 		TileLayer tileLayer = tiledMap.getTileLayer("Higher");
-		Assert.assertEquals(4, tileLayer.getIndex());
+		Assert.assertEquals(5, tileLayer.getIndex());
 	}
 }

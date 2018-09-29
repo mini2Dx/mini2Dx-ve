@@ -68,4 +68,45 @@ public class TiledObjectGroup extends Layer {
 	public List<TiledObject> getObjects() {
 		return objects;
 	}
+
+	/**
+	 * Returns the {@link TiledObject} with the specified ID
+	 * @param id The ID to search for
+	 * @return Null if this layer does not contain an object with the specified ID
+	 */
+	public TiledObject getObjectById(int id) {
+		for(int i = 0; i < objects.size(); i++) {
+			final TiledObject tiledObject = objects.get(i);
+			if(tiledObject.getId() < 0) {
+				continue;
+			}
+			if(tiledObject.getId() != id) {
+				continue;
+			}
+			return tiledObject;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@link TiledObject} with the specified name
+	 * @param name The name to search for
+	 * @return Null if this layer does not contain an object with the specified name
+	 */
+	public TiledObject getObjectByName(String name) {
+		if(name == null) {
+			return null;
+		}
+		for(int i = 0; i < objects.size(); i++) {
+			final TiledObject tiledObject = objects.get(i);
+			if(tiledObject.getName() == null) {
+				continue;
+			}
+			if(!tiledObject.getName().equals(name)) {
+				continue;
+			}
+			return tiledObject;
+		}
+		return null;
+	}
 }

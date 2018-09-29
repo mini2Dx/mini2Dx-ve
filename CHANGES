@@ -1,4 +1,4 @@
-[1.7.14-SNAPSHOT]
+[1.7.14]
 - (#76) Added support for Tiled object shapes
 - (#77) Fixed fade transitions modifying the color instance
 

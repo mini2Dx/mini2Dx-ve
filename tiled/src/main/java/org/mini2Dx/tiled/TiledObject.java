@@ -228,7 +228,7 @@ public class TiledObject {
 
 	/**
 	 * Marks this object as a {@link TiledObjectShape#POLYGON}
-	 * @param points The points in the format <code>x1,y1 x2,y2</code>
+	 * @param points The points in the format <em>x1,y1 x2,y2</em> per the Tiled specification
 	 */
 	public void setAsPolygon(String points) {
 		objectShape = TiledObjectShape.POLYGON;

@@ -25,6 +25,8 @@ import com.badlogic.gdx.graphics.Color;
  * NOTE: Based on Slick implementation by Kevin Glass
  */
 public class FadeInTransition implements Transition {
+	private final Color originalColor;
+
 	private Color color;
 	private float duration;
 
@@ -54,13 +56,16 @@ public class FadeInTransition implements Transition {
 	 *            The time in seconds to last
 	 */
 	public FadeInTransition(Color color, float duration) {
-		this.color = color;
-		this.color.a = 1f;
+		super();
+		this.originalColor = color;
 		this.duration = duration;
 	}
 
 	@Override
-	public void initialise(GameScreen outScreen, GameScreen inScreen) {}
+	public void initialise(GameScreen outScreen, GameScreen inScreen) {
+		this.color = originalColor.cpy();
+		this.color.a = 1f;
+	}
 
 	@Override
 	public void update(GameContainer gc, float delta) {

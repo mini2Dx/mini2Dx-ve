@@ -1,4 +1,5 @@
 [1.7.14-SNAPSHOT]
+- (#77) Fixed fade transitions modifying the color instance
 
 [1.7.13]
 - Fixed out of bounds exception when switch between TabView and another navigation type

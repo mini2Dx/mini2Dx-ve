@@ -12,6 +12,7 @@
 package org.mini2Dx.ios;
 
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
+import org.robovm.apple.uikit.UIRectEdge;
 
 /**
  * Extends {@link IOSApplicationConfiguration} to include mini2Dx options and defaults
@@ -26,6 +27,10 @@ public class IOSMini2DxConfig extends IOSApplicationConfiguration {
 	 * The target timestep
 	 */
 	public float targetTimestep = (1f / targetFPS);
+
+	/** Edges where app gestures must be fired over system gestures.
+	 * Prior to iOS 11, UIRectEdge.All was default behaviour if status bar hidden, see https://github.com/libgdx/libgdx/issues/5110 **/
+	public UIRectEdge screenEdgesDeferringSystemGestures = UIRectEdge.None;
 	
 	public IOSMini2DxConfig(String gameIdentifier) {
 		this.gameIdentifier = gameIdentifier;

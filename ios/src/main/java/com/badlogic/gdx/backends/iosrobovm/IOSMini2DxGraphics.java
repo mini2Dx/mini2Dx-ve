@@ -32,6 +32,7 @@ import org.robovm.apple.opengles.EAGLRenderingAPI;
 import org.robovm.apple.uikit.UIEvent;
 import org.robovm.apple.uikit.UIInterfaceOrientation;
 import org.robovm.apple.uikit.UIInterfaceOrientationMask;
+import org.robovm.apple.uikit.UIRectEdge;
 import org.robovm.objc.Selector;
 import org.robovm.objc.annotation.BindSelector;
 import org.robovm.objc.annotation.Method;
@@ -108,6 +109,11 @@ public class IOSMini2DxGraphics extends NSObject implements Graphics, GLKViewDel
 				// assume portrait
 				return app.config.orientationPortrait;
 			}
+		}
+
+		@Override
+		public UIRectEdge preferredScreenEdgesDeferringSystemGestures() {
+			return app.config.screenEdgesDeferringSystemGestures;
 		}
 
 		@Override
@@ -565,12 +571,33 @@ public class IOSMini2DxGraphics extends NSObject implements Graphics, GLKViewDel
 
 	@Override
 	public boolean isGL30Available () {
-		return false;
+		return gl30 != null;
 	}
 
 	@Override
 	public GL30 getGL30 () {
-		return null;
+		return gl30;
+	}
+
+	@Override
+	public void setGL20 (GL20 gl20) {
+		this.gl20 = gl20;
+		if (gl30 == null) {
+			Gdx.gl = gl20;
+			Gdx.gl20 = gl20;
+		}
+	}
+
+	@Override
+	public void setGL30 (GL30 gl30) {
+		this.gl30 = gl30;
+		if (gl30 != null) {
+			this.gl20 = gl30;
+
+			Gdx.gl = gl20;
+			Gdx.gl20 = gl20;
+			Gdx.gl30 = gl30;
+		}
 	}
 
 	@Override

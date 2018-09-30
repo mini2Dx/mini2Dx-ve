@@ -1,5 +1,6 @@
 [1.8.0-SNAPSHOT]
 - Update to LibGDX 1.9.8, RoboVM 2.3.3
+- Added support for pixel coordinate based UI layouts
 
 [1.7.14]
 - (#76) Added support for Tiled object shapes

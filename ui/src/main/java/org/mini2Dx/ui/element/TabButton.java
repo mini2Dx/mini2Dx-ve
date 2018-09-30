@@ -6,6 +6,7 @@ package org.mini2Dx.ui.element;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.ui.layout.HorizontalAlignment;
+import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.layout.ResponsiveSizeRule;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.TabButtonRenderNode;
@@ -90,26 +91,15 @@ public class TabButton extends Button {
 	void setCurrentTab(boolean currentTab) {
 		this.currentTab = currentTab;
 	}
-	
-	int getCurrentSizeInColumns() {
+
+	public int getWidth() {
 		if(renderNode == null) {
 			return 0;
 		}
-		if(renderNode.getHorizontalLayoutRuleset() == null) {
+		if(renderNode.getLayoutRuleset() == null) {
 			return 0;
 		}
-		if(renderNode.getHorizontalLayoutRuleset().getCurrentSizeRule() == null) {
-			return 0;
-		}
-		return ((ResponsiveSizeRule) renderNode.getHorizontalLayoutRuleset().getCurrentSizeRule()).getColumns();
-	}
-	
-	@Override
-	public void setHorizontalLayout(String layout) {
-		if(layout.contains("px")) {
-			throw new MdxException("Tab buttons do not support pixel sizes, please use columns");
-		}
-		super.setHorizontalLayout(layout);
+		return renderNode.getOuterRenderWidth();
 	}
 
 	public Label getLabel() {

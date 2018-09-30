@@ -49,22 +49,18 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 	private float renderCursorX;
 	private float renderCursorHeight;
 
-	protected LayoutRuleset horizontalLayoutRuleset, verticalLayoutRuleset;
+	protected LayoutRuleset layoutRuleset;
 	protected BitmapFontCache bitmapFontCache = DEFAULT_FONT.newFontCache();
 
 	public TextBoxRenderNode(ParentRenderNode<?, ?> parent, TextBox element) {
 		super(parent, element);
-		horizontalLayoutRuleset = new LayoutRuleset(true, element.getHorizontalLayout());
-		verticalLayoutRuleset = new LayoutRuleset(false, element.getVerticalLayout());
+		layoutRuleset = LayoutRuleset.parse(element.getLayout());
 	}
 
 	@Override
 	public void layout(LayoutState layoutState) {
-		if (!horizontalLayoutRuleset.equals(element.getHorizontalLayout())) {
-			horizontalLayoutRuleset = new LayoutRuleset(true, element.getHorizontalLayout());
-		}
-		if (!verticalLayoutRuleset.equals(element.getVerticalLayout())) {
-			verticalLayoutRuleset = new LayoutRuleset(false, element.getVerticalLayout());
+		if (!layoutRuleset.equals(element.getLayout())) {
+			layoutRuleset = LayoutRuleset.parse(element.getLayout());
 		}
 		super.layout(layoutState);
 	}
@@ -117,10 +113,10 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 
 	@Override
 	protected float determinePreferredContentWidth(LayoutState layoutState) {
-		if (horizontalLayoutRuleset.isHiddenByInputSource(layoutState)) {
+		if (layoutRuleset.isHiddenByInputSource(layoutState)) {
 			return 0f;
 		}
-		float layoutRuleResult = horizontalLayoutRuleset.getPreferredSize(layoutState);
+		float layoutRuleResult = layoutRuleset.getPreferredElementWidth(layoutState);
 		if (layoutRuleResult <= 0f) {
 			hiddenByLayoutRule = true;
 			return 0f;
@@ -139,9 +135,9 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 			result = style.getMinHeight() - style.getPaddingTop() - style.getPaddingBottom() - style.getMarginTop()
 					- style.getMarginBottom();
 		}
-		float sizeRuleHeight = verticalLayoutRuleset.getPreferredSize(layoutState) - style.getPaddingTop()
+		float sizeRuleHeight = layoutRuleset.getPreferredElementHeight(layoutState) - style.getPaddingTop()
 				- style.getPaddingBottom() - style.getMarginTop() - style.getMarginBottom();
-		if (!verticalLayoutRuleset.getCurrentSizeRule().isAutoSize()) {
+		if (!layoutRuleset.getCurrentHeightRule().isAutoSize()) {
 			result = Math.max(result, sizeRuleHeight);
 		}
 		return result;
@@ -149,12 +145,12 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 
 	@Override
 	protected float determineXOffset(LayoutState layoutState) {
-		return horizontalLayoutRuleset.getOffset(layoutState);
+		return layoutRuleset.getPreferredElementRelativeX(layoutState);
 	}
 
 	@Override
 	protected float determineYOffset(LayoutState layoutState) {
-		return verticalLayoutRuleset.getOffset(layoutState);
+		return layoutRuleset.getPreferredElementRelativeY(layoutState);
 	}
 
 	@Override
@@ -468,11 +464,7 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 		super.setState(state);
 	}
 
-	public LayoutRuleset getHorizontalLayoutRuleset() {
-		return horizontalLayoutRuleset;
-	}
-
-	public LayoutRuleset getVerticalLayoutRuleset() {
-		return verticalLayoutRuleset;
+	public LayoutRuleset getLayoutRuleset() {
+		return layoutRuleset;
 	}
 }

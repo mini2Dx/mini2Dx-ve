@@ -38,13 +38,9 @@ public abstract class ParentUiElement extends UiElement {
 	protected final AtomicBoolean asyncRemoveAll = new AtomicBoolean(false);
 
 	@Field(optional = true)
-	private String horizontalLayout = LayoutRuleset.DEFAULT_HORIZONTAL_RULESET;
-	@Field(optional = true)
-	private String verticalLayout = LayoutRuleset.DEFAULT_VERTICAL_RULESET;
+	private String layout = LayoutRuleset.DEFAULT_RULESET;
 	@Field(optional = true)
 	private boolean overflowClipped = false;
-	@Field(optional = true)
-	private FlexDirection flexDirection = FlexDirection.COLUMN;
 
 	protected ParentRenderNode<?, ?> renderNode;
 
@@ -215,56 +211,6 @@ public abstract class ParentUiElement extends UiElement {
 	}
 
 	/**
-	 * Returns the current horizontal layout rules
-	 * 
-	 * @return
-	 */
-	public String getHorizontalLayout() {
-		return horizontalLayout;
-	}
-
-	/**
-	 * Sets the current horizontal layout rules
-	 * 
-	 * @param layoutRuleset
-	 */
-	public void setHorizontalLayout(String layoutRuleset) {
-		if (layoutRuleset == null) {
-			return;
-		}
-		this.horizontalLayout = layoutRuleset;
-		if (renderNode == null) {
-			return;
-		}
-		renderNode.setDirty(true);
-	}
-
-	/**
-	 * Returns the current vertical layout rules
-	 * 
-	 * @return
-	 */
-	public String getVerticalLayout() {
-		return verticalLayout;
-	}
-
-	/**
-	 * Sets the current vertical layout rules
-	 * 
-	 * @param layoutRuleset
-	 */
-	public void setVerticalLayout(String layoutRuleset) {
-		if (layoutRuleset == null) {
-			return;
-		}
-		this.verticalLayout = layoutRuleset;
-		if (renderNode == null) {
-			return;
-		}
-		renderNode.setDirty(true);
-	}
-
-	/**
 	 * Returns if child elements that overflow this element's bounds (e.g. using offsets
 	 * or margins) have their rendering clipped to the element's bounds
 	 * @return False by default
@@ -349,6 +295,25 @@ public abstract class ParentUiElement extends UiElement {
 		return children.size();
 	}
 
+	public String getLayout() {
+		return layout;
+	}
+
+	public void setLayout(String layout) {
+		if(layout == null) {
+			return;
+		}
+		if (this.layout.equals(layout)) {
+			return;
+		}
+		this.layout = layout;
+
+		if (renderNode == null) {
+			return;
+		}
+		renderNode.setDirty(true);
+	}
+
 	@Override
 	public UiElement getElementById(String id) {
 		if (getId().equals(id)) {
@@ -361,33 +326,5 @@ public abstract class ParentUiElement extends UiElement {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Returns the {@link FlexDirection} of this element
-	 * 
-	 * @return The {@link FlexDirection} - defaults to
-	 *         {@link FlexDirection#COLUMN}
-	 */
-	public FlexDirection getFlexDirection() {
-		if (flexDirection == null) {
-			flexDirection = FlexDirection.COLUMN;
-		}
-		return flexDirection;
-	}
-
-	/**
-	 * Sets the {@link FlexDirection} of this element
-	 * 
-	 * @param flexDirection
-	 *            The {@link FlexDirection} to set
-	 */
-	public void setFlexDirection(FlexDirection flexDirection) {
-		this.flexDirection = flexDirection;
-
-		if (renderNode == null) {
-			return;
-		}
-		renderNode.setDirty(true);
 	}
 }

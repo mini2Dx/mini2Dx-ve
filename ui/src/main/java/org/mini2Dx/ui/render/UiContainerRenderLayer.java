@@ -12,6 +12,7 @@
 package org.mini2Dx.ui.render;
 
 import org.mini2Dx.ui.UiContainer;
+import org.mini2Dx.ui.layout.LayoutRuleset;
 import org.mini2Dx.ui.layout.LayoutState;
 
 /**
@@ -24,7 +25,7 @@ public class UiContainerRenderLayer extends RenderLayer {
 	}
 
 	@Override
-	public void layout(LayoutState layoutState) {
+	public void layout(LayoutState layoutState, LayoutRuleset layoutRuleset) {
 		for (int i = 0; i < children.size; i++) {
 			RenderNode<?, ?> node = children.get(i);
 			node.layout(layoutState);

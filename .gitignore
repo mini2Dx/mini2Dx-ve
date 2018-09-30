@@ -3,6 +3,7 @@ target/
 .classpath
 .project
 .idea/
+out/
 *.prefs
 *.mp3
 *.releaseBackup

@@ -34,15 +34,13 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 	protected final IntTreeMap<RenderLayer> layers = new IntTreeMap<RenderLayer>();
 	
 	protected boolean childDirty = false;
-	protected FlexDirection flexDirection = FlexDirection.COLUMN;
-	protected LayoutRuleset horizontalLayoutRuleset, verticalLayoutRuleset;
+	protected LayoutRuleset layoutRuleset;
 
 	private Rectangle cachedClip;
 
 	public ParentRenderNode(ParentRenderNode<?, ?> parent, T element) {
 		super(parent, element);
-		horizontalLayoutRuleset = new LayoutRuleset(true, element.getHorizontalLayout());
-		verticalLayoutRuleset = new LayoutRuleset(false, element.getVerticalLayout());
+		layoutRuleset = LayoutRuleset.parse(element.getLayout());
 	}
 
 	@Override
@@ -100,11 +98,8 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 		if (!isDirty() && !layoutState.isScreenSizeChanged()) {
 			return;
 		}
-		if (!horizontalLayoutRuleset.equals(element.getHorizontalLayout())) {
-			horizontalLayoutRuleset = new LayoutRuleset(true, element.getHorizontalLayout());
-		}
-		if (!verticalLayoutRuleset.equals(element.getVerticalLayout())) {
-			verticalLayoutRuleset = new LayoutRuleset(false, element.getVerticalLayout());
+		if (!layoutRuleset.equals(element.getLayout())) {
+			layoutRuleset = LayoutRuleset.parse(element.getLayout());
 		}
 
 		float parentWidth = layoutState.getParentWidth();
@@ -117,13 +112,12 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 			parent.addChild(this);
 		}
 
-		flexDirection = element.getFlexDirection();
 		xOffset = determineXOffset(layoutState);
 		preferredContentWidth = determinePreferredContentWidth(layoutState);
 		layoutState.setParentWidth(getPreferredContentWidth());
 
-		verticalLayoutRuleset.getPreferredSize(layoutState);
-		if (!verticalLayoutRuleset.getCurrentSizeRule().isAutoSize()) {
+		layoutRuleset.getPreferredElementHeight(layoutState);
+		if (!layoutRuleset.getCurrentHeightRule().isAutoSize()) {
 			preferredContentHeight = determinePreferredContentHeight(layoutState);
 		}
 
@@ -132,13 +126,13 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 		while(keys.hasNext) {
 			final int layerIndex = keys.next();
 			final RenderLayer layer = layers.get(layerIndex);
-			layer.layout(layoutState);
+			layer.layout(layoutState, layoutRuleset);
 		}
 
 		layoutState.setParentWidth(parentWidth);
 
 		yOffset = determineYOffset(layoutState);
-		if (verticalLayoutRuleset.getCurrentSizeRule().isAutoSize()) {
+		if (layoutRuleset.getCurrentHeightRule().isAutoSize()) {
 			preferredContentHeight = determinePreferredContentHeight(layoutState);
 		}
 		setImmediateDirty(false);
@@ -153,9 +147,9 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 			return 0f;
 		}
 		float maxHeight = 0f;
-		float sizeRuleHeight = verticalLayoutRuleset.getPreferredSize(layoutState);
+		float sizeRuleHeight = layoutRuleset.getPreferredElementHeight(layoutState);
 
-		if (verticalLayoutRuleset.getCurrentSizeRule().isAutoSize()) {
+		if (layoutRuleset.getCurrentHeightRule().isAutoSize()) {
 			for (RenderLayer layer : layers.values()) {
 				float height = layer.determinePreferredContentHeight(layoutState);
 				if (height > maxHeight) {
@@ -176,10 +170,10 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 
 	@Override
 	protected float determinePreferredContentWidth(LayoutState layoutState) {
-		if (horizontalLayoutRuleset.isHiddenByInputSource(layoutState)) {
+		if (layoutRuleset.isHiddenByInputSource(layoutState)) {
 			return 0f;
 		}
-		float layoutRuleResult = horizontalLayoutRuleset.getPreferredSize(layoutState);
+		float layoutRuleResult = layoutRuleset.getPreferredElementWidth(layoutState);
 		if (layoutRuleResult <= 0f) {
 			hiddenByLayoutRule = true;
 			return 0f;
@@ -193,12 +187,12 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 
 	@Override
 	protected float determineXOffset(LayoutState layoutState) {
-		return horizontalLayoutRuleset.getOffset(layoutState);
+		return layoutRuleset.getPreferredElementRelativeX(layoutState);
 	}
 
 	@Override
 	protected float determineYOffset(LayoutState layoutState) {
-		return verticalLayoutRuleset.getOffset(layoutState);
+		return layoutRuleset.getPreferredElementRelativeY(layoutState);
 	}
 
 	@Override
@@ -350,18 +344,7 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 		return rootNode.getElementById(id);
 	}
 
-	public LayoutRuleset getHorizontalLayoutRuleset() {
-		return horizontalLayoutRuleset;
-	}
-
-	public LayoutRuleset getVerticalLayoutRuleset() {
-		return verticalLayoutRuleset;
-	}
-
-	public FlexDirection getFlexDirection() {
-		if (flexDirection == null) {
-			flexDirection = FlexDirection.COLUMN;
-		}
-		return flexDirection;
+	public LayoutRuleset getLayoutRuleset() {
+		return layoutRuleset;
 	}
 }

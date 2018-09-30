@@ -23,24 +23,20 @@ import com.badlogic.gdx.math.MathUtils;
  * {@link RenderNode} implementation for {@link ProgressBar}
  */
 public class ProgressBarRenderNode extends RenderNode<ProgressBar, ProgressBarStyleRule> {
-	protected LayoutRuleset horizontalLayoutRuleset, verticalLayoutRuleset;
+	protected LayoutRuleset layoutRuleset;
 	private float multiplier;
 	private float fillWidth;
 
 	public ProgressBarRenderNode(ParentRenderNode<?, ?> parent, ProgressBar element) {
 		super(parent, element);
-		horizontalLayoutRuleset = new LayoutRuleset(true, element.getHorizontalLayout());
-		verticalLayoutRuleset = new LayoutRuleset(false, element.getVerticalLayout());
+		layoutRuleset = LayoutRuleset.parse(element.getLayout());
 		multiplier = element.getValue() / element.getMax();
 	}
 
 	@Override
 	public void layout(LayoutState layoutState) {
-		if (!horizontalLayoutRuleset.equals(element.getHorizontalLayout())) {
-			horizontalLayoutRuleset = new LayoutRuleset(true, element.getHorizontalLayout());
-		}
-		if (!verticalLayoutRuleset.equals(element.getVerticalLayout())) {
-			verticalLayoutRuleset = new LayoutRuleset(false, element.getVerticalLayout());
+		if (!layoutRuleset.equals(element.getLayout())) {
+			layoutRuleset = LayoutRuleset.parse(element.getLayout());
 		}
 		super.layout(layoutState);
 	}
@@ -62,10 +58,10 @@ public class ProgressBarRenderNode extends RenderNode<ProgressBar, ProgressBarSt
 
 	@Override
 	protected float determinePreferredContentWidth(LayoutState layoutState) {
-		if (horizontalLayoutRuleset.isHiddenByInputSource(layoutState)) {
+		if (layoutRuleset.isHiddenByInputSource(layoutState)) {
 			return 0f;
 		}
-		float layoutRuleResult = horizontalLayoutRuleset.getPreferredSize(layoutState);
+		float layoutRuleResult = layoutRuleset.getPreferredElementWidth(layoutState);
 		if (layoutRuleResult <= 0f) {
 			hiddenByLayoutRule = true;
 			return 0f;
@@ -86,9 +82,9 @@ public class ProgressBarRenderNode extends RenderNode<ProgressBar, ProgressBarSt
 		float preferredHeight = style.getMinHeight() - style.getPaddingTop()
 				- style.getPaddingBottom() - style.getMarginTop() - style.getMarginBottom();
 
-		float sizeRuleHeight = verticalLayoutRuleset.getPreferredSize(layoutState) - style.getPaddingTop()
+		float sizeRuleHeight = layoutRuleset.getPreferredElementHeight(layoutState) - style.getPaddingTop()
 				- style.getPaddingBottom() - style.getMarginTop() - style.getMarginBottom();
-		if (!verticalLayoutRuleset.getCurrentSizeRule().isAutoSize()) {
+		if (!layoutRuleset.getCurrentHeightRule().isAutoSize()) {
 			preferredHeight = Math.max(preferredHeight, sizeRuleHeight);
 		}
 		return preferredHeight;
@@ -96,12 +92,12 @@ public class ProgressBarRenderNode extends RenderNode<ProgressBar, ProgressBarSt
 
 	@Override
 	protected float determineXOffset(LayoutState layoutState) {
-		return horizontalLayoutRuleset.getOffset(layoutState);
+		return layoutRuleset.getPreferredElementRelativeX(layoutState);
 	}
 
 	@Override
 	protected float determineYOffset(LayoutState layoutState) {
-		return verticalLayoutRuleset.getOffset(layoutState);
+		return layoutRuleset.getPreferredElementRelativeY(layoutState);
 	}
 
 	public void updateFillWidth() {

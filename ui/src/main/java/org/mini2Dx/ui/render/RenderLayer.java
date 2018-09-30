@@ -16,6 +16,7 @@ import java.util.List;
 
 import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.ui.layout.LayoutRuleset;
 import org.mini2Dx.ui.layout.LayoutState;
 
 /**
@@ -57,8 +58,8 @@ public class RenderLayer implements Comparable<RenderLayer> {
 		}
 	}
 	
-	public void layout(LayoutState layoutState) {
-		owner.getFlexDirection().layout(layoutState, owner, children);
+	public void layout(LayoutState layoutState, LayoutRuleset layoutRuleset) {
+		layoutRuleset.layout(layoutState, owner, children);
 	}
 	
 	public boolean mouseScrolled(int screenX, int screenY, float amount) {

@@ -21,6 +21,7 @@ import org.mini2Dx.ui.event.params.EventTriggerParams;
 import org.mini2Dx.ui.event.params.EventTriggerParamsPool;
 import org.mini2Dx.ui.event.params.MouseEventTriggerParams;
 import org.mini2Dx.ui.layout.HorizontalAlignment;
+import org.mini2Dx.ui.layout.LayoutRuleset;
 import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.style.ButtonStyleRule;
 import org.mini2Dx.ui.style.LabelStyleRule;
@@ -39,6 +40,7 @@ import com.badlogic.gdx.utils.Align;
 public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> implements ActionableRenderNode {
 	private static final GlyphLayout glyphLayout = new GlyphLayout();
 
+	protected LayoutRuleset layoutRuleset;
 	private final CollisionBox leftButton = new CollisionBox();
 	private final CollisionBox rightButton = new CollisionBox();
 
@@ -52,6 +54,15 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 
 	public SelectRenderNode(ParentRenderNode<?, ?> parent, Select<?> element) {
 		super(parent, element);
+		layoutRuleset = LayoutRuleset.parse(element.getLayout());
+	}
+
+	@Override
+	public void layout(LayoutState layoutState) {
+		if (!layoutRuleset.equals(element.getLayout())) {
+			layoutRuleset = LayoutRuleset.parse(element.getLayout());
+		}
+		super.layout(layoutState);
 	}
 
 	@Override
@@ -303,10 +314,10 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 		leftButton.setWidth(style.getButtonWidth());
 		rightButton.setWidth(style.getButtonWidth());
 
-		if (element.getHorizontalLayout().isHiddenByInputSource(layoutState)) {
+		if (layoutRuleset.isHiddenByInputSource(layoutState)) {
 			return 0f;
 		}
-		float layoutRuleResult = element.getHorizontalLayout().getPreferredSize(layoutState);
+		float layoutRuleResult = layoutRuleset.getPreferredElementWidth(layoutState);
 		if (layoutRuleResult <= 0f) {
 			hiddenByLayoutRule = true;
 			return 0f;
@@ -334,11 +345,16 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 		}
 		labelHeight = glyphLayout.height;
 
-		float result = glyphLayout.height;
+		float result = labelHeight;
 		if (style.getMinHeight() > 0 && result + style.getPaddingTop() + style.getPaddingBottom() + style.getMarginTop()
 				+ style.getMarginBottom() < style.getMinHeight()) {
 			result = style.getMinHeight() - style.getPaddingTop() - style.getPaddingBottom() - style.getMarginTop()
 					- style.getMarginBottom();
+		}
+		float sizeRuleHeight = layoutRuleset.getPreferredElementHeight(layoutState) - style.getPaddingTop()
+				- style.getPaddingBottom() - style.getMarginTop() - style.getMarginBottom();
+		if (!layoutRuleset.getCurrentHeightRule().isAutoSize()) {
+			result = Math.max(result, sizeRuleHeight);
 		}
 		leftButton.setHeight(result);
 		rightButton.setHeight(result);
@@ -347,12 +363,12 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 
 	@Override
 	protected float determineXOffset(LayoutState layoutState) {
-		return 0f;
+		return layoutRuleset.getPreferredElementRelativeX(layoutState);
 	}
 
 	@Override
 	protected float determineYOffset(LayoutState layoutState) {
-		return 0f;
+		return layoutRuleset.getPreferredElementRelativeY(layoutState);
 	}
 
 	@Override

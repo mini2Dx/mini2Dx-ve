@@ -38,7 +38,7 @@ import com.badlogic.gdx.Input.Keys;
  * A {@link UiElement} of tabs that can be switched between by the player
  */
 public class TabView extends ParentUiElement implements Navigatable {
-	private static final String DEFAULT_CHANGE_TAB_BTN_LAYOUT = "xs-3c sm-2c lg-1c";
+	private static final String DEFAULT_CHANGE_TAB_BTN_LAYOUT = "flex-col:xs-3c sm-2c lg-1c";
 
 	private final Queue<ControllerHotKeyOperation> controllerHotKeyOperations = new LinkedList<ControllerHotKeyOperation>();
 	private final Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations = new LinkedList<KeyboardHotKeyOperation>();
@@ -52,7 +52,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	private int tabButtonViewIndex = 0;
 
 	@Field(optional=true)
-	private String layout = LayoutRuleset.DEFAULT_HORIZONTAL_RULESET;
+	private String layout = LayoutRuleset.DEFAULT_RULESET;
 	@Field(optional=true)
 	private String tabButtonLayout = "xs-6c sm-4c md-2c xl-1c";
 	@Field(optional = true)
@@ -60,8 +60,8 @@ public class TabView extends ParentUiElement implements Navigatable {
 
 	private final TabViewUiNavigation navigation = new TabViewUiNavigation(this, tabs);
 	
-	private int availableColumnsForTabButtons = 0;
-	private int columnsPerTabButton = 0;
+	private int availablePixelsForTabButtons = 0;
+	private int pixelsPerTabButton = 0;
 
 	/**
 	 * Constructor. Generates a unique ID for this {@link TabView}
@@ -97,24 +97,24 @@ public class TabView extends ParentUiElement implements Navigatable {
 
 		if (previousTabButton == null) {
 			TabButton previousButton = new TabButton(getId() + "-previousTabButton");
-			previousButton.setHorizontalLayout(DEFAULT_CHANGE_TAB_BTN_LAYOUT);
+			previousButton.setLayout(DEFAULT_CHANGE_TAB_BTN_LAYOUT);
 			previousButton.setText("<");
 			previousButton.setVisibility(Visibility.VISIBLE);
 			this.previousTabButton = previousButton;
 		} else {
-			previousTabButton.setHorizontalLayout(DEFAULT_CHANGE_TAB_BTN_LAYOUT);
+			previousTabButton.setLayout(DEFAULT_CHANGE_TAB_BTN_LAYOUT);
 			this.previousTabButton = previousTabButton;
 		}
 		this.previousTabButton.setEnabled(false);
 
 		if (nextTabButton == null) {
 			TabButton nextButton = new TabButton(getId() + "-nextTabButton");
-			nextButton.setHorizontalLayout(DEFAULT_CHANGE_TAB_BTN_LAYOUT);
+			nextButton.setLayout(DEFAULT_CHANGE_TAB_BTN_LAYOUT);
 			nextButton.setText(">");
 			nextButton.setVisibility(Visibility.VISIBLE);
 			this.nextTabButton = nextButton;
 		} else {
-			nextTabButton.setHorizontalLayout(DEFAULT_CHANGE_TAB_BTN_LAYOUT);
+			nextTabButton.setLayout(DEFAULT_CHANGE_TAB_BTN_LAYOUT);
 			this.nextTabButton = nextTabButton;
 		}
 		this.previousTabButton.addActionListener(new ActionListener() {
@@ -263,7 +263,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 			// Tabs added
 			for (int i = tabButtons.size(); i < tabs.size(); i++) {
 				TabButton tabButton = new TabButton(getId() + "-tabButton-" + i);
-				tabButton.setHorizontalLayout(tabButtonLayout);
+				tabButton.setLayout(tabButtonLayout);
 				tabButton.setText(tabs.get(i).getTitle());
 				tabButton.setIconPath(tabs.get(i).getIconPath());
 				tabButton.addActionListener(new TabButtonActionListener(this, i));
@@ -284,35 +284,38 @@ public class TabView extends ParentUiElement implements Navigatable {
 			}
 		}
 
-		availableColumnsForTabButtons = 12 - previousTabButton.getCurrentSizeInColumns()
-				- nextTabButton.getCurrentSizeInColumns();
+		availablePixelsForTabButtons = renderNode.getOuterRenderWidth() - previousTabButton.getWidth() - nextTabButton.getWidth();
 		if (tabButtons.size() > 0) {
-			columnsPerTabButton = tabButtons.get(0).getCurrentSizeInColumns();
+			int maxTabButtonWidth = 0;
+			for(int i = 0; i < tabButtons.size(); i++) {
+				maxTabButtonWidth = Math.max(maxTabButtonWidth, tabButtons.get(i).getWidth());
+			}
+			pixelsPerTabButton = maxTabButtonWidth;
 		}
 
-		int tabButtonViewOffset = tabButtonViewIndex * columnsPerTabButton;
-		int currentTabButtonViewOffset = currentTabIndex * columnsPerTabButton;
+		int tabButtonViewOffset = tabButtonViewIndex * pixelsPerTabButton;
+		int currentTabButtonViewOffset = currentTabIndex * pixelsPerTabButton;
 
 		// Handle tab buttons shifting right into view
 		while (currentTabButtonViewOffset < tabButtonViewOffset) {
 			tabButtonViewIndex--;
-			tabButtonViewOffset = tabButtonViewIndex * columnsPerTabButton;
+			tabButtonViewOffset = tabButtonViewIndex * pixelsPerTabButton;
 		}
 
 		// Handle tab buttons shifting left into view
-		while (tabButtonViewOffset + availableColumnsForTabButtons < currentTabButtonViewOffset + columnsPerTabButton) {
+		while (tabButtonViewOffset + availablePixelsForTabButtons < currentTabButtonViewOffset + pixelsPerTabButton) {
 			tabButtonViewIndex++;
-			tabButtonViewOffset = tabButtonViewIndex * columnsPerTabButton;
+			tabButtonViewOffset = tabButtonViewIndex * pixelsPerTabButton;
 		}
 
 		for (int i = 0; i < tabs.size(); i++) {
 			Tab tab = tabs.get(i);
 			TabButton tabButton = tabButtons.get(i);
 
-			int tabButtonColumnOffset = i * columnsPerTabButton;
-			if (tabButtonColumnOffset + columnsPerTabButton <= tabButtonViewOffset) {
+			int tabButtonColumnOffset = i * pixelsPerTabButton;
+			if (tabButtonColumnOffset + pixelsPerTabButton <= tabButtonViewOffset) {
 				tabButton.setVisibility(Visibility.HIDDEN);
-			} else if (tabButtonColumnOffset >= tabButtonViewOffset + availableColumnsForTabButtons) {
+			} else if (tabButtonColumnOffset >= tabButtonViewOffset + availablePixelsForTabButtons) {
 				tabButton.setVisibility(Visibility.HIDDEN);
 			} else {
 				tabButton.setVisibility(Visibility.VISIBLE);
@@ -688,17 +691,17 @@ public class TabView extends ParentUiElement implements Navigatable {
 	}
 
 	public void setPreviousTabButtonLayout(String layout) {
-		previousTabButton.setHorizontalLayout(layout);
+		previousTabButton.setLayout(layout);
 	}
 
 	public void setNextTabButtonLayout(String layout) {
-		nextTabButton.setHorizontalLayout(layout);
+		nextTabButton.setLayout(layout);
 	}
 
 	public void setTabButtonLayout(String layout) {
 		this.tabButtonLayout = layout;
 		for (int i = 0; i < tabs.size(); i++) {
-			tabs.get(i).setHorizontalLayout(layout);
+			tabs.get(i).setLayout(layout);
 		}
 	}
 	

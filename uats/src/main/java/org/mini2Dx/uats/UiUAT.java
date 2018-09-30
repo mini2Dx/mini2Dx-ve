@@ -166,11 +166,10 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 
 	private void initialiseUi() {
 		topLeftFrame = new AbsoluteContainer("top-left-frame");
-		topLeftFrame.setHorizontalLayout("xs-12c sm-6c md-4c lg-3c");
+		topLeftFrame.setLayout("flex-col:xs-12c sm-6c md-4c lg-3c");
 		topLeftFrame.setStyleId("no-background");
 		Row topLeftHeaderRow = Row.withElements("top-left-header", UiUtils.createHeader("UI UAT"));
-		topLeftHeaderRow.setFlexDirection(FlexDirection.CENTER);
-		topLeftHeaderRow.setVerticalLayout("xs-20px");
+		topLeftHeaderRow.setLayout("flex-center:xs-12c,xs-20px");
 		topLeftFrame.add(topLeftHeaderRow);
 		
 		Button backRowButton = UiUtils.createButton(null, "", new ActionListener() {
@@ -187,7 +186,7 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 				
 			}
 		});
-		backRowButton.setVerticalLayout("xs-20px");
+		backRowButton.setLayout("flex-center:xs-12c,xs-20px");
 		Row backRow = Row.withElements("behind-header", backRowButton);
 		backRow.setZIndex(-1);
 		topLeftFrame.add(backRow);
@@ -296,7 +295,7 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 		select.addOption("Item 3", "3");
 		
 		modal = new AlignedModal("main-modal");
-		modal.setHorizontalLayout("xs-12c md-8c lg-6c md-offset-2c lg-offset-3c");
+		modal.setLayout("flex-column:xs-12c md-8c lg-6c md-offset-2c lg-offset-3c");
 		modal.setVerticalAlignment(VerticalAlignment.MIDDLE);
 		
 		tabView = new TabView("tabView");
@@ -314,7 +313,7 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 		
 		Tab tab2 = new Tab("tab2", "Tab 2");
 		Column xsHiddenColumn = Column.withElements("col-not-visible-xs", UiUtils.createLabel("Not visible on XS screen size"));
-		xsHiddenColumn.setHorizontalLayout("xs-0c sm-12c");
+		xsHiddenColumn.setLayout("flex-column:xs-0c sm-12c");
 		
 		ProgressBar progressBar = new ProgressBar();
 		progressBar.setValue(0.4f);
@@ -350,7 +349,7 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 		hiddenButton.setVisibility(Visibility.HIDDEN);
 		tab3.add(Row.withElements(hiddenButton));
 		final ScrollBox scrollBox = new ScrollBox("scrollBox");
-		scrollBox.setHorizontalLayout("xs-12c");
+		scrollBox.setLayout("flex-column:xs-12c");
 		scrollBox.setVisibility(Visibility.VISIBLE);
 		scrollBox.setMaxHeight(300f);
 		for(int i = 0; i < 30; i++) {
@@ -427,11 +426,10 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 		uiContainer.add(modal);
 		
 		bottomRightFrame = new AbsoluteContainer("bottom-right-frame");
-		bottomRightFrame.setHorizontalLayout("xs-12c sm-6c md-4c lg-3c");
+		bottomRightFrame.setLayout("flex-column:xs-12c sm-6c md-4c lg-3c");
 		bottomRightFrame.setVisibility(Visibility.VISIBLE);
 		Row bottomFrameRow = Row.withElements("row-os", UiUtils.createHeader("OVERFLOW CLIPPED"));
-		bottomFrameRow.setFlexDirection(FlexDirection.COLUMN_REVERSE);
-		bottomFrameRow.setVerticalLayout("xs-12px");
+		bottomFrameRow.setLayout("flex-col-r:xs-12c,12px");
 		bottomFrameRow.setOverflowClipped(true);
 		bottomRightFrame.add(bottomFrameRow);
 		uiContainer.add(bottomRightFrame);

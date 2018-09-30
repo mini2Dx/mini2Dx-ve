@@ -71,7 +71,6 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 		
 		style = determineStyleRule(layoutState);
 		zIndex = element.getZIndex();
-		flexDirection = element.getFlexDirection();
 		preferredContentWidth = determinePreferredContentWidth(layoutState);
 		preferredContentHeight = determinePreferredContentHeight(layoutState);
 		xOffset = determineXOffset(layoutState);
@@ -83,7 +82,7 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 		while(keys.hasNext) {
 			final int layerIndex = keys.next();
 			final RenderLayer layer = layers.get(layerIndex);
-			layer.layout(layoutState);
+			layer.layout(layoutState, layoutRuleset);
 		}
 
 		setImmediateDirty(false);

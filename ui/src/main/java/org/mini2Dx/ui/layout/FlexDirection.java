@@ -135,7 +135,7 @@ public enum FlexDirection {
 		public void layout(LayoutState layoutState, ParentRenderNode<?, ?> parentNode,
 						   Array<RenderNode<?, ?>> children) {
 			final float startX = parentNode.getStyle().getPaddingLeft();
-			if(parentNode.getVerticalLayoutRuleset().getCurrentSizeRule().isAutoSize()) {
+			if(parentNode.getLayoutRuleset().getCurrentHeightRule().isAutoSize()) {
 				float startY = parentNode.getStyle().getPaddingTop();
 				
 				for (int i = children.size - 1; i >= 0; i--) {
@@ -179,7 +179,7 @@ public enum FlexDirection {
 			final float paddingBottom = parentNode.getStyle().getPaddingBottom();
 			
 			int maxHeight = 0;
-			if(parentNode.getVerticalLayoutRuleset().getCurrentSizeRule().isAutoSize()) {
+			if(parentNode.getLayoutRuleset().getCurrentHeightRule().isAutoSize()) {
 				for (int i = 0; i < children.size; i++) {
 					RenderNode<?, ?> node = children.get(i);
 					node.layout(layoutState);

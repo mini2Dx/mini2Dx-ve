@@ -11,14 +11,10 @@
  */
 package org.mini2Dx.ui.render;
 
-import java.util.NavigableSet;
-
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.engine.geom.CollisionBox;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.core.graphics.NinePatch;
 import org.mini2Dx.ui.animation.ScrollTo;
 import org.mini2Dx.ui.element.ScrollBox;
 import org.mini2Dx.ui.event.EventTrigger;
@@ -101,12 +97,32 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 		bottomScrollButton.interpolate(null, alpha);
 	}
 
+	protected void renderBackground(Graphics g) {
+		switch(getState()) {
+		case NORMAL:
+			if (style.getNormalBackgroundRenderer() != null) {
+				style.getNormalBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		case HOVER:
+			if(style.getHoverBackgroundRenderer() != null) {
+				style.getHoverBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		case ACTION:
+			if(style.getHoverBackgroundRenderer() != null) {
+				style.getHoverBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		}
+	}
+
 	@Override
 	protected void renderElement(Graphics g) {
-		if (style.getBackgroundNinePatch() != null) {
-			g.drawNinePatch(style.getBackgroundNinePatch(), getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
-					getInnerRenderHeight());
-		}
+		renderBackground(g);
 		g.translate(0f, scrollTranslationY);
 
 		Rectangle existingClip = g.removeClip();
@@ -128,55 +144,54 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 		}
 		g.translate(0f, -scrollTranslationY);
 
-		NinePatch scrollTrackPatch = style.getScrollTrackNinePatch();
-		g.drawNinePatch(scrollTrackPatch, scrollTrack.getRenderX(), scrollTrack.getRenderY(),
+		style.getScrollTrackRenderer().render(g, scrollTrack.getRenderX(), scrollTrack.getRenderY(),
 				scrollTrack.getRenderWidth(), scrollTrack.getRenderHeight());
 
 		switch (topScrollButtonState) {
 		case ACTION:
-			g.drawNinePatch(topScrollButtonStyleRule.getActionNinePatch(), topScrollButton.getRenderX(),
+			topScrollButtonStyleRule.getActionBackgroundRenderer().render(g, topScrollButton.getRenderX(),
 					topScrollButton.getRenderY(), topScrollButton.getRenderWidth(), topScrollButton.getRenderHeight());
 			break;
 		case HOVER:
-			g.drawNinePatch(topScrollButtonStyleRule.getHoverNinePatch(), topScrollButton.getRenderX(),
+			topScrollButtonStyleRule.getHoverBackgroundRenderer().render(g, topScrollButton.getRenderX(),
 					topScrollButton.getRenderY(), topScrollButton.getRenderWidth(), topScrollButton.getRenderHeight());
 			break;
 		case NORMAL:
 		default:
-			g.drawNinePatch(topScrollButtonStyleRule.getNormalNinePatch(), topScrollButton.getRenderX(),
+			topScrollButtonStyleRule.getNormalBackgroundRenderer().render(g, topScrollButton.getRenderX(),
 					topScrollButton.getRenderY(), topScrollButton.getRenderWidth(), topScrollButton.getRenderHeight());
 			break;
 		}
 
 		switch (scrollThumbState) {
 		case ACTION:
-			g.drawNinePatch(style.getScrollThumbActiveNinePatch(), scrollThumb.getRenderX(), scrollThumb.getRenderY(),
+			style.getScrollThumbActiveRenderer().render(g, scrollThumb.getRenderX(), scrollThumb.getRenderY(),
 					scrollThumb.getRenderWidth(), scrollThumb.getRenderHeight());
 			break;
 		case HOVER:
-			g.drawNinePatch(style.getScrollThumbHoverNinePatch(), scrollThumb.getRenderX(), scrollThumb.getRenderY(),
+			style.getScrollThumbHoverRenderer().render(g, scrollThumb.getRenderX(), scrollThumb.getRenderY(),
 					scrollThumb.getRenderWidth(), scrollThumb.getRenderHeight());
 			break;
 		default:
-			g.drawNinePatch(style.getScrollThumbNormalNinePatch(), scrollThumb.getRenderX(), scrollThumb.getRenderY(),
+			style.getScrollThumbNormalRenderer().render(g, scrollThumb.getRenderX(), scrollThumb.getRenderY(),
 					scrollThumb.getRenderWidth(), scrollThumb.getRenderHeight());
 			break;
 		}
 
 		switch (bottomScrollButtonState) {
 		case ACTION:
-			g.drawNinePatch(bottomScrollButtonStyleRule.getActionNinePatch(), bottomScrollButton.getRenderX(),
+			bottomScrollButtonStyleRule.getActionBackgroundRenderer().render(g, bottomScrollButton.getRenderX(),
 					bottomScrollButton.getRenderY(), bottomScrollButton.getRenderWidth(),
 					bottomScrollButton.getRenderHeight());
 			break;
 		case HOVER:
-			g.drawNinePatch(bottomScrollButtonStyleRule.getHoverNinePatch(), bottomScrollButton.getRenderX(),
+			bottomScrollButtonStyleRule.getHoverBackgroundRenderer().render(g, bottomScrollButton.getRenderX(),
 					bottomScrollButton.getRenderY(), bottomScrollButton.getRenderWidth(),
 					bottomScrollButton.getRenderHeight());
 			break;
 		case NORMAL:
 		default:
-			g.drawNinePatch(bottomScrollButtonStyleRule.getNormalNinePatch(), bottomScrollButton.getRenderX(),
+			bottomScrollButtonStyleRule.getNormalBackgroundRenderer().render(g, bottomScrollButton.getRenderX(),
 					bottomScrollButton.getRenderY(), bottomScrollButton.getRenderWidth(),
 					bottomScrollButton.getRenderHeight());
 			break;

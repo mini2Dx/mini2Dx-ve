@@ -72,12 +72,32 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 		}
 	}
 
+	protected void renderBackground(Graphics g) {
+		switch(getState()) {
+		case NORMAL:
+			if (style.getNormalBackgroundRenderer() != null) {
+				style.getNormalBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		case HOVER:
+			if(style.getHoverBackgroundRenderer() != null) {
+				style.getHoverBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		case ACTION:
+			if(style.getHoverBackgroundRenderer() != null) {
+				style.getHoverBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		}
+	}
+
 	@Override
 	protected void renderElement(Graphics g) {
-		if (style.getBackgroundNinePatch() != null) {
-			g.drawNinePatch(style.getBackgroundNinePatch(), getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
-					getInnerRenderHeight());
-		}
+		renderBackground(g);
 
 		if (element.getTextAnimation() == null) {
 			nullAnimation.render(bitmapFontCache, g, getContentRenderX(), getContentRenderY());

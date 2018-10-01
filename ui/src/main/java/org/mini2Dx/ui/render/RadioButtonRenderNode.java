@@ -102,15 +102,35 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 		EventTriggerParamsPool.release(params);
 	}
 
+	protected void renderBackground(Graphics g) {
+		switch(getState()) {
+		case NORMAL:
+			if (style.getNormalBackgroundRenderer() != null) {
+				style.getNormalBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		case HOVER:
+			if(style.getHoverBackgroundRenderer() != null) {
+				style.getHoverBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		case ACTION:
+			if(style.getHoverBackgroundRenderer() != null) {
+				style.getHoverBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		}
+	}
+
 	@Override
 	protected void renderElement(Graphics g) {
 		if (element.getTotalOptions() != buttonRenderPositions.size()) {
 			return;
 		}
-		if (style.getBackgroundNinePatch() != null) {
-			g.drawNinePatch(style.getBackgroundNinePatch(), getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
-					getInnerRenderHeight());
-		}
+		renderBackground(g);
 
 		bitmapFontCache.setPosition(getContentRenderX(), getContentRenderY());
 

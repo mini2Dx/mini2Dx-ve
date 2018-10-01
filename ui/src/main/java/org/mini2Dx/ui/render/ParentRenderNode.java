@@ -11,21 +11,14 @@
  */
 package org.mini2Dx.ui.render;
 
-import java.util.NavigableMap;
-import java.util.NavigableSet;
-import java.util.TreeMap;
-
 import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.util.IntTreeMap;
 import org.mini2Dx.ui.element.ParentUiElement;
-import org.mini2Dx.ui.layout.FlexDirection;
 import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.layout.LayoutRuleset;
 import org.mini2Dx.ui.style.ParentStyleRule;
-
-import com.badlogic.gdx.math.MathUtils;
 
 /**
  * Base class for {@link RenderNode} implementations that contains child nodes
@@ -67,6 +60,29 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 		}
 	}
 
+	protected void renderBackground(Graphics g) {
+		switch(getState()) {
+		case NORMAL:
+			if (style.getNormalBackgroundRenderer() != null) {
+				style.getNormalBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		case HOVER:
+			if(style.getHoverBackgroundRenderer() != null) {
+				style.getHoverBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		case ACTION:
+			if(style.getHoverBackgroundRenderer() != null) {
+				style.getHoverBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		}
+	}
+
 	@Override
 	protected void renderElement(Graphics g) {
 		boolean overflowClipped = element.isOverflowClipped();
@@ -77,10 +93,9 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 			g.peekClip(cachedClip);
 			g.setClip(outerArea);
 		}
-		if (style.getBackgroundNinePatch() != null) {
-			g.drawNinePatch(style.getBackgroundNinePatch(), getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
-					getInnerRenderHeight());
-		}
+
+		renderBackground(g);
+
 		final IntMap.Keys keys = layers.ascendingKeys();
 		keys.reset();
 		while(keys.hasNext) {

@@ -36,14 +36,12 @@ public class TextBoxStyleRule extends StyleRule {
 	@Field
 	private String disabled;
 	@Field
-	private int fontSize;
-	@Field
 	private String font;
 	@Field
 	private String textColor;
 	
 	private NinePatch normalNinePatch, hoverNinePatch, actionNinePatch, disabledNinePatch;
-	private BitmapFont bitmapFont;
+	private UiFont uiFont;
 	private Color color = null;
 	
 	@Override
@@ -61,16 +59,8 @@ public class TextBoxStyleRule extends StyleRule {
 		disabledNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(disabled)), getPaddingLeft(),
 				getPaddingRight(), getPaddingTop(), getPaddingBottom());
 		color = ColorUtils.rgbToColor(textColor);
-		
-		UiFont themeFont = theme.getFont(font);
-		FreeTypeFontParameter fontParameter = new  FreeTypeFontParameter();
-		fontParameter.size = fontSize;
-		fontParameter.flip = true;
-		if(themeFont.getBorderWidth() > 0) {
-			fontParameter.borderWidth = themeFont.getBorderWidth();
-			fontParameter.borderColor = themeFont.getFontBorderColor();
-		}
-		bitmapFont = themeFont.generateFont(fontParameter);
+
+		uiFont = theme.getFont(font);
 	}
 	
 	public NinePatch getNormalNinePatch() {
@@ -90,15 +80,11 @@ public class TextBoxStyleRule extends StyleRule {
 	}
 
 	public BitmapFont getBitmapFont() {
-		return bitmapFont;
+		return uiFont.getBitmapFont();
 	}
 
 	public Color getColor() {
 		return color;
-	}
-
-	public int getFontSize() {
-		return fontSize;
 	}
 
 	public String getNormal() {
@@ -147,9 +133,5 @@ public class TextBoxStyleRule extends StyleRule {
 
 	public void setTextColor(String textColor) {
 		this.textColor = textColor;
-	}
-
-	public void setFontSize(int fontSize) {
-		this.fontSize = fontSize;
 	}
 }

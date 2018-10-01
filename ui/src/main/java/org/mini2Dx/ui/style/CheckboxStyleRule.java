@@ -11,7 +11,6 @@
  */
 package org.mini2Dx.ui.style;
 
-import org.mini2Dx.core.graphics.NinePatch;
 import org.mini2Dx.core.graphics.TextureRegion;
 import org.mini2Dx.core.serialization.annotation.Field;
 
@@ -39,7 +38,7 @@ public class CheckboxStyleRule extends ParentStyleRule {
 	@Field(optional = true)
 	private String enabledUncheck;
 
-	private NinePatch enabledNinePatch, disabledNinePatch;
+	private BackgroundRenderer enabledBackgroundRenderer, disabledBackgroundRenderer;
 	private TextureRegion disabledCheckTextureRegion, disabledUncheckTextureRegion, enabledCheckTextureRegion,
 			enabledUncheckTextureRegion, hoveredCheckTextureRegion, hoveredUncheckTextureRegion;
 	
@@ -49,11 +48,9 @@ public class CheckboxStyleRule extends ParentStyleRule {
 			return; 
 		}
 		super.prepareAssets(theme, fileHandleResolver, assetManager);
-		
-		enabledNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(enabledBox)), getNinePatchLeft(),
-				getNinePatchRight(), getNinePatchTop(), getNinePatchBottom());
-		disabledNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(disabledBox)), getNinePatchLeft(),
-				getNinePatchRight(), getNinePatchTop(), getNinePatchBottom());
+
+		enabledBackgroundRenderer = BackgroundRenderer.parse(enabledBox);
+		disabledBackgroundRenderer = BackgroundRenderer.parse(disabledBox);
 		enabledCheckTextureRegion = new TextureRegion(theme.getTextureAtlas().findRegion(enabledCheck));
 		disabledCheckTextureRegion = new TextureRegion(theme.getTextureAtlas().findRegion(disabledCheck));
 		
@@ -73,12 +70,12 @@ public class CheckboxStyleRule extends ParentStyleRule {
 		}
 	}
 
-	public NinePatch getEnabledNinePatch() {
-		return enabledNinePatch;
+	public BackgroundRenderer getEnabledBackgroundRenderer() {
+		return enabledBackgroundRenderer;
 	}
 
-	public NinePatch getDisabledNinePatch() {
-		return disabledNinePatch;
+	public BackgroundRenderer getDisabledBackgroundRenderer() {
+		return disabledBackgroundRenderer;
 	}
 
 	public TextureRegion getDisabledCheckTextureRegion() {

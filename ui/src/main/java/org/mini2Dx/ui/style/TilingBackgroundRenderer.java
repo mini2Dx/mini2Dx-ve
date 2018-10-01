@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 See AUTHORS file
+ * Copyright (c) 2018 See AUTHORS file
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -11,77 +11,29 @@
  */
 package org.mini2Dx.ui.style;
 
-import org.mini2Dx.core.exception.MdxException;
-import org.mini2Dx.core.serialization.annotation.Field;
-import org.mini2Dx.core.util.ColorUtils;
-import org.mini2Dx.ui.element.Label;
-
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
+import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.core.graphics.TextureRegion;
 
-/**
- * Extends {@link StyleRule} for {@link Label} styling
- */
-public class LabelStyleRule extends ParentStyleRule {
-	@Field
-	private String font;
-	@Field(optional=true)
-	private String textColor;
-	
-	private UiFont uiFont;
-	private Color color;
+public class TilingBackgroundRenderer extends BackgroundRenderer {
+	private TiledDrawable tiledDrawable;
 
-	@Override
-	public void validate(UiTheme theme) {
-		super.validate(theme);
-
-		if(!theme.getFonts().containsKey(font)) {
-			throw new MdxException("No such font " + font);
-		}
+	public TilingBackgroundRenderer(String imagePath) {
+		super(imagePath);
 	}
 
 	@Override
 	public void prepareAssets(UiTheme theme, FileHandleResolver fileHandleResolver, AssetManager assetManager) {
-		if (theme.isHeadless()) {
-			return; 
+		if(theme.isHeadless()) {
+			return;
 		}
-		
-		super.prepareAssets(theme, fileHandleResolver, assetManager);
-		if(textColor != null) {
-			color = ColorUtils.rgbToColor(textColor);
-		}
-
-		uiFont = theme.getFont(font);
+		tiledDrawable = new TiledDrawable(new TextureRegion(theme.getTextureAtlas().findRegion(imagePath)));
 	}
 
-	public Color getColor() {
-		return color;
-	}
-
-	public BitmapFont getBitmapFont() {
-		return uiFont.getBitmapFont();
-	}
-
-	public int getFontSize() {
-		return uiFont.getFontSize();
-	}
-
-	public String getFont() {
-		return font;
-	}
-
-	public void setFont(String font) {
-		this.font = font;
-	}
-
-	public String getTextColor() {
-		return textColor;
-	}
-
-	public void setTextColor(String textColor) {
-		this.textColor = textColor;
+	@Override
+	public void render(Graphics g, float x, float y, float width, float height) {
+		g.drawTiledDrawable(tiledDrawable, x, y, width, height);
 	}
 }

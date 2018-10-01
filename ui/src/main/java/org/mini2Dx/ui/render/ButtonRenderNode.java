@@ -13,14 +13,13 @@
 package org.mini2Dx.ui.render;
 
 import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.core.graphics.NinePatch;
 import org.mini2Dx.ui.element.Button;
 import org.mini2Dx.ui.event.EventTrigger;
 import org.mini2Dx.ui.event.params.EventTriggerParams;
 import org.mini2Dx.ui.event.params.EventTriggerParamsPool;
 import org.mini2Dx.ui.event.params.MouseEventTriggerParams;
-import org.mini2Dx.ui.layout.LayoutRuleset;
 import org.mini2Dx.ui.layout.LayoutState;
+import org.mini2Dx.ui.style.BackgroundRenderer;
 import org.mini2Dx.ui.style.ButtonStyleRule;
 
 import com.badlogic.gdx.Input.Buttons;
@@ -79,28 +78,27 @@ public class ButtonRenderNode extends ParentRenderNode<Button, ButtonStyleRule> 
 	}
 
 	@Override
-	protected void renderElement(Graphics g) {
-		NinePatch ninePatch = style.getNormalNinePatch();
+	protected void renderBackground(Graphics g) {
+		BackgroundRenderer backgroundRenderer = style.getNormalBackgroundRenderer();
 		if (element.isEnabled()) {
 			switch (getState()) {
 			case ACTION:
-				ninePatch = style.getActionNinePatch();
+				backgroundRenderer = style.getActionBackgroundRenderer();
 				break;
 			case HOVER:
-				ninePatch = style.getHoverNinePatch();
+				backgroundRenderer = style.getHoverBackgroundRenderer();
 				break;
 			default:
 				break;
 			}
 		} else {
-			ninePatch = style.getDisabledNinePatch();
+			backgroundRenderer = style.getDisabledBackgroundRenderer();
 		}
 
-		if (ninePatch != null) {
-			g.drawNinePatch(ninePatch, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+		if (backgroundRenderer != null) {
+			backgroundRenderer.render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
 					getInnerRenderHeight());
 		}
-		super.renderElement(g);
 	}
 
 	@Override

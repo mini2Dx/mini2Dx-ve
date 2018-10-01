@@ -29,8 +29,6 @@ public class SelectStyleRule extends StyleRule {
 	@Field(optional=true)
 	private String background;
 	@Field(optional=true)
-	private int ninePatchTop, ninePatchBottom, ninePatchLeft, ninePatchRight;
-	@Field(optional=true)
 	private String enabledLabelStyle;
 	@Field(optional=true)
 	private String disabledLabelStyle;
@@ -38,8 +36,12 @@ public class SelectStyleRule extends StyleRule {
 	private String leftButtonStyle;
 	@Field(optional=true)
 	private String rightButtonStyle;
-	
-	private NinePatch backgroundNinePatch;
+	@Field(optional=true)
+	private String leftButtonLabelStyle;
+	@Field(optional=true)
+	private String rightButtonLabelStyle;
+
+	private BackgroundRenderer normalBackgroundRenderer;
 	
 	@Override
 	public void validate(UiTheme theme) {
@@ -54,8 +56,11 @@ public class SelectStyleRule extends StyleRule {
 		if(leftButtonStyle != null && !theme.containsButtonStyleRuleset(leftButtonStyle)) {
 			throw new MdxException("No style with id '" + leftButtonStyle + "' for buttons. Required by " + SelectStyleRule.class.getSimpleName());
 		}
-		if(rightButtonStyle != null && !theme.containsButtonStyleRuleset(rightButtonStyle)) {
-			throw new MdxException("No style with id '" + rightButtonStyle + "' for buttons. Required by " + SelectStyleRule.class.getSimpleName());
+		if(leftButtonLabelStyle != null && !theme.containsLabelStyleRuleset(leftButtonLabelStyle)) {
+			throw new MdxException("No style with id '" + leftButtonLabelStyle + "' for labels. Required by " + SelectStyleRule.class.getSimpleName());
+		}
+		if(rightButtonLabelStyle != null && !theme.containsLabelStyleRuleset(rightButtonLabelStyle)) {
+			throw new MdxException("No style with id '" + rightButtonLabelStyle + "' for labels. Required by " + SelectStyleRule.class.getSimpleName());
 		}
 	}
 	
@@ -64,12 +69,21 @@ public class SelectStyleRule extends StyleRule {
 		if (theme.isHeadless()) {
 			return; 
 		}
-		
 		super.prepareAssets(theme, fileHandleResolver, assetManager);
+
 		if(background != null) {
-			backgroundNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(background)), getNinePatchLeft(),
-					getNinePatchRight(), getNinePatchTop(), getNinePatchBottom());
+			normalBackgroundRenderer = BackgroundRenderer.parse(background);
 		}
+		if(leftButtonLabelStyle == null) {
+			leftButtonLabelStyle = enabledLabelStyle;
+		}
+		if(rightButtonLabelStyle == null) {
+			rightButtonLabelStyle = enabledLabelStyle;
+		}
+	}
+
+	public BackgroundRenderer getNormalBackgroundRenderer() {
+		return normalBackgroundRenderer;
 	}
 
 	public int getButtonWidth() {
@@ -86,50 +100,6 @@ public class SelectStyleRule extends StyleRule {
 
 	public void setBackground(String background) {
 		this.background = background;
-	}
-
-	public int getNinePatchTop() {
-		if(ninePatchTop <= 0) {
-			return getPaddingTop();
-		}
-		return ninePatchTop;
-	}
-
-	public int getNinePatchBottom() {
-		if(ninePatchBottom <= 0) {
-			return getPaddingBottom();
-		}
-		return ninePatchBottom;
-	}
-
-	public int getNinePatchLeft() {
-		if(ninePatchLeft <= 0) {
-			return getPaddingLeft();
-		}
-		return ninePatchLeft;
-	}
-
-	public int getNinePatchRight() {
-		if(ninePatchRight <= 0) {
-			return getPaddingRight();
-		}
-		return ninePatchRight;
-	}
-
-	public void setNinePatchTop(int ninePatchTop) {
-		this.ninePatchTop = ninePatchTop;
-	}
-	
-	public void setNinePatchBottom(int ninePatchBottom) {
-		this.ninePatchBottom = ninePatchBottom;
-	}
-
-	public void setNinePatchLeft(int ninePatchLeft) {
-		this.ninePatchLeft = ninePatchLeft;
-	}
-
-	public void setNinePatchRight(int ninePatchRight) {
-		this.ninePatchRight = ninePatchRight;
 	}
 
 	public String getEnabledLabelStyle() {
@@ -164,7 +134,19 @@ public class SelectStyleRule extends StyleRule {
 		this.rightButtonStyle = rightButtonStyle;
 	}
 
-	public NinePatch getBackgroundNinePatch() {
-		return backgroundNinePatch;
+	public String getLeftButtonLabelStyle() {
+		return leftButtonLabelStyle;
+	}
+
+	public void setLeftButtonLabelStyle(String leftButtonLabelStyle) {
+		this.leftButtonLabelStyle = leftButtonLabelStyle;
+	}
+
+	public String getRightButtonLabelStyle() {
+		return rightButtonLabelStyle;
+	}
+
+	public void setRightButtonLabelStyle(String rightButtonLabelStyle) {
+		this.rightButtonLabelStyle = rightButtonLabelStyle;
 	}
 }

@@ -12,7 +12,6 @@
 package org.mini2Dx.ui.render;
 
 import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.core.graphics.NinePatch;
 import org.mini2Dx.core.graphics.TextureRegion;
 import org.mini2Dx.ui.element.Checkbox;
 import org.mini2Dx.ui.event.EventTrigger;
@@ -20,6 +19,7 @@ import org.mini2Dx.ui.event.params.EventTriggerParams;
 import org.mini2Dx.ui.event.params.EventTriggerParamsPool;
 import org.mini2Dx.ui.event.params.MouseEventTriggerParams;
 import org.mini2Dx.ui.layout.LayoutState;
+import org.mini2Dx.ui.style.BackgroundRenderer;
 import org.mini2Dx.ui.style.CheckboxStyleRule;
 
 import com.badlogic.gdx.Input.Buttons;
@@ -69,18 +69,38 @@ public class CheckboxRenderNode extends RenderNode<Checkbox, CheckboxStyleRule> 
 		EventTriggerParamsPool.release(params);
 	}
 
+	protected void renderBackground(Graphics g) {
+		switch(getState()) {
+		case NORMAL:
+			if (style.getNormalBackgroundRenderer() != null) {
+				style.getNormalBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		case HOVER:
+			if(style.getHoverBackgroundRenderer() != null) {
+				style.getHoverBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		case ACTION:
+			if(style.getHoverBackgroundRenderer() != null) {
+				style.getHoverBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+						getInnerRenderHeight());
+			}
+			break;
+		}
+	}
+
 	@Override
 	protected void renderElement(Graphics g) {
-		if (style.getBackgroundNinePatch() != null) {
-			g.drawNinePatch(style.getBackgroundNinePatch(), getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
-					getInnerRenderHeight());
-		}
+		renderBackground(g);
 
-		NinePatch boxNinePatch = null;
+		BackgroundRenderer boxBackgroundRenderer = null;
 		TextureRegion checkTextureRegion = null;
 
 		if (element.isEnabled()) {
-			boxNinePatch = style.getEnabledNinePatch();
+			boxBackgroundRenderer = style.getEnabledBackgroundRenderer();
 
 			switch (getState()) {
 			case HOVER:
@@ -101,7 +121,7 @@ public class CheckboxRenderNode extends RenderNode<Checkbox, CheckboxStyleRule> 
 				break;
 			}
 		} else {
-			boxNinePatch = style.getDisabledNinePatch();
+			boxBackgroundRenderer = style.getDisabledBackgroundRenderer();
 
 			if (element.isChecked()) {
 				checkTextureRegion = style.getDisabledCheckTextureRegion();
@@ -110,8 +130,9 @@ public class CheckboxRenderNode extends RenderNode<Checkbox, CheckboxStyleRule> 
 			}
 		}
 
-		g.drawNinePatch(boxNinePatch, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+		boxBackgroundRenderer.render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
 				getInnerRenderHeight());
+
 		if (checkTextureRegion == null) {
 			return;
 		}

@@ -11,156 +11,47 @@
  */
 package org.mini2Dx.ui.style;
 
-import org.mini2Dx.core.graphics.NinePatch;
-import org.mini2Dx.core.graphics.TextureRegion;
 import org.mini2Dx.core.serialization.annotation.Field;
-import org.mini2Dx.core.util.ColorUtils;
 import org.mini2Dx.ui.element.Button;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
 /**
  * Extends {@link StyleRule} for {@link Button} styling
  */
 public class ButtonStyleRule extends ParentStyleRule {
 	@Field(optional=true)
-	private String normal;
+	private String actionBackground;
 	@Field(optional=true)
-	private String hover;
-	@Field(optional=true)
-	private String action;
-	@Field(optional=true)
-	private String disabled;
-	@Field
-	private int fontSize;
-	@Field
-	private String font;
-	@Field
-	private String textColor;
+	private String disabledBackground;
 
-	private NinePatch normalNinePatch, hoverNinePatch, actionNinePatch, disabledNinePatch;
-	private BitmapFont bitmapFont;
-	private Color color;
+	private BackgroundRenderer actionBackgroundRenderer, disabledBackgroundRenderer;
 	
 	@Override
 	public void prepareAssets(UiTheme theme, FileHandleResolver fileHandleResolver, AssetManager assetManager) {
 		if (theme.isHeadless()) {
 			return; 
 		}
-		
-		if(normal != null) {
-			normalNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(normal)), getNinePatchLeft(),
-					getNinePatchRight(), getNinePatchTop(), getNinePatchBottom());
+		super.prepareAssets(theme, fileHandleResolver, assetManager);
+
+		if(actionBackground != null) {
+			actionBackgroundRenderer = BackgroundRenderer.parse(actionBackground);
+		} else {
+			actionBackgroundRenderer = getHoverBackgroundRenderer();
 		}
-		if(hover != null) {
-			hoverNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(hover)), getNinePatchLeft(),
-					getNinePatchRight(), getNinePatchTop(), getNinePatchBottom());
-		}
-		if(action != null) {
-			actionNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(action)), getNinePatchLeft(),
-					getNinePatchRight(), getNinePatchTop(), getNinePatchBottom());
-		}
-		if(disabled != null) {
-			disabledNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(disabled)), getNinePatchLeft(),
-					getNinePatchRight(), getNinePatchTop(), getNinePatchBottom());
-		}
-		
-		UiFont themeFont = theme.getFont(font);
-		FreeTypeFontParameter fontParameter = new  FreeTypeFontParameter();
-		fontParameter.size = fontSize;
-		fontParameter.flip = true;
-		if(themeFont.getBorderWidth() > 0) {
-			fontParameter.borderWidth = themeFont.getBorderWidth();
-			fontParameter.borderColor = themeFont.getFontBorderColor();
-		}
-		bitmapFont = themeFont.generateFont(fontParameter);
-		
-		if(textColor != null) {
-			color = ColorUtils.rgbToColor(textColor);
+		if(disabledBackground != null) {
+			disabledBackgroundRenderer = BackgroundRenderer.parse(disabledBackground);
+		} else {
+			disabledBackgroundRenderer = getNormalBackgroundRenderer();
 		}
 	}
 
-	public NinePatch getNormalNinePatch() {
-		return normalNinePatch;
+	public BackgroundRenderer getActionBackgroundRenderer() {
+		return actionBackgroundRenderer;
 	}
 
-	public NinePatch getHoverNinePatch() {
-		return hoverNinePatch;
-	}
-
-	public NinePatch getActionNinePatch() {
-		return actionNinePatch;
-	}
-
-	public NinePatch getDisabledNinePatch() {
-		return disabledNinePatch;
-	}
-
-	public BitmapFont getBitmapFont() {
-		return bitmapFont;
-	}
-
-	public Color getColor() {
-		return color;
-	}
-
-	public String getNormal() {
-		return normal;
-	}
-
-	public void setNormal(String normal) {
-		this.normal = normal;
-	}
-
-	public String getHover() {
-		return hover;
-	}
-
-	public void setHover(String hover) {
-		this.hover = hover;
-	}
-
-	public String getAction() {
-		return action;
-	}
-
-	public void setAction(String action) {
-		this.action = action;
-	}
-
-	public String getDisabled() {
-		return disabled;
-	}
-
-	public void setDisabled(String disabled) {
-		this.disabled = disabled;
-	}
-
-	public int getFontSize() {
-		return fontSize;
-	}
-
-	public void setFontSize(int fontSize) {
-		this.fontSize = fontSize;
-	}
-
-	public String getFont() {
-		return font;
-	}
-
-	public void setFont(String font) {
-		this.font = font;
-	}
-
-	public String getTextColor() {
-		return textColor;
-	}
-
-	public void setTextColor(String textColor) {
-		this.textColor = textColor;
+	public BackgroundRenderer getDisabledBackgroundRenderer() {
+		return disabledBackgroundRenderer;
 	}
 }

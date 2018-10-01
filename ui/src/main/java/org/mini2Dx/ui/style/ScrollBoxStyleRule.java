@@ -27,17 +27,13 @@ public class ScrollBoxStyleRule extends ParentStyleRule {
 	@Field
 	private String scrollTrack;
 	@Field
-	private int scrollTrackNinePatchTop, scrollTrackNinePatchBottom, scrollTrackNinePatchLeft, scrollTrackNinePatchRight;
-	@Field
 	private String scrollThumbNormal;
 	@Field
 	private String scrollThumbHover;
 	@Field
 	private String scrollThumbAction;
-	@Field
-	private int scrollThumbNinePatchTop, scrollThumbNinePatchBottom, scrollThumbNinePatchLeft, scrollThumbNinePatchRight;
 	
-	private NinePatch scrollTrackNinePatch, scrollThumbNormalNinePatch, scrollThumbHoverNinePatch, scrollThumbActiveNinePatch;
+	private BackgroundRenderer scrollTrackRenderer, scrollThumbNormalRenderer, scrollThumbHoverRenderer, scrollThumbActiveRenderer;
 	
 	@Override
 	public void validate(UiTheme theme) {
@@ -58,15 +54,10 @@ public class ScrollBoxStyleRule extends ParentStyleRule {
 		}
 		
 		super.prepareAssets(theme, fileHandleResolver, assetManager);
-		scrollTrackNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(scrollTrack)), scrollTrackNinePatchLeft,
-				scrollTrackNinePatchRight, scrollTrackNinePatchTop, scrollTrackNinePatchBottom);
-		
-		scrollThumbNormalNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(scrollThumbNormal)), scrollThumbNinePatchLeft,
-				scrollThumbNinePatchRight, scrollThumbNinePatchTop, scrollThumbNinePatchBottom);
-		scrollThumbHoverNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(scrollThumbHover)), scrollThumbNinePatchLeft,
-				scrollThumbNinePatchRight, scrollThumbNinePatchTop, scrollThumbNinePatchBottom);
-		scrollThumbActiveNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(scrollThumbAction)), scrollThumbNinePatchLeft,
-				scrollThumbNinePatchRight, scrollThumbNinePatchTop, scrollThumbNinePatchBottom);
+		scrollTrackRenderer = BackgroundRenderer.parse(scrollTrack);
+		scrollThumbNormalRenderer = BackgroundRenderer.parse(scrollThumbNormal);
+		scrollThumbHoverRenderer = BackgroundRenderer.parse(scrollThumbHover);
+		scrollThumbActiveRenderer = BackgroundRenderer.parse(scrollThumbAction);
 	}
 
 	public String getTopScrollButtonStyle() {
@@ -133,85 +124,19 @@ public class ScrollBoxStyleRule extends ParentStyleRule {
 		this.scrollThumbAction = scrollThumbAction;
 	}
 
-	public int getScrollTrackNinePatchTop() {
-		return scrollTrackNinePatchTop;
+	public BackgroundRenderer getScrollTrackRenderer() {
+		return scrollTrackRenderer;
 	}
 
-	public void setScrollTrackNinePatchTop(int scrollTrackNinePatchTop) {
-		this.scrollTrackNinePatchTop = scrollTrackNinePatchTop;
+	public BackgroundRenderer getScrollThumbNormalRenderer() {
+		return scrollThumbNormalRenderer;
 	}
 
-	public int getScrollTrackNinePatchBottom() {
-		return scrollTrackNinePatchBottom;
+	public BackgroundRenderer getScrollThumbHoverRenderer() {
+		return scrollThumbHoverRenderer;
 	}
 
-	public void setScrollTrackNinePatchBottom(int scrollTrackNinePatchBottom) {
-		this.scrollTrackNinePatchBottom = scrollTrackNinePatchBottom;
+	public BackgroundRenderer getScrollThumbActiveRenderer() {
+		return scrollThumbActiveRenderer;
 	}
-
-	public int getScrollTrackNinePatchLeft() {
-		return scrollTrackNinePatchLeft;
-	}
-
-	public void setScrollTrackNinePatchLeft(int scrollTrackNinePatchLeft) {
-		this.scrollTrackNinePatchLeft = scrollTrackNinePatchLeft;
-	}
-
-	public int getScrollTrackNinePatchRight() {
-		return scrollTrackNinePatchRight;
-	}
-
-	public void setScrollTrackNinePatchRight(int scrollTrackNinePatchRight) {
-		this.scrollTrackNinePatchRight = scrollTrackNinePatchRight;
-	}
-
-	public int getScrollThumbNinePatchTop() {
-		return scrollThumbNinePatchTop;
-	}
-
-	public void setScrollThumbNinePatchTop(int scrollThumbNinePatchTop) {
-		this.scrollThumbNinePatchTop = scrollThumbNinePatchTop;
-	}
-
-	public int getScrollThumbNinePatchBottom() {
-		return scrollThumbNinePatchBottom;
-	}
-
-	public void setScrollThumbNinePatchBottom(int scrollThumbNinePatchBottom) {
-		this.scrollThumbNinePatchBottom = scrollThumbNinePatchBottom;
-	}
-
-	public int getScrollThumbNinePatchLeft() {
-		return scrollThumbNinePatchLeft;
-	}
-
-	public void setScrollThumbNinePatchLeft(int scrollThumbNinePatchLeft) {
-		this.scrollThumbNinePatchLeft = scrollThumbNinePatchLeft;
-	}
-
-	public int getScrollThumbNinePatchRight() {
-		return scrollThumbNinePatchRight;
-	}
-
-	public void setScrollThumbNinePatchRight(int scrollThumbNinePatchRight) {
-		this.scrollThumbNinePatchRight = scrollThumbNinePatchRight;
-	}
-
-	public NinePatch getScrollTrackNinePatch() {
-		return scrollTrackNinePatch;
-	}
-
-	public NinePatch getScrollThumbNormalNinePatch() {
-		return scrollThumbNormalNinePatch;
-	}
-
-	public NinePatch getScrollThumbHoverNinePatch() {
-		return scrollThumbHoverNinePatch;
-	}
-
-	public NinePatch getScrollThumbActiveNinePatch() {
-		return scrollThumbActiveNinePatch;
-	}
-
-	
 }

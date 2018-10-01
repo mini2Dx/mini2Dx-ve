@@ -27,31 +27,44 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
  * A font for user interfaces
  */
 public class UiFont {
-	private final Map<String, BitmapFont> cache = new HashMap<String, BitmapFont>();
-	
+
 	@Field
 	private String path;
 	@Field(optional=true)
 	private String borderColor;
 	@Field(optional=true)
-	private int borderWidth; 
+	private int borderWidth;
+	@Field
+	private int fontSize;
 	
 	private Color fontBorderColor;
-	private FreeTypeFontGenerator fontGenerator;
+	private BitmapFont bitmapFont;
 	
 	public void prepareAssets(UiTheme theme, FileHandleResolver fileHandleResolver) {
 		if(theme.isHeadless()) {
 			return;
 		}
 		
-		fontGenerator = new FreeTypeFontGenerator(fileHandleResolver.resolve(path));
+		final FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(fileHandleResolver.resolve(path));
 		if(borderColor != null) {
 			fontBorderColor = ColorUtils.rgbToColor(borderColor);
 		}
+		FreeTypeFontParameter fontParameter = new  FreeTypeFontParameter();
+		fontParameter.size = fontSize;
+		fontParameter.flip = true;
+		if(borderWidth > 0) {
+			fontParameter.borderWidth = borderWidth;
+			fontParameter.borderColor = fontBorderColor;
+		}
+		bitmapFont = fontGenerator.generateFont(fontParameter);
 	}
 	
 	public void dispose() {
-		fontGenerator.dispose();
+		bitmapFont.dispose();
+	}
+
+	public BitmapFont getBitmapFont() {
+		return bitmapFont;
 	}
 
 	public String getPath() {
@@ -69,22 +82,19 @@ public class UiFont {
 	public void setBorderWidth(int borderWidth) {
 		this.borderWidth = borderWidth;
 	}
-	
-	public BitmapFont generateFont(FreeTypeFontParameter fontParameters) {
-		String key = getFontParameterKey(fontParameters);
-		
-		BitmapFont result = cache.get(key);
-		if(result == null) {
-			result = fontGenerator.generateFont(fontParameters);
-			cache.put(key, result);
-		}
-		return result;
-	}
 
 	public Color getFontBorderColor() {
 		return fontBorderColor;
 	}
-	
+
+	public int getFontSize() {
+		return fontSize;
+	}
+
+	public void setFontSize(int fontSize) {
+		this.fontSize = fontSize;
+	}
+
 	private String getFontParameterKey(FreeTypeFontParameter parameter) {
 		StringBuilder result = new StringBuilder();
 		result.append(parameter.characters);

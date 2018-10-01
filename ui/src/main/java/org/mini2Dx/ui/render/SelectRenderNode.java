@@ -48,7 +48,7 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 	private NodeState rightButtonState = NodeState.NORMAL;
 
 	private ButtonStyleRule leftButtonStyleRule, rightButtonStyleRule;
-	private LabelStyleRule enabledStyleRule, disabledStyleRule;
+	private LabelStyleRule enabledStyleRule, disabledStyleRule, leftButtonLabelStyleRule, rightButtonLabelStyleRule;
 	private BitmapFont font = new BitmapFont(true);
 	private float labelHeight = 0f;
 
@@ -88,8 +88,8 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 			return;
 		}
 
-		if (style.getBackgroundNinePatch() != null) {
-			g.drawNinePatch(style.getBackgroundNinePatch(), getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+		if (style.getNormalBackgroundRenderer() != null) {
+			style.getNormalBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
 					getInnerRenderHeight());
 		}
 
@@ -119,32 +119,32 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 
 			switch (leftButtonState) {
 			case ACTION:
-				g.drawNinePatch(leftButtonStyleRule.getActionNinePatch(), leftButton.getRenderX(),
+				leftButtonStyleRule.getActionBackgroundRenderer().render(g, leftButton.getRenderX(),
 						leftButton.getRenderY(), leftButton.getRenderWidth(), leftButton.getRenderHeight());
 				break;
 			case HOVER:
-				g.drawNinePatch(leftButtonStyleRule.getHoverNinePatch(), leftButton.getRenderX(),
+				leftButtonStyleRule.getHoverBackgroundRenderer().render(g, leftButton.getRenderX(),
 						leftButton.getRenderY(), leftButton.getRenderWidth(), leftButton.getRenderHeight());
 				break;
 			case NORMAL:
 			default:
-				g.drawNinePatch(leftButtonStyleRule.getNormalNinePatch(), leftButton.getRenderX(),
+				leftButtonStyleRule.getNormalBackgroundRenderer().render(g, leftButton.getRenderX(),
 						leftButton.getRenderY(), leftButton.getRenderWidth(), leftButton.getRenderHeight());
 				break;
 			}
 
 			switch (rightButtonState) {
 			case ACTION:
-				g.drawNinePatch(rightButtonStyleRule.getActionNinePatch(), rightButton.getRenderX(),
+				rightButtonStyleRule.getActionBackgroundRenderer().render(g, rightButton.getRenderX(),
 						rightButton.getRenderY(), rightButton.getRenderWidth(), rightButton.getRenderHeight());
 				break;
 			case HOVER:
-				g.drawNinePatch(rightButtonStyleRule.getHoverNinePatch(), rightButton.getRenderX(),
+				rightButtonStyleRule.getHoverBackgroundRenderer().render(g, rightButton.getRenderX(),
 						rightButton.getRenderY(), rightButton.getRenderWidth(), rightButton.getRenderHeight());
 				break;
 			case NORMAL:
 			default:
-				g.drawNinePatch(rightButtonStyleRule.getNormalNinePatch(), rightButton.getRenderX(),
+				rightButtonStyleRule.getNormalBackgroundRenderer().render(g, rightButton.getRenderX(),
 						rightButton.getRenderY(), rightButton.getRenderWidth(), rightButton.getRenderHeight());
 				break;
 			}
@@ -169,16 +169,16 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 					getContentRenderWidth() - leftButton.getRenderWidth() - rightButton.getRenderWidth(),
 					HorizontalAlignment.CENTER.getAlignValue());
 
-			g.drawNinePatch(leftButtonStyleRule.getDisabledNinePatch(), leftButton.getRenderX(),
+			leftButtonStyleRule.getDisabledBackgroundRenderer().render(g, leftButton.getRenderX(),
 					leftButton.getRenderY(), leftButton.getRenderWidth(), leftButton.getRenderHeight());
-			g.drawNinePatch(rightButtonStyleRule.getDisabledNinePatch(), rightButton.getRenderX(),
+			rightButtonStyleRule.getDisabledBackgroundRenderer().render(g, rightButton.getRenderX(),
 					rightButton.getRenderY(), rightButton.getRenderWidth(), rightButton.getRenderHeight());
 		}
 
 		if (element.getLeftButtonText() != null) {
-			g.setColor(leftButtonStyleRule.getColor());
-			g.setFont(leftButtonStyleRule.getBitmapFont());
-			glyphLayout.setText(leftButtonStyleRule.getBitmapFont(), element.getLeftButtonText());
+			g.setColor(leftButtonLabelStyleRule.getColor());
+			g.setFont(leftButtonLabelStyleRule.getBitmapFont());
+			glyphLayout.setText(leftButtonLabelStyleRule.getBitmapFont(), element.getLeftButtonText());
 
 			int textRenderX = MathUtils
 					.round(leftButton.getRenderX() + (leftButton.getRenderWidth() / 2) - (glyphLayout.width / 2f));
@@ -187,9 +187,9 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 			g.drawString(element.getLeftButtonText(), textRenderX, textRenderY, glyphLayout.width, Align.center);
 		}
 		if (element.getRightButtonText() != null) {
-			g.setColor(rightButtonStyleRule.getColor());
-			g.setFont(rightButtonStyleRule.getBitmapFont());
-			glyphLayout.setText(rightButtonStyleRule.getBitmapFont(), element.getRightButtonText());
+			g.setColor(rightButtonLabelStyleRule.getColor());
+			g.setFont(rightButtonLabelStyleRule.getBitmapFont());
+			glyphLayout.setText(rightButtonLabelStyleRule.getBitmapFont(), element.getRightButtonText());
 
 			int textRenderX = MathUtils
 					.round(rightButton.getRenderX() + (rightButton.getRenderWidth() / 2) - (glyphLayout.width / 2f));
@@ -400,6 +400,20 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 					layoutState.getScreenSize());
 		} else {
 			disabledStyleRule = layoutState.getTheme().getLabelStyleRule(UiTheme.DEFAULT_STYLE_ID,
+					layoutState.getScreenSize());
+		}
+		if (selectStyleRule.getLeftButtonLabelStyle() != null) {
+			leftButtonLabelStyleRule = layoutState.getTheme().getLabelStyleRule(selectStyleRule.getLeftButtonLabelStyle(),
+					layoutState.getScreenSize());
+		} else {
+			leftButtonLabelStyleRule = layoutState.getTheme().getLabelStyleRule(UiTheme.DEFAULT_STYLE_ID,
+					layoutState.getScreenSize());
+		}
+		if (selectStyleRule.getRightButtonLabelStyle() != null) {
+			rightButtonLabelStyleRule = layoutState.getTheme().getLabelStyleRule(selectStyleRule.getRightButtonLabelStyle(),
+					layoutState.getScreenSize());
+		} else {
+			rightButtonLabelStyleRule = layoutState.getTheme().getLabelStyleRule(UiTheme.DEFAULT_STYLE_ID,
 					layoutState.getScreenSize());
 		}
 		return selectStyleRule;

@@ -11,9 +11,6 @@
  */
 package org.mini2Dx.ui.style;
 
-import org.mini2Dx.core.graphics.NinePatch;
-import org.mini2Dx.core.graphics.RepeatedNinePatch;
-import org.mini2Dx.core.graphics.TextureRegion;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.ui.element.ParentUiElement;
 import org.mini2Dx.ui.render.SizeRounding;
@@ -31,14 +28,12 @@ public class ParentStyleRule extends StyleRule {
 	@Field(optional=true)
 	private String background;
 	@Field(optional=true)
-	private String backgroundMode;
+	private String hoverBackground;
 	@Field(optional=true)
 	private String sizeRounding;
-	@Field(optional=true)
-	private int ninePatchTop, ninePatchBottom, ninePatchLeft, ninePatchRight;
 	
 	private SizeRounding rounding = SizeRounding.NONE;
-	private NinePatch backgroundNinePatch;
+	private BackgroundRenderer normalBackgroundRenderer, hoverBackgroundRenderer;
 	
 	@Override
 	public void prepareAssets(UiTheme theme, FileHandleResolver fileHandleResolver, AssetManager assetManager) {
@@ -47,21 +42,24 @@ public class ParentStyleRule extends StyleRule {
 		}
 		
 		if(background != null) {
-			if(getBackgroundMode().equalsIgnoreCase(BG_REPEAT_MODE)) {
-				backgroundNinePatch = new RepeatedNinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(background)), getNinePatchLeft(),
-						getNinePatchRight(), getNinePatchTop(), getNinePatchBottom());
-			} else {
-				backgroundNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(background)), getNinePatchLeft(),
-						getNinePatchRight(), getNinePatchTop(), getNinePatchBottom());
-			}
+			normalBackgroundRenderer = BackgroundRenderer.parse(background);
+		}
+		if(hoverBackground != null) {
+			hoverBackgroundRenderer = BackgroundRenderer.parse(hoverBackground);
+		} else {
+			hoverBackgroundRenderer = normalBackgroundRenderer;
 		}
 		if(sizeRounding != null) {
 			rounding = SizeRounding.valueOf(sizeRounding.toUpperCase());
 		}
 	}
 
-	public NinePatch getBackgroundNinePatch() {
-		return backgroundNinePatch;
+	public BackgroundRenderer getNormalBackgroundRenderer() {
+		return normalBackgroundRenderer;
+	}
+
+	public BackgroundRenderer getHoverBackgroundRenderer() {
+		return hoverBackgroundRenderer;
 	}
 
 	public String getBackground() {
@@ -70,24 +68,6 @@ public class ParentStyleRule extends StyleRule {
 
 	public void setBackground(String background) {
 		this.background = background;
-	}
-
-	public String getBackgroundMode() {
-		if(backgroundMode == null) {
-			return BG_STRETCH_MODE;
-		}
-		return backgroundMode;
-	}
-
-	public void setBackgroundMode(String backgroundMode) {
-		if(backgroundMode == null) {
-			return;
-		}
-		if(backgroundMode.equalsIgnoreCase(BG_REPEAT_MODE)) {
-			this.backgroundMode = BG_REPEAT_MODE;
-		} else {
-			this.backgroundMode = BG_STRETCH_MODE;
-		}
 	}
 	
 	public SizeRounding getRounding() {
@@ -99,33 +79,5 @@ public class ParentStyleRule extends StyleRule {
 			return;
 		}
 		this.rounding = rounding;
-	}
-
-	public int getNinePatchTop() {
-		if(ninePatchTop <= 0) {
-			return getPaddingTop();
-		}
-		return ninePatchTop;
-	}
-
-	public int getNinePatchBottom() {
-		if(ninePatchBottom <= 0) {
-			return getPaddingBottom();
-		}
-		return ninePatchBottom;
-	}
-
-	public int getNinePatchLeft() {
-		if(ninePatchLeft <= 0) {
-			return getPaddingLeft();
-		}
-		return ninePatchLeft;
-	}
-
-	public int getNinePatchRight() {
-		if(ninePatchRight <= 0) {
-			return getPaddingRight();
-		}
-		return ninePatchRight;
 	}
 }

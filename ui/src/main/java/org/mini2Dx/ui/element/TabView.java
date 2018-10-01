@@ -38,7 +38,7 @@ import com.badlogic.gdx.Input.Keys;
  * A {@link UiElement} of tabs that can be switched between by the player
  */
 public class TabView extends ParentUiElement implements Navigatable {
-	private static final String DEFAULT_CHANGE_TAB_BTN_LAYOUT = "flex-col:xs-3c sm-2c lg-1c";
+	private static final String DEFAULT_CHANGE_TAB_BTN_LAYOUT = "flex-col:xs-3c sm-2c md-2c lg-1c";
 
 	private final Queue<ControllerHotKeyOperation> controllerHotKeyOperations = new LinkedList<ControllerHotKeyOperation>();
 	private final Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations = new LinkedList<KeyboardHotKeyOperation>();
@@ -54,7 +54,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	@Field(optional=true)
 	private String layout = LayoutRuleset.DEFAULT_RULESET;
 	@Field(optional=true)
-	private String tabButtonLayout = "xs-6c sm-4c md-2c xl-1c";
+	private String tabButtonLayout = "flex-column:xs-3c sm-4c md-2c lg-2c";
 	@Field(optional = true)
 	protected final List<Tab> tabs = new ArrayList<Tab>(1);
 
@@ -286,36 +286,38 @@ public class TabView extends ParentUiElement implements Navigatable {
 
 		availablePixelsForTabButtons = renderNode.getOuterRenderWidth() - previousTabButton.getWidth() - nextTabButton.getWidth();
 		if (tabButtons.size() > 0) {
-			int maxTabButtonWidth = 0;
-			for(int i = 0; i < tabButtons.size(); i++) {
-				maxTabButtonWidth = Math.max(maxTabButtonWidth, tabButtons.get(i).getWidth());
-			}
-			pixelsPerTabButton = maxTabButtonWidth;
+			pixelsPerTabButton = tabButtons.get(0).getWidth();
 		}
 
-		int tabButtonViewOffset = tabButtonViewIndex * pixelsPerTabButton;
+		int displayedButtonViewOffset = tabButtonViewIndex * pixelsPerTabButton;
 		int currentTabButtonViewOffset = currentTabIndex * pixelsPerTabButton;
 
 		// Handle tab buttons shifting right into view
-		while (currentTabButtonViewOffset < tabButtonViewOffset) {
+		while (currentTabButtonViewOffset < displayedButtonViewOffset) {
 			tabButtonViewIndex--;
-			tabButtonViewOffset = tabButtonViewIndex * pixelsPerTabButton;
+			displayedButtonViewOffset = tabButtonViewIndex * pixelsPerTabButton;
 		}
 
 		// Handle tab buttons shifting left into view
-		while (tabButtonViewOffset + availablePixelsForTabButtons < currentTabButtonViewOffset + pixelsPerTabButton) {
+		while (displayedButtonViewOffset + availablePixelsForTabButtons < currentTabButtonViewOffset + pixelsPerTabButton) {
 			tabButtonViewIndex++;
-			tabButtonViewOffset = tabButtonViewIndex * pixelsPerTabButton;
+			displayedButtonViewOffset = tabButtonViewIndex * pixelsPerTabButton;
 		}
 
 		for (int i = 0; i < tabs.size(); i++) {
 			Tab tab = tabs.get(i);
 			TabButton tabButton = tabButtons.get(i);
 
-			int tabButtonColumnOffset = i * pixelsPerTabButton;
-			if (tabButtonColumnOffset + pixelsPerTabButton <= tabButtonViewOffset) {
+			int tabButtonPixelOffset = i * pixelsPerTabButton;
+			System.out.println(i + " " + tabButtonPixelOffset + " " + (tabButtonPixelOffset + pixelsPerTabButton) + " " + availablePixelsForTabButtons + " " + displayedButtonViewOffset);
+
+			if (tabButtonPixelOffset + pixelsPerTabButton <= displayedButtonViewOffset) {
 				tabButton.setVisibility(Visibility.HIDDEN);
-			} else if (tabButtonColumnOffset >= tabButtonViewOffset + availablePixelsForTabButtons) {
+			} else if (tabButtonPixelOffset < displayedButtonViewOffset) {
+				tabButton.setVisibility(Visibility.HIDDEN);
+			} else if (tabButtonPixelOffset >= displayedButtonViewOffset + availablePixelsForTabButtons) {
+				tabButton.setVisibility(Visibility.HIDDEN);
+			} else if (tabButtonPixelOffset + pixelsPerTabButton > displayedButtonViewOffset + availablePixelsForTabButtons) {
 				tabButton.setVisibility(Visibility.HIDDEN);
 			} else {
 				tabButton.setVisibility(Visibility.VISIBLE);

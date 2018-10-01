@@ -3,6 +3,7 @@
  */
 package org.mini2Dx.ui.element;
 
+import com.badlogic.gdx.math.MathUtils;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.ui.layout.HorizontalAlignment;
@@ -99,7 +100,7 @@ public class TabButton extends Button {
 		if(renderNode.getLayoutRuleset() == null) {
 			return 0;
 		}
-		return renderNode.getOuterRenderWidth();
+		return ((TabButtonRenderNode) renderNode).getOuterRenderWidth();
 	}
 
 	public Label getLabel() {

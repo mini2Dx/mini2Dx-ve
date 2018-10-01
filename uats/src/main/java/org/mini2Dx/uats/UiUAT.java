@@ -429,7 +429,7 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 		bottomRightFrame.setLayout("flex-column:xs-12c sm-6c md-4c lg-3c");
 		bottomRightFrame.setVisibility(Visibility.VISIBLE);
 		Row bottomFrameRow = Row.withElements("row-os", UiUtils.createHeader("OVERFLOW CLIPPED"));
-		bottomFrameRow.setLayout("flex-col-r:xs-12c,12px");
+		bottomFrameRow.setLayout("flex-col-r:xs-12c,xs-12px");
 		bottomFrameRow.setOverflowClipped(true);
 		bottomRightFrame.add(bottomFrameRow);
 		uiContainer.add(bottomRightFrame);

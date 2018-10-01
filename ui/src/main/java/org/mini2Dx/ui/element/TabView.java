@@ -309,7 +309,6 @@ public class TabView extends ParentUiElement implements Navigatable {
 			TabButton tabButton = tabButtons.get(i);
 
 			int tabButtonPixelOffset = i * pixelsPerTabButton;
-			System.out.println(i + " " + tabButtonPixelOffset + " " + (tabButtonPixelOffset + pixelsPerTabButton) + " " + availablePixelsForTabButtons + " " + displayedButtonViewOffset);
 
 			if (tabButtonPixelOffset + pixelsPerTabButton <= displayedButtonViewOffset) {
 				tabButton.setVisibility(Visibility.HIDDEN);

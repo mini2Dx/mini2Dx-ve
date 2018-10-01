@@ -255,7 +255,7 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 		switch (scrollThumbState) {
 		case ACTION:
 			float yDiff = screenY - thumbDragStartY;
-			setScrollThumbPosition(((scrollThumb.getY() + yDiff) - scrollTrack.getY()) / scrollTrack.getHeight());
+			setScrollThumbPosition(scrollThumbPosition + (yDiff / scrollTrack.getHeight()));
 			thumbDragStartY = screenY;
 			return true;
 		case HOVER:
@@ -442,6 +442,10 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 		return scrollThumbPosition;
 	}
 
+	/**
+	 * Sets the scroll position
+	 * @param position A value between 0.0 and 1.0
+	 */
 	public void setScrollThumbPosition(float position) {
 		float maxPosition = (scrollTrack.getHeight() - scrollThumb.getHeight()) / scrollTrack.getHeight();
 		scrollThumbPosition = position;

@@ -44,7 +44,7 @@ public class CheckboxRenderNode extends RenderNode<Checkbox, CheckboxStyleRule> 
 		if (!element.isEnabled()) {
 			return null;
 		}
-		if (outerArea.contains(screenX, screenY)) {
+		if (innerArea.contains(screenX, screenY)) {
 			setState(NodeState.ACTION);
 			return this;
 		}
@@ -56,7 +56,7 @@ public class CheckboxRenderNode extends RenderNode<Checkbox, CheckboxStyleRule> 
 		if (getState() != NodeState.ACTION) {
 			return;
 		}
-		if (outerArea.contains(screenX, screenY)) {
+		if (innerArea.contains(screenX, screenY)) {
 			setState(NodeState.HOVER);
 		} else {
 			setState(NodeState.NORMAL);

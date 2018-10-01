@@ -176,12 +176,12 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 		case ACTION:
 			return false;
 		case NORMAL:
-			if (outerArea.contains(screenX, screenY)) {
+			if (innerArea.contains(screenX, screenY)) {
 				super.setState(NodeState.HOVER);
 			}
 			break;
 		case HOVER:
-			if (!outerArea.contains(screenX, screenY)) {
+			if (!innerArea.contains(screenX, screenY)) {
 				super.setState(NodeState.NORMAL);
 			}
 			break;
@@ -202,7 +202,7 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 		}
 		switch (getState()) {
 		case ACTION:
-			if (!outerArea.contains(screenX, screenY)) {
+			if (!innerArea.contains(screenX, screenY)) {
 				MouseEventTriggerParams params = EventTriggerParamsPool.allocateMouseParams();
 				params.setMouseX(screenX);
 				params.setMouseY(screenY);
@@ -212,7 +212,7 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 			}
 			return this;
 		default:
-			if (outerArea.contains(screenX, screenY)) {
+			if (innerArea.contains(screenX, screenY)) {
 				return this;
 			}
 			return null;
@@ -226,7 +226,7 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 		}
 		switch (getState()) {
 		case ACTION:
-			if (outerArea.contains(screenX, screenY)) {
+			if (innerArea.contains(screenX, screenY)) {
 				setCursorIndex(screenX, screenY);
 			} else {
 				MouseEventTriggerParams params = EventTriggerParamsPool.allocateMouseParams();
@@ -237,7 +237,7 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 			}
 			break;
 		default:
-			if (outerArea.contains(screenX, screenY)) {
+			if (innerArea.contains(screenX, screenY)) {
 				MouseEventTriggerParams params = EventTriggerParamsPool.allocateMouseParams();
 				params.setMouseX(screenX);
 				params.setMouseY(screenY);

@@ -45,7 +45,7 @@ public class ButtonRenderNode extends ParentRenderNode<Button, ButtonStyleRule> 
 		if (!element.isEnabled()) {
 			return null;
 		}
-		if (outerArea.contains(screenX, screenY)) {
+		if (innerArea.contains(screenX, screenY)) {
 			setState(NodeState.ACTION);
 			return this;
 		}
@@ -57,7 +57,7 @@ public class ButtonRenderNode extends ParentRenderNode<Button, ButtonStyleRule> 
 		if (getState() != NodeState.ACTION) {
 			return;
 		}
-		if (outerArea.contains(screenX, screenY)) {
+		if (innerArea.contains(screenX, screenY)) {
 			setState(NodeState.HOVER);
 		} else {
 			setState(NodeState.NORMAL);

@@ -32,6 +32,7 @@ import com.badlogic.gdx.Gdx;
 public abstract class RenderNode<T extends UiElement, S extends StyleRule> implements HoverableRenderNode {
 	protected final List<UiEffect> effects = new ArrayList<UiEffect>(1);
 	protected final CollisionBox outerArea = new CollisionBox();
+	protected final Rectangle innerArea = new Rectangle();
 	protected final Rectangle targetOuterArea = new Rectangle();
 	protected final ParentRenderNode<?, ?> parent;
 	protected final T element;
@@ -98,6 +99,8 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 			Gdx.app.log(element.getId(), "UPDATE - outerArea: " + outerArea + ", targetArea: " + targetOuterArea
 					+ ", visibility: " + element.getVisibility());
 		}
+
+		innerArea.set(getInnerX(), getInnerY(), getInnerWidth(), getInnerHeight());
 	}
 
 	public void interpolate(float alpha) {
@@ -129,7 +132,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 	}
 
 	public boolean mouseMoved(int screenX, int screenY) {
-		if (outerArea.contains(screenX, screenY)) {
+		if (innerArea.contains(screenX, screenY)) {
 			beginHover();
 			return true;
 		} else if (state != NodeState.NORMAL) {
@@ -150,7 +153,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 	}
 
 	public boolean contains(float screenX, float screenY) {
-		return outerArea.contains(screenX, screenY);
+		return innerArea.contains(screenX, screenY);
 	}
 
 	public void beginHover() {
@@ -479,7 +482,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 
 	@Override
 	public String toString() {
-		return "RenderNode [currentArea=" + outerArea + ", targetArea=" + targetOuterArea + ", parent=" + parent.getId()
+		return "RenderNode [outerArea=" + outerArea + ", targetOuterArea=" + targetOuterArea + ", parent=" + parent.getId()
 				+ ", style=" + style + ", preferredWidth=" + preferredContentWidth + ", preferredHeight="
 				+ preferredContentHeight + ", xOffset=" + xOffset + ", yOffset=" + yOffset + "]";
 	}

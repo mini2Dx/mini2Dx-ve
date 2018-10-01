@@ -267,7 +267,7 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		if (outerArea.contains(screenX, screenY)) {
+		if (innerArea.contains(screenX, screenY)) {
 			setState(NodeState.HOVER);
 
 			if (leftButton.contains(screenX, screenY)) {

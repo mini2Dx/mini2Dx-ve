@@ -227,16 +227,16 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		boolean outerAreaContains = false;
-		if (outerArea.contains(screenX, screenY)) {
+		boolean innerAreaContains = false;
+		if (innerArea.contains(screenX, screenY)) {
 			setState(NodeState.HOVER);
-			outerAreaContains = true;
+			innerAreaContains = true;
 		} else {
 			setState(NodeState.NORMAL);
 		}
-		boolean result = handleScrollThumbMouseMoved(outerAreaContains, screenX, screenY);
-		result |= handleTopScrollButtonMouseMoved(outerAreaContains, screenX, screenY);
-		result |= handleBottomScrollButtonMouseMoved(outerAreaContains, screenX, screenY);
+		boolean result = handleScrollThumbMouseMoved(innerAreaContains, screenX, screenY);
+		result |= handleTopScrollButtonMouseMoved(innerAreaContains, screenX, screenY);
+		result |= handleBottomScrollButtonMouseMoved(innerAreaContains, screenX, screenY);
 
 		if (!result) {
 			final IntMap.Keys keys = layers.descendingKeys();
@@ -251,7 +251,7 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 		return result;
 	}
 
-	private boolean handleScrollThumbMouseMoved(boolean outerAreaContains, int screenX, int screenY) {
+	private boolean handleScrollThumbMouseMoved(boolean innerAreaContains, int screenX, int screenY) {
 		switch (scrollThumbState) {
 		case ACTION:
 			float yDiff = screenY - thumbDragStartY;
@@ -261,7 +261,7 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 		case HOVER:
 		case NORMAL:
 		default:
-			if (outerAreaContains) {
+			if (innerAreaContains) {
 				if (scrollThumb.contains(screenX, screenY)) {
 					scrollThumbState = NodeState.HOVER;
 				} else {
@@ -276,7 +276,7 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 		}
 	}
 
-	private boolean handleTopScrollButtonMouseMoved(boolean outerAreaContains, int screenX, int screenY) {
+	private boolean handleTopScrollButtonMouseMoved(boolean innerAreaContains, int screenX, int screenY) {
 		if (scrollThumbState == NodeState.ACTION) {
 			return false;
 		}
@@ -295,7 +295,7 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 		}
 	}
 
-	private boolean handleBottomScrollButtonMouseMoved(boolean outerAreaContains, int screenX, int screenY) {
+	private boolean handleBottomScrollButtonMouseMoved(boolean innerAreaContains, int screenX, int screenY) {
 		if (scrollThumbState == NodeState.ACTION) {
 			return false;
 		}
@@ -357,7 +357,7 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 
 	@Override
 	public boolean mouseScrolled(int screenX, int screenY, float amount) {
-		if (outerArea.contains(screenX, screenY)) {
+		if (innerArea.contains(screenX, screenY)) {
 			setScrollThumbPosition(scrollThumbPosition + (amount * ((ScrollBox) element).getScrollFactor()));
 		}
 		return false;

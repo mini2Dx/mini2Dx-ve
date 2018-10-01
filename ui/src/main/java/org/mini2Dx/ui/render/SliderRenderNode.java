@@ -78,7 +78,7 @@ public class SliderRenderNode extends RenderNode<Slider, SliderStyleRule> implem
 		if (!element.isEnabled()) {
 			return null;
 		}
-		if (outerArea.contains(screenX, screenY)) {
+		if (innerArea.contains(screenX, screenY)) {
 			setState(NodeState.ACTION);
 
 			if (sliderPosition.contains(screenX - getContentRenderX(), screenY - getContentRenderY())) {
@@ -96,7 +96,7 @@ public class SliderRenderNode extends RenderNode<Slider, SliderStyleRule> implem
 		if (!dragging && getState() != NodeState.ACTION) {
 			return;
 		}
-		if (outerArea.contains(screenX, screenY)) {
+		if (innerArea.contains(screenX, screenY)) {
 			setState(NodeState.HOVER);
 		} else {
 			setState(NodeState.NORMAL);

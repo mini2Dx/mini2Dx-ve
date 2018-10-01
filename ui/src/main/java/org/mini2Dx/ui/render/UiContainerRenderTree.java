@@ -76,6 +76,7 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 		xOffset = determineXOffset(layoutState);
 		yOffset = determineYOffset(layoutState);
 		outerArea.forceTo(xOffset, yOffset, preferredContentWidth, preferredContentHeight);
+		innerArea.set(outerArea.getX(), outerArea.getY(), outerArea.getWidth(), outerArea.getHeight());
 
 		final IntMap.Keys keys = layers.ascendingKeys();
 		keys.reset();

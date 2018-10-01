@@ -197,7 +197,7 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		if (outerArea.contains(screenX, screenY)) {
+		if (innerArea.contains(screenX, screenY)) {
 			setState(NodeState.HOVER);
 			boolean result = false;
 
@@ -218,7 +218,7 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 
 	@Override
 	public boolean mouseScrolled(int screenX, int screenY, float amount) {
-		if (outerArea.contains(screenX, screenY)) {
+		if (innerArea.contains(screenX, screenY)) {
 			boolean result = false;
 
 			final IntMap.Keys keys = layers.descendingKeys();

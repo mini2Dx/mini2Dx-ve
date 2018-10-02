@@ -50,7 +50,11 @@ public class CheckboxStyleRule extends ParentStyleRule {
 		super.prepareAssets(theme, fileHandleResolver, assetManager);
 
 		enabledBackgroundRenderer = BackgroundRenderer.parse(enabledBox);
+		enabledBackgroundRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
+
 		disabledBackgroundRenderer = BackgroundRenderer.parse(disabledBox);
+		disabledBackgroundRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
+
 		enabledCheckTextureRegion = new TextureRegion(theme.getTextureAtlas().findRegion(enabledCheck));
 		disabledCheckTextureRegion = new TextureRegion(theme.getTextureAtlas().findRegion(disabledCheck));
 		

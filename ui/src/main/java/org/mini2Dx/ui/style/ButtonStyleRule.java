@@ -37,11 +37,13 @@ public class ButtonStyleRule extends ParentStyleRule {
 
 		if(actionBackground != null) {
 			actionBackgroundRenderer = BackgroundRenderer.parse(actionBackground);
+			actionBackgroundRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
 		} else {
 			actionBackgroundRenderer = getHoverBackgroundRenderer();
 		}
 		if(disabledBackground != null) {
 			disabledBackgroundRenderer = BackgroundRenderer.parse(disabledBackground);
+			disabledBackgroundRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
 		} else {
 			disabledBackgroundRenderer = getNormalBackgroundRenderer();
 		}
@@ -53,5 +55,21 @@ public class ButtonStyleRule extends ParentStyleRule {
 
 	public BackgroundRenderer getDisabledBackgroundRenderer() {
 		return disabledBackgroundRenderer;
+	}
+
+	public String getActionBackground() {
+		return actionBackground;
+	}
+
+	public void setActionBackground(String actionBackground) {
+		this.actionBackground = actionBackground;
+	}
+
+	public String getDisabledBackground() {
+		return disabledBackground;
+	}
+
+	public void setDisabledBackground(String disabledBackground) {
+		this.disabledBackground = disabledBackground;
 	}
 }

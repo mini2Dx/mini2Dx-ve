@@ -55,7 +55,6 @@ public class SliderRenderNode extends RenderNode<Slider, SliderStyleRule> implem
 			float relativeX = Math.max(0, Gdx.input.getX() - getContentRenderX());
 			element.setValue(relativeX / getContentRenderWidth());
 			determineSliderPosiitonByElementValue(getContentRenderWidth());
-			System.out.println(getState());
 		}
 	}
 
@@ -137,7 +136,7 @@ public class SliderRenderNode extends RenderNode<Slider, SliderStyleRule> implem
 	protected void renderElement(Graphics g) {
 		renderBackground(g);
 
-		if (style.getSliderBarNinePatch() != null) {
+		if (style.getSliderBarRenderer() != null) {
 			int sliderBarRenderY = getContentRenderY();
 			int slideBarHeight = getContentRenderHeight();
 
@@ -146,7 +145,7 @@ public class SliderRenderNode extends RenderNode<Slider, SliderStyleRule> implem
 				sliderBarRenderY = getContentRenderY() + (getContentRenderHeight() / 2) - (slideBarHeight / 2);
 			}
 
-			g.drawNinePatch(style.getSliderBarNinePatch(), getContentRenderX(), sliderBarRenderY,
+			style.getSliderBarRenderer().render(g, getContentRenderX(), sliderBarRenderY,
 					getContentRenderWidth(), slideBarHeight);
 		}
 

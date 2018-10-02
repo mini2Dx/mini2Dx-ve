@@ -27,14 +27,6 @@ public class SliderStyleRule extends ParentStyleRule {
 	@Field(optional=true)
 	private String sliderBar;
 	@Field(optional=true)
-	private int sliderBarNinePatchTop = -1;
-	@Field(optional=true)
-	private int sliderBarNinePatchLeft = -1;
-	@Field(optional=true)
-	private int sliderBarNinePatchRight = -1;
-	@Field(optional=true)
-	private int sliderBarNinePatchBottom = -1;
-	@Field(optional=true)
 	private int sliderBarMaxHeight = 0;
 	@Field
 	private String normal;
@@ -45,26 +37,14 @@ public class SliderStyleRule extends ParentStyleRule {
 	@Field
 	private String disabled;
 	
-	private NinePatch sliderBarNinePatch;
+	private BackgroundRenderer sliderBarRenderer;
 	private TextureRegion normalTextureRegion, activeTextureRegion, hoverTextureRegion, disabledTextureRegion;
 	
 	@Override
 	public void validate(UiTheme theme) {
 		super.validate(theme);
-		if(sliderBar == null) {
+		if(sliderBar == null || sliderBar.isEmpty()) {
 			return;
-		}
-		if(sliderBarNinePatchTop < 0) {
-			throw new MdxException("sliderBarNinePatchTop must be greater than or equal to 0. Required by " + SliderStyleRule.class.getSimpleName());
-		}
-		if(sliderBarNinePatchBottom < 0) {
-			throw new MdxException("sliderBarNinePatchBottom must be greater than or equal to 0. Required by " + SliderStyleRule.class.getSimpleName());
-		}
-		if(sliderBarNinePatchLeft < 0) {
-			throw new MdxException("sliderBarNinePatchLeft must be greater than or equal to 0. Required by " + SliderStyleRule.class.getSimpleName());
-		}
-		if(sliderBarNinePatchRight < 0) {
-			throw new MdxException("sliderBarNinePatchRight must be greater than or equal to 0. Required by " + SliderStyleRule.class.getSimpleName());
 		}
 	}
 	
@@ -76,8 +56,8 @@ public class SliderStyleRule extends ParentStyleRule {
 		super.prepareAssets(theme, fileHandleResolver, assetManager);
 		
 		if(sliderBar != null) {
-			sliderBarNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(sliderBar)), sliderBarNinePatchLeft,
-					sliderBarNinePatchRight, sliderBarNinePatchTop, sliderBarNinePatchBottom);
+			sliderBarRenderer = BackgroundRenderer.parse(sliderBar);
+			sliderBarRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
 		}
 		normalTextureRegion = new TextureRegion(theme.getTextureAtlas().findRegion(normal));
 		activeTextureRegion = new TextureRegion(theme.getTextureAtlas().findRegion(active));
@@ -85,10 +65,10 @@ public class SliderStyleRule extends ParentStyleRule {
 		disabledTextureRegion = new TextureRegion(theme.getTextureAtlas().findRegion(disabled));
 	}
 
-	public NinePatch getSliderBarNinePatch() {
-		return sliderBarNinePatch;
+	public BackgroundRenderer getSliderBarRenderer() {
+		return sliderBarRenderer;
 	}
-	
+
 	public TextureRegion getNormalTextureRegion() {
 		return normalTextureRegion;
 	}

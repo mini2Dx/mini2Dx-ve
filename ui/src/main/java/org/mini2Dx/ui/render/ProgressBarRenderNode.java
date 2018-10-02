@@ -44,10 +44,10 @@ public class ProgressBarRenderNode extends RenderNode<ProgressBar, ProgressBarSt
 	@Override
 	protected void renderElement(Graphics g) {
 		if (style.getBackground() != null) {
-			g.drawNinePatch(style.getBackgroundNinePatch(), getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
+			style.getBackgroundRenderer().render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(),
 					getInnerRenderHeight());
 		}
-		g.drawNinePatch(style.getFillNinePatch(), getContentRenderX(), getContentRenderY(), fillWidth,
+		style.getFillRenderer().render(g, getContentRenderX(), getContentRenderY(), fillWidth,
 				getContentRenderHeight());
 	}
 

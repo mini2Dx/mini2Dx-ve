@@ -55,9 +55,16 @@ public class ScrollBoxStyleRule extends ParentStyleRule {
 		
 		super.prepareAssets(theme, fileHandleResolver, assetManager);
 		scrollTrackRenderer = BackgroundRenderer.parse(scrollTrack);
+		scrollTrackRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
+
 		scrollThumbNormalRenderer = BackgroundRenderer.parse(scrollThumbNormal);
+		scrollThumbNormalRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
+
 		scrollThumbHoverRenderer = BackgroundRenderer.parse(scrollThumbHover);
+		scrollThumbHoverRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
+
 		scrollThumbActiveRenderer = BackgroundRenderer.parse(scrollThumbAction);
+		scrollThumbActiveRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
 	}
 
 	public String getTopScrollButtonStyle() {

@@ -28,19 +28,19 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
  */
 public class TextBoxStyleRule extends StyleRule {
 	@Field
-	private String normal;
+	private String background;
 	@Field
-	private String hover;
+	private String hoverBackground;
 	@Field
-	private String action;
+	private String actionBackground;
 	@Field
-	private String disabled;
+	private String disabledBackground;
 	@Field
 	private String font;
 	@Field
 	private String textColor;
 	
-	private NinePatch normalNinePatch, hoverNinePatch, actionNinePatch, disabledNinePatch;
+	private BackgroundRenderer normalBackgroundRenderer, hoverBackgroundRenderer, actionBackgroundRenderer, disabledBackgroundRenderer;
 	private UiFont uiFont;
 	private Color color = null;
 	
@@ -49,74 +49,50 @@ public class TextBoxStyleRule extends StyleRule {
 		if (theme.isHeadless()) {
 			return; 
 		}
-		
-		normalNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(normal)), getPaddingLeft(),
-				getPaddingRight(), getPaddingTop(), getPaddingBottom());
-		hoverNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(hover)), getPaddingLeft(),
-				getPaddingRight(), getPaddingTop(), getPaddingBottom());
-		actionNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(action)), getPaddingLeft(),
-				getPaddingRight(), getPaddingTop(), getPaddingBottom());
-		disabledNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(disabled)), getPaddingLeft(),
-				getPaddingRight(), getPaddingTop(), getPaddingBottom());
+
+		normalBackgroundRenderer = BackgroundRenderer.parse(background);
+		normalBackgroundRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
+
+		hoverBackgroundRenderer = BackgroundRenderer.parse(hoverBackground);
+		hoverBackgroundRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
+
+		actionBackgroundRenderer = BackgroundRenderer.parse(actionBackground);
+		actionBackgroundRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
+
+		disabledBackgroundRenderer = BackgroundRenderer.parse(disabledBackground);
+		disabledBackgroundRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
+
 		color = ColorUtils.rgbToColor(textColor);
 
 		uiFont = theme.getFont(font);
 	}
-	
-	public NinePatch getNormalNinePatch() {
-		return normalNinePatch;
+
+	public BackgroundRenderer getNormalBackgroundRenderer() {
+		return normalBackgroundRenderer;
 	}
 
-	public NinePatch getHoverNinePatch() {
-		return hoverNinePatch;
+	public BackgroundRenderer getHoverBackgroundRenderer() {
+		return hoverBackgroundRenderer;
 	}
 
-	public NinePatch getActionNinePatch() {
-		return actionNinePatch;
+	public BackgroundRenderer getActionBackgroundRenderer() {
+		return actionBackgroundRenderer;
 	}
 
-	public NinePatch getDisabledNinePatch() {
-		return disabledNinePatch;
+	public BackgroundRenderer getDisabledBackgroundRenderer() {
+		return disabledBackgroundRenderer;
 	}
 
 	public BitmapFont getBitmapFont() {
 		return uiFont.getBitmapFont();
 	}
 
+	public int getFontSize() {
+		return uiFont.getFontSize();
+	}
+
 	public Color getColor() {
 		return color;
-	}
-
-	public String getNormal() {
-		return normal;
-	}
-
-	public void setNormal(String normal) {
-		this.normal = normal;
-	}
-
-	public String getHover() {
-		return hover;
-	}
-
-	public void setHover(String hover) {
-		this.hover = hover;
-	}
-
-	public String getAction() {
-		return action;
-	}
-
-	public void setAction(String action) {
-		this.action = action;
-	}
-
-	public String getDisabled() {
-		return disabled;
-	}
-
-	public void setDisabled(String disabled) {
-		this.disabled = disabled;
 	}
 
 	public String getFont() {

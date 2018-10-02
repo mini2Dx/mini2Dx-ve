@@ -43,9 +43,11 @@ public class ParentStyleRule extends StyleRule {
 		
 		if(background != null) {
 			normalBackgroundRenderer = BackgroundRenderer.parse(background);
+			normalBackgroundRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
 		}
 		if(hoverBackground != null) {
 			hoverBackgroundRenderer = BackgroundRenderer.parse(hoverBackground);
+			hoverBackgroundRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
 		} else {
 			hoverBackgroundRenderer = normalBackgroundRenderer;
 		}
@@ -79,5 +81,13 @@ public class ParentStyleRule extends StyleRule {
 			return;
 		}
 		this.rounding = rounding;
+	}
+
+	public String getHoverBackground() {
+		return hoverBackground;
+	}
+
+	public void setHoverBackground(String hoverBackground) {
+		this.hoverBackground = hoverBackground;
 	}
 }

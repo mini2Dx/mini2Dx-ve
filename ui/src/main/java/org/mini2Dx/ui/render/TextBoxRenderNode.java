@@ -23,6 +23,7 @@ import org.mini2Dx.ui.event.params.MouseEventTriggerParams;
 import org.mini2Dx.ui.layout.HorizontalAlignment;
 import org.mini2Dx.ui.layout.LayoutRuleset;
 import org.mini2Dx.ui.layout.LayoutState;
+import org.mini2Dx.ui.style.BackgroundRenderer;
 import org.mini2Dx.ui.style.TextBoxStyleRule;
 
 import com.badlogic.gdx.Gdx;
@@ -82,26 +83,26 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 
 	@Override
 	protected void renderElement(Graphics g) {
-		NinePatch ninePatch = style.getNormalNinePatch();
+		BackgroundRenderer backgroundRenderer = style.getNormalBackgroundRenderer();
 		if (element.isEnabled()) {
 			switch (getState()) {
 			case ACTION:
-				ninePatch = style.getActionNinePatch();
+				backgroundRenderer = style.getActionBackgroundRenderer();
 				break;
 			case HOVER:
-				ninePatch = style.getHoverNinePatch();
+				backgroundRenderer = style.getHoverBackgroundRenderer();
 				break;
 			default:
 				break;
 			}
 		} else {
-			ninePatch = style.getDisabledNinePatch();
+			backgroundRenderer = style.getDisabledBackgroundRenderer();
 		}
 
 		float textRenderX = getContentRenderX();
 		float textRenderY = getContentRenderY();
 
-		g.drawNinePatch(ninePatch, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(), getInnerRenderHeight());
+		backgroundRenderer.render(g, getInnerRenderX(), getInnerRenderY(), getInnerRenderWidth(), getInnerRenderHeight());
 
 		bitmapFontCache.setPosition(textRenderX, textRenderY);
 		g.drawBitmapFontCache(bitmapFontCache);

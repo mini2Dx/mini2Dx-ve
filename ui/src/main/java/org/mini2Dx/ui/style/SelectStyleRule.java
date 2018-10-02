@@ -73,6 +73,7 @@ public class SelectStyleRule extends StyleRule {
 
 		if(background != null) {
 			normalBackgroundRenderer = BackgroundRenderer.parse(background);
+			normalBackgroundRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
 		}
 		if(leftButtonLabelStyle == null) {
 			leftButtonLabelStyle = enabledLabelStyle;

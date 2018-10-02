@@ -35,12 +35,10 @@ public class UiThemeWriter {
 		
 		ButtonStyleRuleset buttonRuleset = new ButtonStyleRuleset();
 		ButtonStyleRule styleRule = new ButtonStyleRule();
-		styleRule.setAction("");
-		styleRule.setDisabled("");
-		styleRule.setFont("");
-		styleRule.setHover("");
-		styleRule.setNormal("");
-		styleRule.setTextColor("");
+		styleRule.setActionBackground("");
+		styleRule.setDisabledBackground("");
+		styleRule.setHoverBackground("");
+		styleRule.setBackground("");
 		
 		buttonRuleset.putStyleRule(ScreenSize.XS, styleRule);
 		theme.putButtonStyleRuleset(UiTheme.DEFAULT_STYLE_ID, buttonRuleset);

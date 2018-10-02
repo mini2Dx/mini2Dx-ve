@@ -26,14 +26,10 @@ import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 public class ProgressBarStyleRule extends StyleRule {
 	@Field(optional = true)
 	private String background;
-	@Field(optional = true)
-	private int backgroundNinePatchTop, backgroundNinePatchBottom, backgroundNinePatchLeft, backgroundNinePatchRight;
 	@Field
 	private String fill;
-	@Field
-	private int fillNinePatchTop, fillNinePatchBottom, fillNinePatchLeft, fillNinePatchRight;
 
-	private NinePatch backgroundNinePatch, fillNinePatch;
+	private BackgroundRenderer backgroundRenderer, fillRenderer;
 
 	@Override
 	public void validate(UiTheme theme) {
@@ -50,20 +46,21 @@ public class ProgressBarStyleRule extends StyleRule {
 			return; 
 		}
 		if (background != null) {
-			backgroundNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(background)),
-					getBackgroundNinePatchLeft(), getBackgroundNinePatchRight(), getBackgroundNinePatchTop(),
-					getBackgroundNinePatchBottom());
+			backgroundRenderer = BackgroundRenderer.parse(background);
+			backgroundRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
 		}
-		fillNinePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(fill)), fillNinePatchLeft,
-				fillNinePatchRight, fillNinePatchTop, fillNinePatchBottom);
+		if(fill != null) {
+			fillRenderer = BackgroundRenderer.parse(fill);
+			fillRenderer.prepareAssets(theme, fileHandleResolver, assetManager);
+		}
 	}
 
-	public NinePatch getBackgroundNinePatch() {
-		return backgroundNinePatch;
+	public BackgroundRenderer getBackgroundRenderer() {
+		return backgroundRenderer;
 	}
-	
-	public NinePatch getFillNinePatch() {
-		return fillNinePatch;
+
+	public BackgroundRenderer getFillRenderer() {
+		return fillRenderer;
 	}
 
 	public String getBackground() {
@@ -74,71 +71,11 @@ public class ProgressBarStyleRule extends StyleRule {
 		this.background = background;
 	}
 
-	public int getBackgroundNinePatchTop() {
-		if (backgroundNinePatchTop <= 0) {
-			return getPaddingTop();
-		}
-		return backgroundNinePatchTop;
-	}
-
-	public int getBackgroundNinePatchBottom() {
-		if (backgroundNinePatchBottom <= 0) {
-			return getPaddingBottom();
-		}
-		return backgroundNinePatchBottom;
-	}
-
-	public int getBackgroundNinePatchLeft() {
-		if (backgroundNinePatchLeft <= 0) {
-			return getPaddingLeft();
-		}
-		return backgroundNinePatchLeft;
-	}
-
-	public int getBackgroundNinePatchRight() {
-		if (backgroundNinePatchRight <= 0) {
-			return getPaddingRight();
-		}
-		return backgroundNinePatchRight;
-	}
-
 	public String getFill() {
 		return fill;
 	}
 
 	public void setFill(String fill) {
 		this.fill = fill;
-	}
-
-	public int getFillNinePatchTop() {
-		return fillNinePatchTop;
-	}
-
-	public void setFillNinePatchTop(int fillNinePatchTop) {
-		this.fillNinePatchTop = fillNinePatchTop;
-	}
-
-	public int getFillNinePatchBottom() {
-		return fillNinePatchBottom;
-	}
-
-	public void setFillNinePatchBottom(int fillNinePatchBottom) {
-		this.fillNinePatchBottom = fillNinePatchBottom;
-	}
-
-	public int getFillNinePatchLeft() {
-		return fillNinePatchLeft;
-	}
-
-	public void setFillNinePatchLeft(int fillNinePatchLeft) {
-		this.fillNinePatchLeft = fillNinePatchLeft;
-	}
-
-	public int getFillNinePatchRight() {
-		return fillNinePatchRight;
-	}
-
-	public void setFillNinePatchRight(int fillNinePatchRight) {
-		this.fillNinePatchRight = fillNinePatchRight;
 	}
 }

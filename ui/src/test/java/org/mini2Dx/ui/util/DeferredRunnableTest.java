@@ -61,7 +61,7 @@ public class DeferredRunnableTest {
     }
 
     @Test
-    public void testDeferredRunnableProcessOrder() {
+    public void testDeferredUntilUpdateRunnableProcessOrder() {
         mockery.checking(new Expectations() {
             {
                 atLeast(1).of(graphics).getDeltaTime();
@@ -75,11 +75,11 @@ public class DeferredRunnableTest {
         final AtomicBoolean flag2 = new AtomicBoolean(false);
         final AtomicBoolean flag3 = new AtomicBoolean(false);
 
-        element.defer(new Runnable() {
+        element.deferUntilUpdate(new Runnable() {
             @Override
             public void run() {
                 flag1.set(true);
-                element.defer(new Runnable() {
+                element.deferUntilUpdate(new Runnable() {
                     @Override
                     public void run() {
                         flag2.set(true);
@@ -87,7 +87,7 @@ public class DeferredRunnableTest {
                 });
             }
         });
-        element.defer(new Runnable() {
+        element.deferUntilUpdate(new Runnable() {
             @Override
             public void run() {
                 flag3.set(true);
@@ -98,13 +98,64 @@ public class DeferredRunnableTest {
         Assert.assertEquals(false, flag2.get());
         Assert.assertEquals(false, flag3.get());
 
-        element.syncWithRenderNode();
+        element.syncWithUpdate();
 
         Assert.assertEquals(true, flag1.get());
         Assert.assertEquals(false, flag2.get());
         Assert.assertEquals(true, flag3.get());
 
-        element.syncWithRenderNode();
+        element.syncWithUpdate();
+
+        Assert.assertEquals(true, flag1.get());
+        Assert.assertEquals(true, flag2.get());
+        Assert.assertEquals(true, flag3.get());
+    }
+
+    @Test
+    public void testDeferredUntilLayoutRunnableProcessOrder() {
+        mockery.checking(new Expectations() {
+            {
+                atLeast(1).of(graphics).getDeltaTime();
+                will(returnValue(0.16f));
+            }
+        });
+
+        final DummyUiElement element = new DummyUiElement();
+
+        final AtomicBoolean flag1 = new AtomicBoolean(false);
+        final AtomicBoolean flag2 = new AtomicBoolean(false);
+        final AtomicBoolean flag3 = new AtomicBoolean(false);
+
+        element.deferUntilLayout(new Runnable() {
+            @Override
+            public void run() {
+                flag1.set(true);
+                element.deferUntilLayout(new Runnable() {
+                    @Override
+                    public void run() {
+                        flag2.set(true);
+                    }
+                });
+            }
+        });
+        element.deferUntilLayout(new Runnable() {
+            @Override
+            public void run() {
+                flag3.set(true);
+            }
+        });
+
+        Assert.assertEquals(false, flag1.get());
+        Assert.assertEquals(false, flag2.get());
+        Assert.assertEquals(false, flag3.get());
+
+        element.syncWithLayout();
+
+        Assert.assertEquals(true, flag1.get());
+        Assert.assertEquals(false, flag2.get());
+        Assert.assertEquals(true, flag3.get());
+
+        element.syncWithLayout();
 
         Assert.assertEquals(true, flag1.get());
         Assert.assertEquals(true, flag2.get());

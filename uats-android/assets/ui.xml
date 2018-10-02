@@ -2,8 +2,6 @@
 <data id="modal">
 	<layout>flex-column:xs-8c sm-6c</layout>
 	<visibility>VISIBLE</visibility>
-	<verticalAlignment>MIDDLE</verticalAlignment>
-	<horizontalAlignment>CENTER</horizontalAlignment>
 	<children length="1">
 		<value class="org.mini2Dx.ui.element.Row" id="row">
 			<visibility>VISIBLE</visibility>

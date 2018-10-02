@@ -37,7 +37,8 @@ import org.mini2Dx.ui.util.IdAllocator;
 public abstract class UiElement implements Hoverable {
 	private final String id;
 	protected final Queue<UiEffect> effects = new LinkedList<UiEffect>();
-	protected final List<DeferredRunnable> deferred = new ArrayList<DeferredRunnable>(1);
+	protected final List<DeferredRunnable> deferredUpdate = new ArrayList<DeferredRunnable>(1);
+	protected final List<DeferredRunnable> deferredLayout = new ArrayList<DeferredRunnable>(1);
 
 	@Field(optional = true)
 	protected Visibility visibility = UiContainer.getDefaultVisibility();
@@ -49,7 +50,9 @@ public abstract class UiElement implements Hoverable {
 	private List<UiEffectListener> effectListeners;
 	private List<HoverListener> hoverListeners;
 	private boolean debugEnabled = false;
-	private boolean deferredSortRequired = true;
+
+	private boolean deferredUpdateSortRequired = true;
+	private boolean deferredLayoutSortRequired = true;
 
 	/**
 	 * Constructor. Generates a unique ID for this element.
@@ -72,9 +75,16 @@ public abstract class UiElement implements Hoverable {
 	}
 
 	/**
-	 * Syncs data between the {@link UiElement} and {@link RenderNode}
+	 * Syncs data between the {@link UiElement} and {@link RenderNode} during update
 	 */
-	public abstract void syncWithRenderNode();
+	public abstract void syncWithUpdate();
+
+	/**
+	 * Syncs data between the {@link UiElement} and {@link RenderNode} during UI layout
+	 */
+	public void syncWithLayout() {
+		processLayoutDeferred();
+	}
 
 	/**
 	 * Attaches a {@link RenderNode} for this element to a parent
@@ -109,8 +119,8 @@ public abstract class UiElement implements Hoverable {
 	 * @param runnable The {@link Runnable} to execute
 	 * @return A {@link DeferredRunnable} that can be cancelled
 	 */
-	public DeferredRunnable defer(Runnable runnable) {
-		return defer(runnable, 0f);
+	public DeferredRunnable deferUntilUpdate(Runnable runnable) {
+		return deferUntilUpdate(runnable, 0f);
 	}
 	
 	/**
@@ -119,26 +129,55 @@ public abstract class UiElement implements Hoverable {
 	 * @param duration The time to wait (in seconds) until executing the {@link Runnable}
 	 * @return A {@link DeferredRunnable} that can be cancelled
 	 */
-	public DeferredRunnable defer(Runnable runnable, float duration) {
+	public DeferredRunnable deferUntilUpdate(Runnable runnable, float duration) {
 		DeferredRunnable result = DeferredRunnable.allocate(runnable, duration);
-		deferred.add(result);
-		deferredSortRequired = true;
+		deferredUpdate.add(result);
+		deferredUpdateSortRequired = true;
+		return result;
+	}
+
+	/**
+	 * Defers the execution of a {@link Runnable} instance until the next UI re-layout
+	 * @param runnable The {@link Runnable} to execute
+	 * @return A {@link DeferredRunnable} that can be cancelled
+	 */
+	public DeferredRunnable deferUntilLayout(Runnable runnable) {
+		DeferredRunnable result = DeferredRunnable.allocate(runnable, 0f);
+		deferredLayout.add(result);
+		deferredLayoutSortRequired = true;
 		return result;
 	}
 	
 	/**
-	 * Processes all deferred actions
+	 * Processes all actions deferred until update
 	 */
-	protected void processDeferred() {
-		if(deferredSortRequired) {
-			Collections.sort(deferred);
-			deferredSortRequired = false;
+	protected void processUpdateDeferred() {
+		if(deferredUpdateSortRequired) {
+			Collections.sort(deferredUpdate);
+			deferredUpdateSortRequired = false;
 		}
 
-		for(int i = deferred.size() - 1; i >= 0; i--) {
-			DeferredRunnable runnable = deferred.get(i);
+		for(int i = deferredUpdate.size() - 1; i >= 0; i--) {
+			DeferredRunnable runnable = deferredUpdate.get(i);
 			if(runnable.run()) {
-				deferred.remove(i);
+				deferredUpdate.remove(i);
+			}
+		}
+	}
+
+	/**
+	 * Processes all actions deferred until layout
+	 */
+	protected void processLayoutDeferred() {
+		if(deferredLayoutSortRequired) {
+			Collections.sort(deferredLayout);
+			deferredLayoutSortRequired = false;
+		}
+
+		for(int i = deferredLayout.size() - 1; i >= 0; i--) {
+			DeferredRunnable runnable = deferredLayout.get(i);
+			if(runnable.run()) {
+				deferredLayout.remove(i);
 			}
 		}
 	}

@@ -115,11 +115,11 @@ public class Select<V> extends UiElement implements Actionable {
 	}
 	
 	@Override
-	public void syncWithRenderNode() {
+	public void syncWithUpdate() {
 		while (!effects.isEmpty()) {
 			renderNode.applyEffect(effects.poll());
 		}
-		processDeferred();
+		processUpdateDeferred();
 	}
 
 	/**

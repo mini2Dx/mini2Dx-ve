@@ -154,6 +154,7 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 		setDirty(false);
 		childDirty = false;
 		initialLayoutOccurred = true;
+		element.syncWithLayout();
 	}
 
 	@Override

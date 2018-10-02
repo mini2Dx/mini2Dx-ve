@@ -304,11 +304,11 @@ public class Image extends UiElement {
 	}
 	
 	@Override
-	public void syncWithRenderNode() {
+	public void syncWithUpdate() {
 		while (!effects.isEmpty()) {
 			renderNode.applyEffect(effects.poll());
 		}
-		processDeferred();
+		processUpdateDeferred();
 	}
 
 	@Override

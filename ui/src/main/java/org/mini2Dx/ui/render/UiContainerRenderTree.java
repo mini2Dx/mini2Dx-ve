@@ -91,6 +91,7 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 		childDirty = false;
 		screenSizeChanged = false;
 		initialLayoutOccurred = true;
+		element.syncWithLayout();
 	}
 
 	@Override

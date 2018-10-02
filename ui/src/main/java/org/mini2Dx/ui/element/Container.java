@@ -13,7 +13,6 @@ package org.mini2Dx.ui.element;
 
 import com.badlogic.gdx.math.MathUtils;
 import org.mini2Dx.core.controller.button.ControllerButton;
-import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.layout.HorizontalAlignment;
@@ -57,7 +56,6 @@ public class Container extends Column implements Navigatable {
 
 	/**
 	 * Aligns this container to the same area of another element.
-	 * Note: This element and the align element must already be added to the render tree before this method can be called.
 	 *
 	 * @param alignToElement The {@link UiElement} to align with. Note: This can also be the {@link UiContainer}
 	 * @param horizontalAlignment The {@link HorizontalAlignment} of this element
@@ -65,10 +63,20 @@ public class Container extends Column implements Navigatable {
 	 */
 	public void alignTo(ParentUiElement alignToElement, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
 		if (renderNode == null) {
-			throw new MdxException("Container must be added to a UiContainer before alignment can be set");
+			deferAlignToUntilLayout(alignToElement, horizontalAlignment, verticalAlignment);
+			return;
+		}
+		if(!renderNode.isInitialLayoutOccurred()) {
+			deferAlignToUntilLayout(alignToElement, horizontalAlignment, verticalAlignment);
+			return;
+		}
+		if(!renderNode.isInitialUpdateOccurred()) {
+			deferAlignToUntilUpdate(alignToElement, horizontalAlignment, verticalAlignment);
+			return;
 		}
 		if (alignToElement.getWidth() < 0f) {
-			throw new MdxException("alignToElement must be added to a UiContainer before alignment can be set");
+			deferAlignToUntilLayout(alignToElement, horizontalAlignment, verticalAlignment);
+			return;
 		}
 		final int x, y;
 
@@ -144,8 +152,23 @@ public class Container extends Column implements Navigatable {
 	 * @param horizontalAlignment The {@link HorizontalAlignment} of this element
 	 * @param verticalAlignment The {@link VerticalAlignment} of this element
 	 */
-	public void deferAlignTo(final ParentUiElement alignToElement, final HorizontalAlignment horizontalAlignment, final VerticalAlignment verticalAlignment) {
-		defer(new Runnable() {
+	public void deferAlignToUntilUpdate(final ParentUiElement alignToElement, final HorizontalAlignment horizontalAlignment, final VerticalAlignment verticalAlignment) {
+		deferUntilUpdate(new Runnable() {
+			@Override
+			public void run() {
+				alignTo(alignToElement, horizontalAlignment, verticalAlignment);
+			}
+		});
+	}
+
+	/**
+	 * Calls {@link #alignTo(ParentUiElement, HorizontalAlignment, VerticalAlignment)} on the next UI layout
+	 * @param alignToElement The {@link UiElement} to align with. Note: This can also be the {@link UiContainer}
+	 * @param horizontalAlignment The {@link HorizontalAlignment} of this element
+	 * @param verticalAlignment The {@link VerticalAlignment} of this element
+	 */
+	public void deferAlignToUntilLayout(final ParentUiElement alignToElement, final HorizontalAlignment horizontalAlignment, final VerticalAlignment verticalAlignment) {
+		deferUntilLayout(new Runnable() {
 			@Override
 			public void run() {
 				alignTo(alignToElement, horizontalAlignment, verticalAlignment);
@@ -154,8 +177,8 @@ public class Container extends Column implements Navigatable {
 	}
 
 	@Override
-	public void syncWithRenderNode() {
-		super.syncWithRenderNode();
+	public void syncWithUpdate() {
+		super.syncWithUpdate();
 		((ContainerRenderNode) renderNode).syncHotkeys(controllerHotKeyOperations, keyboardHotKeyOperations);
 	}
 

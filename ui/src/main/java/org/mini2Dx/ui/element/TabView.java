@@ -250,7 +250,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	}
 
 	@Override
-	public void syncWithRenderNode() {
+	public void syncWithUpdate() {
 		while (!effects.isEmpty()) {
 			renderNode.applyEffect(effects.poll());
 		}

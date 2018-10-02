@@ -118,7 +118,6 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 		if(controllerInput != null) {
 			controllerInput.enable();
 		}
-		uatsDialog.deferAlignTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.TOP);
 	}
 
 	@Override
@@ -316,6 +315,8 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 		uatsDialog.setNavigation(uiNavigation);
 
 		uiContainer.add(uatsDialog);
+
+		uatsDialog.alignTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.TOP);
 	}
 
 	@Override

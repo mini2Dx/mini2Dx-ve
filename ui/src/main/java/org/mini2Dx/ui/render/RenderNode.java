@@ -43,7 +43,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 	protected float xOffset, yOffset;
 	protected int zIndex;
 	protected boolean hiddenByLayoutRule = false;
-	protected boolean initialLayoutOccurred = false;
+	protected boolean initialLayoutOccurred = false, initialUpdateOccurred = false;
 	private float relativeX, relativeY;
 	private boolean dirty;
 	private boolean includeInRender = false;
@@ -74,7 +74,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		}
 		outerArea.preUpdate();
 
-		element.syncWithRenderNode();
+		element.syncWithUpdate();
 
 		boolean visible = isScheduledToRender();
 		if (effects.size() == 0) {
@@ -101,6 +101,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		}
 
 		innerArea.set(getInnerX(), getInnerY(), getInnerWidth(), getInnerHeight());
+		initialUpdateOccurred = true;
 	}
 
 	public void interpolate(float alpha) {
@@ -207,6 +208,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		}
 		dirty = false;
 		initialLayoutOccurred = true;
+		element.syncWithLayout();
 	}
 
 	public boolean isIncludedInLayout() {
@@ -478,6 +480,14 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 
 	public ParentRenderNode<?, ?> getParent() {
 		return parent;
+	}
+
+	public boolean isInitialLayoutOccurred() {
+		return initialLayoutOccurred;
+	}
+
+	public boolean isInitialUpdateOccurred() {
+		return initialUpdateOccurred;
 	}
 
 	@Override

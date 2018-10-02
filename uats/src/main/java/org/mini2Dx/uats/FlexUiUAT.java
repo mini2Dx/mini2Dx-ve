@@ -92,9 +92,9 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 	
 	@Override
 	public void onResize(int width, int height) {
+		centerContainer.deferAlignToUntilLayout(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
+		bottomRightContainer.deferAlignToUntilLayout(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
 		uiContainer.set(width, height);
-		centerContainer.deferAlignTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
-		bottomRightContainer.deferAlignTo(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
 	}
 
 	@Override
@@ -135,8 +135,6 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		if(controllerInput != null) {
 			controllerInput.enable();
 		}
-		centerContainer.deferAlignTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
-		bottomRightContainer.deferAlignTo(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
 	}
 	
 	@Override
@@ -419,5 +417,8 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		bottomFrameRow.setOverflowClipped(true);
 		bottomRightContainer.add(bottomFrameRow);
 		uiContainer.add(bottomRightContainer);
+
+		centerContainer.alignTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
+		bottomRightContainer.alignTo(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
 	}
 }

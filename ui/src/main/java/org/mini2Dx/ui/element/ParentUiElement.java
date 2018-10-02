@@ -243,7 +243,7 @@ public abstract class ParentUiElement extends UiElement {
 	}
 
 	@Override
-	public void syncWithRenderNode() {
+	public void syncWithUpdate() {
 		while (!effects.isEmpty()) {
 			renderNode.applyEffect(effects.poll());
 		}
@@ -257,7 +257,7 @@ public abstract class ParentUiElement extends UiElement {
 		while (!asyncRemoveQueue.isEmpty()) {
 			remove(asyncRemoveQueue.poll());
 		}
-		processDeferred();
+		processUpdateDeferred();
 	}
 
 	@Override

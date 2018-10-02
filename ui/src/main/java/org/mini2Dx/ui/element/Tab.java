@@ -117,8 +117,8 @@ public class Tab extends Row implements Navigatable {
 	}
 
 	@Override
-	public void syncWithRenderNode() {
-		super.syncWithRenderNode();
+	public void syncWithUpdate() {
+		super.syncWithUpdate();
 		((NavigatableRenderNode) renderNode).syncHotkeys(controllerHotKeyOperations, keyboardHotKeyOperations);
 	}
 	

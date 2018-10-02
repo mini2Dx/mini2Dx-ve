@@ -37,8 +37,8 @@ public class DummyUiElement extends UiElement {
 	}
 
 	@Override
-	public void syncWithRenderNode() {
-		processDeferred();
+	public void syncWithUpdate() {
+		processUpdateDeferred();
 	}
 
 	@Override

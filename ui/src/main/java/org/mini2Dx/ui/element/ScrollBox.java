@@ -64,8 +64,8 @@ public class ScrollBox extends Column {
 	}
 
 	@Override
-	public void syncWithRenderNode() {
-		super.syncWithRenderNode();
+	public void syncWithUpdate() {
+		super.syncWithUpdate();
 
 		if (renderNode == null) {
 			return;

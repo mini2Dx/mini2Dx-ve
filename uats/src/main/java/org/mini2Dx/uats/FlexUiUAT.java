@@ -28,25 +28,10 @@ import org.mini2Dx.uats.util.UATSelectionScreen;
 import org.mini2Dx.uats.util.UiUtils;
 import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.controller.ControllerUiInput;
-import org.mini2Dx.ui.element.AbsoluteContainer;
-import org.mini2Dx.ui.element.AlignedModal;
-import org.mini2Dx.ui.element.Button;
-import org.mini2Dx.ui.element.Checkbox;
-import org.mini2Dx.ui.element.Column;
-import org.mini2Dx.ui.element.Label;
-import org.mini2Dx.ui.element.ProgressBar;
-import org.mini2Dx.ui.element.RadioButton;
-import org.mini2Dx.ui.element.Row;
-import org.mini2Dx.ui.element.ScrollBox;
-import org.mini2Dx.ui.element.Select;
-import org.mini2Dx.ui.element.Slider;
-import org.mini2Dx.ui.element.Tab;
-import org.mini2Dx.ui.element.TabView;
-import org.mini2Dx.ui.element.TextBox;
-import org.mini2Dx.ui.element.TextButton;
-import org.mini2Dx.ui.element.Visibility;
+import org.mini2Dx.ui.element.*;
 import org.mini2Dx.ui.event.ActionEvent;
 import org.mini2Dx.ui.layout.FlexDirection;
+import org.mini2Dx.ui.layout.HorizontalAlignment;
 import org.mini2Dx.ui.layout.VerticalAlignment;
 import org.mini2Dx.ui.listener.ActionListener;
 import org.mini2Dx.ui.navigation.VerticalUiNavigation;
@@ -57,19 +42,18 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.MathUtils;
 
 /**
- * A user acceptance test for the mini2Dx responsive UI framework
+ * User acceptance test for the mini2Dx flex UI layout
  */
-public class UiUAT extends BasicGameScreen implements GameResizeListener {
+public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 	private final AssetManager assetManager;
 	
 	private UiContainer uiContainer;
 	private ControllerUiInput<?> controllerInput;
 	
-	private AbsoluteContainer topLeftFrame, bottomRightFrame;
-	private AlignedModal modal;
+	private Container topLeftContainer, bottomRightContainer;
+	private Container centerContainer;
 	
 	private TabView tabView;
 	private Select<String> select;
@@ -81,7 +65,7 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 	
 	private int nextScreenId = -1;
 
-	public UiUAT(AssetManager assetManager) {
+	public FlexUiUAT(AssetManager assetManager) {
 		super();
 		this.assetManager = assetManager;
 	}
@@ -109,12 +93,13 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 	@Override
 	public void onResize(int width, int height) {
 		uiContainer.set(width, height);
+		centerContainer.deferAlignTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
+		bottomRightContainer.deferAlignTo(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
 	}
 
 	@Override
 	public void update(GameContainer gc, ScreenManager<? extends GameScreen> screenManager, float delta) {
 		uiContainer.update(delta);
-		bottomRightFrame.set(gc.getWidth() - bottomRightFrame.getWidth(), gc.getHeight() - bottomRightFrame.getHeight());
 		if (nextScreenId > -1) {
 			screenManager.enterGameScreen(nextScreenId, new FadeOutTransition(), new FadeInTransition());
 			nextScreenId = -1;
@@ -150,6 +135,8 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 		if(controllerInput != null) {
 			controllerInput.enable();
 		}
+		centerContainer.deferAlignTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
+		bottomRightContainer.deferAlignTo(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
 	}
 	
 	@Override
@@ -161,16 +148,16 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 
 	@Override
 	public int getId() {
-		return ScreenIds.getScreenId(UiUAT.class);
+		return ScreenIds.getScreenId(FlexUiUAT.class);
 	}
 
 	private void initialiseUi() {
-		topLeftFrame = new AbsoluteContainer("top-left-frame");
-		topLeftFrame.setLayout("flex-col:xs-12c sm-6c md-4c lg-3c");
-		topLeftFrame.setStyleId("no-background");
+		topLeftContainer = new Container("top-left-frame");
+		topLeftContainer.setLayout("flex-col:xs-12c sm-6c md-4c lg-3c");
+		topLeftContainer.setStyleId("no-background");
 		Row topLeftHeaderRow = Row.withElements("top-left-header", UiUtils.createHeader("UI UAT"));
 		topLeftHeaderRow.setLayout("flex-center:xs-12c,xs-20px");
-		topLeftFrame.add(topLeftHeaderRow);
+		topLeftContainer.add(topLeftHeaderRow);
 		
 		Button backRowButton = UiUtils.createButton(null, "", new ActionListener() {
 			
@@ -189,10 +176,10 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 		backRowButton.setLayout("flex-center:xs-12c,xs-20px");
 		Row backRow = Row.withElements("behind-header", backRowButton);
 		backRow.setZIndex(-1);
-		topLeftFrame.add(backRow);
+		topLeftContainer.add(backRow);
 		
-		topLeftFrame.setVisibility(Visibility.VISIBLE);
-		uiContainer.add(topLeftFrame);
+		topLeftContainer.setVisibility(Visibility.VISIBLE);
+		uiContainer.add(topLeftContainer);
 		
 		VerticalUiNavigation tab1Navigation = new VerticalUiNavigation();
 		textBox = UiUtils.createTextBox(tab1Navigation, "textbox", new ActionListener() {
@@ -294,9 +281,8 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 		select.addOption("Item 2", "2");
 		select.addOption("Item 3", "3");
 		
-		modal = new AlignedModal("main-modal");
-		modal.setLayout("flex-column:xs-12c md-8c lg-6c md-offset-2c lg-offset-3c");
-		modal.setVerticalAlignment(VerticalAlignment.MIDDLE);
+		centerContainer = new Container("main-centerContainer");
+		centerContainer.setLayout("flex-column:xs-12c md-8c lg-6c md-offset-2c lg-offset-3c");
 		
 		tabView = new TabView("tabView");
 		tabView.setVisibility(Visibility.VISIBLE);
@@ -326,8 +312,8 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 			
 			@Override
 			public void onActionEnd(ActionEvent event) {
-				modal.remove(tabView);
-				modal.add(tabView);
+				centerContainer.remove(tabView);
+				centerContainer.add(tabView);
 			}
 			
 			@Override
@@ -420,18 +406,18 @@ public class UiUAT extends BasicGameScreen implements GameResizeListener {
 		tabView.setNextTabHotkey(Keys.E);
 		tabView.setPreviousTabHotkey(Keys.Q);
 		
-		modal.add(tabView);
-		modal.setVisibility(Visibility.VISIBLE);
-		modal.setNavigation(tabView.getNavigation());
-		uiContainer.add(modal);
+		centerContainer.add(tabView);
+		centerContainer.setVisibility(Visibility.VISIBLE);
+		centerContainer.setNavigation(tabView.getNavigation());
+		uiContainer.add(centerContainer);
 		
-		bottomRightFrame = new AbsoluteContainer("bottom-right-frame");
-		bottomRightFrame.setLayout("flex-column:xs-12c sm-6c md-4c lg-3c");
-		bottomRightFrame.setVisibility(Visibility.VISIBLE);
+		bottomRightContainer = new Container("bottom-right-frame");
+		bottomRightContainer.setLayout("flex-column:xs-12c sm-6c md-4c lg-3c");
+		bottomRightContainer.setVisibility(Visibility.VISIBLE);
 		Row bottomFrameRow = Row.withElements("row-os", UiUtils.createHeader("OVERFLOW CLIPPED"));
 		bottomFrameRow.setLayout("flex-col-r:xs-12c,xs-12px");
 		bottomFrameRow.setOverflowClipped(true);
-		bottomRightFrame.add(bottomFrameRow);
-		uiContainer.add(bottomRightFrame);
+		bottomRightContainer.add(bottomFrameRow);
+		uiContainer.add(bottomRightContainer);
 	}
 }

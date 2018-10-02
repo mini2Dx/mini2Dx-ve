@@ -45,7 +45,9 @@ public class FlexLayoutRuleset extends LayoutRuleset {
 
 	/**
 	 * Constructor
-	 * @param rules The ruleset, e.g. xs-12c xs-offset-4c sm-500px sm-offset-20px
+	 * @param flexDirection The {@link FlexDirection}
+	 * @param rules The ruleset, e.g. flex-column:xs-12c xs-offset-4c sm-500px sm-offset-20px,auto
+	 * @param ruleValue The part of the ruleset after :
 	 */
 	public FlexLayoutRuleset(FlexDirection flexDirection, String rules, String ruleValue) {
 		super(rules);

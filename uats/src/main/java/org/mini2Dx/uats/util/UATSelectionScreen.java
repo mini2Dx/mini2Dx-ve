@@ -21,26 +21,12 @@ import org.mini2Dx.core.screen.ScreenManager;
 import org.mini2Dx.core.screen.Transition;
 import org.mini2Dx.core.screen.transition.FadeInTransition;
 import org.mini2Dx.core.screen.transition.FadeOutTransition;
-import org.mini2Dx.uats.AudioUAT;
-import org.mini2Dx.uats.BlendingUAT;
-import org.mini2Dx.uats.ClippingUAT;
-import org.mini2Dx.uats.ControllerMapping;
-import org.mini2Dx.uats.ControllerUAT;
-import org.mini2Dx.uats.GeometryUAT;
-import org.mini2Dx.uats.GraphicsUAT;
-import org.mini2Dx.uats.HexagonalTiledMapUAT;
-import org.mini2Dx.uats.IsometricTiledMapUAT;
-import org.mini2Dx.uats.OrthogonalTiledMapNoCachingUAT;
-import org.mini2Dx.uats.OrthogonalTiledMapWithCachingUAT;
-import org.mini2Dx.uats.ParticleEffectsUAT;
-import org.mini2Dx.uats.TextureRegionUAT;
-import org.mini2Dx.uats.UiSerializationUAT;
-import org.mini2Dx.uats.UiUAT;
+import org.mini2Dx.uats.*;
 import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.animation.TypingTextAnimation;
 import org.mini2Dx.ui.controller.ControllerUiInput;
 import org.mini2Dx.ui.effect.SlideIn;
-import org.mini2Dx.ui.element.AlignedModal;
+import org.mini2Dx.ui.element.Container;
 import org.mini2Dx.ui.element.Row;
 import org.mini2Dx.ui.element.Visibility;
 import org.mini2Dx.ui.event.ActionEvent;
@@ -68,7 +54,7 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 
 	private UiContainer uiContainer;
 	private ControllerUiInput<?> controllerInput;
-	private AlignedModal uatsDialog;
+	private Container uatsDialog;
 	private int nextScreenId = -1;
 
 	public UATSelectionScreen(AssetManager assetManager) {
@@ -132,6 +118,7 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 		if(controllerInput != null) {
 			controllerInput.enable();
 		}
+		uatsDialog.deferAlignTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.TOP);
 	}
 
 	@Override
@@ -152,9 +139,7 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 	}
 
 	private void initialiseUi() {
-		uatsDialog = new AlignedModal("uats-dialog");
-		uatsDialog.setHorizontalAlignment(HorizontalAlignment.CENTER);
-		uatsDialog.setVerticalAlignment(VerticalAlignment.TOP);
+		uatsDialog = new Container("uats-dialog");
 		uatsDialog.setLayout("flex-column:xs-12c sm-10c md-8c lg-6c sm-offset-1c md-offset-2c lg-offset-3c");
 		VerticalUiNavigation uiNavigation = new VerticalUiNavigation();
 		
@@ -285,14 +270,24 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 				nextScreenId = ScreenIds.getScreenId(ControllerUAT.class);
 			}
 		})));
-		uatsDialog.add(Row.withElements("row-ui", UiUtils.createButton(uiNavigation, "UI", new ActionListener() {
+		uatsDialog.add(Row.withElements("row-ui", UiUtils.createButton(uiNavigation, "Flex UI Layout", new ActionListener() {
 			@Override
 			public void onActionBegin(ActionEvent event) {
 			}
 
 			@Override
 			public void onActionEnd(ActionEvent event) {
-				nextScreenId = ScreenIds.getScreenId(UiUAT.class);
+				nextScreenId = ScreenIds.getScreenId(FlexUiUAT.class);
+			}
+		})));
+		uatsDialog.add(Row.withElements("row-ui", UiUtils.createButton(uiNavigation, "Pixel UI Layout", new ActionListener() {
+			@Override
+			public void onActionBegin(ActionEvent event) {
+			}
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				nextScreenId = ScreenIds.getScreenId(PixelUiUAT.class);
 			}
 		})));
 		uatsDialog.add(Row.withElements("row-ui-serialization", UiUtils.createButton(uiNavigation, "UI Serialization", new ActionListener() {

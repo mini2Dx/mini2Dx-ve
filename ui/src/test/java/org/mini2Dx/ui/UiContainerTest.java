@@ -13,7 +13,6 @@ package org.mini2Dx.ui;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -25,7 +24,7 @@ import org.mini2Dx.core.controller.ControllerType;
 import org.mini2Dx.core.controller.button.XboxOneButton;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.ui.element.AlignedModal;
+import org.mini2Dx.ui.element.Container;
 import org.mini2Dx.ui.element.UiElement;
 import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.listener.UiContainerListener;
@@ -44,7 +43,7 @@ public class UiContainerTest implements UiContainerListener {
 	
 	private GameContainer gameContainer;
 	private AssetManager assetManager;
-	private AlignedModal modal;
+	private Container container;
 	
 	private UiContainer uiContainer;
 	
@@ -54,7 +53,7 @@ public class UiContainerTest implements UiContainerListener {
 		
 		gameContainer = mockery.mock(GameContainer.class);
 		assetManager = mockery.mock(AssetManager.class);
-		modal = mockery.mock(AlignedModal.class);
+		container = mockery.mock(Container.class);
 		
 		mockery.checking(new Expectations() {
 			{
@@ -96,12 +95,12 @@ public class UiContainerTest implements UiContainerListener {
 	public void testBlocksKeyUpWhenKeyDownPreviouslyReceived() {
 		mockery.checking(new Expectations() {
 			{
-				exactly(2).of(modal).hotkey(Keys.LEFT);
+				exactly(2).of(container).hotkey(Keys.LEFT);
 				will(returnValue(null));
 			}
 		});
 		
-		uiContainer.setActiveNavigation(modal);
+		uiContainer.setActiveNavigation(container);
 		uiContainer.keyDown(Keys.LEFT);
 		Assert.assertEquals(true, uiContainer.keyUp(Keys.LEFT));
 	}
@@ -114,7 +113,7 @@ public class UiContainerTest implements UiContainerListener {
 
 	@Test
 	public void testIgnoresKeyUpWhenKeyDownNotPreviouslyReceived() {
-		uiContainer.setActiveNavigation(modal);
+		uiContainer.setActiveNavigation(container);
 		Assert.assertEquals(false, uiContainer.keyUp(Keys.LEFT));
 	}
 	
@@ -122,12 +121,12 @@ public class UiContainerTest implements UiContainerListener {
 	public void testIgnoresRepeatedKeyUpEvents() {
 		mockery.checking(new Expectations() {
 			{
-				exactly(2).of(modal).hotkey(Keys.LEFT);
+				exactly(2).of(container).hotkey(Keys.LEFT);
 				will(returnValue(null));
 			}
 		});
 		
-		uiContainer.setActiveNavigation(modal);
+		uiContainer.setActiveNavigation(container);
 		uiContainer.keyDown(Keys.LEFT);
 		Assert.assertEquals(true, uiContainer.keyUp(Keys.LEFT));
 		Assert.assertEquals(false, uiContainer.keyUp(Keys.LEFT));
@@ -137,12 +136,12 @@ public class UiContainerTest implements UiContainerListener {
 	public void testBlocksButtonUpWhenButtonDownPreviouslyReceived() {
 		mockery.checking(new Expectations() {
 			{
-				exactly(2).of(modal).hotkey(XboxOneButton.A);
+				exactly(2).of(container).hotkey(XboxOneButton.A);
 				will(returnValue(null));
 			}
 		});
 		
-		uiContainer.setActiveNavigation(modal);
+		uiContainer.setActiveNavigation(container);
 		uiContainer.buttonDown(null, XboxOneButton.A);
 		Assert.assertEquals(true, uiContainer.buttonUp(null, XboxOneButton.A));
 	}
@@ -155,7 +154,7 @@ public class UiContainerTest implements UiContainerListener {
 
 	@Test
 	public void testIgnoresButtonUpWhenButtonDownNotPreviouslyReceived() {
-		uiContainer.setActiveNavigation(modal);
+		uiContainer.setActiveNavigation(container);
 		Assert.assertEquals(false, uiContainer.buttonUp(null, XboxOneButton.A));
 	}
 	
@@ -163,12 +162,12 @@ public class UiContainerTest implements UiContainerListener {
 	public void testIgnoresRepeatedButtonUpEvents() {
 		mockery.checking(new Expectations() {
 			{
-				exactly(2).of(modal).hotkey(XboxOneButton.A);
+				exactly(2).of(container).hotkey(XboxOneButton.A);
 				will(returnValue(null));
 			}
 		});
 		
-		uiContainer.setActiveNavigation(modal);
+		uiContainer.setActiveNavigation(container);
 		uiContainer.buttonDown(null, XboxOneButton.A);
 		Assert.assertEquals(true, uiContainer.buttonUp(null, XboxOneButton.A));
 		Assert.assertEquals(false, uiContainer.buttonUp(null, XboxOneButton.A));

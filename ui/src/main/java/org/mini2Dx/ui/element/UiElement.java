@@ -323,4 +323,28 @@ public abstract class UiElement implements Hoverable {
 	public void setDebugEnabled(boolean debugEnabled) {
 		this.debugEnabled = debugEnabled;
 	}
+
+	/**
+	 * Returns the x coordinate of the element with in the {@link UiContainer}
+	 * @return {@link Float#MIN_VALUE} if this element has not been added to the render tree
+	 */
+	public abstract float getX();
+
+	/**
+	 * Returns the Y coordinate of the element with in the {@link UiContainer}
+	 * @return {@link Float#MIN_VALUE} if this element has not been added to the render tree
+	 */
+	public abstract float getY();
+
+	/**
+	 * Returns the width of this element. Note: This value includes the margin and padding determined by the style.
+	 * @return -1 if this element has not been added to the render tree
+	 */
+	public abstract float getWidth();
+
+	/**
+	 * Returns the height of this element. Note: This value includes the margin and padding determined by the style.
+	 * @return -1 if this element has not been added to the render tree
+	 */
+	public abstract float getHeight();
 }

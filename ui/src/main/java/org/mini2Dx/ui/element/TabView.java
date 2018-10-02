@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import com.badlogic.gdx.math.MathUtils;
 import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
@@ -284,9 +285,9 @@ public class TabView extends ParentUiElement implements Navigatable {
 			}
 		}
 
-		availablePixelsForTabButtons = renderNode.getOuterRenderWidth() - previousTabButton.getWidth() - nextTabButton.getWidth();
+		availablePixelsForTabButtons = MathUtils.round(renderNode.getOuterRenderWidth() - previousTabButton.getWidth() - nextTabButton.getWidth());
 		if (tabButtons.size() > 0) {
-			pixelsPerTabButton = tabButtons.get(0).getWidth();
+			pixelsPerTabButton = MathUtils.round(tabButtons.get(0).getWidth());
 		}
 
 		int displayedButtonViewOffset = tabButtonViewIndex * pixelsPerTabButton;

@@ -93,21 +93,43 @@ public class TabButton extends Button {
 		this.currentTab = currentTab;
 	}
 
-	public int getWidth() {
-		if(renderNode == null) {
-			return 0;
-		}
-		if(renderNode.getLayoutRuleset() == null) {
-			return 0;
-		}
-		return ((TabButtonRenderNode) renderNode).getOuterRenderWidth();
-	}
-
 	public Label getLabel() {
 		return label;
 	}
 
 	public Image getIcon() {
 		return icon;
+	}
+
+	@Override
+	public float getX() {
+		if(renderNode == null) {
+			return Float.MIN_VALUE;
+		}
+		return renderNode.getOuterX();
+	}
+
+	@Override
+	public float getY() {
+		if(renderNode == null) {
+			return Float.MIN_VALUE;
+		}
+		return renderNode.getOuterY();
+	}
+
+	@Override
+	public float getWidth() {
+		if(renderNode == null) {
+			return -1f;
+		}
+		return renderNode.getOuterWidth();
+	}
+
+	@Override
+	public float getHeight() {
+		if(renderNode == null) {
+			return -1f;
+		}
+		return renderNode.getOuterHeight();
 	}
 }

@@ -73,7 +73,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 
 	private InputSource lastInputSource, nextInputSource;
 	private ControllerType lastControllerType = ControllerType.UNKNOWN, nextControllerType = ControllerType.UNKNOWN;
-	private int width, height;
+	private float width, height;
 	private int lastMouseX, lastMouseY;
 	private float scaleX = 1f;
 	private float scaleY = 1f;
@@ -707,7 +707,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	 * 
 	 * @return The width in pixels
 	 */
-	public int getWidth() {
+	public float getWidth() {
 		return width;
 	}
 
@@ -716,7 +716,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	 * 
 	 * @return The height in pixels
 	 */
-	public int getHeight() {
+	public float getHeight() {
 		return height;
 	}
 

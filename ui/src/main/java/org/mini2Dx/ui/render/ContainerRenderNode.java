@@ -13,17 +13,24 @@ package org.mini2Dx.ui.render;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 
+import com.badlogic.gdx.utils.IntMap;
+import org.mini2Dx.core.controller.button.ControllerButton;
+import org.mini2Dx.ui.element.Actionable;
 import org.mini2Dx.ui.element.Column;
+import org.mini2Dx.ui.element.Container;
 import org.mini2Dx.ui.layout.LayoutState;
+import org.mini2Dx.ui.navigation.ControllerHotKeyOperation;
+import org.mini2Dx.ui.navigation.KeyboardHotKeyOperation;
 import org.mini2Dx.ui.style.ContainerStyleRule;
-
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
 
 /**
  * Base class for {@link Container} {@link RenderNode} implementations
  */
-public abstract class ContainerRenderNode extends ParentRenderNode<Column, ContainerStyleRule> {
+public class ContainerRenderNode extends ParentRenderNode<Column, ContainerStyleRule> implements NavigatableRenderNode {
+	private final IntMap<String> keyboardHotkeys = new IntMap<String>();
+	private final Map<String, String> controllerHotkeys = new HashMap<String, String>();
 	private final Map<String, RenderNode<?, ?>> elementIdLookupCache = new HashMap<String, RenderNode<?, ?>>();
 	
 	public ContainerRenderNode(ParentRenderNode<?, ?> parent, Column column) {
@@ -35,6 +42,7 @@ public abstract class ContainerRenderNode extends ParentRenderNode<Column, Conta
 		if(isDirty()) {
 			elementIdLookupCache.clear();
 		}
+		((Container) element).getNavigation().layout(layoutState.getScreenSize());
 		super.layout(layoutState);
 	}
 	
@@ -54,5 +62,75 @@ public abstract class ContainerRenderNode extends ParentRenderNode<Column, Conta
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public ActionableRenderNode hotkey(int keycode) {
+		String id = keyboardHotkeys.get(keycode);
+		if (id == null) {
+			return null;
+		}
+		RenderNode<?, ?> renderNode = searchTreeForElementById(id);
+		if (renderNode == null) {
+			return null;
+		}
+		return (ActionableRenderNode) renderNode;
+	}
+
+	@Override
+	public ActionableRenderNode hotkey(ControllerButton controllerButton) {
+		String id = controllerHotkeys.get(controllerButton.getAbsoluteValue());
+		if (id == null) {
+			return null;
+		}
+		RenderNode<?, ?> renderNode = searchTreeForElementById(id);
+		if (renderNode == null) {
+			return null;
+		}
+		return (ActionableRenderNode) renderNode;
+	}
+
+	@Override
+	public void syncHotkeys(Queue<ControllerHotKeyOperation> controllerHotKeyOperations,
+							Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations) {
+		while (!controllerHotKeyOperations.isEmpty()) {
+			ControllerHotKeyOperation hotKeyOperation = controllerHotKeyOperations.poll();
+			if (hotKeyOperation.isMapOperation()) {
+				controllerHotkeys.put(hotKeyOperation.getControllerButton().getAbsoluteValue(),
+						hotKeyOperation.getActionable().getId());
+			} else {
+				if (hotKeyOperation.getControllerButton() == null) {
+					controllerHotkeys.clear();
+				} else {
+					controllerHotkeys.remove(hotKeyOperation.getControllerButton().getAbsoluteValue());
+				}
+			}
+		}
+		while (!keyboardHotKeyOperations.isEmpty()) {
+			KeyboardHotKeyOperation hotKeyOperation = keyboardHotKeyOperations.poll();
+			if (hotKeyOperation.isMapOperation()) {
+				keyboardHotkeys.put(hotKeyOperation.getKeycode(), hotKeyOperation.getActionable().getId());
+			} else {
+				if (hotKeyOperation.getKeycode() == Integer.MAX_VALUE) {
+					keyboardHotkeys.clear();
+				} else {
+					keyboardHotkeys.remove(hotKeyOperation.getKeycode());
+				}
+			}
+		}
+	}
+
+	@Override
+	public ActionableRenderNode navigate(int keycode) {
+		Actionable actionable = ((Container) element).getNavigation().navigate(keycode);
+		if (actionable == null) {
+			return null;
+		}
+		return (ActionableRenderNode) searchTreeForElementById(actionable.getId());
+	}
+
+	@Override
+	protected ContainerStyleRule determineStyleRule(LayoutState layoutState) {
+		return layoutState.getTheme().getStyleRule(((Container) element), layoutState.getScreenSize());
 	}
 }

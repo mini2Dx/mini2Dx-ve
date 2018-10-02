@@ -12,27 +12,11 @@
 package org.mini2Dx.uats.util;
 
 import org.mini2Dx.core.assets.FallbackFileHandleResolver;
-import org.mini2Dx.core.controller.MdxController;
 import org.mini2Dx.core.game.ScreenBasedGame;
 import org.mini2Dx.tiled.TiledMap;
 import org.mini2Dx.tiled.TiledMapLoader;
-import org.mini2Dx.uats.AudioUAT;
-import org.mini2Dx.uats.BlendingUAT;
-import org.mini2Dx.uats.ClippingUAT;
-import org.mini2Dx.uats.ControllerMapping;
-import org.mini2Dx.uats.ControllerUAT;
-import org.mini2Dx.uats.GeometryUAT;
-import org.mini2Dx.uats.GraphicsUAT;
-import org.mini2Dx.uats.HexagonalTiledMapUAT;
-import org.mini2Dx.uats.IsometricTiledMapUAT;
-import org.mini2Dx.uats.OrthogonalTiledMapNoCachingUAT;
-import org.mini2Dx.uats.OrthogonalTiledMapWithCachingUAT;
-import org.mini2Dx.uats.ParticleEffectsUAT;
-import org.mini2Dx.uats.TextureRegionUAT;
-import org.mini2Dx.uats.UiSerializationUAT;
-import org.mini2Dx.uats.UiUAT;
+import org.mini2Dx.uats.*;
 import org.mini2Dx.ui.UiThemeLoader;
-import org.mini2Dx.ui.controller.ControllerUiInput;
 import org.mini2Dx.ui.style.UiTheme;
 
 import com.badlogic.gdx.Application;
@@ -78,7 +62,8 @@ public class UATApplication extends ScreenBasedGame {
 		addScreen(new ParticleEffectsUAT());
 		addScreen(new ControllerUAT());
 		addScreen(new ControllerMapping());
-		addScreen(new UiUAT(assetManager));
+		addScreen(new FlexUiUAT(assetManager));
+		addScreen(new PixelUiUAT(assetManager));
 		addScreen(new UiSerializationUAT(assetManager));
 	}
 

@@ -12,11 +12,11 @@ import org.mini2Dx.core.screen.ScreenManager;
 import org.mini2Dx.core.serialization.SerializationException;
 import org.mini2Dx.uats.util.ScreenIds;
 import org.mini2Dx.ui.UiContainer;
-import org.mini2Dx.ui.element.AlignedModal;
 import org.mini2Dx.ui.element.Column;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import org.mini2Dx.ui.element.Container;
 
 /**
  *
@@ -27,7 +27,7 @@ public class UiSerializationUAT extends BasicGameScreen {
 	private final AssetManager assetManager;
 	
 	private UiContainer uiContainer;
-	private AlignedModal modal;
+	private Container container;
 	
 	private boolean success = false;
 	private String failureMessage = "";
@@ -42,10 +42,10 @@ public class UiSerializationUAT extends BasicGameScreen {
 		uiContainer = new UiContainer(gc, assetManager);
 		
 		try {
-			modal = Mdx.xml.fromXml(Gdx.files.internal("ui.xml").reader(), AlignedModal.class);
+			container = Mdx.xml.fromXml(Gdx.files.internal("ui.xml").reader(), Container.class);
 		} catch (SerializationException e) {
 			Gdx.app.error(LOGGING_TAG, e.getMessage(), e);
-			modal = null;
+			container = null;
 		}
 	}
 
@@ -78,21 +78,21 @@ public class UiSerializationUAT extends BasicGameScreen {
 	}
 
 	private boolean isSuccess() {
-		if(modal == null) {
-			failureMessage = "'modal' is null";
+		if(container == null) {
+			failureMessage = "'container' is null";
 			return false;
 		}
-		if(modal.getElementById("row") == null) {
+		if(container.getElementById("row") == null) {
 			failureMessage = "'row' is null";
 			return false;
 		}
-		if(modal.getElementById("column1") == null) {
+		if(container.getElementById("column1") == null) {
 			failureMessage = "'column1' is null";
 			return false;
 		}
-		final Column column = (Column) modal.getElementById("column1");
+		final Column column = (Column) container.getElementById("column1");
 		
-		if(modal.getElementById("image") == null) {
+		if(container.getElementById("image") == null) {
 			failureMessage = "'image' is null";
 			
 			if(column.getTotalChildren() == 0) {
@@ -102,47 +102,47 @@ public class UiSerializationUAT extends BasicGameScreen {
 			}
 			return false;
 		}
-		if(modal.getElementById("label") == null) {
+		if(container.getElementById("label") == null) {
 			failureMessage = "'label' is null";
 			return false;
 		}
-		if(modal.getElementById("textButton") == null) {
+		if(container.getElementById("textButton") == null) {
 			failureMessage = "'textButton' is null";
 			return false;
 		}
-		if(modal.getElementById("imageButton") == null) {
+		if(container.getElementById("imageButton") == null) {
 			failureMessage = "'imageButton' is null";
 			return false;
 		}
-		if(modal.getElementById("checkbox") == null) {
+		if(container.getElementById("checkbox") == null) {
 			failureMessage = "'checkbox' is null";
 			return false;
 		}
-		if(modal.getElementById("progeessBar") == null) {
+		if(container.getElementById("progeessBar") == null) {
 			failureMessage = "'progeessBar' is null";
 			return false;
 		}
-		if(modal.getElementById("radioButton") == null) {
+		if(container.getElementById("radioButton") == null) {
 			failureMessage = "'radioButton' is null";
 			return false;
 		}
-		if(modal.getElementById("scrollBox") == null) {
+		if(container.getElementById("scrollBox") == null) {
 			failureMessage = "'scrollBox' is null";
 			return false;
 		}
-		if(modal.getElementById("select") == null) {
+		if(container.getElementById("select") == null) {
 			failureMessage = "'select' is null";
 			return false;
 		}
-		if(modal.getElementById("slider") == null) {
+		if(container.getElementById("slider") == null) {
 			failureMessage = "'slider' is null";
 			return false;
 		}
-		if(modal.getElementById("tabView") == null) {
+		if(container.getElementById("tabView") == null) {
 			failureMessage = "'tabView' is null";
 			return false;
 		}
-		if(modal.getElementById("textBox") == null) {
+		if(container.getElementById("textBox") == null) {
 			failureMessage = "'textBox' is null";
 			return false;
 		}

@@ -18,10 +18,9 @@ import org.mini2Dx.core.game.BasicGame;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.headless.HeadlessMini2DxConfig;
-import org.mini2Dx.ui.element.AlignedModal;
 import org.mini2Dx.ui.element.Column;
+import org.mini2Dx.ui.element.Container;
 import org.mini2Dx.ui.element.Label;
-import org.mini2Dx.ui.element.Modal;
 import org.mini2Dx.ui.element.Visibility;
 import org.mini2Dx.ui.layout.HorizontalAlignment;
 import org.mini2Dx.ui.layout.VerticalAlignment;
@@ -53,7 +52,7 @@ public class RenderTreeLayoutPerformanceTest {
 	public static class TestState extends BasicGame {
 		private FileHandleResolver fileHandleResolver = new ClasspathFileHandleResolver();
 		private AssetManager assetManager = new AssetManager(fileHandleResolver);
-		private List<Modal> modals = new ArrayList<Modal>();
+		private List<Container> containers = new ArrayList<Container>();
 		
 		private HeadlessMini2DxGame game;
 		private UiContainer uiContainer;
@@ -73,29 +72,27 @@ public class RenderTreeLayoutPerformanceTest {
 			
 			for(HorizontalAlignment hAlignment : HorizontalAlignment.values()) {
 				for(VerticalAlignment vAlignment : VerticalAlignment.values()) {
-					AlignedModal modal = new AlignedModal();
+					Container modal = new Container();
 					modal.setLayout("flex-column:xs-4c");
 					modal.setVisibility(Visibility.VISIBLE);
-					modal.setHorizontalAlignment(hAlignment);
-					modal.setVerticalAlignment(vAlignment);
 					
 					addNestedElements(modal, 0);
-					modals.add(modal);
+					containers.add(modal);
 				}
 			}
 		}
 		
 		@Setup(Level.Iteration)
 		public void setUp() {
-			for(Modal modal : modals) {
-				uiContainer.add(modal);
+			for(Container container : containers) {
+				uiContainer.add(container);
 			}
 		}
 		
 		@TearDown(Level.Iteration)
 		public void cleanup() {
-			for(Modal modal : modals) {
-				uiContainer.remove(modal);
+			for(Container container : containers) {
+				uiContainer.remove(container);
 			}
 			uiContainer.update(GameContainer.MAXIMUM_DELTA);
 		}

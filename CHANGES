@@ -1,5 +1,6 @@
 [1.8.0-SNAPSHOT]
 - Update to LibGDX 1.9.8, RoboVM 2.3.3
+- [BREAKING] UI Modal and Containers are now unified into a single Container class
 - Added support for both flex and pixel coordinate UI layouts
 - Added support for static, ninepatch and tiling UI element backgrounds
 - Improved UI theme JSON consistency

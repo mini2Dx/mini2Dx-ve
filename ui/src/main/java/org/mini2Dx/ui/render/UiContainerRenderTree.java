@@ -103,7 +103,7 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 		setDirty(true);
 	}
 
-	public void onResize(int width, int height) {
+	public void onResize(float width, float height) {
 		screenSizeScale = 1f;
 		switch(element.getScreenSizeScaleMode()) {
 		case LINEAR:

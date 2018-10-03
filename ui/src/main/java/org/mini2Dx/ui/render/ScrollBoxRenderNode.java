@@ -86,7 +86,11 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 		scrollTrack.set(topScrollButton.getX(), topScrollButton.getY() + topScrollButton.getHeight());
 		bottomScrollButton.set(scrollTrack.getX(), scrollTrack.getY() + scrollTrack.getHeight());
 		scrollThumb.set(scrollTrack.getX(), scrollTrack.getY() + (scrollThumbPosition * scrollTrack.getHeight()));
-	}
+
+		if(scrollTranslationY > contentHeight) {
+			scrollTranslationY = MathUtils.round(scrollThumbPosition * contentHeight);
+		}
+ 	}
 
 	@Override
 	public void interpolate(float alpha) {
@@ -253,7 +257,7 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 		result |= handleTopScrollButtonMouseMoved(innerAreaContains, screenX, screenY);
 		result |= handleBottomScrollButtonMouseMoved(innerAreaContains, screenX, screenY);
 
-		if (!result) {
+		if (!result && innerAreaContains) {
 			final IntMap.Keys keys = layers.descendingKeys();
 			keys.reset();
 			while(keys.hasNext) {
@@ -348,14 +352,16 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 			return this;
 		}
 
-		final IntMap.Keys keys = layers.descendingKeys();
-		keys.reset();
-		while(keys.hasNext) {
-			final int layerIndex = keys.next();
-			ActionableRenderNode result = layers.get(layerIndex).mouseDown(screenX, screenY + scrollTranslationY,
-					pointer, button);
-			if (result != null) {
-				return result;
+		if(innerArea.contains(screenX, screenY)) {
+			final IntMap.Keys keys = layers.descendingKeys();
+			keys.reset();
+			while(keys.hasNext) {
+				final int layerIndex = keys.next();
+				ActionableRenderNode result = layers.get(layerIndex).mouseDown(screenX, screenY + scrollTranslationY,
+						pointer, button);
+				if (result != null) {
+					return result;
+				}
 			}
 		}
 		return null;

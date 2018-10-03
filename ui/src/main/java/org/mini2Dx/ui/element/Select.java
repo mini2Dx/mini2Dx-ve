@@ -42,7 +42,7 @@ public class Select<V> extends UiElement implements Actionable {
 	@Field(optional = true)
 	private boolean enabled = true;
 	@Field(optional = true)
-	private String layout = LayoutRuleset.DEFAULT_RULESET;
+	private String flexLayout = null;
 	@Field(optional=true)
 	private String leftButtonText;
 	@Field(optional=true)
@@ -119,6 +119,12 @@ public class Select<V> extends UiElement implements Actionable {
 		while (!effects.isEmpty()) {
 			renderNode.applyEffect(effects.poll());
 		}
+
+		x = renderNode.getOuterX();
+		y = renderNode.getOuterY();
+		width = renderNode.getOuterWidth();
+		height = renderNode.getOuterHeight();
+
 		processUpdateDeferred();
 	}
 
@@ -347,18 +353,18 @@ public class Select<V> extends UiElement implements Actionable {
 		renderNode.setDirty(true);
 	}
 
-	public String getLayout() {
-		return layout;
+	public String getFlexLayout() {
+		return flexLayout;
 	}
 
-	public void setLayout(String layout) {
-		if(layout == null) {
+	public void setFlexLayout(String flexLayout) {
+		if(flexLayout == null) {
 			return;
 		}
-		if (this.layout.equals(layout)) {
+		if(this.flexLayout != null && this.flexLayout.equals(flexLayout)) {
 			return;
 		}
-		this.layout = layout;
+		this.flexLayout = flexLayout;
 
 		if (renderNode == null) {
 			return;
@@ -399,34 +405,10 @@ public class Select<V> extends UiElement implements Actionable {
 	}
 
 	@Override
-	public float getX() {
-		if(renderNode == null) {
-			return Float.MIN_VALUE;
+	protected void setRenderNodeDirty() {
+		if (renderNode == null) {
+			return;
 		}
-		return renderNode.getOuterX();
-	}
-
-	@Override
-	public float getY() {
-		if(renderNode == null) {
-			return Float.MIN_VALUE;
-		}
-		return renderNode.getOuterY();
-	}
-
-	@Override
-	public float getWidth() {
-		if(renderNode == null) {
-			return -1f;
-		}
-		return renderNode.getOuterWidth();
-	}
-
-	@Override
-	public float getHeight() {
-		if(renderNode == null) {
-			return -1f;
-		}
-		return renderNode.getOuterHeight();
+		renderNode.setDirty(true);
 	}
 }

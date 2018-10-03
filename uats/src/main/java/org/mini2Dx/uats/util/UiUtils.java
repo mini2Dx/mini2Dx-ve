@@ -152,6 +152,7 @@ public class UiUtils {
 	
 	public static TextButton createButton(UiNavigation navigation, String text, boolean debug, ActionListener listener) {
 		TextButton button = new TextButton("TextButton: " + text);
+		button.setFlexLayout("flex-column:xs-12c");
 		button.setText(text);
 		if(listener != null) {
 			button.addActionListener(listener);
@@ -167,6 +168,7 @@ public class UiUtils {
 	
 	public static TextBox createTextBox(UiNavigation navigation, String id, ActionListener listener) {
 		TextBox textBox = new TextBox(id);
+		textBox.setFlexLayout("flex-column:xs-12c");
 		textBox.addActionListener(listener);
 		textBox.setVisibility(Visibility.VISIBLE);
 		
@@ -178,6 +180,7 @@ public class UiUtils {
 	
 	public static Select<String> createSelect(UiNavigation navigation, String id, ActionListener listener) {
 		Select<String> select = new Select<String>(id);
+		select.setFlexLayout("flex-column:xs-12c");
 		select.addActionListener(listener);
 		select.setVisibility(Visibility.VISIBLE);
 		

@@ -18,7 +18,7 @@ import java.util.Queue;
 import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.ui.element.Actionable;
-import org.mini2Dx.ui.element.Column;
+import org.mini2Dx.ui.element.Div;
 import org.mini2Dx.ui.element.Container;
 import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.navigation.ControllerHotKeyOperation;
@@ -28,13 +28,13 @@ import org.mini2Dx.ui.style.ContainerStyleRule;
 /**
  * Base class for {@link Container} {@link RenderNode} implementations
  */
-public class ContainerRenderNode extends ParentRenderNode<Column, ContainerStyleRule> implements NavigatableRenderNode {
+public class ContainerRenderNode extends ParentRenderNode<Div, ContainerStyleRule> implements NavigatableRenderNode {
 	private final IntMap<String> keyboardHotkeys = new IntMap<String>();
 	private final Map<String, String> controllerHotkeys = new HashMap<String, String>();
 	private final Map<String, RenderNode<?, ?>> elementIdLookupCache = new HashMap<String, RenderNode<?, ?>>();
 	
-	public ContainerRenderNode(ParentRenderNode<?, ?> parent, Column column) {
-		super(parent, column);
+	public ContainerRenderNode(ParentRenderNode<?, ?> parent, Div div) {
+		super(parent, div);
 	}
 	
 	@Override

@@ -3,26 +3,33 @@
  */
 package org.mini2Dx.ui.render;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
-
 import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.ui.element.Actionable;
 import org.mini2Dx.ui.element.Tab;
+import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.navigation.ControllerHotKeyOperation;
 import org.mini2Dx.ui.navigation.KeyboardHotKeyOperation;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
 
 /**
  * {@link RenderNode} implementation for {@link Tab}
  */
-public class TabRenderNode extends RowRenderNode implements NavigatableRenderNode {
+public class TabRenderNode extends DivRenderNode implements NavigatableRenderNode {
 	private IntMap<String> keyboardHotkeys = new IntMap<String>();
 	private Map<String, String> controllerHotkeys = new HashMap<String, String>();
 
 	public TabRenderNode(ParentRenderNode<?, ?> parent, Tab tab) {
 		super(parent, tab);
+	}
+
+	@Override
+	protected float determinePreferredContentWidth(LayoutState layoutState) {
+		return style.getRounding().calculateRounding(layoutState.getParentWidth() - style.getPaddingLeft()
+				- style.getPaddingRight() - style.getMarginLeft() - style.getMarginRight());
 	}
 
 	@Override

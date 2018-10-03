@@ -28,7 +28,7 @@ import com.badlogic.gdx.math.MathUtils;
 /**
  * A scrollable view for {@link UiElement}s
  */
-public class ScrollBox extends Column {
+public class ScrollBox extends Div {
 	private static final float DEFAULT_SCROLL_FACTOR = 0.005f;
 
 	@Field(optional = true)

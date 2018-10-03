@@ -11,23 +11,17 @@
  */
 package org.mini2Dx.ui.render;
 
-import org.mini2Dx.ui.element.Row;
+import org.mini2Dx.ui.element.Div;
 import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.style.ParentStyleRule;
 
 /**
- * {@link RenderNode} implementation for {@link Row}
+ * {@link RenderNode} implementation for {@link Div}
  */
-public class RowRenderNode extends ParentRenderNode<Row, ParentStyleRule> {
+public class DivRenderNode extends ParentRenderNode<Div, ParentStyleRule> {
 
-	public RowRenderNode(ParentRenderNode<?, ?> parent, Row row) {
-		super(parent, row);
-	}
-
-	@Override
-	protected float determinePreferredContentWidth(LayoutState layoutState) {
-		return style.getRounding().calculateRounding(layoutState.getParentWidth() - style.getPaddingLeft()
-				- style.getPaddingRight() - style.getMarginLeft() - style.getMarginRight());
+	public DivRenderNode(ParentRenderNode<?, ?> parent, Div div) {
+		super(parent, div);
 	}
 
 	@Override

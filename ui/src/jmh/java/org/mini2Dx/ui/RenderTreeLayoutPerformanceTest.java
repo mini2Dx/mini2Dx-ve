@@ -18,7 +18,7 @@ import org.mini2Dx.core.game.BasicGame;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.headless.HeadlessMini2DxConfig;
-import org.mini2Dx.ui.element.Column;
+import org.mini2Dx.ui.element.Div;
 import org.mini2Dx.ui.element.Container;
 import org.mini2Dx.ui.element.Label;
 import org.mini2Dx.ui.element.Visibility;
@@ -73,7 +73,7 @@ public class RenderTreeLayoutPerformanceTest {
 			for(HorizontalAlignment hAlignment : HorizontalAlignment.values()) {
 				for(VerticalAlignment vAlignment : VerticalAlignment.values()) {
 					Container modal = new Container();
-					modal.setLayout("flex-column:xs-4c");
+					modal.setFlexLayout("flex-column:xs-4c");
 					modal.setVisibility(Visibility.VISIBLE);
 					
 					addNestedElements(modal, 0);
@@ -97,22 +97,22 @@ public class RenderTreeLayoutPerformanceTest {
 			uiContainer.update(GameContainer.MAXIMUM_DELTA);
 		}
 		
-		private void addNestedElements(Column root, int depth) {
+		private void addNestedElements(Div root, int depth) {
 			if(depth >= CHILDREN_PER_NODE) {
 				return;
 			}
 			for(int i = 0; i < CHILDREN_PER_NODE; i++) {
-				Column column = new Column();
-				column.setLayout("flex-column:xs-4c");
-				column.setVisibility(Visibility.VISIBLE);
+				Div div = new Div();
+				div.setFlexLayout("flex-div:xs-4c");
+				div.setVisibility(Visibility.VISIBLE);
 				
 				Label label = new Label();
 				label.setVisibility(Visibility.VISIBLE);
 				label.setText("Label " + i);
 				label.setResponsive(true);
-				column.add(label);
+				div.add(label);
 				
-				addNestedElements(column, depth + 1);
+				addNestedElements(div, depth + 1);
 			}
 		}
 

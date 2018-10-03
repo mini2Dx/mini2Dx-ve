@@ -155,34 +155,10 @@ public class DummyUiElement extends UiElement {
 	}
 
 	@Override
-	public float getX() {
-		if(renderNode == null) {
-			return Float.MIN_VALUE;
+	protected void setRenderNodeDirty() {
+		if (renderNode == null) {
+			return;
 		}
-		return renderNode.getOuterX();
-	}
-
-	@Override
-	public float getY() {
-		if(renderNode == null) {
-			return Float.MIN_VALUE;
-		}
-		return renderNode.getOuterY();
-	}
-
-	@Override
-	public float getWidth() {
-		if(renderNode == null) {
-			return -1f;
-		}
-		return renderNode.getOuterWidth();
-	}
-
-	@Override
-	public float getHeight() {
-		if(renderNode == null) {
-			return -1f;
-		}
-		return renderNode.getOuterHeight();
+		renderNode.setDirty(true);
 	}
 }

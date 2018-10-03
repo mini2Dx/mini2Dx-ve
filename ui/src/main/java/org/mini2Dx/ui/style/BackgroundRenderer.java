@@ -32,7 +32,7 @@ public abstract class BackgroundRenderer {
 		if(value.isEmpty()) {
 			throw new MdxException("Missing background value");
 		}
-		final String [] components = value.toLowerCase().split(" ");
+		final String [] components = value.split(" ");
 		if(components.length > 2) {
 			throw new MdxException("Invalid background value: " + value);
 		}
@@ -40,7 +40,7 @@ public abstract class BackgroundRenderer {
 		if(imagePath.isEmpty()) {
 			throw new MdxException("Invalid image path in background: " + value);
 		}
-		final String [] typeComponents = (components.length > 1 ? components[1] : "static").split(":");
+		final String [] typeComponents = (components.length > 1 ? components[1].toLowerCase() : "static").split(":");
 		final String backgroundType = typeComponents[0];
 
 		switch(backgroundType) {

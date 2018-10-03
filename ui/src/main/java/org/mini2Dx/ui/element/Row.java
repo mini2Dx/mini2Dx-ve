@@ -12,13 +12,13 @@
 package org.mini2Dx.ui.element;
 
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
+import org.mini2Dx.ui.render.DivRenderNode;
 import org.mini2Dx.ui.render.ParentRenderNode;
-import org.mini2Dx.ui.render.RowRenderNode;
 
 /**
- * A row of {@link UiElement}s. Equivalent to 12 {@link Column}s
+ * Utility {@link Div} class pre-set with flex layout "flex-column:xs-12c"
  */
-public class Row extends Column {
+public class Row extends Div {
 	/**
 	 * Constructor. Generates a unique ID for this {@link Row}
 	 */
@@ -32,11 +32,12 @@ public class Row extends Column {
 	 */
 	public Row(@ConstructorArg(clazz=String.class, name = "id") String id) {
 		super(id);
+		setFlexLayout("flex-column:xs-12c");
 	}
 	
 	@Override
 	protected ParentRenderNode<?, ?> createRenderNode(ParentRenderNode<?, ?> parent) {
-		return new RowRenderNode(parent, this);
+		return new DivRenderNode(parent, this);
 	}
 	
 	/**

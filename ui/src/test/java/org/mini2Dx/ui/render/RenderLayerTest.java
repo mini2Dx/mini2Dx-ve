@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.ui.render;
 
+import junit.framework.Assert;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -22,11 +23,10 @@ import org.mini2Dx.ui.dummy.DummyParentUiElement;
 import org.mini2Dx.ui.dummy.DummyRenderNode;
 import org.mini2Dx.ui.dummy.DummyUiElement;
 import org.mini2Dx.ui.element.Visibility;
+import org.mini2Dx.ui.layout.FlexLayoutRuleset;
 import org.mini2Dx.ui.layout.LayoutRuleset;
 import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.layout.ScreenSize;
-
-import junit.framework.Assert;
 
 /**
  * Unit tests for {@link RenderLayer}
@@ -82,7 +82,7 @@ public class RenderLayerTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		final LayoutRuleset layoutRuleset = LayoutRuleset.parse("flex-column:xs-12c");
+		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
 		Assert.assertEquals(8f, renderNode1.getRelativeX());
@@ -104,7 +104,7 @@ public class RenderLayerTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		final LayoutRuleset layoutRuleset = LayoutRuleset.parse("flex-column:xs-12c");
+		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
 		Assert.assertEquals(0f, renderNode1.getRelativeX());
@@ -125,7 +125,7 @@ public class RenderLayerTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		final LayoutRuleset layoutRuleset = LayoutRuleset.parse("flex-column:xs-12c");
+		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
 		Assert.assertEquals(preferredHeight, renderLayer.determinePreferredContentHeight(layoutState));
@@ -145,7 +145,7 @@ public class RenderLayerTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		final LayoutRuleset layoutRuleset = LayoutRuleset.parse("flex-column:xs-12c");
+		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
 		Assert.assertEquals(preferredHeight * 2f, renderLayer.determinePreferredContentHeight(layoutState));
@@ -168,7 +168,7 @@ public class RenderLayerTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		final LayoutRuleset layoutRuleset = LayoutRuleset.parse("flex-column:xs-12c");
+		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
 		Assert.assertEquals(preferredHeight + yOffset, renderLayer.determinePreferredContentHeight(layoutState));
@@ -191,7 +191,7 @@ public class RenderLayerTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		final LayoutRuleset layoutRuleset = LayoutRuleset.parse("flex-column:xs-12c");
+		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
 		Assert.assertEquals((preferredHeight * 2f) + (yOffset * 2f), renderLayer.determinePreferredContentHeight(layoutState));
@@ -215,7 +215,7 @@ public class RenderLayerTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		final LayoutRuleset layoutRuleset = LayoutRuleset.parse("flex-column:xs-12c");
+		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
 		Assert.assertEquals(preferredHeight + (padding * 2f), renderLayer.determinePreferredContentHeight(layoutState));
@@ -239,7 +239,7 @@ public class RenderLayerTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		final LayoutRuleset layoutRuleset = LayoutRuleset.parse("flex-column:xs-12c");
+		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
 		Assert.assertEquals((preferredHeight * 2f) + (padding * 4f), renderLayer.determinePreferredContentHeight(layoutState));
@@ -266,7 +266,7 @@ public class RenderLayerTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		final LayoutRuleset layoutRuleset = LayoutRuleset.parse("flex-column:xs-12c");
+		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
 		Assert.assertEquals(preferredHeight + (padding * 2f) + (margin * 2f), renderLayer.determinePreferredContentHeight(layoutState));
@@ -293,7 +293,7 @@ public class RenderLayerTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		final LayoutRuleset layoutRuleset = LayoutRuleset.parse("flex-column:xs-12c");
+		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
 		Assert.assertEquals((preferredHeight * 2f) + (padding * 4f) + (margin * 4f), renderLayer.determinePreferredContentHeight(layoutState));
@@ -320,7 +320,7 @@ public class RenderLayerTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		final LayoutRuleset layoutRuleset = LayoutRuleset.parse("flex-column:xs-12c");
+		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
 		Assert.assertEquals(preferredHeight + (padding * 2f) + (margin * 2f), renderLayer.determinePreferredContentHeight(layoutState));
@@ -347,7 +347,7 @@ public class RenderLayerTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		final LayoutRuleset layoutRuleset = LayoutRuleset.parse("flex-column:xs-12c");
+		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
 		Assert.assertEquals((preferredHeight * 2f) + (padding * 4f) + (margin * 4f), renderLayer.determinePreferredContentHeight(layoutState));

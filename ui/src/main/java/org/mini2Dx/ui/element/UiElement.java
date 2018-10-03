@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import com.badlogic.gdx.math.MathUtils;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.core.serialization.annotation.NonConcrete;
@@ -44,6 +45,14 @@ public abstract class UiElement implements Hoverable {
 	protected Visibility visibility = UiContainer.getDefaultVisibility();
 	@Field(optional = true)
 	protected String styleId = UiTheme.DEFAULT_STYLE_ID;
+	@Field(optional = true)
+	protected float x;
+	@Field(optional = true)
+	protected float y;
+	@Field(optional = true)
+	protected float width = 50f;
+	@Field(optional = true)
+	protected float height = 50f;
 	@Field(optional = true)
 	protected int zIndex = 0;
 
@@ -73,6 +82,8 @@ public abstract class UiElement implements Hoverable {
 		}
 		this.id = id;
 	}
+
+	protected abstract void setRenderNodeDirty();
 
 	/**
 	 * Syncs data between the {@link UiElement} and {@link RenderNode} during update
@@ -363,27 +374,106 @@ public abstract class UiElement implements Hoverable {
 		this.debugEnabled = debugEnabled;
 	}
 
-	/**
-	 * Returns the x coordinate of the element with in the {@link UiContainer}
-	 * @return {@link Float#MIN_VALUE} if this element has not been added to the render tree
-	 */
-	public abstract float getX();
+	public float getX() {
+		return x;
+	}
+
+	public float getY() {
+		return y;
+	}
+
+	public float getWidth() {
+		return width;
+	}
+
+	public float getHeight() {
+		return height;
+	}
 
 	/**
-	 * Returns the Y coordinate of the element with in the {@link UiContainer}
-	 * @return {@link Float#MIN_VALUE} if this element has not been added to the render tree
+	 * Sets the x, y, width and height of this element
+	 * @param x The x coordinate (in pixels) relative to its parent
+	 * @param y The y coordinate (in pixels) relative to its parent
+	 * @param width The width in pixels
+	 * @param height The height in pixels
 	 */
-	public abstract float getY();
+	public void set(final float x, final float y, final float width, final float height) {
+		if(MathUtils.isEqual(this.x, x) && MathUtils.isEqual(this.y, y)
+				&& MathUtils.isEqual(this.width, width) && MathUtils.isEqual(this.height, height)) {
+			return;
+		}
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+
+		setRenderNodeDirty();
+	}
 
 	/**
-	 * Returns the width of this element. Note: This value includes the margin and padding determined by the style.
-	 * @return -1 if this element has not been added to the render tree
+	 * Sets the x and y coordinates of this element
+	 * @param x The x coordinate (in pixels) relative to its parent
+	 * @param y The y coordinate (in pixels) relative to its parent
 	 */
-	public abstract float getWidth();
+	public void setXY(final float x, final float y) {
+		if(MathUtils.isEqual(this.x, x) && MathUtils.isEqual(this.y, y)) {
+			return;
+		}
+		this.x = x;
+		this.y = y;
+
+		setRenderNodeDirty();
+	}
 
 	/**
-	 * Returns the height of this element. Note: This value includes the margin and padding determined by the style.
-	 * @return -1 if this element has not been added to the render tree
+	 * Sets the x coordinate of this element.
+	 * @param x The x coordinate (in pixels) relative to its parent
 	 */
-	public abstract float getHeight();
+	public void setX(final float x) {
+		if(MathUtils.isEqual(this.x, x)) {
+			return;
+		}
+		this.x = x;
+
+		setRenderNodeDirty();
+	}
+
+	/**
+	 * Sets the y coordinate of this element
+	 * @param y The y coordinate (in pixels) relative to its parent
+	 */
+	public void setY(final float y) {
+		if(MathUtils.isEqual(this.y, y)) {
+			return;
+		}
+		this.y = y;
+
+		setRenderNodeDirty();
+	}
+
+	/**
+	 * Sets the width of this element
+	 * @param width The width in pixels
+	 */
+	public void setWidth(final float width) {
+		if(MathUtils.isEqual(this.width, width)) {
+			return;
+		}
+		this.width = width;
+
+		setRenderNodeDirty();
+	}
+
+	/**
+	 * Sets the height of this element
+	 * @param height The height in pixels
+	 */
+	public void setHeight(final float height) {
+		if(MathUtils.isEqual(this.height, height)) {
+			return;
+		}
+		this.height = height;
+
+		setRenderNodeDirty();
+	}
 }

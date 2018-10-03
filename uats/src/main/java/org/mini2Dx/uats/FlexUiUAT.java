@@ -151,10 +151,11 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 
 	private void initialiseUi() {
 		topLeftContainer = new Container("top-left-frame");
-		topLeftContainer.setLayout("flex-col:xs-12c sm-6c md-4c lg-3c");
+		topLeftContainer.setFlexLayout("flex-col:xs-12c sm-6c md-4c lg-3c");
 		topLeftContainer.setStyleId("no-background");
+
 		Row topLeftHeaderRow = Row.withElements("top-left-header", UiUtils.createHeader("UI UAT"));
-		topLeftHeaderRow.setLayout("flex-center:xs-12c,xs-20px");
+		topLeftHeaderRow.setFlexLayout("flex-center:xs-12c,xs-20px");
 		topLeftContainer.add(topLeftHeaderRow);
 		
 		Button backRowButton = UiUtils.createButton(null, "", new ActionListener() {
@@ -171,7 +172,7 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 				
 			}
 		});
-		backRowButton.setLayout("flex-center:xs-12c,xs-20px");
+		backRowButton.setFlexLayout("flex-center:xs-12c,xs-20px");
 		Row backRow = Row.withElements("behind-header", backRowButton);
 		backRow.setZIndex(-1);
 		topLeftContainer.add(backRow);
@@ -232,10 +233,10 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 				case "Row-Reverse Layout":
 					radioButton.setFlexDirection(FlexDirection.ROW_REVERSE);
 					break;
-				case "Column Layout":
+				case "Div Layout":
 					radioButton.setFlexDirection(FlexDirection.COLUMN);
 					break;
-				case "Column-Reverse Layout":
+				case "Div-Reverse Layout":
 					radioButton.setFlexDirection(FlexDirection.COLUMN_REVERSE);
 					break;
 				}
@@ -280,9 +281,10 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		select.addOption("Item 3", "3");
 		
 		centerContainer = new Container("main-centerContainer");
-		centerContainer.setLayout("flex-column:xs-12c md-8c lg-6c md-offset-2c lg-offset-3c");
+		centerContainer.setFlexLayout("flex-column:xs-12c md-8c lg-6c md-offset-2c lg-offset-3c");
 		
 		tabView = new TabView("tabView");
+		tabView.setFlexLayout("flex-column:xs-12c");
 		tabView.setVisibility(Visibility.VISIBLE);
 		
 		Tab tab1 = new Tab("tab1", "Tab 1");
@@ -296,15 +298,16 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		tabView.add(tab1);
 		
 		Tab tab2 = new Tab("tab2", "Tab 2");
-		Column xsHiddenColumn = Column.withElements("col-not-visible-xs", UiUtils.createLabel("Not visible on XS screen size"));
-		xsHiddenColumn.setLayout("flex-column:xs-0c sm-12c");
+		Div xsHiddenDiv = Div.withElements("col-not-visible-xs", UiUtils.createLabel("Not visible on XS screen size"));
+		xsHiddenDiv.setFlexLayout("flex-column:xs-0c sm-12c");
 		
 		ProgressBar progressBar = new ProgressBar();
+		progressBar.setFlexLayout("flex-column:xs-12c");
 		progressBar.setValue(0.4f);
 		progressBar.setVisibility(Visibility.VISIBLE);
 		tab2.add(Row.withElements(progressBar));
 		
-		tab2.add(Row.withElements("row-not-visible-xs", xsHiddenColumn));
+		tab2.add(Row.withElements("row-not-visible-xs", xsHiddenDiv));
 		
 		Button reAddElementsButton =  UiUtils.createButton(null, "Re-add tabview", new ActionListener() {
 			
@@ -333,7 +336,7 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		hiddenButton.setVisibility(Visibility.HIDDEN);
 		tab3.add(Row.withElements(hiddenButton));
 		final ScrollBox scrollBox = new ScrollBox("scrollBox");
-		scrollBox.setLayout("flex-column:xs-12c");
+		scrollBox.setFlexLayout("flex-column:xs-12c");
 		scrollBox.setVisibility(Visibility.VISIBLE);
 		scrollBox.setMaxHeight(300f);
 		for(int i = 0; i < 30; i++) {
@@ -410,10 +413,10 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		uiContainer.add(centerContainer);
 		
 		bottomRightContainer = new Container("bottom-right-frame");
-		bottomRightContainer.setLayout("flex-column:xs-12c sm-6c md-4c lg-3c");
+		bottomRightContainer.setFlexLayout("flex-column:xs-12c sm-6c md-4c lg-3c");
 		bottomRightContainer.setVisibility(Visibility.VISIBLE);
 		Row bottomFrameRow = Row.withElements("row-os", UiUtils.createHeader("OVERFLOW CLIPPED"));
-		bottomFrameRow.setLayout("flex-col-r:xs-12c,xs-12px");
+		bottomFrameRow.setFlexLayout("flex-col-r:xs-12c,xs-12px");
 		bottomFrameRow.setOverflowClipped(true);
 		bottomRightContainer.add(bottomFrameRow);
 		uiContainer.add(bottomRightContainer);

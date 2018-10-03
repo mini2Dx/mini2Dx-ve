@@ -19,10 +19,9 @@ import org.junit.Test;
 import org.mini2Dx.ui.InputSource;
 import org.mini2Dx.ui.dummy.DummyRenderNode;
 import org.mini2Dx.ui.dummy.DummyUiElement;
-import org.mini2Dx.ui.element.Column;
+import org.mini2Dx.ui.element.Div;
 import org.mini2Dx.ui.element.Row;
 import org.mini2Dx.ui.element.Visibility;
-import org.mini2Dx.ui.layout.LayoutRuleset;
 import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.style.ParentStyleRule;
@@ -31,22 +30,22 @@ import org.mini2Dx.ui.style.UiTheme;
 import junit.framework.Assert;
 
 /**
- * Unit tests for {@link ColumnRenderNode}
+ * Unit tests for {@link DivRenderNode}
  */
-public class ColumnRenderNodeTest {
+public class DivRenderNodeTest {
 	private Mockery mockery;
 	private UiContainerRenderTree renderTree;
 	private UiTheme theme;
 	
 	private LayoutState layoutState;
 	
-	private Column column = new Column("column1");
-	private ColumnRenderNode columnRenderNode = new ColumnRenderNode(null, column);
+	private Div div = new Div("column1");
+	private DivRenderNode divRenderNode = new DivRenderNode(null, div);
 	
 	private Row row1 = new Row("row1");
 	private Row row2 = new Row("row2");
-	private RowRenderNode rowRenderNode1 = new RowRenderNode(columnRenderNode, row1);
-	private RowRenderNode rowRenderNode2 = new RowRenderNode(columnRenderNode, row2);
+	private DivRenderNode rowRenderNode1 = new DivRenderNode(divRenderNode, row1);
+	private DivRenderNode rowRenderNode2 = new DivRenderNode(divRenderNode, row2);
 	
 	private DummyUiElement uiElement1 = new DummyUiElement("uiElement1");
 	private DummyUiElement uiElement2 = new DummyUiElement("uiElement1");
@@ -61,9 +60,9 @@ public class ColumnRenderNodeTest {
 		
 		theme = mockery.mock(UiTheme.class);
 		renderTree = mockery.mock(UiContainerRenderTree.class);
-		column.setLayout("flex-column:xs-3c");
+		div.setFlexLayout("flex-div:xs-3c");
 		
-		column.setVisibility(Visibility.VISIBLE);
+		div.setVisibility(Visibility.VISIBLE);
 		row1.setVisibility(Visibility.VISIBLE);
 		row2.setVisibility(Visibility.VISIBLE);
 		
@@ -72,8 +71,8 @@ public class ColumnRenderNodeTest {
 		rowRenderNode2.addChild(renderNode1);
 		rowRenderNode2.addChild(renderNode2);
 		
-		columnRenderNode.addChild(rowRenderNode1);
-		columnRenderNode.addChild(rowRenderNode2);
+		divRenderNode.addChild(rowRenderNode1);
+		divRenderNode.addChild(rowRenderNode2);
 	}
 	
 	@Test
@@ -91,13 +90,13 @@ public class ColumnRenderNodeTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		columnRenderNode.layout(layoutState);
+		divRenderNode.layout(layoutState);
 		
 		Assert.assertEquals(preferredWidth, uiElement1.getPreferredContentWidth());
 		Assert.assertEquals(preferredWidth, uiElement2.getPreferredContentWidth());
 		Assert.assertEquals(parentWidth / 4f, rowRenderNode1.getPreferredContentWidth());
 		Assert.assertEquals(parentWidth / 4f, rowRenderNode2.getPreferredContentWidth());
-		Assert.assertEquals(parentWidth / 4f, columnRenderNode.getPreferredContentWidth());
+		Assert.assertEquals(parentWidth / 4f, divRenderNode.getPreferredContentWidth());
 	}
 
 	@Test
@@ -115,13 +114,13 @@ public class ColumnRenderNodeTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		columnRenderNode.layout(layoutState);
+		divRenderNode.layout(layoutState);
 		
 		Assert.assertEquals(preferredHeight, renderNode1.getPreferredContentHeight());
 		Assert.assertEquals(preferredHeight, renderNode2.getPreferredContentHeight());
 		Assert.assertEquals(preferredHeight, rowRenderNode1.getPreferredContentHeight());
 		Assert.assertEquals(preferredHeight, rowRenderNode2.getPreferredContentHeight());
-		Assert.assertEquals((preferredHeight * 2f), columnRenderNode.getPreferredContentHeight());
+		Assert.assertEquals((preferredHeight * 2f), divRenderNode.getPreferredContentHeight());
 	}
 	
 	@Test
@@ -139,13 +138,13 @@ public class ColumnRenderNodeTest {
 		
 		renderNode1.setDirty(true);
 		renderNode2.setDirty(true);
-		columnRenderNode.layout(layoutState);
+		divRenderNode.layout(layoutState);
 		
 		Assert.assertEquals(preferredHeight, renderNode1.getPreferredContentHeight());
 		Assert.assertEquals(preferredHeight, renderNode2.getPreferredContentHeight());
 		Assert.assertEquals((preferredHeight * 2f), rowRenderNode1.getPreferredContentHeight());
 		Assert.assertEquals((preferredHeight * 2f), rowRenderNode2.getPreferredContentHeight());
-		Assert.assertEquals((preferredHeight * 4f), columnRenderNode.getPreferredContentHeight());
+		Assert.assertEquals((preferredHeight * 4f), divRenderNode.getPreferredContentHeight());
 	}
 	
 	private void configureParentWithWidth(final float parentWidth) {
@@ -156,7 +155,7 @@ public class ColumnRenderNodeTest {
 				will(returnValue("mock"));
 				atLeast(1).of(renderTree).getScreenSizeScale();
 				will(returnValue(1f));
-				atLeast(1).of(theme).getStyleRule(with(any(Column.class)), with(ScreenSize.XS));
+				atLeast(1).of(theme).getStyleRule(with(any(Div.class)), with(ScreenSize.XS));
 				will(returnValue(new ParentStyleRule()));
 				atLeast(1).of(theme).getStyleRule(with(any(Row.class)), with(ScreenSize.XS));
 				will(returnValue(new ParentStyleRule()));
@@ -164,6 +163,6 @@ public class ColumnRenderNodeTest {
 				will(returnValue(InputSource.KEYBOARD_MOUSE));
 			}
 		});
-		columnRenderNode.layout(layoutState);
+		divRenderNode.layout(layoutState);
 	}
 }

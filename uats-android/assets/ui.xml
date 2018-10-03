@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <data id="modal">
-	<layout>flex-column:xs-8c sm-6c</layout>
+	<layout>flex-div:xs-8c sm-6c</layout>
 	<visibility>VISIBLE</visibility>
 	<children length="1">
 		<value class="org.mini2Dx.ui.element.Row" id="row">
 			<visibility>VISIBLE</visibility>
 			<children length="6">
-				<value class="org.mini2Dx.ui.element.Column" id="column1">
-					<layout>flex-column:xs-1c</layout>
+				<value class="org.mini2Dx.ui.element.Div" id="column1">
+					<layout>flex-div:xs-1c</layout>
 					<visibility>VISIBLE</visibility>
 					<children length="1">
 						<value class="org.mini2Dx.ui.element.Image" id="image">
@@ -18,8 +18,8 @@
 						</value>
 					</children>
 				</value>
-				<value class="org.mini2Dx.ui.element.Column" id="column2">
-					<layout>flex-column:xs-1c</layout>
+				<value class="org.mini2Dx.ui.element.Div" id="column2">
+					<layout>flex-div:xs-1c</layout>
 					<visibility>VISIBLE</visibility>
 					<children length="1">
 						<value class="org.mini2Dx.ui.element.Label" id="label">
@@ -28,8 +28,8 @@
 						</value>
 					</children>
 				</value>
-				<value class="org.mini2Dx.ui.element.Column" id="column3">
-					<layout>flex-column:xs-1c</layout>
+				<value class="org.mini2Dx.ui.element.Div" id="column3">
+					<layout>flex-div:xs-1c</layout>
 					<visibility>VISIBLE</visibility>
 					<children length="1">
 						<value class="org.mini2Dx.ui.element.TextButton" id="textButton">
@@ -43,8 +43,8 @@
 						</value>
 					</children>
 				</value>
-				<value class="org.mini2Dx.ui.element.Column" id="column4">
-					<layout>flex-column:xs-1c</layout>
+				<value class="org.mini2Dx.ui.element.Div" id="column4">
+					<layout>flex-div:xs-1c</layout>
 					<visibility>VISIBLE</visibility>
 					<children length="1">
 						<value class="org.mini2Dx.ui.element.ImageButton" id="imageButton">
@@ -60,8 +60,8 @@
 						</value>
 					</children>
 				</value>
-				<value class="org.mini2Dx.ui.element.Column" id="column5">
-					<layout>flex-column:xs-1c</layout>
+				<value class="org.mini2Dx.ui.element.Div" id="column5">
+					<layout>flex-div:xs-1c</layout>
 					<visibility>VISIBLE</visibility>
 					<children length="1">
 						<value class="org.mini2Dx.ui.element.Checkbox" id="checkbox">
@@ -70,8 +70,8 @@
 						</value>
 					</children>
 				</value>
-				<value class="org.mini2Dx.ui.element.Column" id="column6">
-					<layout>flex-column:xs-1c</layout>
+				<value class="org.mini2Dx.ui.element.Div" id="column6">
+					<layout>flex-div:xs-1c</layout>
 					<visibility>VISIBLE</visibility>
 					<children length="1">
 						<value class="org.mini2Dx.ui.element.ProgressBar" id="progeessBar">
@@ -79,8 +79,8 @@
 						</value>
 					</children>
 				</value>
-				<value class="org.mini2Dx.ui.element.Column" id="column7">
-					<layout>flex-column:xs-1c</layout>
+				<value class="org.mini2Dx.ui.element.Div" id="column7">
+					<layout>flex-div:xs-1c</layout>
 					<visibility>VISIBLE</visibility>
 					<children length="1">
 						<value class="org.mini2Dx.ui.element.RadioButton" id="radioButton">
@@ -88,8 +88,8 @@
 						</value>
 					</children>
 				</value>
-				<value class="org.mini2Dx.ui.element.Column" id="column8">
-					<layout>flex-column:xs-1c</layout>
+				<value class="org.mini2Dx.ui.element.Div" id="column8">
+					<layout>flex-div:xs-1c</layout>
 					<visibility>VISIBLE</visibility>
 					<children length="1">
 						<value class="org.mini2Dx.ui.element.ScrollBox" id="scrollBox">
@@ -97,8 +97,8 @@
 						</value>
 					</children>
 				</value>
-				<value class="org.mini2Dx.ui.element.Column" id="column9">
-					<layout>flex-column:xs-1c</layout>
+				<value class="org.mini2Dx.ui.element.Div" id="column9">
+					<layout>flex-div:xs-1c</layout>
 					<visibility>VISIBLE</visibility>
 					<children length="1">
 						<value class="org.mini2Dx.ui.element.Select" id="select">
@@ -106,8 +106,8 @@
 						</value>
 					</children>
 				</value>
-				<value class="org.mini2Dx.ui.element.Column" id="column10">
-					<layout>flex-column:xs-1c</layout>
+				<value class="org.mini2Dx.ui.element.Div" id="column10">
+					<layout>flex-div:xs-1c</layout>
 					<visibility>VISIBLE</visibility>
 					<children length="1">
 						<value class="org.mini2Dx.ui.element.Slider" id="slider">
@@ -115,8 +115,8 @@
 						</value>
 					</children>
 				</value>
-				<value class="org.mini2Dx.ui.element.Column" id="column11">
-					<layout>flex-column:xs-1c</layout>
+				<value class="org.mini2Dx.ui.element.Div" id="column11">
+					<layout>flex-div:xs-1c</layout>
 					<visibility>VISIBLE</visibility>
 					<children length="1">
 						<value class="org.mini2Dx.ui.element.TabView" id="tabView">
@@ -124,8 +124,8 @@
 						</value>
 					</children>
 				</value>
-				<value class="org.mini2Dx.ui.element.Column" id="column12">
-					<layout>flex-column:xs-1c</layout>
+				<value class="org.mini2Dx.ui.element.Div" id="column12">
+					<layout>flex-div:xs-1c</layout>
 					<visibility>VISIBLE</visibility>
 					<children length="1">
 						<value class="org.mini2Dx.ui.element.TextBox" id="textBox">

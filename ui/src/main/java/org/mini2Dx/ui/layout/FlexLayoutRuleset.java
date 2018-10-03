@@ -22,12 +22,14 @@ import org.mini2Dx.ui.render.RenderNode;
 import java.util.*;
 
 public class FlexLayoutRuleset extends LayoutRuleset {
+	public static final String DEFAULT_RULESET = "flex-column:xs-12c,xs-auto";
 
 	protected static final String AUTO = "auto";
 	protected static final String PIXEL_SUFFIX = "px";
 	protected static final String COLUMN_SUFFIX = "c";
 	protected static final String EMPTY_STRING = "";
 
+	protected final String rules;
 	protected final Map<ScreenSize, SizeRule> widthRules = new HashMap<ScreenSize, SizeRule>();
 	protected final Map<ScreenSize, SizeRule> heightRules = new HashMap<ScreenSize, SizeRule>();
 	protected final Set<InputSource> hiddenByInput = new HashSet<InputSource>();
@@ -50,7 +52,8 @@ public class FlexLayoutRuleset extends LayoutRuleset {
 	 * @param ruleValue The part of the ruleset after :
 	 */
 	public FlexLayoutRuleset(FlexDirection flexDirection, String rules, String ruleValue) {
-		super(rules);
+		super();
+		this.rules = rules;
 		this.flexDirection = flexDirection;
 
 		String [] components = ruleValue.split(",");
@@ -155,7 +158,7 @@ public class FlexLayoutRuleset extends LayoutRuleset {
 				sizeRules.put(screenSize, new AutoSizeRule());
 			} else if (ruleDetails[1].endsWith(PIXEL_SUFFIX)) {
 				sizeRules.put(screenSize,
-						new AbsoluteSizeRule(Integer.parseInt(ruleDetails[1].replace(PIXEL_SUFFIX, EMPTY_STRING))));
+						new AbsoluteSizeRule(Float.parseFloat(ruleDetails[1].replace(PIXEL_SUFFIX, EMPTY_STRING))));
 			} else if (ruleDetails[1].endsWith(COLUMN_SUFFIX)) {
 				if(!horizontalRuleset) {
 					throw new MdxException("Invalid size - cannot use column size for vertical size rules. Must be pixel (px) or auto");
@@ -194,7 +197,7 @@ public class FlexLayoutRuleset extends LayoutRuleset {
 			ScreenSize screenSize = ScreenSize.fromString(ruleDetails[0]);
 			if (ruleDetails[2].endsWith(PIXEL_SUFFIX)) {
 				offsetRules.put(screenSize,
-						new AbsoluteOffsetRule(Integer.parseInt(ruleDetails[2].replace(PIXEL_SUFFIX, EMPTY_STRING))));
+						new AbsoluteOffsetRule(Float.parseFloat(ruleDetails[2].replace(PIXEL_SUFFIX, EMPTY_STRING))));
 			} else if (ruleDetails[2].endsWith(COLUMN_SUFFIX)) {
 				if(!horizontalRuleset) {
 					throw new MdxException("Invalid offset - cannot use column offset for vertical size rules. Must be pixel (px)");
@@ -298,5 +301,45 @@ public class FlexLayoutRuleset extends LayoutRuleset {
 
 	public OffsetRule getCurrentOffsetYRule() {
 		return currentOffsetYRule;
+	}
+
+	@Override
+	public boolean isFlexLayout() {
+		return true;
+	}
+
+	public boolean equals(String rules) {
+		if(rules == null) {
+			return false;
+		}
+		if(rules.isEmpty()) {
+			return false;
+		}
+		return this.rules.equals(rules);
+	}
+
+	public static FlexLayoutRuleset parse(String layout) {
+		final String [] typeAndValue = layout.toLowerCase().split(":");
+		switch(typeAndValue[0]) {
+		case "flex-col":
+		case "flex-column":
+			return new FlexLayoutRuleset(FlexDirection.COLUMN, layout, typeAndValue[1]);
+		case "flex-r":
+		case "flex-row":
+			return new FlexLayoutRuleset(FlexDirection.ROW, layout, typeAndValue[1]);
+		case "flex-col-r":
+		case "flex-column-r":
+		case "flex-column-reverse":
+			return new FlexLayoutRuleset(FlexDirection.COLUMN_REVERSE, layout, typeAndValue[1]);
+		case "flex-r-r":
+		case "flex-row-r":
+		case "flex-row-reverse":
+			return new FlexLayoutRuleset(FlexDirection.ROW_REVERSE, layout, typeAndValue[1]);
+		case "flex-cen":
+		case "flex-centre":
+		case "flex-center":
+			return new FlexLayoutRuleset(FlexDirection.CENTER, layout, typeAndValue[1]);
+		}
+		throw new MdxException("Invalid layout type '" + typeAndValue[0] + "'");
 	}
 }

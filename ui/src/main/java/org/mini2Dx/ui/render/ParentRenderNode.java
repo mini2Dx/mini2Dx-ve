@@ -16,6 +16,8 @@ import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.util.IntTreeMap;
 import org.mini2Dx.ui.element.ParentUiElement;
+import org.mini2Dx.ui.layout.FlexLayoutRuleset;
+import org.mini2Dx.ui.layout.ImmediateLayoutRuleset;
 import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.layout.LayoutRuleset;
 import org.mini2Dx.ui.style.ParentStyleRule;
@@ -33,7 +35,15 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 
 	public ParentRenderNode(ParentRenderNode<?, ?> parent, T element) {
 		super(parent, element);
-		layoutRuleset = LayoutRuleset.parse(element.getLayout());
+		initLayoutRuleset();
+	}
+
+	protected void initLayoutRuleset() {
+		if(element.getFlexLayout() != null) {
+			layoutRuleset = FlexLayoutRuleset.parse(element.getFlexLayout());
+		} else {
+			layoutRuleset = new ImmediateLayoutRuleset(element);
+		}
 	}
 
 	@Override
@@ -113,8 +123,8 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 		if (!isDirty() && !layoutState.isScreenSizeChanged()) {
 			return;
 		}
-		if (!layoutRuleset.equals(element.getLayout())) {
-			layoutRuleset = LayoutRuleset.parse(element.getLayout());
+		if (!layoutRuleset.equals(element.getFlexLayout())) {
+			initLayoutRuleset();
 		}
 
 		float parentWidth = layoutState.getParentWidth();
@@ -154,6 +164,7 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 		setDirty(false);
 		childDirty = false;
 		initialLayoutOccurred = true;
+
 		element.syncWithLayout();
 	}
 

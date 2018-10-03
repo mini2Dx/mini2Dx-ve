@@ -38,7 +38,7 @@ public abstract class ParentUiElement extends UiElement {
 	protected final AtomicBoolean asyncRemoveAll = new AtomicBoolean(false);
 
 	@Field(optional = true)
-	private String layout = LayoutRuleset.DEFAULT_RULESET;
+	private String flexLayout = null;
 	@Field(optional = true)
 	private boolean overflowClipped = false;
 
@@ -257,6 +257,12 @@ public abstract class ParentUiElement extends UiElement {
 		while (!asyncRemoveQueue.isEmpty()) {
 			remove(asyncRemoveQueue.poll());
 		}
+
+		x = renderNode.getOuterX();
+		y = renderNode.getOuterY();
+		width = renderNode.getOuterWidth();
+		height = renderNode.getOuterHeight();
+
 		processUpdateDeferred();
 	}
 
@@ -295,18 +301,18 @@ public abstract class ParentUiElement extends UiElement {
 		return children.size();
 	}
 
-	public String getLayout() {
-		return layout;
+	public String getFlexLayout() {
+		return flexLayout;
 	}
 
-	public void setLayout(String layout) {
-		if(layout == null) {
+	public void setFlexLayout(String flexLayout) {
+		if(flexLayout == null) {
 			return;
 		}
-		if (this.layout.equals(layout)) {
+		if(this.flexLayout != null && this.flexLayout.equals(flexLayout)) {
 			return;
 		}
-		this.layout = layout;
+		this.flexLayout = flexLayout;
 
 		if (renderNode == null) {
 			return;
@@ -329,34 +335,10 @@ public abstract class ParentUiElement extends UiElement {
 	}
 
 	@Override
-	public float getX() {
-		if(renderNode == null) {
-			return Float.MIN_VALUE;
+	protected void setRenderNodeDirty() {
+		if (renderNode == null) {
+			return;
 		}
-		return renderNode.getOuterX();
-	}
-
-	@Override
-	public float getY() {
-		if(renderNode == null) {
-			return Float.MIN_VALUE;
-		}
-		return renderNode.getOuterY();
-	}
-
-	@Override
-	public float getWidth() {
-		if(renderNode == null) {
-			return -1f;
-		}
-		return renderNode.getOuterWidth();
-	}
-
-	@Override
-	public float getHeight() {
-		if(renderNode == null) {
-			return -1f;
-		}
-		return renderNode.getOuterHeight();
+		renderNode.setDirty(true);
 	}
 }

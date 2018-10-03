@@ -12,19 +12,18 @@
 package org.mini2Dx.ui.element;
 
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
-import org.mini2Dx.ui.render.ColumnRenderNode;
+import org.mini2Dx.ui.render.DivRenderNode;
 import org.mini2Dx.ui.render.ParentRenderNode;
 
 /**
- * A column of {@link UiElement}s. A column can be multiple columns wide with
- * {@link UiElement}s added horizontally and wrapping as required.
+ * A division or section containing {@link UiElement}s
  */
-public class Column extends ParentUiElement {
+public class Div extends ParentUiElement {
 
 	/**
-	 * Constructor. Generates a unique ID for this {@link Column}
+	 * Constructor. Generates a unique ID for this {@link Div}
 	 */
-	public Column() {
+	public Div() {
 		this(null);
 	}
 
@@ -32,38 +31,38 @@ public class Column extends ParentUiElement {
 	 * Constructor
 	 * 
 	 * @param id
-	 *            The unique ID for this {@link Column}
+	 *            The unique ID for this {@link Div}
 	 */
-	public Column(@ConstructorArg(clazz = String.class, name = "id") String id) {
+	public Div(@ConstructorArg(clazz = String.class, name = "id") String id) {
 		super(id);
 	}
 	
 	@Override
 	protected ParentRenderNode<?, ?> createRenderNode(ParentRenderNode<?, ?> parent) {
-		return new ColumnRenderNode(parent, this);
+		return new DivRenderNode(parent, this);
 	}
 	
 	/**
-	 * Creates a {@link Visibility#VISIBLE} {@link Column} containing the
+	 * Creates a {@link Visibility#VISIBLE} {@link Div} containing the
 	 * specified {@link UiElement}s
 	 * 
-	 * @param elements The {@link UiElement}s to add to the {@link Column}
-	 * @return A new {@link Column} containing the {@link UiElement}s
+	 * @param elements The {@link UiElement}s to add to the {@link Div}
+	 * @return A new {@link Div} containing the {@link UiElement}s
 	 */
-	public static Column withElements(UiElement... elements) {
+	public static Div withElements(UiElement... elements) {
 		return withElements(null, elements);
 	}
 
 	/**
-	 * Creates a {@link Visibility#VISIBLE} {@link Column} containing the
+	 * Creates a {@link Visibility#VISIBLE} {@link Div} containing the
 	 * specified {@link UiElement}s
 	 * 
-	 * @param columnId The unique ID of the {@link Column}
-	 * @param elements The {@link UiElement}s to add to the {@link Column}
-	 * @return A new {@link Column} containing the {@link UiElement}s
+	 * @param columnId The unique ID of the {@link Div}
+	 * @param elements The {@link UiElement}s to add to the {@link Div}
+	 * @return A new {@link Div} containing the {@link UiElement}s
 	 */
-	public static Column withElements(String columnId, UiElement... elements) {
-		Column result = new Column(columnId);
+	public static Div withElements(String columnId, UiElement... elements) {
+		Div result = new Div(columnId);
 		for (int i = 0; i < elements.length; i++) {
 			result.add(elements[i]);
 		}

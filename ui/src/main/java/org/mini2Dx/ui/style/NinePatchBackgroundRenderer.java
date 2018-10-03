@@ -13,6 +13,8 @@ package org.mini2Dx.ui.style;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.NinePatch;
 import org.mini2Dx.core.graphics.TextureRegion;
@@ -35,8 +37,11 @@ public class NinePatchBackgroundRenderer extends BackgroundRenderer {
 		if(theme.isHeadless()) {
 			return;
 		}
-		ninePatch = new NinePatch(new TextureRegion(theme.getTextureAtlas().findRegion(imagePath)), left,
-				right, top, bottom);
+		final TextureAtlas.AtlasRegion atlasRegion = theme.getTextureAtlas().findRegion(imagePath);
+		if(atlasRegion == null) {
+			throw new MdxException("No such texture '" + imagePath + "'");
+		}
+		ninePatch = new NinePatch(new TextureRegion(atlasRegion), left, right, top, bottom);
 	}
 
 	@Override

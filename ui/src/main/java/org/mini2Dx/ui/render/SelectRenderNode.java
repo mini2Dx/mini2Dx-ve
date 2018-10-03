@@ -20,9 +20,7 @@ import org.mini2Dx.ui.event.EventTrigger;
 import org.mini2Dx.ui.event.params.EventTriggerParams;
 import org.mini2Dx.ui.event.params.EventTriggerParamsPool;
 import org.mini2Dx.ui.event.params.MouseEventTriggerParams;
-import org.mini2Dx.ui.layout.HorizontalAlignment;
-import org.mini2Dx.ui.layout.LayoutRuleset;
-import org.mini2Dx.ui.layout.LayoutState;
+import org.mini2Dx.ui.layout.*;
 import org.mini2Dx.ui.style.ButtonStyleRule;
 import org.mini2Dx.ui.style.LabelStyleRule;
 import org.mini2Dx.ui.style.SelectStyleRule;
@@ -54,15 +52,26 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 
 	public SelectRenderNode(ParentRenderNode<?, ?> parent, Select<?> element) {
 		super(parent, element);
-		layoutRuleset = LayoutRuleset.parse(element.getLayout());
+		initLayoutRuleset();
+	}
+
+	protected void initLayoutRuleset() {
+		if(element.getFlexLayout() != null) {
+			layoutRuleset = FlexLayoutRuleset.parse(element.getFlexLayout());
+		} else {
+			layoutRuleset = new ImmediateLayoutRuleset(element);
+		}
 	}
 
 	@Override
 	public void layout(LayoutState layoutState) {
-		if (!layoutRuleset.equals(element.getLayout())) {
-			layoutRuleset = LayoutRuleset.parse(element.getLayout());
+		if (!layoutRuleset.equals(element.getFlexLayout())) {
+			initLayoutRuleset();
 		}
 		super.layout(layoutState);
+		if(layoutRuleset.isFlexLayout()) {
+			element.set(outerArea.getX(), outerArea.getY(), outerArea.getWidth(), outerArea.getHeight());
+		}
 	}
 
 	@Override

@@ -13,6 +13,8 @@ package org.mini2Dx.ui.render;
 
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.ui.element.ProgressBar;
+import org.mini2Dx.ui.layout.FlexLayoutRuleset;
+import org.mini2Dx.ui.layout.ImmediateLayoutRuleset;
 import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.layout.LayoutRuleset;
 import org.mini2Dx.ui.style.ProgressBarStyleRule;
@@ -29,14 +31,22 @@ public class ProgressBarRenderNode extends RenderNode<ProgressBar, ProgressBarSt
 
 	public ProgressBarRenderNode(ParentRenderNode<?, ?> parent, ProgressBar element) {
 		super(parent, element);
-		layoutRuleset = LayoutRuleset.parse(element.getLayout());
+		initLayoutRuleset();
 		multiplier = element.getValue() / element.getMax();
+	}
+
+	protected void initLayoutRuleset() {
+		if(element.getFlexLayout() != null) {
+			layoutRuleset = FlexLayoutRuleset.parse(element.getFlexLayout());
+		} else {
+			layoutRuleset = new ImmediateLayoutRuleset(element);
+		}
 	}
 
 	@Override
 	public void layout(LayoutState layoutState) {
-		if (!layoutRuleset.equals(element.getLayout())) {
-			layoutRuleset = LayoutRuleset.parse(element.getLayout());
+		if (!layoutRuleset.equals(element.getFlexLayout())) {
+			initLayoutRuleset();
 		}
 		super.layout(layoutState);
 	}

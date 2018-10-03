@@ -20,9 +20,7 @@ import org.mini2Dx.ui.event.params.EventTriggerParams;
 import org.mini2Dx.ui.event.params.EventTriggerParamsPool;
 import org.mini2Dx.ui.event.params.KeyboardEventTriggerParams;
 import org.mini2Dx.ui.event.params.MouseEventTriggerParams;
-import org.mini2Dx.ui.layout.HorizontalAlignment;
-import org.mini2Dx.ui.layout.LayoutRuleset;
-import org.mini2Dx.ui.layout.LayoutState;
+import org.mini2Dx.ui.layout.*;
 import org.mini2Dx.ui.style.BackgroundRenderer;
 import org.mini2Dx.ui.style.TextBoxStyleRule;
 
@@ -55,13 +53,21 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 
 	public TextBoxRenderNode(ParentRenderNode<?, ?> parent, TextBox element) {
 		super(parent, element);
-		layoutRuleset = LayoutRuleset.parse(element.getLayout());
+		initLayoutRuleset();
+	}
+
+	protected void initLayoutRuleset() {
+		if(element.getFlexLayout() != null) {
+			layoutRuleset = FlexLayoutRuleset.parse(element.getFlexLayout());
+		} else {
+			layoutRuleset = new ImmediateLayoutRuleset(element);
+		}
 	}
 
 	@Override
 	public void layout(LayoutState layoutState) {
-		if (!layoutRuleset.equals(element.getLayout())) {
-			layoutRuleset = LayoutRuleset.parse(element.getLayout());
+		if (!layoutRuleset.equals(element.getFlexLayout())) {
+			initLayoutRuleset();
 		}
 		super.layout(layoutState);
 	}

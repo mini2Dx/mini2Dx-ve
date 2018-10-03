@@ -30,43 +30,6 @@ import org.mini2Dx.ui.render.RenderNode;
  * {@link ScreenSize}s
  */
 public abstract class LayoutRuleset {
-	public static final String DEFAULT_RULESET = "flex-column:xs-12c,xs-auto";
-
-	public static LayoutRuleset parse(String layout) {
-		final String [] typeAndValue = layout.toLowerCase().split(":");
-		switch(typeAndValue[0]) {
-		case "p":
-		case "pix":
-		case "pixel":
-			return new PixelLayoutRuleset(layout, typeAndValue[1]);
-		case "flex-col":
-		case "flex-column":
-			return new FlexLayoutRuleset(FlexDirection.COLUMN, layout, typeAndValue[1]);
-		case "flex-r":
-		case "flex-row":
-			return new FlexLayoutRuleset(FlexDirection.ROW, layout, typeAndValue[1]);
-		case "flex-col-r":
-		case "flex-column-r":
-		case "flex-column-reverse":
-			return new FlexLayoutRuleset(FlexDirection.COLUMN_REVERSE, layout, typeAndValue[1]);
-		case "flex-r-r":
-		case "flex-row-r":
-		case "flex-row-reverse":
-			return new FlexLayoutRuleset(FlexDirection.ROW_REVERSE, layout, typeAndValue[1]);
-		case "flex-cen":
-		case "flex-centre":
-		case "flex-center":
-			return new FlexLayoutRuleset(FlexDirection.CENTER, layout, typeAndValue[1]);
-		}
-		throw new MdxException("Invalid layout type '" + typeAndValue[0] + "'");
-	}
-
-	private final String rules;
-
-	public LayoutRuleset(String rules) {
-		super();
-		this.rules = rules;
-	}
 
 	public abstract void layout(LayoutState layoutState, ParentRenderNode<?, ?> parentNode, Array<RenderNode<?, ?>> children);
 
@@ -88,7 +51,7 @@ public abstract class LayoutRuleset {
 
 	public abstract OffsetRule getCurrentOffsetYRule();
 
-	public boolean equals(String rules) {
-		return this.rules.equals(rules);
-	}
+	public abstract boolean isFlexLayout();
+
+	public abstract boolean equals(String rules);
 }

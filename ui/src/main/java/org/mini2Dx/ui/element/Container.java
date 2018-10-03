@@ -33,7 +33,7 @@ import java.util.Queue;
  * Element for containing {@link UiElement}s. {@link Container} can act as a window through
  * {@link UiTheme} styles.
  */
-public class Container extends Column implements Navigatable {
+public class Container extends Div implements Navigatable {
 	private final Queue<ControllerHotKeyOperation> controllerHotKeyOperations = new LinkedList<ControllerHotKeyOperation>();
 	private final Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations = new LinkedList<KeyboardHotKeyOperation>();
 
@@ -75,7 +75,7 @@ public class Container extends Column implements Navigatable {
 			return;
 		}
 		if (alignToElement.getWidth() < 0f) {
-			deferAlignToUntilLayout(alignToElement, horizontalAlignment, verticalAlignment);
+			deferAlignToUntilUpdate(alignToElement, horizontalAlignment, verticalAlignment);
 			return;
 		}
 		final int x, y;
@@ -104,12 +104,12 @@ public class Container extends Column implements Navigatable {
 			y = MathUtils.round(alignToElement.getY() + alignToElement.getHeight() - getHeight());
 			break;
 		}
+		System.out.println("SET TO: " + x + "," + y);
 
-		if (getLayout().startsWith("pixel")) {
-			final String [] components = getLayout().split(",");
-			setLayout("pixel:" + x + "," + y + "," + components[2] + "," + components[3]);
+		if(getFlexLayout() == null) {
+			setXY(x, y);
 		} else {
-			final String originalLayout = getLayout();
+			final String originalLayout = getFlexLayout();
 			final String [] originalLayoutComponents = originalLayout.split(":");
 			final String flexComponent = originalLayoutComponents[0];
 			final String [] xyComponents = originalLayoutComponents[1].split(",");
@@ -142,7 +142,7 @@ public class Container extends Column implements Navigatable {
 					result.append(yComponent[i]);
 				}
 			}
-			setLayout(result.toString());
+			setFlexLayout(result.toString());
 		}
 	}
 

@@ -12,7 +12,7 @@ import org.mini2Dx.core.screen.ScreenManager;
 import org.mini2Dx.core.serialization.SerializationException;
 import org.mini2Dx.uats.util.ScreenIds;
 import org.mini2Dx.ui.UiContainer;
-import org.mini2Dx.ui.element.Column;
+import org.mini2Dx.ui.element.Div;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -90,15 +90,15 @@ public class UiSerializationUAT extends BasicGameScreen {
 			failureMessage = "'column1' is null";
 			return false;
 		}
-		final Column column = (Column) container.getElementById("column1");
+		final Div div = (Div) container.getElementById("column1");
 		
 		if(container.getElementById("image") == null) {
 			failureMessage = "'image' is null";
 			
-			if(column.getTotalChildren() == 0) {
+			if(div.getTotalChildren() == 0) {
 				failureMessage += ". Element was not deserialized";
-			} else if(!column.get(0).getId().equals("image")) {
-				failureMessage += ". Id was stored as " + column.get(0).getId();
+			} else if(!div.get(0).getId().equals("image")) {
+				failureMessage += ". Id was stored as " + div.get(0).getId();
 			}
 			return false;
 		}

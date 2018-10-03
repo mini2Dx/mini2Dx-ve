@@ -20,7 +20,7 @@ import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.element.AnimatedImage;
 import org.mini2Dx.ui.element.Button;
 import org.mini2Dx.ui.element.Checkbox;
-import org.mini2Dx.ui.element.Column;
+import org.mini2Dx.ui.element.Div;
 import org.mini2Dx.ui.element.Container;
 import org.mini2Dx.ui.element.Image;
 import org.mini2Dx.ui.element.Label;
@@ -199,7 +199,7 @@ public class UiTheme {
 		for (String id : columns.keySet()) {
 			StyleRuleset<ParentStyleRule> columnRuleset = columns.get(id);
 			columnRuleset.loadDependencies(this, dependencies);
-			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Column Ruleset: " + id + "] Dependencies loaded");
+			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Div Ruleset: " + id + "] Dependencies loaded");
 		}
 		for (String id : containers.keySet()) {
 			StyleRuleset<ContainerStyleRule> containerRuleset = containers.get(id);
@@ -334,8 +334,8 @@ public class UiTheme {
 		return getCheckboxStyleRule(checkbox.getStyleId(), screenSize);
 	}
 
-	public ParentStyleRule getStyleRule(Column column, ScreenSize screenSize) {
-		return getColumnStyleRule(column.getStyleId(), screenSize);
+	public ParentStyleRule getStyleRule(Div div, ScreenSize screenSize) {
+		return getColumnStyleRule(div.getStyleId(), screenSize);
 	}
 
 	public ContainerStyleRule getStyleRule(Container container, ScreenSize screenSize) {

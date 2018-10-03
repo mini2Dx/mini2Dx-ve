@@ -74,8 +74,6 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		}
 		outerArea.preUpdate();
 
-		element.syncWithUpdate();
-
 		boolean visible = isScheduledToRender();
 		if (effects.size() == 0) {
 			outerArea.forceTo(targetOuterArea);
@@ -102,6 +100,8 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 
 		innerArea.set(getInnerX(), getInnerY(), getInnerWidth(), getInnerHeight());
 		initialUpdateOccurred = true;
+
+		element.syncWithUpdate();
 	}
 
 	public void interpolate(float alpha) {
@@ -206,6 +206,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 			yOffset = determineYOffset(layoutState);
 			break;
 		}
+
 		dirty = false;
 		initialLayoutOccurred = true;
 		element.syncWithLayout();

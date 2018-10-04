@@ -427,7 +427,16 @@ public class UiTheme {
 		}
 		return ruleset.getStyleRule(screenSize);
 	}
-	
+
+	public StyleRule getImageStyleRule(String styleId, ScreenSize screenSize) {
+		DefaultStyleRuleset ruleset = images.get(styleId);
+		if (ruleset == null) {
+			Gdx.app.error(LOGGING_TAG, "No style found with ID " + styleId);
+			ruleset = images.get(DEFAULT_STYLE_ID);
+		}
+		return ruleset.getStyleRule(screenSize);
+	}
+
 	public LabelStyleRule getLabelStyleRule(String styleId, ScreenSize screenSize) {
 		StyleRuleset<LabelStyleRule> ruleset = labels.get(styleId);
 		if (ruleset == null) {

@@ -5,10 +5,16 @@ import org.mini2Dx.ui.element.UiElement;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.RenderNode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ImmediateLayoutRuleset extends LayoutRuleset {
 	private final UiElement element;
 	private final OffsetRule xRule, yRule;
 	private final SizeRule widthRule, heightRule;
+
+	private final Map<String, Float> previousOffsetX = new HashMap<String, Float>();
+	private final Map<String, Float> previousOffsetY = new HashMap<String, Float>();
 
 	public ImmediateLayoutRuleset(UiElement element) {
 		super();
@@ -30,8 +36,24 @@ public class ImmediateLayoutRuleset extends LayoutRuleset {
 			if (!node.isIncludedInLayout()) {
 				continue;
 			}
-			node.setRelativeX(startX + node.getXOffset());
-			node.setRelativeY(startY + node.getYOffset());
+			final float previousOffsetX, previousOffsetY;
+
+			if(this.previousOffsetX.containsKey(node.getId())) {
+				previousOffsetX = this.previousOffsetX.get(node.getId());
+			} else {
+				previousOffsetX = 0f;
+			}
+			if(this.previousOffsetY.containsKey(node.getId())) {
+				previousOffsetY = this.previousOffsetY.get(node.getId());
+			} else {
+				previousOffsetY = 0f;
+			}
+
+			node.setRelativeX(startX + (node.getXOffset() - previousOffsetX));
+			node.setRelativeY(startY + (node.getYOffset()) - previousOffsetY);
+
+			this.previousOffsetX.put(node.getId(), node.getRelativeX());
+			this.previousOffsetY.put(node.getId(), node.getRelativeY());
 		}
 	}
 

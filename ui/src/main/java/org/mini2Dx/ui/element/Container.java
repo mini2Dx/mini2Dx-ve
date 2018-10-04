@@ -16,6 +16,7 @@ import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.layout.HorizontalAlignment;
+import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.layout.VerticalAlignment;
 import org.mini2Dx.ui.navigation.ControllerHotKeyOperation;
 import org.mini2Dx.ui.navigation.KeyboardHotKeyOperation;
@@ -24,6 +25,7 @@ import org.mini2Dx.ui.navigation.VerticalUiNavigation;
 import org.mini2Dx.ui.render.ActionableRenderNode;
 import org.mini2Dx.ui.render.ContainerRenderNode;
 import org.mini2Dx.ui.render.ParentRenderNode;
+import org.mini2Dx.ui.style.StyleRule;
 import org.mini2Dx.ui.style.UiTheme;
 
 import java.util.LinkedList;
@@ -51,129 +53,23 @@ public class Container extends Div implements Navigatable {
 	 * @param id The unique ID for the {@link Container}
 	 */
 	public Container(@ConstructorArg(clazz = String.class, name = "id") String id) {
-		super(id);
+		this(id, 0f, 0f, 9000f, 9000f);
 	}
 
 	/**
-	 * Aligns this container to the same area of another element.
-	 *
-	 * @param alignToElement The {@link UiElement} to align with. Note: This can also be the {@link UiContainer}
-	 * @param horizontalAlignment The {@link HorizontalAlignment} of this element
-	 * @param verticalAlignment The {@link VerticalAlignment} of this element
+	 * Constructor
+	 * @param id The unique ID for this element (if null an ID will be generated)
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
 	 */
-	public void alignTo(ParentUiElement alignToElement, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
-		if (renderNode == null) {
-			deferAlignToUntilLayout(alignToElement, horizontalAlignment, verticalAlignment);
-			return;
-		}
-		if(!renderNode.isInitialLayoutOccurred()) {
-			deferAlignToUntilLayout(alignToElement, horizontalAlignment, verticalAlignment);
-			return;
-		}
-		if(!renderNode.isInitialUpdateOccurred()) {
-			deferAlignToUntilUpdate(alignToElement, horizontalAlignment, verticalAlignment);
-			return;
-		}
-		if (alignToElement.getWidth() < 0f) {
-			deferAlignToUntilUpdate(alignToElement, horizontalAlignment, verticalAlignment);
-			return;
-		}
-		final int x, y;
-
-		switch (horizontalAlignment) {
-		default:
-		case LEFT:
-			x = MathUtils.round(alignToElement.getX());
-			break;
-		case CENTER:
-			x = MathUtils.round(alignToElement.getX() + (alignToElement.getWidth() * 0.5f) - (getWidth() * 0.5f));
-			break;
-		case RIGHT:
-			x = MathUtils.round(alignToElement.getX() + alignToElement.getWidth() - getWidth());
-			break;
-		}
-		switch (verticalAlignment) {
-		default:
-		case TOP:
-			y = MathUtils.round(alignToElement.getY());
-			break;
-		case MIDDLE:
-			y = MathUtils.round(alignToElement.getY() + (alignToElement.getHeight() * 0.5f) - (getHeight() * 0.5f));
-			break;
-		case BOTTOM:
-			y = MathUtils.round(alignToElement.getY() + alignToElement.getHeight() - getHeight());
-			break;
-		}
-		System.out.println("SET TO: " + x + "," + y);
-
-		if(getFlexLayout() == null) {
-			setXY(x, y);
-		} else {
-			final String originalLayout = getFlexLayout();
-			final String [] originalLayoutComponents = originalLayout.split(":");
-			final String flexComponent = originalLayoutComponents[0];
-			final String [] xyComponents = originalLayoutComponents[1].split(",");
-			final String [] xComponent = xyComponents[0].split(" ");
-
-			final StringBuilder result = new StringBuilder(flexComponent);
-			result.append(':');
-			result.append("xs-offset-" + x + "px");
-
-			for(int i = 0; i < xComponent.length; i++) {
-				if(xComponent[i].contains("offset")) {
-					continue;
-				}
-				result.append(' ');
-				result.append(xComponent[i]);
-			}
-
-			result.append(',');
-			result.append("xs-offset-" + y + "px");
-			if(xyComponents.length == 1) {
-				result.append(' ');
-				result.append("xs-auto");
-			} else {
-				final String [] yComponent = xyComponents[1].split(" ");
-				for(int i = 0; i < yComponent.length; i++) {
-					if(yComponent[i].contains("offset")) {
-						continue;
-					}
-					result.append(' ');
-					result.append(yComponent[i]);
-				}
-			}
-			setFlexLayout(result.toString());
-		}
-	}
-
-	/**
-	 * Calls {@link #alignTo(ParentUiElement, HorizontalAlignment, VerticalAlignment)} on the next update
-	 * @param alignToElement The {@link UiElement} to align with. Note: This can also be the {@link UiContainer}
-	 * @param horizontalAlignment The {@link HorizontalAlignment} of this element
-	 * @param verticalAlignment The {@link VerticalAlignment} of this element
-	 */
-	public void deferAlignToUntilUpdate(final ParentUiElement alignToElement, final HorizontalAlignment horizontalAlignment, final VerticalAlignment verticalAlignment) {
-		deferUntilUpdate(new Runnable() {
-			@Override
-			public void run() {
-				alignTo(alignToElement, horizontalAlignment, verticalAlignment);
-			}
-		});
-	}
-
-	/**
-	 * Calls {@link #alignTo(ParentUiElement, HorizontalAlignment, VerticalAlignment)} on the next UI layout
-	 * @param alignToElement The {@link UiElement} to align with. Note: This can also be the {@link UiContainer}
-	 * @param horizontalAlignment The {@link HorizontalAlignment} of this element
-	 * @param verticalAlignment The {@link VerticalAlignment} of this element
-	 */
-	public void deferAlignToUntilLayout(final ParentUiElement alignToElement, final HorizontalAlignment horizontalAlignment, final VerticalAlignment verticalAlignment) {
-		deferUntilLayout(new Runnable() {
-			@Override
-			public void run() {
-				alignTo(alignToElement, horizontalAlignment, verticalAlignment);
-			}
-		});
+	public Container(@ConstructorArg(clazz = String.class, name = "id") String id,
+					@ConstructorArg(clazz = Float.class, name = "x") float x,
+					@ConstructorArg(clazz = Float.class, name = "y") float y,
+					@ConstructorArg(clazz = Float.class, name = "width") float width,
+					@ConstructorArg(clazz = Float.class, name = "height") float height) {
+		super(id, x, y, width, height);
 	}
 
 	@Override
@@ -257,5 +153,13 @@ public class Container extends Div implements Navigatable {
 			return;
 		}
 		this.navigation = navigation;
+	}
+
+	@Override
+	public StyleRule getStyleRule() {
+		if(!UiContainer.isThemeApplied()) {
+			return null;
+		}
+		return UiContainer.getTheme().getContainerStyleRule(styleId, ScreenSize.XS);
 	}
 }

@@ -20,7 +20,7 @@ import org.mini2Dx.ui.InputSource;
 import org.mini2Dx.ui.dummy.DummyRenderNode;
 import org.mini2Dx.ui.dummy.DummyUiElement;
 import org.mini2Dx.ui.element.Div;
-import org.mini2Dx.ui.element.Row;
+import org.mini2Dx.ui.element.FlexRow;
 import org.mini2Dx.ui.element.Visibility;
 import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.layout.ScreenSize;
@@ -42,10 +42,10 @@ public class DivRenderNodeTest {
 	private Div div = new Div("column1");
 	private DivRenderNode divRenderNode = new DivRenderNode(null, div);
 	
-	private Row row1 = new Row("row1");
-	private Row row2 = new Row("row2");
-	private DivRenderNode rowRenderNode1 = new DivRenderNode(divRenderNode, row1);
-	private DivRenderNode rowRenderNode2 = new DivRenderNode(divRenderNode, row2);
+	private FlexRow flexRow1 = new FlexRow("flexRow1");
+	private FlexRow flexRow2 = new FlexRow("flexRow2");
+	private DivRenderNode rowRenderNode1 = new DivRenderNode(divRenderNode, flexRow1);
+	private DivRenderNode rowRenderNode2 = new DivRenderNode(divRenderNode, flexRow2);
 	
 	private DummyUiElement uiElement1 = new DummyUiElement("uiElement1");
 	private DummyUiElement uiElement2 = new DummyUiElement("uiElement1");
@@ -63,8 +63,8 @@ public class DivRenderNodeTest {
 		div.setFlexLayout("flex-div:xs-3c");
 		
 		div.setVisibility(Visibility.VISIBLE);
-		row1.setVisibility(Visibility.VISIBLE);
-		row2.setVisibility(Visibility.VISIBLE);
+		flexRow1.setVisibility(Visibility.VISIBLE);
+		flexRow2.setVisibility(Visibility.VISIBLE);
 		
 		rowRenderNode1.addChild(renderNode1);
 		rowRenderNode1.addChild(renderNode2);
@@ -157,7 +157,7 @@ public class DivRenderNodeTest {
 				will(returnValue(1f));
 				atLeast(1).of(theme).getStyleRule(with(any(Div.class)), with(ScreenSize.XS));
 				will(returnValue(new ParentStyleRule()));
-				atLeast(1).of(theme).getStyleRule(with(any(Row.class)), with(ScreenSize.XS));
+				atLeast(1).of(theme).getStyleRule(with(any(FlexRow.class)), with(ScreenSize.XS));
 				will(returnValue(new ParentStyleRule()));
 				atLeast(1).of(renderTree).getLastInputSource();
 				will(returnValue(InputSource.KEYBOARD_MOUSE));

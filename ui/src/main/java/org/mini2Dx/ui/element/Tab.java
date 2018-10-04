@@ -30,7 +30,7 @@ import org.mini2Dx.ui.render.TabRenderNode;
 /**
  * A tab that contains {@link UiElement}s. Add to a {@link TabView}
  */
-public class Tab extends Row implements Navigatable {
+public class Tab extends FlexRow implements Navigatable {
 	private final Queue<ControllerHotKeyOperation> controllerHotKeyOperations = new LinkedList<ControllerHotKeyOperation>();
 	private final Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations = new LinkedList<KeyboardHotKeyOperation>();
 	

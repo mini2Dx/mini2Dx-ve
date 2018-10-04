@@ -1,5 +1,5 @@
 <container>
-	<row>
+	<flexRow>
 		<div id="firstColumn" layout="xs-12 sm-10 sm-offset-1 md-3" style="">
 			<label style="" text="Label text" />
 		</div>
@@ -18,5 +18,5 @@
 		<div layout="xs-12 sm-10 sm-offset-2 md-3">
 			<textbox id="" style="" />
 		</div>
-	</row>
+	</flexRow>
 </container>

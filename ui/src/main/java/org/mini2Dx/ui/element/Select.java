@@ -16,16 +16,19 @@ import java.util.List;
 
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
+import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.event.ActionEvent;
 import org.mini2Dx.ui.event.ActionEventPool;
 import org.mini2Dx.ui.event.EventTrigger;
 import org.mini2Dx.ui.event.params.EventTriggerParams;
 import org.mini2Dx.ui.layout.LayoutRuleset;
+import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.listener.ActionListener;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.SelectRenderNode;
 
 import com.badlogic.gdx.graphics.Color;
+import org.mini2Dx.ui.style.StyleRule;
 
 /**
  * A {@link UiElement} with preset options. Uses left/right buttons to change
@@ -120,8 +123,8 @@ public class Select<V> extends UiElement implements Actionable {
 			renderNode.applyEffect(effects.poll());
 		}
 
-		x = renderNode.getOuterX();
-		y = renderNode.getOuterY();
+		x = renderNode.getRelativeX();
+		y = renderNode.getRelativeY();
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
 
@@ -353,6 +356,14 @@ public class Select<V> extends UiElement implements Actionable {
 		renderNode.setDirty(true);
 	}
 
+	@Override
+	public StyleRule getStyleRule() {
+		if(!UiContainer.isThemeApplied()) {
+			return null;
+		}
+		return UiContainer.getTheme().getSelectStyleRule(styleId, ScreenSize.XS);
+	}
+
 	public String getFlexLayout() {
 		return flexLayout;
 	}
@@ -405,10 +416,34 @@ public class Select<V> extends UiElement implements Actionable {
 	}
 
 	@Override
-	protected void setRenderNodeDirty() {
+	public boolean isRenderNodeDirty() {
+		if (renderNode == null) {
+			return true;
+		}
+		return renderNode.isDirty();
+	}
+
+	@Override
+	public void setRenderNodeDirty() {
 		if (renderNode == null) {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public boolean isInitialLayoutOccurred() {
+		if (renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialLayoutOccurred();
+	}
+
+	@Override
+	public boolean isInitialUpdateOccurred() {
+		if(renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialUpdateOccurred();
 	}
 }

@@ -54,7 +54,7 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 	}
 
 	public void layout() {
-		layout(new LayoutState(this, assetManager, element.getTheme(), currentScreenSize, 12,
+		layout(new LayoutState(this, assetManager, UiContainer.getTheme(), currentScreenSize, 12,
 				((UiContainer) element).getWidth(), screenSizeChanged));
 	}
 

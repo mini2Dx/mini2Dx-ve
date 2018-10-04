@@ -18,6 +18,8 @@ import org.mini2Dx.core.graphics.TextureRegion;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.core.serialization.annotation.PostDeserialize;
+import org.mini2Dx.ui.UiContainer;
+import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.render.ImageRenderNode;
 import org.mini2Dx.ui.render.ParentRenderNode;
 
@@ -26,6 +28,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import org.mini2Dx.ui.style.StyleRule;
 
 /**
  * Wraps a {@link Texture} or {@link TextureRegion} as a {@link UiElement}
@@ -131,6 +134,20 @@ public class Image extends UiElement {
 		this.cachedTexturePath = texturePath;
 	}
 
+	protected void estimateSize() {
+		if(renderNode != null) {
+			return;
+		}
+		if(!UiContainer.isThemeApplied()) {
+			return;
+		}
+		final StyleRule styleRule = UiContainer.getTheme().getImageStyleRule(styleId, ScreenSize.XS);
+		if(textureRegion != null) {
+			width = textureRegion.getRegionWidth() + styleRule.getMarginLeft() + styleRule.getMarginRight() + styleRule.getPaddingLeft() + styleRule.getPaddingRight();
+			height = textureRegion.getRegionHeight() + styleRule.getMarginTop() + styleRule.getMarginBottom() + styleRule.getPaddingTop() + styleRule.getPaddingBottom();
+		}
+	}
+
 	@Override
 	public void attach(ParentRenderNode<?, ?> parentRenderNode) {
 		if (renderNode != null) {
@@ -189,6 +206,7 @@ public class Image extends UiElement {
 	 */
 	public void setTextureRegion(TextureRegion textureRegion) {
 		this.textureRegion = textureRegion;
+		estimateSize();
 
 		if (renderNode == null) {
 			return;
@@ -309,10 +327,11 @@ public class Image extends UiElement {
 			renderNode.applyEffect(effects.poll());
 		}
 
-		x = renderNode.getOuterX();
-		y = renderNode.getOuterY();
+		x = renderNode.getRelativeX();
+		y = renderNode.getRelativeY();
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
+
 		processUpdateDeferred();
 	}
 
@@ -325,6 +344,7 @@ public class Image extends UiElement {
 			return;
 		}
 		this.styleId = styleId;
+		estimateSize();
 
 		if (renderNode == null) {
 			return;
@@ -340,6 +360,14 @@ public class Image extends UiElement {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public StyleRule getStyleRule() {
+		if(!UiContainer.isThemeApplied()) {
+			return null;
+		}
+		return UiContainer.getTheme().getImageStyleRule(styleId, ScreenSize.XS);
 	}
 
 	/**
@@ -375,10 +403,34 @@ public class Image extends UiElement {
 	}
 
 	@Override
-	protected void setRenderNodeDirty() {
+	public boolean isRenderNodeDirty() {
+		if (renderNode == null) {
+			return true;
+		}
+		return renderNode.isDirty();
+	}
+
+	@Override
+	public void setRenderNodeDirty() {
 		if (renderNode == null) {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public boolean isInitialLayoutOccurred() {
+		if (renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialLayoutOccurred();
+	}
+
+	@Override
+	public boolean isInitialUpdateOccurred() {
+		if(renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialUpdateOccurred();
 	}
 }

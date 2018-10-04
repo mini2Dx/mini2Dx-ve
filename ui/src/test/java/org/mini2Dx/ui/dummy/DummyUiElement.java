@@ -155,10 +155,34 @@ public class DummyUiElement extends UiElement {
 	}
 
 	@Override
-	protected void setRenderNodeDirty() {
+	public boolean isRenderNodeDirty() {
+		if (renderNode == null) {
+			return true;
+		}
+		return renderNode.isDirty();
+	}
+
+	@Override
+	public void setRenderNodeDirty() {
 		if (renderNode == null) {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public boolean isInitialLayoutOccurred() {
+		if (renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialLayoutOccurred();
+	}
+
+	@Override
+	public boolean isInitialUpdateOccurred() {
+		if(renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialUpdateOccurred();
 	}
 }

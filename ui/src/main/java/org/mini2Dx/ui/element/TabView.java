@@ -21,8 +21,9 @@ import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
+import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.event.ActionEvent;
-import org.mini2Dx.ui.layout.LayoutRuleset;
+import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.listener.ActionListener;
 import org.mini2Dx.ui.navigation.ControllerHotKeyOperation;
 import org.mini2Dx.ui.navigation.KeyboardHotKeyOperation;
@@ -34,6 +35,7 @@ import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.TabViewRenderNode;
 
 import com.badlogic.gdx.Input.Keys;
+import org.mini2Dx.ui.style.StyleRule;
 
 /**
  * A {@link UiElement} of tabs that can be switched between by the player
@@ -44,7 +46,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	private final Queue<ControllerHotKeyOperation> controllerHotKeyOperations = new LinkedList<ControllerHotKeyOperation>();
 	private final Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations = new LinkedList<KeyboardHotKeyOperation>();
 
-	private final Row tabMenuRow;
+	private final FlexRow tabMenuFlexRow;
 	private final TabButton previousTabButton, nextTabButton;
 	private final List<TabButton> tabButtons = new ArrayList<TabButton>(1);
 	
@@ -91,8 +93,8 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 */
 	public TabView(String id, TabButton previousTabButton, TabButton nextTabButton) {
 		super(id);
-		tabMenuRow = new Row(getId() + "-tabMenuRow");
-		tabMenuRow.setVisibility(Visibility.VISIBLE);
+		tabMenuFlexRow = new FlexRow(getId() + "-tabMenuFlexRow");
+		tabMenuFlexRow.setVisibility(Visibility.VISIBLE);
 
 		if (previousTabButton == null) {
 			TabButton previousButton = new TabButton(getId() + "-previousTabButton");
@@ -256,8 +258,8 @@ public class TabView extends ParentUiElement implements Navigatable {
 		syncTabTitles();
 		syncChildStyles();
 
-		x = renderNode.getOuterX();
-		y = renderNode.getOuterY();
+		x = renderNode.getRelativeX();
+		y = renderNode.getRelativeY();
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
 
@@ -275,18 +277,18 @@ public class TabView extends ParentUiElement implements Navigatable {
 				tabButton.addActionListener(new TabButtonActionListener(this, i));
 				tabButtons.add(tabButton);
 			}
-			tabMenuRow.removeAll();
+			tabMenuFlexRow.removeAll();
 
-			tabMenuRow.add(previousTabButton);
+			tabMenuFlexRow.add(previousTabButton);
 			for (int i = 0; i < tabButtons.size(); i++) {
-				tabMenuRow.add(tabButtons.get(i));
+				tabMenuFlexRow.add(tabButtons.get(i));
 			}
-			tabMenuRow.add(nextTabButton);
+			tabMenuFlexRow.add(nextTabButton);
 		} else if (tabs.size() < tabButtons.size()) {
 			// Tabs removed
 			for (int i = tabButtons.size() - 1; tabButtons.size() > tabs.size(); i--) {
 				TabButton button = tabButtons.remove(i);
-				tabMenuRow.remove(button);
+				tabMenuFlexRow.remove(button);
 			}
 		}
 
@@ -342,7 +344,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	}
 
 	private void syncChildStyles() {
-		tabMenuRow.setStyleId(renderNode.getTabMenuStyleId());
+		tabMenuFlexRow.setStyleId(renderNode.getTabMenuStyleId());
 		for (int i = 0; i < tabs.size(); i++) {
 			tabs.get(i).setStyleId(renderNode.getTabContentStyleId());
 			tabButtons.get(i).setStyleId(renderNode.getTabButtonStyleId());
@@ -369,7 +371,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 			return;
 		}
 		renderNode = new TabViewRenderNode(parentRenderNode, this);
-		tabMenuRow.attach(renderNode);
+		tabMenuFlexRow.attach(renderNode);
 		for (int i = 0; i < tabs.size(); i++) {
 			tabs.get(i).attach(renderNode);
 		}
@@ -384,7 +386,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 		for (int i = 0; i < tabs.size(); i++) {
 			tabs.get(i).detach(renderNode);
 		}
-		tabMenuRow.detach(renderNode);
+		tabMenuFlexRow.detach(renderNode);
 		parentRenderNode.removeChild(renderNode);
 		renderNode = null;
 	}
@@ -426,6 +428,14 @@ public class TabView extends ParentUiElement implements Navigatable {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public StyleRule getStyleRule() {
+		if(!UiContainer.isThemeApplied()) {
+			return null;
+		}
+		return UiContainer.getTheme().getTabStyleRule(styleId, ScreenSize.XS);
 	}
 
 	/**

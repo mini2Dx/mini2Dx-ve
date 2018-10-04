@@ -3,7 +3,7 @@
 	<layout>flex-div:xs-8c sm-6c</layout>
 	<visibility>VISIBLE</visibility>
 	<children length="1">
-		<value class="org.mini2Dx.ui.element.Row" id="row">
+		<value class="org.mini2Dx.ui.element.FlexRow" id="flexRow">
 			<visibility>VISIBLE</visibility>
 			<children length="6">
 				<value class="org.mini2Dx.ui.element.Div" id="column1">

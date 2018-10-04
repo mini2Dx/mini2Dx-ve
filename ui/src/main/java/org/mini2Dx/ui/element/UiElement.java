@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015 See AUTHORS file
  * All rights reserved.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
- *
+ * <p>
  * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
  * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
  * Neither the name of the mini2Dx nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
@@ -23,10 +23,14 @@ import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.core.serialization.annotation.NonConcrete;
 import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.effect.UiEffect;
+import org.mini2Dx.ui.layout.HorizontalAlignment;
+import org.mini2Dx.ui.layout.PixelLayoutUtils;
+import org.mini2Dx.ui.layout.VerticalAlignment;
 import org.mini2Dx.ui.listener.HoverListener;
 import org.mini2Dx.ui.listener.UiEffectListener;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.RenderNode;
+import org.mini2Dx.ui.style.StyleRule;
 import org.mini2Dx.ui.style.UiTheme;
 import org.mini2Dx.ui.util.DeferredRunnable;
 import org.mini2Dx.ui.util.IdAllocator;
@@ -46,22 +50,18 @@ public abstract class UiElement implements Hoverable {
 	@Field(optional = true)
 	protected String styleId = UiTheme.DEFAULT_STYLE_ID;
 	@Field(optional = true)
-	protected float x;
-	@Field(optional = true)
-	protected float y;
-	@Field(optional = true)
-	protected float width = 50f;
-	@Field(optional = true)
-	protected float height = 50f;
-	@Field(optional = true)
 	protected int zIndex = 0;
+
+	protected float x;
+	protected float y;
+	protected float width;
+	protected float height;
 
 	private List<UiEffectListener> effectListeners;
 	private List<HoverListener> hoverListeners;
 	private boolean debugEnabled = false;
 
 	private boolean deferredUpdateSortRequired = true;
-	private boolean deferredLayoutSortRequired = true;
 
 	/**
 	 * Constructor. Generates a unique ID for this element.
@@ -72,18 +72,44 @@ public abstract class UiElement implements Hoverable {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param id
-	 *            The unique ID for this element
+	 *            The unique ID for this element (if null an ID will be generated)
 	 */
 	public UiElement(@ConstructorArg(clazz = String.class, name = "id") String id) {
+		this(id, 0f, 0f, 50f, 50f);
+	}
+
+	/**
+	 * Constructor
+	 * @param id The unique ID for this element (if null an ID will be generated)
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public UiElement(@ConstructorArg(clazz = String.class, name = "id") String id,
+					 @ConstructorArg(clazz = Float.class, name = "x") float x,
+					 @ConstructorArg(clazz = Float.class, name = "y") float y,
+					 @ConstructorArg(clazz = Float.class, name = "width") float width,
+					 @ConstructorArg(clazz = Float.class, name = "height") float height) {
 		if (id == null) {
 			id = IdAllocator.getNextId();
 		}
 		this.id = id;
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
 	}
 
-	protected abstract void setRenderNodeDirty();
+	public abstract boolean isInitialLayoutOccurred();
+
+	public abstract boolean isInitialUpdateOccurred();
+
+	public abstract boolean isRenderNodeDirty();
+
+	public abstract void setRenderNodeDirty();
 
 	/**
 	 * Syncs data between the {@link UiElement} and {@link RenderNode} during update
@@ -98,9 +124,91 @@ public abstract class UiElement implements Hoverable {
 	}
 
 	/**
+	 * Aligns the edges of this {@link UiElement} to the edges of another element.
+	 *
+	 * @param alignToElement The {@link UiElement} to align with. Note: This can also be the {@link UiContainer}
+	 * @param horizontalAlignment {@link HorizontalAlignment#LEFT} aligns the right-side of this element to the left side of the align element.
+	 * 	{@link HorizontalAlignment#CENTER} aligns the center of this element to the center of the align element.
+	 * 	{@link HorizontalAlignment#RIGHT} aligns the left-side of this element to the right-side of the align element.
+	 * @param verticalAlignment {@link VerticalAlignment#TOP} aligns the bottom-side of this element to the top-side of the align element.
+	 * 	{@link VerticalAlignment#MIDDLE} aligns the middle of this element to the middle of the align element.
+	 * 	{@link VerticalAlignment#BOTTOM} aligns the top-side of this element to the bottom-side of the align element.
+	 */
+	public void alignEdgeToEdge(UiElement alignToElement, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
+		PixelLayoutUtils.alignEdgeToEdge(this, alignToElement, horizontalAlignment, verticalAlignment);
+	}
+
+	/**
+	 * Aligns the right edge of this element to the left edge of another element
+	 *
+	 * @param alignToElement The {@link UiElement} to align with. Note: This can also be the {@link UiContainer}
+	 * @param verticalAlignment {@link VerticalAlignment#TOP} aligns the top-side of this element to the top-side of the align element.
+	 * 	 * 	{@link VerticalAlignment#MIDDLE} aligns the middle of this element to the middle of the align element.
+	 * 	 * 	{@link VerticalAlignment#BOTTOM} aligns the bottom-side of this element to the bottom-side of the align element.
+	 */
+	public void alignLeftOf(final UiElement alignToElement, final VerticalAlignment verticalAlignment) {
+		PixelLayoutUtils.alignLeftOf(this, alignToElement, verticalAlignment);
+	}
+
+	/**
+	 * Aligns the left edge of this element to the right edge of another element
+	 *
+	 * @param alignToElement The {@link UiElement} to align with. Note: This can also be the {@link UiContainer}
+	 * @param verticalAlignment {@link VerticalAlignment#TOP} aligns the top-side of this element to the top-side of the align element.
+	 * 	 * 	{@link VerticalAlignment#MIDDLE} aligns the middle of this element to the middle of the align element.
+	 * 	 * 	{@link VerticalAlignment#BOTTOM} aligns the bottom-side of this element to the bottom-side of the align element.
+	 */
+	public void alignRightOf(final UiElement alignToElement, final VerticalAlignment verticalAlignment) {
+		PixelLayoutUtils.alignRightOf(this, alignToElement, verticalAlignment);
+	}
+
+	/**
+	 * Aligns the top edge of this element to the bottom of another element
+	 *
+	 * @param alignToElement The {@link UiElement} to align with. Note: This can also be the {@link UiContainer}
+	 * @param horizontalAlignment {@link HorizontalAlignment#LEFT} aligns the left-side of this element to the left side of the align element.
+	 * 	{@link HorizontalAlignment#CENTER} aligns the center of this element to the center of the align element.
+	 * 	{@link HorizontalAlignment#RIGHT} aligns the right-side of this element to the right-side of the align element.
+	 */
+	public void alignBelow(final UiElement alignToElement, final HorizontalAlignment horizontalAlignment) {
+		PixelLayoutUtils.alignBelow(this, alignToElement, horizontalAlignment);
+	}
+
+	/**
+	 * Aligns the bottom edge of this element to the top of another element
+	 *
+	 * @param alignToElement The {@link UiElement} to align with. Note: This can also be the {@link UiContainer}
+	 * @param horizontalAlignment {@link HorizontalAlignment#LEFT} aligns the left-side of this element to the left side of the align element.
+	 * 	 * 	{@link HorizontalAlignment#CENTER} aligns the center of this element to the center of the align element.
+	 * 	 * 	{@link HorizontalAlignment#RIGHT} aligns the right-side of this element to the right-side of the align element.
+	 */
+	public void alignAbove(final UiElement alignToElement, final HorizontalAlignment horizontalAlignment) {
+		PixelLayoutUtils.alignAbove(this, alignToElement, horizontalAlignment);
+	}
+
+	/**
+	 * Snaps this {@link UiElement} to the top-left corner of another {@link UiElement}
+	 * @param snapToElement The {@link UiElement} to snap to. Note: This can also be the {@link UiContainer}
+	 */
+	public void snapTo(UiElement snapToElement) {
+		PixelLayoutUtils.snapTo(this, snapToElement);
+	}
+
+	/**
+	 * Snaps this {@link UiElement} to the same area of another element.
+	 *
+	 * @param snapToElement The {@link UiElement} to snap to. Note: This can also be the {@link UiContainer}
+	 * @param horizontalAlignment The {@link HorizontalAlignment} of this element within the area of the align element
+	 * @param verticalAlignment The {@link VerticalAlignment} of this element within the area of the align element
+	 */
+	public void snapTo(UiElement snapToElement, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
+		PixelLayoutUtils.snapTo(this, snapToElement, horizontalAlignment, verticalAlignment);
+	}
+
+	/**
 	 * Attaches a {@link RenderNode} for this element to a parent
 	 * {@link RenderNode}
-	 * 
+	 *
 	 * @param parentRenderNode
 	 *            The parent {@link RenderNode} to attach to
 	 */
@@ -109,7 +217,7 @@ public abstract class UiElement implements Hoverable {
 	/**
 	 * Detaches this element's {@link RenderNode} from a parent
 	 * {@link RenderNode}
-	 * 
+	 *
 	 * @param parentRenderNode
 	 *            The parent {@link RenderNode} to detach from
 	 */
@@ -117,14 +225,14 @@ public abstract class UiElement implements Hoverable {
 
 	/**
 	 * Applies a {@link UiEffect} to this element
-	 * 
+	 *
 	 * @param effect
 	 *            The {@link UiEffect} to be applied
 	 */
 	public void applyEffect(UiEffect effect) {
 		effects.offer(effect);
 	}
-	
+
 	/**
 	 * Defers the execution of a {@link Runnable} instance until the next frame update
 	 * @param runnable The {@link Runnable} to execute
@@ -133,7 +241,7 @@ public abstract class UiElement implements Hoverable {
 	public DeferredRunnable deferUntilUpdate(Runnable runnable) {
 		return deferUntilUpdate(runnable, 0f);
 	}
-	
+
 	/**
 	 * Defers the execution of a {@link Runnable} instance for a period of time
 	 * @param runnable The {@link Runnable} to execute
@@ -148,48 +256,40 @@ public abstract class UiElement implements Hoverable {
 	}
 
 	/**
-	 * Defers the execution of a {@link Runnable} instance until the next UI re-layout
+	 * Defers the execution of a {@link Runnable} instance until the next UI re-layout completes
 	 * @param runnable The {@link Runnable} to execute
 	 * @return A {@link DeferredRunnable} that can be cancelled
 	 */
 	public DeferredRunnable deferUntilLayout(Runnable runnable) {
 		DeferredRunnable result = DeferredRunnable.allocate(runnable, 0f);
 		deferredLayout.add(result);
-		deferredLayoutSortRequired = true;
 		return result;
 	}
-	
+
 	/**
 	 * Processes all actions deferred until update
 	 */
 	protected void processUpdateDeferred() {
-		if(deferredUpdateSortRequired) {
+		if (deferredUpdateSortRequired) {
 			Collections.sort(deferredUpdate);
 			deferredUpdateSortRequired = false;
 		}
 
-		for(int i = deferredUpdate.size() - 1; i >= 0; i--) {
+		for (int i = deferredUpdate.size() - 1; i >= 0; i--) {
 			DeferredRunnable runnable = deferredUpdate.get(i);
-			if(runnable.run()) {
+			if (runnable.run()) {
 				deferredUpdate.remove(i);
 			}
 		}
 	}
 
 	/**
-	 * Processes all actions deferred until layout
+	 * Processes all actions deferred until layout completion
 	 */
 	protected void processLayoutDeferred() {
-		if(deferredLayoutSortRequired) {
-			Collections.sort(deferredLayout);
-			deferredLayoutSortRequired = false;
-		}
-
-		for(int i = deferredLayout.size() - 1; i >= 0; i--) {
-			DeferredRunnable runnable = deferredLayout.get(i);
-			if(runnable.run()) {
-				deferredLayout.remove(i);
-			}
+		deferredUpdateSortRequired |= !deferredLayout.isEmpty();
+		while(!deferredLayout.isEmpty()) {
+			deferredUpdate.add(deferredLayout.remove(0));
 		}
 	}
 
@@ -201,7 +301,7 @@ public abstract class UiElement implements Hoverable {
 
 	/**
 	 * Returns the current {@link Visibility} of this {@link UiElement}
-	 * 
+	 *
 	 * @return
 	 */
 	public Visibility getVisibility() {
@@ -210,7 +310,7 @@ public abstract class UiElement implements Hoverable {
 
 	/**
 	 * Sets the current {@link Visibility} of this {@link UiElement}
-	 * 
+	 *
 	 * @param visibility
 	 *            The {@link Visibility} to set
 	 */
@@ -218,7 +318,7 @@ public abstract class UiElement implements Hoverable {
 
 	/**
 	 * Returns the current style id of this {@link UiElement}
-	 * 
+	 *
 	 * @return {@link UiTheme#DEFAULT_STYLE_ID} by default
 	 */
 	public String getStyleId() {
@@ -227,7 +327,7 @@ public abstract class UiElement implements Hoverable {
 
 	/**
 	 * Sets the style if for this {@link UiElement}
-	 * 
+	 *
 	 * @param styleId
 	 *            The style id to set
 	 */
@@ -235,7 +335,7 @@ public abstract class UiElement implements Hoverable {
 
 	/**
 	 * Returns the Z index of this {@link UiElement}
-	 * 
+	 *
 	 * @return 0 by default
 	 */
 	public int getZIndex() {
@@ -245,7 +345,7 @@ public abstract class UiElement implements Hoverable {
 	/**
 	 * Sets the Z index of this {@link UiElement}. Elements will be rendered on
 	 * different Z layers in ascending Z order (negatives values first, positive values last)
-	 * 
+	 *
 	 * @param zIndex The Z index
 	 */
 	public abstract void setZIndex(int zIndex);
@@ -277,24 +377,24 @@ public abstract class UiElement implements Hoverable {
 			hoverListeners.get(i).onHoverBegin(this);
 		}
 	}
-	
+
 	/**
 	 * Adds a {@link UiEffectListener} to this {@link UiElement}
 	 * @param listener The {@link UiEffectListener} to add
 	 */
 	public void addEffectListener(UiEffectListener listener) {
-		if(effectListeners == null) {
+		if (effectListeners == null) {
 			effectListeners = new ArrayList<UiEffectListener>(1);
 		}
 		effectListeners.add(listener);
 	}
-	
+
 	/**
 	 * Removes a {@link UiEffectListener} from this {@link UiElement}
 	 * @param listener The {@link UiEffectListener} to remove
 	 */
 	public void removeEffectListener(UiEffectListener listener) {
-		if(effectListeners == null) {
+		if (effectListeners == null) {
 			return;
 		}
 		effectListeners.remove(listener);
@@ -311,13 +411,13 @@ public abstract class UiElement implements Hoverable {
 			hoverListeners.get(i).onHoverEnd(this);
 		}
 	}
-	
+
 	/**
 	 * Notifies all {@link UiEffectListener}s of the finished event
 	 * @param effect The {@link UiEffect} that finished
 	 */
 	public void notifyEffectListenersOnFinished(UiEffect effect) {
-		if(effectListeners == null) {
+		if (effectListeners == null) {
 			return;
 		}
 		for (int i = effectListeners.size() - 1; i >= 0; i--) {
@@ -329,7 +429,7 @@ public abstract class UiElement implements Hoverable {
 	 * Searches the UI for a {@link UiElement} with a given id. Warning: This
 	 * can be an expensive operation for complex UIs. It is recommended you
 	 * cache results.
-	 * 
+	 *
 	 * @param id
 	 *            The {@link UiElement} identifier to search for
 	 * @return Null if there is no such {@link UiElement} with the given id
@@ -374,18 +474,22 @@ public abstract class UiElement implements Hoverable {
 		this.debugEnabled = debugEnabled;
 	}
 
+	@ConstructorArg(clazz = Float.class, name = "x")
 	public float getX() {
 		return x;
 	}
 
+	@ConstructorArg(clazz = Float.class, name = "y")
 	public float getY() {
 		return y;
 	}
 
+	@ConstructorArg(clazz = Float.class, name = "width")
 	public float getWidth() {
 		return width;
 	}
 
+	@ConstructorArg(clazz = Float.class, name = "height")
 	public float getHeight() {
 		return height;
 	}
@@ -398,7 +502,7 @@ public abstract class UiElement implements Hoverable {
 	 * @param height The height in pixels
 	 */
 	public void set(final float x, final float y, final float width, final float height) {
-		if(MathUtils.isEqual(this.x, x) && MathUtils.isEqual(this.y, y)
+		if (MathUtils.isEqual(this.x, x) && MathUtils.isEqual(this.y, y)
 				&& MathUtils.isEqual(this.width, width) && MathUtils.isEqual(this.height, height)) {
 			return;
 		}
@@ -416,7 +520,7 @@ public abstract class UiElement implements Hoverable {
 	 * @param y The y coordinate (in pixels) relative to its parent
 	 */
 	public void setXY(final float x, final float y) {
-		if(MathUtils.isEqual(this.x, x) && MathUtils.isEqual(this.y, y)) {
+		if (MathUtils.isEqual(this.x, x) && MathUtils.isEqual(this.y, y)) {
 			return;
 		}
 		this.x = x;
@@ -430,7 +534,7 @@ public abstract class UiElement implements Hoverable {
 	 * @param x The x coordinate (in pixels) relative to its parent
 	 */
 	public void setX(final float x) {
-		if(MathUtils.isEqual(this.x, x)) {
+		if (MathUtils.isEqual(this.x, x)) {
 			return;
 		}
 		this.x = x;
@@ -443,7 +547,7 @@ public abstract class UiElement implements Hoverable {
 	 * @param y The y coordinate (in pixels) relative to its parent
 	 */
 	public void setY(final float y) {
-		if(MathUtils.isEqual(this.y, y)) {
+		if (MathUtils.isEqual(this.y, y)) {
 			return;
 		}
 		this.y = y;
@@ -456,7 +560,7 @@ public abstract class UiElement implements Hoverable {
 	 * @param width The width in pixels
 	 */
 	public void setWidth(final float width) {
-		if(MathUtils.isEqual(this.width, width)) {
+		if (MathUtils.isEqual(this.width, width)) {
 			return;
 		}
 		this.width = width;
@@ -464,16 +568,90 @@ public abstract class UiElement implements Hoverable {
 		setRenderNodeDirty();
 	}
 
+	public void setContentWidth(final float contentWidth) {
+		setWidth(contentWidth + getMarginLeft() + getMarginRight() + getPaddingLeft() + getPaddingRight());
+	}
+
+	public void setContentHeight(final float contentHeight) {
+		setHeight(contentHeight + getMarginTop() + getMarginBottom() + getPaddingTop() + getPaddingBottom());
+	}
+
 	/**
 	 * Sets the height of this element
 	 * @param height The height in pixels
 	 */
 	public void setHeight(final float height) {
-		if(MathUtils.isEqual(this.height, height)) {
+		if (MathUtils.isEqual(this.height, height)) {
 			return;
 		}
 		this.height = height;
 
 		setRenderNodeDirty();
+	}
+
+	public abstract StyleRule getStyleRule();
+
+	public int getMarginTop() {
+		final StyleRule styleRule = getStyleRule();
+		if(styleRule == null) {
+			return 0;
+		}
+		return styleRule.getMarginTop();
+	}
+
+	public int getMarginBottom() {
+		final StyleRule styleRule = getStyleRule();
+		if(styleRule == null) {
+			return 0;
+		}
+		return styleRule.getMarginBottom();
+	}
+
+	public int getMarginLeft() {
+		final StyleRule styleRule = getStyleRule();
+		if(styleRule == null) {
+			return 0;
+		}
+		return styleRule.getMarginLeft();
+	}
+
+	public int getMarginRight() {
+		final StyleRule styleRule = getStyleRule();
+		if(styleRule == null) {
+			return 0;
+		}
+		return styleRule.getMarginRight();
+	}
+
+	public int getPaddingTop() {
+		final StyleRule styleRule = getStyleRule();
+		if(styleRule == null) {
+			return 0;
+		}
+		return styleRule.getPaddingTop();
+	}
+
+	public int getPaddingBottom() {
+		final StyleRule styleRule = getStyleRule();
+		if(styleRule == null) {
+			return 0;
+		}
+		return styleRule.getPaddingBottom();
+	}
+
+	public int getPaddingLeft() {
+		final StyleRule styleRule = getStyleRule();
+		if(styleRule == null) {
+			return 0;
+		}
+		return styleRule.getPaddingLeft();
+	}
+
+	public int getPaddingRight() {
+		final StyleRule styleRule = getStyleRule();
+		if(styleRule == null) {
+			return 0;
+		}
+		return styleRule.getPaddingRight();
 	}
 }

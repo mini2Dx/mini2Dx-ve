@@ -18,13 +18,17 @@ import java.util.Queue;
 
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
+import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.event.ActionEvent;
 import org.mini2Dx.ui.event.ActionEventPool;
 import org.mini2Dx.ui.event.EventTrigger;
 import org.mini2Dx.ui.event.params.EventTriggerParams;
+import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.listener.ActionListener;
 import org.mini2Dx.ui.render.CheckboxRenderNode;
 import org.mini2Dx.ui.render.ParentRenderNode;
+import org.mini2Dx.ui.style.CheckboxStyleRule;
+import org.mini2Dx.ui.style.StyleRule;
 
 /**
  * Implements a checkbox that can be checked or unchecked by the player
@@ -55,7 +59,41 @@ public class Checkbox extends UiElement implements Actionable {
 	 *            The unique ID for this {@link Checkbox}
 	 */
 	public Checkbox(@ConstructorArg(clazz = String.class, name = "id") String id) {
-		super(id);
+		this(id, 0f, 0f, 20f, 20f);
+	}
+
+	/**
+	 * Constructor
+	 * @param id The unique ID for this element (if null an ID will be generated)
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public Checkbox(@ConstructorArg(clazz = String.class, name = "id") String id,
+				 @ConstructorArg(clazz = Float.class, name = "x") float x,
+				 @ConstructorArg(clazz = Float.class, name = "y") float y,
+				 @ConstructorArg(clazz = Float.class, name = "width") float width,
+				 @ConstructorArg(clazz = Float.class, name = "height") float height) {
+		super(id, x, y, width, height);
+		estimateSize();
+	}
+
+	protected void estimateSize() {
+		if(renderNode != null) {
+			return;
+		}
+		if(!UiContainer.isThemeApplied()) {
+			return;
+		}
+		final CheckboxStyleRule styleRule = UiContainer.getTheme().getCheckboxStyleRule(styleId, ScreenSize.XS);
+		if(checked) {
+			width = styleRule.getEnabledCheckTextureRegion().getRegionWidth() + styleRule.getMarginLeft() + styleRule.getMarginRight() + styleRule.getPaddingLeft() + styleRule.getPaddingRight();
+			height = styleRule.getEnabledCheckTextureRegion().getRegionHeight() + styleRule.getMarginTop() + styleRule.getMarginBottom() + styleRule.getPaddingTop() + styleRule.getPaddingBottom();
+		} else {
+			width = styleRule.getDisabledCheckTextureRegion().getRegionWidth() + styleRule.getMarginLeft() + styleRule.getMarginRight() + styleRule.getPaddingLeft() + styleRule.getPaddingRight();
+			height = styleRule.getDisabledCheckTextureRegion().getRegionHeight() + styleRule.getMarginTop() + styleRule.getMarginBottom() + styleRule.getPaddingTop() + styleRule.getPaddingBottom();
+		}
 	}
 	
 	@Override
@@ -140,6 +178,7 @@ public class Checkbox extends UiElement implements Actionable {
 			return;
 		}
 		this.styleId = styleId;
+		estimateSize();
 
 		if (renderNode == null) {
 			return;
@@ -153,8 +192,8 @@ public class Checkbox extends UiElement implements Actionable {
 			renderNode.applyEffect(effects.poll());
 		}
 
-		x = renderNode.getOuterX();
-		y = renderNode.getOuterY();
+		x = renderNode.getRelativeX();
+		y = renderNode.getRelativeY();
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
 
@@ -169,6 +208,14 @@ public class Checkbox extends UiElement implements Actionable {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public StyleRule getStyleRule() {
+		if(!UiContainer.isThemeApplied()) {
+			return null;
+		}
+		return UiContainer.getTheme().getCheckboxStyleRule(styleId, ScreenSize.XS);
 	}
 
 	public boolean isChecked() {
@@ -222,10 +269,34 @@ public class Checkbox extends UiElement implements Actionable {
 	}
 
 	@Override
-	protected void setRenderNodeDirty() {
+	public boolean isRenderNodeDirty() {
+		if (renderNode == null) {
+			return true;
+		}
+		return renderNode.isDirty();
+	}
+
+	@Override
+	public void setRenderNodeDirty() {
 		if (renderNode == null) {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public boolean isInitialLayoutOccurred() {
+		if (renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialLayoutOccurred();
+	}
+
+	@Override
+	public boolean isInitialUpdateOccurred() {
+		if(renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialUpdateOccurred();
 	}
 }

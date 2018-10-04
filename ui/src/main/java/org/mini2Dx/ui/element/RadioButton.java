@@ -20,14 +20,17 @@ import java.util.Queue;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
+import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.event.ActionEvent;
 import org.mini2Dx.ui.event.ActionEventPool;
 import org.mini2Dx.ui.event.EventTrigger;
 import org.mini2Dx.ui.event.params.EventTriggerParams;
 import org.mini2Dx.ui.layout.FlexDirection;
+import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.listener.ActionListener;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.RadioButtonRenderNode;
+import org.mini2Dx.ui.style.StyleRule;
 
 /**
  * A responsive radio buttons UI element
@@ -144,8 +147,8 @@ public class RadioButton extends UiElement implements Actionable {
 			renderNode.applyEffect(effects.poll());
 		}
 
-		x = renderNode.getOuterX();
-		y = renderNode.getOuterY();
+		x = renderNode.getRelativeX();
+		y = renderNode.getRelativeY();
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
 
@@ -186,6 +189,14 @@ public class RadioButton extends UiElement implements Actionable {
 			return;
 		}
 		actionListeners.remove(listener);
+	}
+
+	@Override
+	public StyleRule getStyleRule() {
+		if(!UiContainer.isThemeApplied()) {
+			return null;
+		}
+		return UiContainer.getTheme().getRadioButtonStyleRule(styleId, ScreenSize.XS);
 	}
 
 	/**
@@ -319,10 +330,34 @@ public class RadioButton extends UiElement implements Actionable {
 	}
 
 	@Override
-	protected void setRenderNodeDirty() {
+	public boolean isRenderNodeDirty() {
+		if (renderNode == null) {
+			return true;
+		}
+		return renderNode.isDirty();
+	}
+
+	@Override
+	public void setRenderNodeDirty() {
 		if (renderNode == null) {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public boolean isInitialLayoutOccurred() {
+		if (renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialLayoutOccurred();
+	}
+
+	@Override
+	public boolean isInitialUpdateOccurred() {
+		if(renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialUpdateOccurred();
 	}
 }

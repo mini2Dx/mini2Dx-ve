@@ -69,9 +69,6 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 			initLayoutRuleset();
 		}
 		super.layout(layoutState);
-		if(layoutRuleset.isFlexLayout()) {
-			element.set(outerArea.getX(), outerArea.getY(), outerArea.getWidth(), outerArea.getHeight());
-		}
 	}
 
 	@Override

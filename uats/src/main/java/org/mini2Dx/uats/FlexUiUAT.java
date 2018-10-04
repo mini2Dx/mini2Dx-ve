@@ -52,8 +52,7 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 	private UiContainer uiContainer;
 	private ControllerUiInput<?> controllerInput;
 	
-	private Container topLeftContainer, bottomRightContainer;
-	private Container centerContainer;
+	private Container topLeftContainer, centerContainer, bottomRightContainer;
 	
 	private TabView tabView;
 	private Select<String> select;
@@ -92,8 +91,8 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 	
 	@Override
 	public void onResize(int width, int height) {
-		centerContainer.deferAlignToUntilLayout(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
-		bottomRightContainer.deferAlignToUntilLayout(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
+		centerContainer.snapTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
+		bottomRightContainer.snapTo(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
 		uiContainer.set(width, height);
 	}
 
@@ -123,9 +122,9 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 	@Override
 	public void preTransitionIn(Transition transitionIn) {
 		nextScreenId = -1;
-    	if(!uiContainer.isThemeApplied()) {
-    		uiContainer.setTheme(assetManager.get(UiTheme.DEFAULT_THEME_FILENAME, UiTheme.class));
-    	}
+		if (!UiContainer.isThemeApplied()) {
+			UiContainer.setTheme(assetManager.get(UiTheme.DEFAULT_THEME_FILENAME, UiTheme.class));
+		}
     	Gdx.input.setInputProcessor(uiContainer);
 	}
 	
@@ -154,28 +153,24 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		topLeftContainer.setFlexLayout("flex-col:xs-12c sm-6c md-4c lg-3c");
 		topLeftContainer.setStyleId("no-background");
 
-		Row topLeftHeaderRow = Row.withElements("top-left-header", UiUtils.createHeader("UI UAT"));
-		topLeftHeaderRow.setFlexLayout("flex-center:xs-12c,xs-20px");
-		topLeftContainer.add(topLeftHeaderRow);
+		FlexRow topLeftHeaderFlexRow = FlexRow.withElements("top-left-header", UiUtils.createHeader("UI UAT"));
+		topLeftHeaderFlexRow.setFlexLayout("flex-center:xs-12c,xs-20px");
+		topLeftContainer.add(topLeftHeaderFlexRow);
 		
 		Button backRowButton = UiUtils.createButton(null, "", new ActionListener() {
 			
 			@Override
 			public void onActionEnd(ActionEvent event) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 			@Override
 			public void onActionBegin(ActionEvent event) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
 		backRowButton.setFlexLayout("flex-center:xs-12c,xs-20px");
-		Row backRow = Row.withElements("behind-header", backRowButton);
-		backRow.setZIndex(-1);
-		topLeftContainer.add(backRow);
+		FlexRow backFlexRow = FlexRow.withElements("behind-header", backRowButton);
+		backFlexRow.setZIndex(-1);
+		topLeftContainer.add(backFlexRow);
 		
 		topLeftContainer.setVisibility(Visibility.VISIBLE);
 		uiContainer.add(topLeftContainer);
@@ -227,10 +222,10 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 			@Override
 			public void onActionEnd(ActionEvent event) {
 				switch(radioButton.getSelectedOption()) {
-				case "Row Layout":
+				case "FlexRow Layout":
 					radioButton.setFlexDirection(FlexDirection.ROW);
 					break;
-				case "Row-Reverse Layout":
+				case "FlexRow-Reverse Layout":
 					radioButton.setFlexDirection(FlexDirection.ROW_REVERSE);
 					break;
 				case "Div Layout":
@@ -246,8 +241,8 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 			@Override
 			public void onActionBegin(ActionEvent event) {}
 		});
-		radioButton.addOption("Row Layout");
-		radioButton.addOption("Row-Reverse Layout");
+		radioButton.addOption("FlexRow Layout");
+		radioButton.addOption("FlexRow-Reverse Layout");
 		radioButton.addOption("Column Layout");
 		radioButton.addOption("Column-Reverse Layout");
 		
@@ -288,12 +283,12 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		tabView.setVisibility(Visibility.VISIBLE);
 		
 		Tab tab1 = new Tab("tab1", "Tab 1");
-		tab1.add(Row.withElements("row-textbox", textBox, textBoxResult));
-		tab1.add(Row.withElements("row-select", select));
-		tab1.add(Row.withElements("row-checkbox", checkbox, checkboxResult));
-		tab1.add(Row.withElements("row-radioButton", radioButton, radioButtonResult));
-		tab1.add(Row.withElements("row-slider", slider, sliderResult));
-		tab1.add(Row.withElements("row-return-button", returnButton));
+		tab1.add(FlexRow.withElements("row-textbox", textBox, textBoxResult));
+		tab1.add(FlexRow.withElements("row-select", select));
+		tab1.add(FlexRow.withElements("row-checkbox", checkbox, checkboxResult));
+		tab1.add(FlexRow.withElements("row-radioButton", radioButton, radioButtonResult));
+		tab1.add(FlexRow.withElements("row-slider", slider, sliderResult));
+		tab1.add(FlexRow.withElements("row-return-button", returnButton));
 		tab1.setNavigation(tab1Navigation);
 		tabView.add(tab1);
 		
@@ -305,9 +300,9 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		progressBar.setFlexLayout("flex-column:xs-12c");
 		progressBar.setValue(0.4f);
 		progressBar.setVisibility(Visibility.VISIBLE);
-		tab2.add(Row.withElements(progressBar));
+		tab2.add(FlexRow.withElements(progressBar));
 		
-		tab2.add(Row.withElements("row-not-visible-xs", xsHiddenDiv));
+		tab2.add(FlexRow.withElements("row-not-visible-xs", xsHiddenDiv));
 		
 		Button reAddElementsButton =  UiUtils.createButton(null, "Re-add tabview", new ActionListener() {
 			
@@ -320,7 +315,7 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 			@Override
 			public void onActionBegin(ActionEvent event) {}
 		});
-		tab2.add(Row.withElements(reAddElementsButton));
+		tab2.add(FlexRow.withElements(reAddElementsButton));
 		
 		tabView.add(tab2);
 		
@@ -334,7 +329,7 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 			public void onActionBegin(ActionEvent event) {}
 		});
 		hiddenButton.setVisibility(Visibility.HIDDEN);
-		tab3.add(Row.withElements(hiddenButton));
+		tab3.add(FlexRow.withElements(hiddenButton));
 		final ScrollBox scrollBox = new ScrollBox("scrollBox");
 		scrollBox.setFlexLayout("flex-column:xs-12c");
 		scrollBox.setVisibility(Visibility.VISIBLE);
@@ -342,17 +337,17 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		for(int i = 0; i < 30; i++) {
 			if(i % 2 == 0) {
 				Label label = UiUtils.createLabel("Label " + i);
-				Row row = Row.withElements(label);
-				row.setVisibility(Visibility.VISIBLE);
-				scrollBox.add(row);
+				FlexRow flexRow = FlexRow.withElements(label);
+				flexRow.setVisibility(Visibility.VISIBLE);
+				scrollBox.add(flexRow);
 			} else {
 				Button button = UiUtils.createButton(null, "Test", null);
-				Row row = Row.withElements(button);
-				row.setVisibility(Visibility.VISIBLE);
-				scrollBox.add(row);
+				FlexRow flexRow = FlexRow.withElements(button);
+				flexRow.setVisibility(Visibility.VISIBLE);
+				scrollBox.add(flexRow);
 			}
 		}
-		tab3.add(Row.withElements(scrollBox));
+		tab3.add(FlexRow.withElements(scrollBox));
 		
 		Button scrollToTopButton = UiUtils.createButton(null, "Scroll to top (immediate)", new ActionListener() {
 			
@@ -364,7 +359,7 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 			@Override
 			public void onActionBegin(ActionEvent event) {}
 		});
-		tab3.add(Row.withElements(scrollToTopButton));
+		tab3.add(FlexRow.withElements(scrollToTopButton));
 		
 		Button scrollToBottomButton = UiUtils.createButton(null, "Scroll to bottom (immediate)", new ActionListener() {
 			
@@ -376,7 +371,7 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 			@Override
 			public void onActionBegin(ActionEvent event) {}
 		});
-		tab3.add(Row.withElements(scrollToBottomButton));
+		tab3.add(FlexRow.withElements(scrollToBottomButton));
 		
 		scrollToTopButton = UiUtils.createButton(null, "Scroll to top (smooth)", new ActionListener() {
 			
@@ -388,7 +383,7 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 			@Override
 			public void onActionBegin(ActionEvent event) {}
 		});
-		tab3.add(Row.withElements(scrollToTopButton));
+		tab3.add(FlexRow.withElements(scrollToTopButton));
 		
 		scrollToBottomButton = UiUtils.createButton(null, "Scroll to bottom (smooth)", new ActionListener() {
 			
@@ -400,7 +395,7 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 			@Override
 			public void onActionBegin(ActionEvent event) {}
 		});
-		tab3.add(Row.withElements(scrollToBottomButton));
+		tab3.add(FlexRow.withElements(scrollToBottomButton));
 		
 		tabView.add(tab3);
 		
@@ -415,13 +410,13 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		bottomRightContainer = new Container("bottom-right-frame");
 		bottomRightContainer.setFlexLayout("flex-column:xs-12c sm-6c md-4c lg-3c");
 		bottomRightContainer.setVisibility(Visibility.VISIBLE);
-		Row bottomFrameRow = Row.withElements("row-os", UiUtils.createHeader("OVERFLOW CLIPPED"));
-		bottomFrameRow.setFlexLayout("flex-col-r:xs-12c,xs-12px");
-		bottomFrameRow.setOverflowClipped(true);
-		bottomRightContainer.add(bottomFrameRow);
+		FlexRow bottomFrameFlexRow = FlexRow.withElements("row-os", UiUtils.createHeader("OVERFLOW CLIPPED"));
+		bottomFrameFlexRow.setFlexLayout("flex-col-r:xs-12c,xs-12px");
+		bottomFrameFlexRow.setOverflowClipped(true);
+		bottomRightContainer.add(bottomFrameFlexRow);
 		uiContainer.add(bottomRightContainer);
 
-		centerContainer.alignTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
-		bottomRightContainer.alignTo(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
+		centerContainer.snapTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
+		bottomRightContainer.snapTo(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
 	}
 }

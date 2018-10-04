@@ -23,6 +23,8 @@ import com.badlogic.gdx.utils.Array;
  * Applies styling (e.g. padding, margin, etc.) to a {@link UiElement}s
  */
 public class StyleRule {
+	public static final StyleRule NOOP = new StyleRule();
+
 	@Field(optional=true)
 	private int paddingTop, paddingBottom, paddingLeft, paddingRight;
 	@Field(optional=true)

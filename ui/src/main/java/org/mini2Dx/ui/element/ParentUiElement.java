@@ -12,7 +12,6 @@
 package org.mini2Dx.ui.element;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -21,10 +20,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
-import org.mini2Dx.ui.layout.FlexDirection;
-import org.mini2Dx.ui.layout.LayoutRuleset;
+import org.mini2Dx.ui.layout.PixelLayoutUtils;
 import org.mini2Dx.ui.render.ParentRenderNode;
-import org.mini2Dx.ui.util.DeferredRunnable;
 
 /**
  * Base class for {@link UiElement}s that can contain child {@link UiElement}s
@@ -58,7 +55,23 @@ public abstract class ParentUiElement extends UiElement {
 	 *            The unique ID for this {@link ParentUiElement}
 	 */
 	public ParentUiElement(@ConstructorArg(clazz = String.class, name = "id") String id) {
-		super(id);
+		this(id, 0f, 0f, 50f, 50f);
+	}
+
+	/**
+	 * Constructor
+	 * @param id The unique ID for this element (if null an ID will be generated)
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public ParentUiElement(@ConstructorArg(clazz = String.class, name = "id") String id,
+				 @ConstructorArg(clazz = Float.class, name = "x") float x,
+				 @ConstructorArg(clazz = Float.class, name = "y") float y,
+				 @ConstructorArg(clazz = Float.class, name = "width") float width,
+				 @ConstructorArg(clazz = Float.class, name = "height") float height) {
+		super(id, x, y, width, height);
 	}
 
 	/**
@@ -69,7 +82,7 @@ public abstract class ParentUiElement extends UiElement {
 	 * @return A new instance of {@link ParentRenderNode}
 	 */
 	protected abstract ParentRenderNode<?, ?> createRenderNode(ParentRenderNode<?, ?> parent);
-	
+
 	/**
 	 * Returns the child {@link UiElement} at the specified index
 	 * @param index The index of the child element
@@ -186,6 +199,26 @@ public abstract class ParentUiElement extends UiElement {
 		asyncRemoveAll.set(true);
 	}
 
+	/**
+	 * Returns the child {@link UiElement}
+	 * @param i The child index
+	 * @return
+	 */
+	public UiElement getChild(int i) {
+		return children.get(i);
+	}
+
+	/**
+	 * Shrinks the width and height for this element based on its children
+	 */
+	public void shrinkToContents(boolean recursive) {
+		shrinkToContents(recursive, null);
+	}
+
+	public void shrinkToContents(boolean recursive, Runnable callback) {
+		PixelLayoutUtils.shrinkToContents(this, recursive, callback);
+	}
+
 	@Override
 	public void attach(ParentRenderNode<?, ?> parentRenderNode) {
 		if (renderNode != null) {
@@ -258,8 +291,8 @@ public abstract class ParentUiElement extends UiElement {
 			remove(asyncRemoveQueue.poll());
 		}
 
-		x = renderNode.getOuterX();
-		y = renderNode.getOuterY();
+		x = renderNode.getRelativeX();
+		y = renderNode.getRelativeY();
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
 
@@ -335,10 +368,34 @@ public abstract class ParentUiElement extends UiElement {
 	}
 
 	@Override
-	protected void setRenderNodeDirty() {
+	public boolean isRenderNodeDirty() {
+		if (renderNode == null) {
+			return true;
+		}
+		return renderNode.isDirty();
+	}
+
+	@Override
+	public void setRenderNodeDirty() {
 		if (renderNode == null) {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public boolean isInitialLayoutOccurred() {
+		if (renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialLayoutOccurred();
+	}
+
+	@Override
+	public boolean isInitialUpdateOccurred() {
+		if(renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialUpdateOccurred();
 	}
 }

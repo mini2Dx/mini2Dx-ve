@@ -14,12 +14,18 @@ package org.mini2Dx.ui.element;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import com.badlogic.gdx.math.MathUtils;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
+import org.mini2Dx.ui.UiContainer;
+import org.mini2Dx.ui.layout.HorizontalAlignment;
 import org.mini2Dx.ui.layout.LayoutRuleset;
+import org.mini2Dx.ui.layout.ScreenSize;
+import org.mini2Dx.ui.layout.VerticalAlignment;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.ProgressBarRenderNode;
+import org.mini2Dx.ui.style.StyleRule;
 
 /**
  * Implements a progress/loading bar
@@ -52,8 +58,8 @@ public class ProgressBar extends UiElement {
 			renderNode.applyEffect(effects.poll());
 		}
 
-		x = renderNode.getOuterX();
-		y = renderNode.getOuterY();
+		x = renderNode.getRelativeX();
+		y = renderNode.getRelativeY();
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
 
@@ -115,6 +121,14 @@ public class ProgressBar extends UiElement {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public StyleRule getStyleRule() {
+		if(!UiContainer.isThemeApplied()) {
+			return null;
+		}
+		return UiContainer.getTheme().getProgressBarStyleRule(styleId, ScreenSize.XS);
 	}
 
 	public String getFlexLayout() {
@@ -190,10 +204,34 @@ public class ProgressBar extends UiElement {
 	}
 
 	@Override
-	protected void setRenderNodeDirty() {
+	public boolean isRenderNodeDirty() {
+		if (renderNode == null) {
+			return true;
+		}
+		return renderNode.isDirty();
+	}
+
+	@Override
+	public void setRenderNodeDirty() {
 		if (renderNode == null) {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public boolean isInitialLayoutOccurred() {
+		if (renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialLayoutOccurred();
+	}
+
+	@Override
+	public boolean isInitialUpdateOccurred() {
+		if(renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialUpdateOccurred();
 	}
 }

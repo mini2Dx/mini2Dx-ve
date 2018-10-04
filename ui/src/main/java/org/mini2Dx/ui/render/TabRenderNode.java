@@ -33,6 +33,11 @@ public class TabRenderNode extends DivRenderNode implements NavigatableRenderNod
 	}
 
 	@Override
+	protected float determinePreferredContentHeight(LayoutState layoutState) {
+		return super.determinePreferredContentHeight(layoutState);
+	}
+
+	@Override
 	public ActionableRenderNode hotkey(int keycode) {
 		String id = keyboardHotkeys.get(keycode);
 		if (id == null) {

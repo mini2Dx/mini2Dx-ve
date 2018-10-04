@@ -14,12 +14,18 @@ package org.mini2Dx.ui.element;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import org.mini2Dx.core.graphics.GlyphLayout;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
+import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.animation.TextAnimation;
 import org.mini2Dx.ui.layout.HorizontalAlignment;
+import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.render.LabelRenderNode;
 import org.mini2Dx.ui.render.ParentRenderNode;
+import org.mini2Dx.ui.style.LabelStyleRule;
+import org.mini2Dx.ui.style.StyleRule;
 import org.mini2Dx.ui.style.UiTheme;
 
 import com.badlogic.gdx.graphics.Color;
@@ -28,6 +34,8 @@ import com.badlogic.gdx.graphics.Color;
  * A text label {@link UiElement}
  */
 public class Label extends UiElement {
+	private static final GlyphLayout GLYPH_LAYOUT = new GlyphLayout();
+
 	/**
 	 * A blending-safe white {@link Color} value
 	 */
@@ -61,7 +69,43 @@ public class Label extends UiElement {
 	 * @param id The unique ID of the {@link Label}
 	 */
 	public Label(@ConstructorArg(clazz=String.class, name = "id") String id) {
-		super(id);
+		this(id, 0f, 0f, 9000f, 128f);
+	}
+
+	/**
+	 * Constructor
+	 * @param id The unique ID for this element (if null an ID will be generated)
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public Label(@ConstructorArg(clazz = String.class, name = "id") String id,
+				 @ConstructorArg(clazz = Float.class, name = "x") float x,
+				 @ConstructorArg(clazz = Float.class, name = "y") float y,
+				 @ConstructorArg(clazz = Float.class, name = "width") float width,
+				 @ConstructorArg(clazz = Float.class, name = "height") float height) {
+		super(id, x, y, width, height);
+	}
+
+	protected void estimateSize() {
+		if(renderNode != null) {
+			return;
+		}
+		if(!UiContainer.isThemeApplied()) {
+			return;
+		}
+		if(text == null) {
+			return;
+		}
+		final LabelStyleRule styleRule = UiContainer.getTheme().getLabelStyleRule(styleId, ScreenSize.XS);
+		final BitmapFont font = styleRule.getBitmapFont();
+		if(font == null) {
+			return;
+		}
+		GLYPH_LAYOUT.setText(font, text);
+		width = GLYPH_LAYOUT.width + styleRule.getMarginLeft() + styleRule.getMarginRight() + styleRule.getPaddingLeft() + styleRule.getPaddingRight();
+		height = GLYPH_LAYOUT.height + styleRule.getMarginTop() + styleRule.getMarginBottom() + styleRule.getPaddingTop() + styleRule.getPaddingBottom();
 	}
 
 	/**
@@ -84,6 +128,7 @@ public class Label extends UiElement {
 			return;
 		}
 		this.text = text;
+		estimateSize();
 		
 		if(renderNode == null) {
 			return;
@@ -108,6 +153,14 @@ public class Label extends UiElement {
 		parentRenderNode.removeChild(renderNode);
 		renderNode = null;
 	}
+
+	@Override
+	public StyleRule getStyleRule() {
+		if(!UiContainer.isThemeApplied()) {
+			return null;
+		}
+		return UiContainer.getTheme().getLabelStyleRule(styleId, ScreenSize.XS);
+	}
 	
 	@Override
 	public void setVisibility(Visibility visibility) {
@@ -128,8 +181,8 @@ public class Label extends UiElement {
 			renderNode.applyEffect(effects.poll());
 		}
 
-		x = renderNode.getOuterX();
-		y = renderNode.getOuterY();
+		x = renderNode.getRelativeX();
+		y = renderNode.getRelativeY();
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
 
@@ -145,6 +198,7 @@ public class Label extends UiElement {
 			return;
 		}
 		this.styleId = styleId;
+		estimateSize();
 		
 		if(renderNode == null) {
 			return;
@@ -253,10 +307,34 @@ public class Label extends UiElement {
 	}
 
 	@Override
-	protected void setRenderNodeDirty() {
+	public boolean isRenderNodeDirty() {
+		if (renderNode == null) {
+			return true;
+		}
+		return renderNode.isDirty();
+	}
+
+	@Override
+	public void setRenderNodeDirty() {
 		if (renderNode == null) {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public boolean isInitialLayoutOccurred() {
+		if (renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialLayoutOccurred();
+	}
+
+	@Override
+	public boolean isInitialUpdateOccurred() {
+		if(renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialUpdateOccurred();
 	}
 }

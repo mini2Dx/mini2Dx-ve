@@ -12,27 +12,55 @@
 package org.mini2Dx.ui.element;
 
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
+import org.mini2Dx.ui.layout.FlexDirection;
 import org.mini2Dx.ui.render.DivRenderNode;
 import org.mini2Dx.ui.render.ParentRenderNode;
 
 /**
  * Utility {@link Div} class pre-set with flex layout "flex-column:xs-12c"
  */
-public class Row extends Div {
+public class FlexRow extends Div {
 	/**
-	 * Constructor. Generates a unique ID for this {@link Row}
+	 * Constructor. Generates a unique ID for this {@link FlexRow}
 	 */
-	public Row() {
+	public FlexRow() {
 		this(null);
 	}
 	
 	/**
 	 * Constructor
-	 * @param id The unique ID for this {@link Row}
+	 * @param id The unique ID for this {@link FlexRow}
 	 */
-	public Row(@ConstructorArg(clazz=String.class, name = "id") String id) {
+	public FlexRow(@ConstructorArg(clazz=String.class, name = "id") String id) {
 		super(id);
 		setFlexLayout("flex-column:xs-12c");
+	}
+
+	/**
+	 * Sets the {@link FlexDirection} of this {@link FlexRow}
+	 * @param flexDirection The flex direction
+	 */
+	public void setFlexDirection(FlexDirection flexDirection) {
+		if(flexDirection == null) {
+			return;
+		}
+		switch(flexDirection) {
+		case COLUMN:
+			setFlexLayout("flex-column:xs-12c");
+			break;
+		case COLUMN_REVERSE:
+			setFlexLayout("flex-column-reverse:xs-12c");
+			break;
+		case ROW:
+			setFlexLayout("flex-row:xs-12c");
+			break;
+		case ROW_REVERSE:
+			setFlexLayout("flex-row-reverse:xs-12c");
+			break;
+		case CENTER:
+			setFlexLayout("flex-center:xs-12c");
+			break;
+		}
 	}
 	
 	@Override
@@ -41,29 +69,32 @@ public class Row extends Div {
 	}
 	
 	/**
-	 * Creates a {@link Visibility#VISIBLE} {@link Row} containing the
+	 * Creates a {@link Visibility#VISIBLE} {@link FlexRow} containing the
 	 * specified {@link UiElement}s
 	 * 
-	 * @param elements The {@link UiElement}s to add to the {@link Row}
-	 * @return A new {@link Row} containing the {@link UiElement}s
+	 * @param elements The {@link UiElement}s to add to the {@link FlexRow}
+	 * @return A new {@link FlexRow} containing the {@link UiElement}s
 	 */
-	public static Row withElements(UiElement ...elements) {
+	public static FlexRow withElements(UiElement ...elements) {
 		return withElements(null, elements);
 	}
 	
 	/**
-	 * Creates a {@link Visibility#VISIBLE} {@link Row} containing the
+	 * Creates a {@link Visibility#VISIBLE} {@link FlexRow} containing the
 	 * specified {@link UiElement}s
 	 * 
-	 * @param rowId The unique ID of the {@link Row}
-	 * @param elements The {@link UiElement}s to add to the {@link Row}
-	 * @return A new {@link Row} containing the {@link UiElement}s
+	 * @param rowId The unique ID of the {@link FlexRow}
+	 * @param elements The {@link UiElement}s to add to the {@link FlexRow}
+	 * @return A new {@link FlexRow} containing the {@link UiElement}s
 	 */
-	public static Row withElements(String rowId, UiElement ...elements) {
-		Row result = new Row(rowId);
+	public static FlexRow withElements(String rowId, UiElement ...elements) {
+		FlexRow result = new FlexRow(rowId);
+		float maxY = 0f;
 		for(int i = 0; i < elements.length; i++) {
 			result.add(elements[i]);
+			maxY = Math.max(maxY, elements[i].getY() + elements[i].getHeight());
 		}
+		result.setHeight(maxY);
 		result.setVisibility(Visibility.VISIBLE);
 		return result;
 	}

@@ -11,20 +11,21 @@
  */
 package org.mini2Dx.ui.element;
 
-import org.mini2Dx.core.exception.MdxException;
-import org.mini2Dx.core.graphics.TextureRegion;
-import org.mini2Dx.core.serialization.annotation.ConstructorArg;
-import org.mini2Dx.core.serialization.annotation.Field;
-import org.mini2Dx.core.serialization.annotation.PostDeserialize;
-import org.mini2Dx.ui.render.AnimatedImageRenderNode;
-import org.mini2Dx.ui.render.ImageRenderNode;
-import org.mini2Dx.ui.render.ParentRenderNode;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import org.mini2Dx.core.exception.MdxException;
+import org.mini2Dx.core.graphics.TextureRegion;
+import org.mini2Dx.core.serialization.annotation.ConstructorArg;
+import org.mini2Dx.core.serialization.annotation.Field;
+import org.mini2Dx.core.serialization.annotation.PostDeserialize;
+import org.mini2Dx.ui.UiContainer;
+import org.mini2Dx.ui.layout.ScreenSize;
+import org.mini2Dx.ui.render.AnimatedImageRenderNode;
+import org.mini2Dx.ui.render.ParentRenderNode;
+import org.mini2Dx.ui.style.StyleRule;
 
 /**
  *
@@ -54,7 +55,7 @@ public class AnimatedImage extends UiElement {
 	 * Constructor. Generates a unique ID for this {@link AnimatedImage}
 	 */
 	public AnimatedImage() {
-		super(null);
+		this(null);
 	}
 
 	/**
@@ -64,7 +65,23 @@ public class AnimatedImage extends UiElement {
 	 *            The unique ID for this {@link AnimatedImage}
 	 */
 	public AnimatedImage(@ConstructorArg(clazz = String.class, name = "id") String id) {
-		super(id);
+		this(id, 0f, 0f, 1f, 1f);
+	}
+
+	/**
+	 * Constructor
+	 * @param id The unique ID for this element (if null an ID will be generated)
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public AnimatedImage(@ConstructorArg(clazz = String.class, name = "id") String id,
+				 @ConstructorArg(clazz = Float.class, name = "x") float x,
+				 @ConstructorArg(clazz = Float.class, name = "y") float y,
+				 @ConstructorArg(clazz = Float.class, name = "width") float width,
+				 @ConstructorArg(clazz = Float.class, name = "height") float height) {
+		super(id, x, y, width, height);
 	}
 
 	/**
@@ -150,6 +167,20 @@ public class AnimatedImage extends UiElement {
 		}
 	}
 
+	protected void estimateSize() {
+		if(renderNode != null) {
+			return;
+		}
+		if(!UiContainer.isThemeApplied()) {
+			return;
+		}
+		final StyleRule styleRule = UiContainer.getTheme().getImageStyleRule(styleId, ScreenSize.XS);
+		if(textureRegions != null && textureRegions.length > 0) {
+			width = textureRegions[0].getRegionWidth() + styleRule.getMarginLeft() + styleRule.getMarginRight() + styleRule.getPaddingLeft() + styleRule.getPaddingRight();
+			height = textureRegions[0].getRegionHeight() + styleRule.getMarginTop() + styleRule.getMarginBottom() + styleRule.getPaddingTop() + styleRule.getPaddingBottom();
+		}
+	}
+
 	@Override
 	public void attach(ParentRenderNode<?, ?> parentRenderNode) {
 		if (renderNode != null) {
@@ -220,6 +251,7 @@ public class AnimatedImage extends UiElement {
 	public void setTextureRegions(TextureRegion[] textureRegions, float[] durations) {
 		this.textureRegions = textureRegions;
 		this.frameDurations = durations;
+		estimateSize();
 
 		if (renderNode == null) {
 			return;
@@ -244,6 +276,7 @@ public class AnimatedImage extends UiElement {
 				regions[i] = new TextureRegion(textures[i]);
 			}
 			setTextureRegions(regions, durations);
+			estimateSize();
 		}
 	}
 
@@ -359,8 +392,8 @@ public class AnimatedImage extends UiElement {
 			renderNode.applyEffect(effects.poll());
 		}
 
-		x = renderNode.getOuterX();
-		y = renderNode.getOuterY();
+		x = renderNode.getRelativeX();
+		y = renderNode.getRelativeY();
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
 
@@ -376,6 +409,7 @@ public class AnimatedImage extends UiElement {
 			return;
 		}
 		this.styleId = styleId;
+		estimateSize();
 
 		if (renderNode == null) {
 			return;
@@ -391,6 +425,14 @@ public class AnimatedImage extends UiElement {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public StyleRule getStyleRule() {
+		if(!UiContainer.isThemeApplied()) {
+			return null;
+		}
+		return UiContainer.getTheme().getImageStyleRule(styleId, ScreenSize.XS);
 	}
 
 	/**
@@ -432,10 +474,34 @@ public class AnimatedImage extends UiElement {
 	}
 
 	@Override
-	protected void setRenderNodeDirty() {
+	public boolean isRenderNodeDirty() {
+		if (renderNode == null) {
+			return true;
+		}
+		return renderNode.isDirty();
+	}
+
+	@Override
+	public void setRenderNodeDirty() {
 		if (renderNode == null) {
 			return;
 		}
 		renderNode.setDirty(true);
+	}
+
+	@Override
+	public boolean isInitialLayoutOccurred() {
+		if (renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialLayoutOccurred();
+	}
+
+	@Override
+	public boolean isInitialUpdateOccurred() {
+		if(renderNode == null) {
+			return false;
+		}
+		return renderNode.isInitialUpdateOccurred();
 	}
 }

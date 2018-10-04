@@ -19,9 +19,9 @@ import org.mini2Dx.core.serialization.SerializationException;
 import org.mini2Dx.desktop.serialization.DesktopXmlSerializer;
 
 /**
- * Unit and integration tests for {@link Row}
+ * Unit and integration tests for {@link FlexRow}
  */
-public class RowTest {
+public class FlexRowTest {
 	@Before
 	public void setUp() {
 		Mdx.xml = new DesktopXmlSerializer();
@@ -29,21 +29,21 @@ public class RowTest {
 
 	@Test
 	public void testSerialization() {
-		Row row = new Row("row-1");
-		row.setZIndex(27);
-		row.add(new Label());
-		row.add(new TextButton("button-2"));
+		FlexRow flexRow = new FlexRow("flexRow-1");
+		flexRow.setZIndex(27);
+		flexRow.add(new Label());
+		flexRow.add(new TextButton("button-2"));
 		
 		try {
-			String xml = Mdx.xml.toXml(row);
+			String xml = Mdx.xml.toXml(flexRow);
 			System.out.println(xml);
-			Row result = Mdx.xml.fromXml(xml, Row.class);
+			FlexRow result = Mdx.xml.fromXml(xml, FlexRow.class);
 			
-			Assert.assertEquals(row.getId(), result.getId());
-			Assert.assertEquals(row.getZIndex(), result.getZIndex());
-			Assert.assertEquals(row.children.size(), result.children.size());
-			for(int i = 0; i < row.children.size(); i++) {
-				Assert.assertEquals(row.children.get(i).getId(), result.children.get(i).getId());
+			Assert.assertEquals(flexRow.getId(), result.getId());
+			Assert.assertEquals(flexRow.getZIndex(), result.getZIndex());
+			Assert.assertEquals(flexRow.children.size(), result.children.size());
+			for(int i = 0; i < flexRow.children.size(); i++) {
+				Assert.assertEquals(flexRow.children.get(i).getId(), result.children.get(i).getId());
 			}
 		} catch (SerializationException e) {
 			e.printStackTrace();

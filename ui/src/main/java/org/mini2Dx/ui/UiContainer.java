@@ -43,6 +43,7 @@ import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.RenderNode;
 import org.mini2Dx.ui.render.TextInputableRenderNode;
 import org.mini2Dx.ui.render.UiContainerRenderTree;
+import org.mini2Dx.ui.style.StyleRule;
 import org.mini2Dx.ui.style.UiTheme;
 import org.mini2Dx.ui.util.IdAllocator;
 
@@ -61,6 +62,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	private static final String LOGGING_TAG = UiContainer.class.getSimpleName();
 	private static final List<UiContainer> uiContainerInstances = new ArrayList<UiContainer>();
 	private static Visibility defaultVisibility = Visibility.HIDDEN;
+	private static UiTheme UI_THEME;
 
 	private final List<ControllerUiInput<?>> controllerInputs = new ArrayList<ControllerUiInput<?>>(1);
 	private final List<UiContainerListener> listeners = new ArrayList<UiContainerListener>(1);
@@ -77,8 +79,8 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	private int lastMouseX, lastMouseY;
 	private float scaleX = 1f;
 	private float scaleY = 1f;
+	private String lastThemeId;
 	private boolean themeWarningIssued, initialThemeLayoutComplete;
-	private UiTheme theme;
 
 	private int actionKey = Keys.ENTER;
 	private Navigatable activeNavigation;
@@ -165,6 +167,13 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 			}
 			return;
 		}
+		if(lastThemeId == null || (lastThemeId != null && !lastThemeId.equals(UI_THEME.getId()))) {
+			renderTree.setDirty(true);
+			initialThemeLayoutComplete = false;
+			Gdx.app.log(LOGGING_TAG, "Applied theme - " + UI_THEME.getId());
+		}
+		lastThemeId = UI_THEME.getId();
+
 		if(forceRenderTreeLayout.get()) {
 			renderTree.onResize(width, height);
 			forceRenderTreeLayout.set(false);
@@ -270,8 +279,8 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	 * 
 	 * @return True if the {@link UiTheme} has been applied
 	 */
-	public boolean isThemeApplied() {
-		return theme != null;
+	public static boolean isThemeApplied() {
+		return UI_THEME != null;
 	}
 
 	/**
@@ -279,8 +288,8 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	 * 
 	 * @return Null if no {@link UiTheme} has been applied
 	 */
-	public UiTheme getTheme() {
-		return theme;
+	public static UiTheme getTheme() {
+		return UI_THEME;
 	}
 
 	/**
@@ -289,17 +298,14 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	 * @param theme
 	 *            The {@link UiTheme} to apply
 	 */
-	public void setTheme(UiTheme theme) {
+	public static void setTheme(UiTheme theme) {
 		if (theme == null) {
 			return;
 		}
-		if (this.theme != null && theme.equals(this.theme)) {
+		if (UI_THEME != null && UI_THEME.getId().equals(theme.getId())) {
 			return;
 		}
-		this.theme = theme;
-		renderTree.setDirty(true);
-		initialThemeLayoutComplete = false;
-		Gdx.app.log(LOGGING_TAG, "Applied theme - " + theme.getId());
+		UI_THEME = theme;
 	}
 
 	@Override
@@ -718,6 +724,11 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	 */
 	public float getHeight() {
 		return height;
+	}
+
+	@Override
+	public StyleRule getStyleRule() {
+		return StyleRule.NOOP;
 	}
 
 	/**

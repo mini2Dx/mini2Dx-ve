@@ -63,6 +63,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	private static final List<UiContainer> uiContainerInstances = new ArrayList<UiContainer>();
 	private static Visibility defaultVisibility = Visibility.HIDDEN;
 	private static UiTheme UI_THEME;
+	private static UiContainerState STATE = UiContainerState.NOOP;
 
 	private final List<ControllerUiInput<?>> controllerInputs = new ArrayList<ControllerUiInput<?>>(1);
 	private final List<UiContainerListener> listeners = new ArrayList<UiContainerListener>(1);
@@ -184,11 +185,17 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 			controllerInputs.get(i).update(delta);
 		}
 		if (renderTree.isDirty()) {
+			STATE = UiContainerState.LAYOUT;
 			renderTree.layout();
+			STATE = UiContainerState.NOOP;
+			renderTree.processLayoutDeferred();
 			initialThemeLayoutComplete = true;
 		}
+		STATE = UiContainerState.UPDATE;
 		renderTree.update(delta);
 		notifyPostUpdate(delta);
+		STATE = UiContainerState.NOOP;
+		renderTree.processUpdateDeferred();
 	}
 
 	/**
@@ -201,9 +208,11 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		if (!isThemeApplied()) {
 			return;
 		}
+		STATE = UiContainerState.INTERPOLATE;
 		notifyPreInterpolate(alpha);
 		renderTree.interpolate(alpha);
 		notifyPostInterpolate(alpha);
+		STATE = UiContainerState.NOOP;
 	}
 
 	/**
@@ -219,6 +228,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		if (!initialThemeLayoutComplete) {
 			return;
 		}
+		STATE = UiContainerState.RENDER;
 		notifyPreRender(g);
 		switch (visibility) {
 		case HIDDEN:
@@ -239,6 +249,8 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 			break;
 		}
 		notifyPostRender(g);
+		STATE = UiContainerState.NOOP;
+		renderTree.processRenderDeferred();
 	}
 
 	@Override
@@ -306,6 +318,14 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 			return;
 		}
 		UI_THEME = theme;
+	}
+
+	/**
+	 * Returns the current {@link UiContainerState}
+	 * @return
+	 */
+	public static UiContainerState getState() {
+		return STATE;
 	}
 
 	@Override

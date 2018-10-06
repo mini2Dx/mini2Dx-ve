@@ -20,8 +20,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
+import org.mini2Dx.ui.layout.FlexLayoutRuleset;
 import org.mini2Dx.ui.layout.PixelLayoutUtils;
 import org.mini2Dx.ui.render.ParentRenderNode;
+import org.mini2Dx.ui.render.UiContainerRenderTree;
 
 /**
  * Base class for {@link UiElement}s that can contain child {@link UiElement}s
@@ -276,7 +278,7 @@ public abstract class ParentUiElement extends UiElement {
 	}
 
 	@Override
-	public void syncWithUpdate() {
+	public void syncWithUpdate(UiContainerRenderTree rootNode) {
 		while (!effects.isEmpty()) {
 			renderNode.applyEffect(effects.poll());
 		}
@@ -291,12 +293,12 @@ public abstract class ParentUiElement extends UiElement {
 			remove(asyncRemoveQueue.poll());
 		}
 
-		x = renderNode.getRelativeX();
-		y = renderNode.getRelativeY();
+		x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
+		y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
 
-		processUpdateDeferred();
+		super.syncWithUpdate(rootNode);
 	}
 
 	@Override
@@ -317,6 +319,9 @@ public abstract class ParentUiElement extends UiElement {
 
 	@Override
 	public void setZIndex(int zIndex) {
+		if(this.zIndex == zIndex) {
+			return;
+		}
 		this.zIndex = zIndex;
 
 		if (renderNode == null) {
@@ -397,5 +402,77 @@ public abstract class ParentUiElement extends UiElement {
 			return false;
 		}
 		return renderNode.isInitialUpdateOccurred();
+	}
+
+	@Override
+	public boolean set(float x, float y, float width, float height) {
+		final boolean result = super.set(x, y, width, height);
+		if(result) {
+			if(flexLayout != null) {
+				flexLayout = FlexLayoutRuleset.set(flexLayout, x, y, width, height);
+				System.out.println(getId() + " set all " + flexLayout);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public boolean setXY(float x, float y) {
+		final boolean result = super.setXY(x, y);
+		if(result) {
+			if(flexLayout != null) {
+				flexLayout = FlexLayoutRuleset.setXY(flexLayout, x, y);
+				System.out.println(getId() + " set xy " + flexLayout);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public boolean setX(float x) {
+		final boolean result = super.setX(x);
+		if(result) {
+			if(flexLayout != null) {
+				flexLayout = FlexLayoutRuleset.setX(flexLayout, x);
+				System.out.println(getId() + " set x " + flexLayout);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public boolean setY(float y) {
+		final boolean result = super.setY(y);
+		if(result) {
+			if(flexLayout != null) {
+				flexLayout = FlexLayoutRuleset.setY(flexLayout, y);
+				System.out.println(getId() + "  set y " + flexLayout);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public boolean setWidth(float width) {
+		final boolean result = super.setWidth(width);
+		if(result) {
+			if(flexLayout != null) {
+				flexLayout = FlexLayoutRuleset.setWidth(flexLayout, width);
+				System.out.println(getId() + " set width " + flexLayout);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public boolean setHeight(float height) {
+		final boolean result = super.setHeight(height);
+		if(result) {
+			if(flexLayout != null) {
+				flexLayout = FlexLayoutRuleset.setHeight(flexLayout, height);
+				System.out.println(getId() + " set height " + flexLayout);
+			}
+		}
+		return result;
 	}
 }

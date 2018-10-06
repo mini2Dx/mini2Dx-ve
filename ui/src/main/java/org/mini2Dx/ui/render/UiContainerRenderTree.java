@@ -11,10 +11,7 @@
  */
 package org.mini2Dx.ui.render;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.controller.ControllerType;
@@ -27,6 +24,7 @@ import org.mini2Dx.ui.style.ParentStyleRule;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import org.mini2Dx.ui.util.DeferredRunnable;
 
 /**
  * {@link RenderNode} implementation for {@link UiContainer}
@@ -37,10 +35,16 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 	private final AssetManager assetManager;
 	private final Map<String, RenderNode<?, ?>> elementIdLookupCache = new HashMap<String, RenderNode<?, ?>>();
 
+	protected final List<DeferredRunnable> deferredLayout = new ArrayList<DeferredRunnable>(1);
+	protected final List<DeferredRunnable> deferredUpdate = new ArrayList<DeferredRunnable>(1);
+	protected final List<DeferredRunnable> deferredRender = new ArrayList<DeferredRunnable>(1);
+
 	private List<ScreenSizeListener> screenSizeListeners;
 	private ScreenSize currentScreenSize = ScreenSize.XS;
 	private boolean screenSizeChanged = false;
 	private float screenSizeScale = 1f;
+
+	private boolean deferredLayoutSortRequired = true, deferredUpdateSortRequired = true, deferredRenderSortRequired = true;
 
 	public UiContainerRenderTree(UiContainer uiContainer, AssetManager assetManager) {
 		super(null, uiContainer);
@@ -91,7 +95,7 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 		childDirty = false;
 		screenSizeChanged = false;
 		initialLayoutOccurred = true;
-		element.syncWithLayout();
+		element.syncWithLayout(this);
 	}
 
 	@Override
@@ -102,6 +106,66 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 		}
 		layers.get(zIndex).add(child);
 		setDirty(true);
+	}
+
+	public void transferUpdateDeferred(List<DeferredRunnable> deferredUpdate) {
+		deferredUpdateSortRequired |= !deferredUpdate.isEmpty();
+		this.deferredUpdate.addAll(deferredUpdate);
+		deferredUpdate.clear();
+	}
+
+	public void transferLayoutDeferred(List<DeferredRunnable> deferredLayout) {
+		deferredLayoutSortRequired |= !deferredLayout.isEmpty();
+		this.deferredLayout.addAll(deferredLayout);
+		deferredLayout.clear();
+	}
+
+	public void transferRenderDeferred(List<DeferredRunnable> deferredRender) {
+		deferredRenderSortRequired |= !deferredRender.isEmpty();
+		this.deferredRender.addAll(deferredRender);
+		deferredRender.clear();
+	}
+
+	public void processUpdateDeferred() {
+		if (deferredUpdateSortRequired) {
+			Collections.sort(deferredUpdate);
+			deferredUpdateSortRequired = false;
+		}
+
+		for (int i = deferredUpdate.size() - 1; i >= 0; i--) {
+			DeferredRunnable runnable = deferredUpdate.get(i);
+			if (runnable.run()) {
+				deferredUpdate.remove(i);
+			}
+		}
+	}
+
+	public void processLayoutDeferred() {
+		if (deferredLayoutSortRequired) {
+			Collections.sort(deferredLayout);
+			deferredLayoutSortRequired = false;
+		}
+
+		for (int i = deferredLayout.size() - 1; i >= 0; i--) {
+			DeferredRunnable runnable = deferredLayout.get(i);
+			if (runnable.run()) {
+				deferredLayout.remove(i);
+			}
+		}
+	}
+
+	public void processRenderDeferred() {
+		if (deferredRenderSortRequired) {
+			Collections.sort(deferredRender);
+			deferredRenderSortRequired = false;
+		}
+
+		for (int i = deferredRender.size() - 1; i >= 0; i--) {
+			DeferredRunnable runnable = deferredRender.get(i);
+			if (runnable.run()) {
+				deferredRender.remove(i);
+			}
+		}
 	}
 
 	public void onResize(float width, float height) {
@@ -133,10 +197,6 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 		}
 		screenSizeChanged = true;
 		this.currentScreenSize = screenSize;
-
-		if (element.isDebugEnabled()) {
-			Gdx.app.log(LOGGING_TAG, "Screen resize to " + currentScreenSize + " - " + width + "x" + height);
-		}
 
 		if (screenSizeListeners == null) {
 			return;

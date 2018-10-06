@@ -24,6 +24,7 @@ import org.mini2Dx.ui.layout.HorizontalAlignment;
 import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.render.LabelRenderNode;
 import org.mini2Dx.ui.render.ParentRenderNode;
+import org.mini2Dx.ui.render.UiContainerRenderTree;
 import org.mini2Dx.ui.style.LabelStyleRule;
 import org.mini2Dx.ui.style.StyleRule;
 import org.mini2Dx.ui.style.UiTheme;
@@ -176,17 +177,17 @@ public class Label extends UiElement {
 	}
 	
 	@Override
-	public void syncWithUpdate() {
+	public void syncWithUpdate(UiContainerRenderTree rootNode) {
 		while (!effects.isEmpty()) {
 			renderNode.applyEffect(effects.poll());
 		}
 
-		x = renderNode.getRelativeX();
-		y = renderNode.getRelativeY();
+		x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
+		y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
 
-		processUpdateDeferred();
+		super.syncWithUpdate(rootNode);
 	}
 	
 	@Override

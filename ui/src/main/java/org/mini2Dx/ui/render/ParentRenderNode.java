@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.util.IntTreeMap;
+import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.element.ParentUiElement;
 import org.mini2Dx.ui.layout.FlexLayoutRuleset;
 import org.mini2Dx.ui.layout.ImmediateLayoutRuleset;
@@ -165,7 +166,7 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 		childDirty = false;
 		initialLayoutOccurred = true;
 
-		element.syncWithLayout();
+		element.syncWithLayout(rootNode);
 	}
 
 	@Override
@@ -306,14 +307,33 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 	}
 
 	@Override
-	public void setDirty(boolean dirty) {
-		if (layers == null || layers.size == 0) {
-			super.setDirty(dirty);
-		} else {
-			for (RenderLayer layer : layers.values()) {
-				layer.setDirty(dirty);
+	public void setDirty(final boolean dirty) {
+		switch(UiContainer.getState()) {
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			if (layers == null || layers.size == 0) {
+				super.setDirty(dirty);
+			} else {
+				for (RenderLayer layer : layers.values()) {
+					layer.setDirty(dirty);
+				}
 			}
+			break;
+		case LAYOUT:
+		case UPDATE:
+			element.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setDirty(dirty);
+				}
+			});
+			break;
 		}
+	}
+
+	protected boolean isImmediateDirty() {
+		return super.isDirty();
 	}
 
 	protected void setImmediateDirty(boolean dirty) {

@@ -27,17 +27,6 @@ public class TabRenderNode extends DivRenderNode implements NavigatableRenderNod
 	}
 
 	@Override
-	protected float determinePreferredContentWidth(LayoutState layoutState) {
-		return style.getRounding().calculateRounding(layoutState.getParentWidth() - style.getPaddingLeft()
-				- style.getPaddingRight() - style.getMarginLeft() - style.getMarginRight());
-	}
-
-	@Override
-	protected float determinePreferredContentHeight(LayoutState layoutState) {
-		return super.determinePreferredContentHeight(layoutState);
-	}
-
-	@Override
 	public ActionableRenderNode hotkey(int keycode) {
 		String id = keyboardHotkeys.get(keycode);
 		if (id == null) {
@@ -101,5 +90,4 @@ public class TabRenderNode extends DivRenderNode implements NavigatableRenderNod
 		}
 		return (ActionableRenderNode) searchTreeForElementById(actionable.getId());
 	}
-
 }

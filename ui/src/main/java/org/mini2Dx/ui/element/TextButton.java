@@ -32,7 +32,24 @@ public class TextButton extends Button {
 	 * @param id The unique ID for this {@link TextButton}
 	 */
 	public TextButton(@ConstructorArg(clazz=String.class, name = "id") String id) {
-		super(id);
+		this(id, 0f, 0f, 40f, 20f);
+	}
+
+	/**
+	 * Constructor
+	 * @param id The unique ID for this element (if null an ID will be generated)
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public TextButton(@ConstructorArg(clazz = String.class, name = "id") String id,
+					   @ConstructorArg(clazz = Float.class, name = "x") float x,
+					   @ConstructorArg(clazz = Float.class, name = "y") float y,
+					   @ConstructorArg(clazz = Float.class, name = "width") float width,
+					   @ConstructorArg(clazz = Float.class, name = "height") float height) {
+		super(id, x, y, width, height);
+		System.out.println("TextButton ID: " + id + " " + getId());
 	}
 	
 	private void checkInitialised() {

@@ -22,15 +22,12 @@ import org.mini2Dx.ui.navigation.ControllerHotKeyOperation;
 import org.mini2Dx.ui.navigation.KeyboardHotKeyOperation;
 import org.mini2Dx.ui.navigation.UiNavigation;
 import org.mini2Dx.ui.navigation.VerticalUiNavigation;
-import org.mini2Dx.ui.render.ActionableRenderNode;
-import org.mini2Dx.ui.render.NavigatableRenderNode;
-import org.mini2Dx.ui.render.ParentRenderNode;
-import org.mini2Dx.ui.render.TabRenderNode;
+import org.mini2Dx.ui.render.*;
 
 /**
  * A tab that contains {@link UiElement}s. Add to a {@link TabView}
  */
-public class Tab extends FlexRow implements Navigatable {
+public class Tab extends Div implements Navigatable {
 	private final Queue<ControllerHotKeyOperation> controllerHotKeyOperations = new LinkedList<ControllerHotKeyOperation>();
 	private final Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations = new LinkedList<KeyboardHotKeyOperation>();
 	
@@ -54,7 +51,7 @@ public class Tab extends FlexRow implements Navigatable {
 		super(id);
 		this.title = title;
 	}
-	
+
 	@Override
 	protected ParentRenderNode<?, ?> createRenderNode(ParentRenderNode<?, ?> parent) {
 		return new TabRenderNode(parent, this);
@@ -117,8 +114,8 @@ public class Tab extends FlexRow implements Navigatable {
 	}
 
 	@Override
-	public void syncWithUpdate() {
-		super.syncWithUpdate();
+	public void syncWithUpdate(UiContainerRenderTree rootNode) {
+		super.syncWithUpdate(rootNode);
 		((NavigatableRenderNode) renderNode).syncHotkeys(controllerHotKeyOperations, keyboardHotKeyOperations);
 	}
 	

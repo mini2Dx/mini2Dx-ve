@@ -24,6 +24,7 @@ import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.ScrollBoxRenderNode;
 
 import com.badlogic.gdx.math.MathUtils;
+import org.mini2Dx.ui.render.UiContainerRenderTree;
 
 /**
  * A scrollable view for {@link UiElement}s
@@ -64,8 +65,8 @@ public class ScrollBox extends Div {
 	}
 
 	@Override
-	public void syncWithUpdate() {
-		super.syncWithUpdate();
+	public void syncWithUpdate(UiContainerRenderTree rootNode) {
+		super.syncWithUpdate(rootNode);
 
 		if (renderNode == null) {
 			return;

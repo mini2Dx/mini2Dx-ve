@@ -31,6 +31,7 @@ import org.mini2Dx.ui.layout.VerticalAlignment;
 import org.mini2Dx.ui.listener.ActionListener;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.TextBoxRenderNode;
+import org.mini2Dx.ui.render.UiContainerRenderTree;
 import org.mini2Dx.ui.style.StyleRule;
 
 /**
@@ -71,7 +72,23 @@ public class TextBox extends UiElement implements Actionable {
 	 * @param id The unique ID for this {@link TextBox}
 	 */
 	public TextBox(@ConstructorArg(clazz = String.class, name = "id") String id) {
-		super(id);
+		this(id, 0f, 0f, 40f, 20f);
+	}
+
+	/**
+	 * Constructor
+	 * @param id The unique ID for this element (if null an ID will be generated)
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public TextBox(@ConstructorArg(clazz = String.class, name = "id") String id,
+				   @ConstructorArg(clazz = Float.class, name = "x") float x,
+				   @ConstructorArg(clazz = Float.class, name = "y") float y,
+				   @ConstructorArg(clazz = Float.class, name = "width") float width,
+				   @ConstructorArg(clazz = Float.class, name = "height") float height) {
+		super(id, x, y, width, height);
 	}
 
 	@Override
@@ -122,17 +139,17 @@ public class TextBox extends UiElement implements Actionable {
 	}
 	
 	@Override
-	public void syncWithUpdate() {
+	public void syncWithUpdate(UiContainerRenderTree rootNode) {
 		while (!effects.isEmpty()) {
 			renderNode.applyEffect(effects.poll());
 		}
 
-		x = renderNode.getRelativeX();
-		y = renderNode.getRelativeY();
+		x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
+		y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
 
-		processUpdateDeferred();
+		super.syncWithUpdate(rootNode);
 	}
 
 	/**

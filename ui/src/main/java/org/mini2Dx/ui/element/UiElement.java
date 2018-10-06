@@ -30,6 +30,7 @@ import org.mini2Dx.ui.listener.HoverListener;
 import org.mini2Dx.ui.listener.UiEffectListener;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.RenderNode;
+import org.mini2Dx.ui.render.UiContainerRenderTree;
 import org.mini2Dx.ui.style.StyleRule;
 import org.mini2Dx.ui.style.UiTheme;
 import org.mini2Dx.ui.util.DeferredRunnable;
@@ -42,8 +43,10 @@ import org.mini2Dx.ui.util.IdAllocator;
 public abstract class UiElement implements Hoverable {
 	private final String id;
 	protected final Queue<UiEffect> effects = new LinkedList<UiEffect>();
-	protected final List<DeferredRunnable> deferredUpdate = new ArrayList<DeferredRunnable>(1);
+
 	protected final List<DeferredRunnable> deferredLayout = new ArrayList<DeferredRunnable>(1);
+	protected final List<DeferredRunnable> deferredUpdate = new ArrayList<DeferredRunnable>(1);
+	protected final List<DeferredRunnable> deferredRender = new ArrayList<DeferredRunnable>(1);
 
 	@Field(optional = true)
 	protected Visibility visibility = UiContainer.getDefaultVisibility();
@@ -60,8 +63,6 @@ public abstract class UiElement implements Hoverable {
 	private List<UiEffectListener> effectListeners;
 	private List<HoverListener> hoverListeners;
 	private boolean debugEnabled = false;
-
-	private boolean deferredUpdateSortRequired = true;
 
 	/**
 	 * Constructor. Generates a unique ID for this element.
@@ -93,7 +94,7 @@ public abstract class UiElement implements Hoverable {
 					 @ConstructorArg(clazz = Float.class, name = "y") float y,
 					 @ConstructorArg(clazz = Float.class, name = "width") float width,
 					 @ConstructorArg(clazz = Float.class, name = "height") float height) {
-		if (id == null) {
+		if (id == null || id.isEmpty()) {
 			id = IdAllocator.getNextId();
 		}
 		this.id = id;
@@ -107,20 +108,37 @@ public abstract class UiElement implements Hoverable {
 
 	public abstract boolean isInitialUpdateOccurred();
 
+	/**
+	 * Returns if the {@link UiElement} has been initialised within the render tree
+	 * @return False if a layout() and update() call has not yet occurred on the element
+	 */
+	public boolean isInitialised() {
+		return isInitialLayoutOccurred() && isInitialUpdateOccurred();
+	}
+
 	public abstract boolean isRenderNodeDirty();
 
 	public abstract void setRenderNodeDirty();
 
 	/**
-	 * Syncs data between the {@link UiElement} and {@link RenderNode} during update
-	 */
-	public abstract void syncWithUpdate();
-
-	/**
 	 * Syncs data between the {@link UiElement} and {@link RenderNode} during UI layout
 	 */
-	public void syncWithLayout() {
-		processLayoutDeferred();
+	public void syncWithLayout(UiContainerRenderTree rootNode) {
+		rootNode.transferLayoutDeferred(deferredLayout);
+	}
+
+	/**
+	 * Syncs data between the {@link UiElement} and {@link RenderNode} during update
+	 */
+	public void syncWithUpdate(UiContainerRenderTree rootNode) {
+		rootNode.transferUpdateDeferred(deferredUpdate);
+	}
+
+	/**
+	 * Syncs data between the {@link UiElement} and {@link RenderNode} during UI render
+	 */
+	public void syncWithRender(UiContainerRenderTree rootNode) {
+		rootNode.transferRenderDeferred(deferredRender);
 	}
 
 	/**
@@ -251,7 +269,6 @@ public abstract class UiElement implements Hoverable {
 	public DeferredRunnable deferUntilUpdate(Runnable runnable, float duration) {
 		DeferredRunnable result = DeferredRunnable.allocate(runnable, duration);
 		deferredUpdate.add(result);
-		deferredUpdateSortRequired = true;
 		return result;
 	}
 
@@ -267,30 +284,14 @@ public abstract class UiElement implements Hoverable {
 	}
 
 	/**
-	 * Processes all actions deferred until update
+	 * Defers the execution of a {@link Runnable} instance until the UI render completes
+	 * @param runnable The {@link Runnable} to execute
+	 * @return A {@link DeferredRunnable} that can be cancelled
 	 */
-	protected void processUpdateDeferred() {
-		if (deferredUpdateSortRequired) {
-			Collections.sort(deferredUpdate);
-			deferredUpdateSortRequired = false;
-		}
-
-		for (int i = deferredUpdate.size() - 1; i >= 0; i--) {
-			DeferredRunnable runnable = deferredUpdate.get(i);
-			if (runnable.run()) {
-				deferredUpdate.remove(i);
-			}
-		}
-	}
-
-	/**
-	 * Processes all actions deferred until layout completion
-	 */
-	protected void processLayoutDeferred() {
-		deferredUpdateSortRequired |= !deferredLayout.isEmpty();
-		while(!deferredLayout.isEmpty()) {
-			deferredUpdate.add(deferredLayout.remove(0));
-		}
+	public DeferredRunnable deferUntilRender(Runnable runnable) {
+		DeferredRunnable result = DeferredRunnable.allocate(runnable, 0f);
+		deferredRender.add(result);
+		return result;
 	}
 
 	@Override
@@ -500,11 +501,12 @@ public abstract class UiElement implements Hoverable {
 	 * @param y The y coordinate (in pixels) relative to its parent
 	 * @param width The width in pixels
 	 * @param height The height in pixels
+	 * @return True if the x or y coordinate or width or height changed
 	 */
-	public void set(final float x, final float y, final float width, final float height) {
+	public boolean set(final float x, final float y, final float width, final float height) {
 		if (MathUtils.isEqual(this.x, x) && MathUtils.isEqual(this.y, y)
 				&& MathUtils.isEqual(this.width, width) && MathUtils.isEqual(this.height, height)) {
-			return;
+			return false;
 		}
 		this.x = x;
 		this.y = y;
@@ -512,81 +514,92 @@ public abstract class UiElement implements Hoverable {
 		this.height = height;
 
 		setRenderNodeDirty();
+		return true;
 	}
 
 	/**
 	 * Sets the x and y coordinates of this element
 	 * @param x The x coordinate (in pixels) relative to its parent
 	 * @param y The y coordinate (in pixels) relative to its parent
+	 * @return True if the x or y coordinate changed
 	 */
-	public void setXY(final float x, final float y) {
+	public boolean setXY(final float x, final float y) {
 		if (MathUtils.isEqual(this.x, x) && MathUtils.isEqual(this.y, y)) {
-			return;
+			return false;
 		}
 		this.x = x;
 		this.y = y;
 
 		setRenderNodeDirty();
+		return true;
 	}
 
 	/**
 	 * Sets the x coordinate of this element.
 	 * @param x The x coordinate (in pixels) relative to its parent
+	 * @return True if the x coordinate changed
 	 */
-	public void setX(final float x) {
+	public boolean setX(final float x) {
 		if (MathUtils.isEqual(this.x, x)) {
-			return;
+			return false;
 		}
 		this.x = x;
 
 		setRenderNodeDirty();
+		return true;
 	}
 
 	/**
 	 * Sets the y coordinate of this element
 	 * @param y The y coordinate (in pixels) relative to its parent
+	 * @return True if the y coordinate changed
 	 */
-	public void setY(final float y) {
+	public boolean setY(final float y) {
 		if (MathUtils.isEqual(this.y, y)) {
-			return;
+			return false;
 		}
 		this.y = y;
 
 		setRenderNodeDirty();
+		return true;
 	}
 
 	/**
 	 * Sets the width of this element
 	 * @param width The width in pixels
+	 * @return True if the width changed
 	 */
-	public void setWidth(final float width) {
+	public boolean setWidth(final float width) {
 		if (MathUtils.isEqual(this.width, width)) {
-			return;
+			return false;
 		}
 		this.width = width;
 
 		setRenderNodeDirty();
-	}
-
-	public void setContentWidth(final float contentWidth) {
-		setWidth(contentWidth + getMarginLeft() + getMarginRight() + getPaddingLeft() + getPaddingRight());
-	}
-
-	public void setContentHeight(final float contentHeight) {
-		setHeight(contentHeight + getMarginTop() + getMarginBottom() + getPaddingTop() + getPaddingBottom());
+		return true;
 	}
 
 	/**
 	 * Sets the height of this element
 	 * @param height The height in pixels
+	 * @return True if the height changed
 	 */
-	public void setHeight(final float height) {
+	public boolean setHeight(final float height) {
 		if (MathUtils.isEqual(this.height, height)) {
-			return;
+			return false;
 		}
 		this.height = height;
 
 		setRenderNodeDirty();
+		return true;
+	}
+
+	public boolean setContentWidth(final float contentWidth) {
+		return setWidth(contentWidth + getMarginLeft() + getMarginRight() + getPaddingLeft() + getPaddingRight());
+	}
+
+	public boolean setContentHeight(final float contentHeight) {
+		return setHeight(contentHeight + getMarginTop() + getMarginBottom() + getPaddingTop() + getPaddingBottom());
 	}
 
 	public abstract StyleRule getStyleRule();

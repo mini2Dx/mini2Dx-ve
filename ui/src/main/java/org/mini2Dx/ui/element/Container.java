@@ -25,6 +25,7 @@ import org.mini2Dx.ui.navigation.VerticalUiNavigation;
 import org.mini2Dx.ui.render.ActionableRenderNode;
 import org.mini2Dx.ui.render.ContainerRenderNode;
 import org.mini2Dx.ui.render.ParentRenderNode;
+import org.mini2Dx.ui.render.UiContainerRenderTree;
 import org.mini2Dx.ui.style.StyleRule;
 import org.mini2Dx.ui.style.UiTheme;
 
@@ -73,8 +74,8 @@ public class Container extends Div implements Navigatable {
 	}
 
 	@Override
-	public void syncWithUpdate() {
-		super.syncWithUpdate();
+	public void syncWithUpdate(UiContainerRenderTree rootNode) {
+		super.syncWithUpdate(rootNode);
 		((ContainerRenderNode) renderNode).syncHotkeys(controllerHotKeyOperations, keyboardHotKeyOperations);
 	}
 

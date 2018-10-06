@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.ui.layout;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.Mdx;
 import org.mini2Dx.core.controller.ControllerType;
@@ -60,7 +61,7 @@ public class FlexLayoutRuleset extends LayoutRuleset {
 		switch(components.length) {
 		case 1: {
 			//Horizontal only
-			String[] rule = components[0].split(" ");
+			String[] rule = components[0].trim().split(" ");
 			for (int i = 0; i < rule.length; i++) {
 				String[] ruleDetails = rule[i].split("-");
 				switch (ruleDetails.length) {
@@ -83,7 +84,7 @@ public class FlexLayoutRuleset extends LayoutRuleset {
 		case 2: {
 			{
 				//Horizontal
-				String[] rule = components[0].split(" ");
+				String[] rule = components[0].trim().split(" ");
 				for (int i = 0; i < rule.length; i++) {
 					String[] ruleDetails = rule[i].split("-");
 					switch (ruleDetails.length) {
@@ -103,7 +104,7 @@ public class FlexLayoutRuleset extends LayoutRuleset {
 			}
 			{
 				//Vertical
-				String[] rule = components[1].split(" ");
+				String[] rule = components[1].trim().split(" ");
 				for (int i = 0; i < rule.length; i++) {
 					String[] ruleDetails = rule[i].split("-");
 					switch (ruleDetails.length) {
@@ -150,7 +151,7 @@ public class FlexLayoutRuleset extends LayoutRuleset {
 			break;
 		}
 		default:
-			ScreenSize screenSize = ScreenSize.fromString(ruleDetails[0]);
+			ScreenSize screenSize = ScreenSize.fromString(ruleDetails[0].trim());
 			if (ruleDetails[1].equalsIgnoreCase(AUTO)) {
 				if(horizontalRuleset) {
 					throw new MdxException("Invalid size - cannot use auto size for horizontal size rules. Must end be columns (c) or pixels (px)");
@@ -158,13 +159,13 @@ public class FlexLayoutRuleset extends LayoutRuleset {
 				sizeRules.put(screenSize, new AutoSizeRule());
 			} else if (ruleDetails[1].endsWith(PIXEL_SUFFIX)) {
 				sizeRules.put(screenSize,
-						new AbsoluteSizeRule(Float.parseFloat(ruleDetails[1].replace(PIXEL_SUFFIX, EMPTY_STRING))));
+						new AbsoluteSizeRule(Float.parseFloat(ruleDetails[1].replace(PIXEL_SUFFIX, EMPTY_STRING).trim())));
 			} else if (ruleDetails[1].endsWith(COLUMN_SUFFIX)) {
 				if(!horizontalRuleset) {
 					throw new MdxException("Invalid size - cannot use column size for vertical size rules. Must be pixel (px) or auto");
 				}
 				sizeRules.put(screenSize,
-						new ResponsiveSizeRule(Integer.parseInt(ruleDetails[1].replace(COLUMN_SUFFIX, EMPTY_STRING))));
+						new ResponsiveSizeRule(Integer.parseInt(ruleDetails[1].replace(COLUMN_SUFFIX, EMPTY_STRING).trim())));
 			} else {
 				throw new MdxException("Invalid size - must end with c (columns) or px (pixels");
 			}
@@ -341,5 +342,143 @@ public class FlexLayoutRuleset extends LayoutRuleset {
 			return new FlexLayoutRuleset(FlexDirection.CENTER, layout, typeAndValue[1]);
 		}
 		throw new MdxException("Invalid layout type '" + typeAndValue[0] + "'");
+	}
+
+	public static String set(String flexLayout, float x, float y, float width, float height) {
+		flexLayout = setXY(flexLayout, x, y);
+		flexLayout = setWidth(flexLayout, width);
+		flexLayout = setHeight(flexLayout, height);
+		return flexLayout;
+	}
+
+	public static String setXY(String flexLayout, float x, float y) {
+		flexLayout = setX(flexLayout, x);
+		flexLayout = setY(flexLayout, y);
+		return flexLayout;
+	}
+
+	public static String setX(String flexLayout, float x) {
+		final int valueIndex = flexLayout.indexOf(':') + 1;
+		final String flexComponent = flexLayout.substring(0, valueIndex);
+
+		final String [] xyComponents = flexLayout.substring(valueIndex).split(",");
+		final String [] xComponents = xyComponents[0].split(" ");
+		final String [] yComponents = xyComponents.length > 1 ? xyComponents[1].split(" ") : new String[0];
+
+		final StringBuilder xResult = new StringBuilder();
+		final StringBuilder yResult = new StringBuilder();
+
+		for(int i = 0; i < xComponents.length; i++) {
+			if(xComponents[i].contains("offset")) {
+				continue;
+			}
+			xResult.append(xComponents[i]);
+			xResult.append(' ');
+		}
+		xResult.append("xs-offset-");
+		xResult.append(MathUtils.round(x));
+		xResult.append("px");
+
+		if(yComponents.length == 0) {
+			yResult.append("xs-auto");
+		} else {
+			yResult.append(flexLayout.substring(flexLayout.lastIndexOf(',') + 1));
+		}
+		return flexComponent + xResult.toString().trim() + ',' + yResult.toString().trim();
+	}
+
+	public static String setY(String flexLayout, float y) {
+		final int valueIndex = flexLayout.indexOf(':') + 1;
+		final String flexComponent = flexLayout.substring(0, valueIndex);
+
+		final String [] xyComponents = flexLayout.substring(valueIndex).split(",");
+		final String [] xComponents = xyComponents[0].split(" ");
+		final String [] yComponents = xyComponents.length > 1 ? xyComponents[1].split(" ") : new String[0];
+
+		final StringBuilder xResult = new StringBuilder();
+		final StringBuilder yResult = new StringBuilder();
+
+		for(int i = 0; i < xComponents.length; i++) {
+			xResult.append(xComponents[i]);
+			xResult.append(' ');
+		}
+
+		if(yComponents.length > 0) {
+			for(int i = 0; i < yComponents.length; i++) {
+				if(yComponents[i].contains("offset")) {
+					continue;
+				}
+
+				yResult.append(yComponents[i]);
+				yResult.append(' ');
+			}
+		}
+		yResult.append("xs-offset-");
+		yResult.append(MathUtils.round(y));
+		yResult.append("px");
+
+		return flexComponent + xResult.toString().trim() + ',' + yResult.toString().trim();
+	}
+
+	public static String setWidth(String flexLayout, float width) {
+		final int valueIndex = flexLayout.indexOf(':') + 1;
+		final String flexComponent = flexLayout.substring(0, valueIndex);
+
+		final String [] xyComponents = flexLayout.substring(valueIndex).split(",");
+		final String [] xComponents = xyComponents[0].split(" ");
+		final String [] yComponents = xyComponents.length > 1 ? xyComponents[1].split(" ") : new String[0];
+
+		final StringBuilder xResult = new StringBuilder();
+		final StringBuilder yResult = new StringBuilder();
+
+		for(int i = 0; i < xComponents.length; i++) {
+			if(!xComponents[i].contains("offset")) {
+				continue;
+			}
+			xResult.append(xComponents[i]);
+			xResult.append(' ');
+		}
+		xResult.append("xs-");
+		xResult.append(MathUtils.round(width));
+		xResult.append("px");
+
+		if(yComponents.length == 0) {
+			yResult.append("xs-auto");
+		} else {
+			yResult.append(flexLayout.substring(flexLayout.lastIndexOf(',') + 1));
+		}
+		return flexComponent + xResult.toString().trim() + ',' + yResult.toString().trim();
+	}
+
+	public static String setHeight(String flexLayout, float height) {
+		final int valueIndex = flexLayout.indexOf(':') + 1;
+		final String flexComponent = flexLayout.substring(0, valueIndex);
+
+		final String [] xyComponents = flexLayout.substring(valueIndex).split(",");
+		final String [] xComponents = xyComponents[0].split(" ");
+		final String [] yComponents = xyComponents.length > 1 ? xyComponents[1].split(" ") : new String[0];
+
+		final StringBuilder xResult = new StringBuilder();
+		final StringBuilder yResult = new StringBuilder();
+
+		for(int i = 0; i < xComponents.length; i++) {
+			xResult.append(xComponents[i]);
+			xResult.append(' ');
+		}
+
+		if(yComponents.length > 0) {
+			for(int i = 0; i < yComponents.length; i++) {
+				if(!yComponents[i].contains("offset")) {
+					continue;
+				}
+				yResult.append(yComponents[i]);
+				yResult.append(' ');
+			}
+		}
+		yResult.append("xs-");
+		yResult.append(MathUtils.round(height));
+		yResult.append("px");
+
+		return flexComponent + xResult.toString().trim() + ',' + yResult.toString().trim();
 	}
 }

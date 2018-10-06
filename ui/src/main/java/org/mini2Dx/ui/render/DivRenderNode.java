@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.ui.render;
 
+import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.ui.element.Div;
 import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.style.ParentStyleRule;

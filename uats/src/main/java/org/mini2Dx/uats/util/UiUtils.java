@@ -151,7 +151,13 @@ public class UiUtils {
 	}
 	
 	public static TextButton createButton(UiNavigation navigation, String text, boolean debug, ActionListener listener) {
-		TextButton button = new TextButton("TextButton: " + text);
+		final String id;
+		if(text == null || text.isEmpty()) {
+			id = null;
+		} else {
+			id = "TextButton: " + text;
+		}
+		TextButton button = new TextButton(id);
 		button.setFlexLayout("flex-column:xs-12c");
 		button.setText(text);
 		if(listener != null) {

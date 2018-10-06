@@ -14,6 +14,7 @@ package org.mini2Dx.ui.dummy;
 import org.mini2Dx.ui.element.UiElement;
 import org.mini2Dx.ui.element.Visibility;
 import org.mini2Dx.ui.render.ParentRenderNode;
+import org.mini2Dx.ui.render.UiContainerRenderTree;
 import org.mini2Dx.ui.style.StyleRule;
 
 /**
@@ -34,11 +35,6 @@ public class DummyUiElement extends UiElement {
 	public DummyUiElement(String id) {
 		super(id);
 		setVisibility(Visibility.VISIBLE);
-	}
-
-	@Override
-	public void syncWithUpdate() {
-		processUpdateDeferred();
 	}
 
 	@Override

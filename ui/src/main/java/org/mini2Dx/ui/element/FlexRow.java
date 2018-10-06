@@ -89,12 +89,9 @@ public class FlexRow extends Div {
 	 */
 	public static FlexRow withElements(String rowId, UiElement ...elements) {
 		FlexRow result = new FlexRow(rowId);
-		float maxY = 0f;
 		for(int i = 0; i < elements.length; i++) {
 			result.add(elements[i]);
-			maxY = Math.max(maxY, elements[i].getY() + elements[i].getHeight());
 		}
-		result.setHeight(maxY);
 		result.setVisibility(Visibility.VISIBLE);
 		return result;
 	}

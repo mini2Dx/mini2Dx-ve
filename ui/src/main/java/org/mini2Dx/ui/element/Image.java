@@ -28,6 +28,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import org.mini2Dx.ui.render.UiContainerRenderTree;
 import org.mini2Dx.ui.style.StyleRule;
 
 /**
@@ -322,17 +323,17 @@ public class Image extends UiElement {
 	}
 	
 	@Override
-	public void syncWithUpdate() {
+	public void syncWithUpdate(UiContainerRenderTree rootNode) {
 		while (!effects.isEmpty()) {
 			renderNode.applyEffect(effects.poll());
 		}
 
-		x = renderNode.getRelativeX();
-		y = renderNode.getRelativeY();
+		x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
+		y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
 
-		processUpdateDeferred();
+		super.syncWithUpdate(rootNode);
 	}
 
 	@Override

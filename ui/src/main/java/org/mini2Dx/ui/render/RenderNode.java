@@ -18,6 +18,7 @@ import org.mini2Dx.core.engine.geom.CollisionBox;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.effect.UiEffect;
 import org.mini2Dx.ui.element.UiElement;
 import org.mini2Dx.ui.element.Visibility;
@@ -101,7 +102,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		innerArea.set(getInnerX(), getInnerY(), getInnerWidth(), getInnerHeight());
 		initialUpdateOccurred = true;
 
-		element.syncWithUpdate();
+		element.syncWithUpdate(rootNode);
 	}
 
 	public void interpolate(float alpha) {
@@ -130,6 +131,8 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		for (int i = 0; i < effects.size(); i++) {
 			effects.get(i).postRender(g);
 		}
+
+		element.syncWithRender(rootNode);
 	}
 
 	public boolean mouseMoved(int screenX, int screenY) {
@@ -209,7 +212,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 
 		dirty = false;
 		initialLayoutOccurred = true;
-		element.syncWithLayout();
+		element.syncWithLayout(rootNode);
 	}
 
 	public boolean isIncludedInLayout() {
@@ -246,15 +249,30 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		return dirty;
 	}
 
-	public void setDirty(boolean dirty) {
-		if(dirty && this.dirty == dirty) {
+	public void setDirty(final boolean dirty1) {
+		if(dirty1 && this.dirty == dirty1) {
 			return;
 		}
-		this.dirty = dirty;
-		if (parent == null) {
-			return;
+		switch(UiContainer.getState()) {
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			this.dirty = dirty1;
+			if (parent == null) {
+				return;
+			}
+			parent.setChildDirty(dirty1);
+			break;
+		case LAYOUT:
+		case UPDATE:
+			element.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setDirty(dirty1);
+				}
+			});
+			break;
 		}
-		parent.setChildDirty(dirty);
 	}
 
 	public void applyEffect(UiEffect effect) {

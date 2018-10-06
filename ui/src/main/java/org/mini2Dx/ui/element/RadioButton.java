@@ -30,6 +30,7 @@ import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.listener.ActionListener;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.RadioButtonRenderNode;
+import org.mini2Dx.ui.render.UiContainerRenderTree;
 import org.mini2Dx.ui.style.StyleRule;
 
 /**
@@ -142,17 +143,17 @@ public class RadioButton extends UiElement implements Actionable {
 	}
 	
 	@Override
-	public void syncWithUpdate() {
+	public void syncWithUpdate(UiContainerRenderTree rootNode) {
 		while (!effects.isEmpty()) {
 			renderNode.applyEffect(effects.poll());
 		}
 
-		x = renderNode.getRelativeX();
-		y = renderNode.getRelativeY();
+		x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
+		y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
 		width = renderNode.getOuterWidth();
 		height = renderNode.getOuterHeight();
 
-		processUpdateDeferred();
+		super.syncWithUpdate(rootNode);
 	}
 
 	@Override

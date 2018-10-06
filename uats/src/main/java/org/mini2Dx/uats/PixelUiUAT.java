@@ -12,6 +12,7 @@
 package org.mini2Dx.uats;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
@@ -27,14 +28,17 @@ import org.mini2Dx.core.screen.transition.FadeInTransition;
 import org.mini2Dx.core.screen.transition.FadeOutTransition;
 import org.mini2Dx.uats.util.ScreenIds;
 import org.mini2Dx.uats.util.UATApplication;
+import org.mini2Dx.uats.util.UATSelectionScreen;
 import org.mini2Dx.uats.util.UiUtils;
 import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.controller.ControllerUiInput;
 import org.mini2Dx.ui.element.*;
 import org.mini2Dx.ui.event.ActionEvent;
+import org.mini2Dx.ui.layout.FlexDirection;
 import org.mini2Dx.ui.layout.HorizontalAlignment;
 import org.mini2Dx.ui.layout.VerticalAlignment;
 import org.mini2Dx.ui.listener.ActionListener;
+import org.mini2Dx.ui.navigation.VerticalUiNavigation;
 import org.mini2Dx.ui.style.UiTheme;
 
 /**
@@ -85,6 +89,9 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 
 	@Override
 	public void update(GameContainer gc, ScreenManager<? extends GameScreen> screenManager, float delta) {
+		//System.out.println("Row " + uiContainer.getElementById("row-select").isRenderNodeDirty());
+		//System.out.println("Select " + select.isRenderNodeDirty());
+
 		uiContainer.update(delta);
 		if (nextScreenId > -1) {
 			screenManager.enterGameScreen(nextScreenId, new FadeOutTransition(), new FadeInTransition());
@@ -157,137 +164,147 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		topLeftContainer.setVisibility(Visibility.VISIBLE);
 		uiContainer.add(topLeftContainer);
 
-//		VerticalUiNavigation tab1Navigation = new VerticalUiNavigation();
-//		textBox = UiUtils.createTextBox(tab1Navigation, "textbox", new ActionListener() {
-//
-//			@Override
-//			public void onActionEnd(ActionEvent event) {
-//				textBoxResult.setText(textBox.getValue());
-//			}
-//
-//			@Override
-//			public void onActionBegin(ActionEvent event) {
-//			}
-//		});
-//		textBox.setFlexLayout(null);
-//		textBox.set(0f, 0f, uiContainer.getWidth() * 0.75f, 25f);
-//
-//		select = UiUtils.createSelect(tab1Navigation, "select", new ActionListener() {
-//
-//			@Override
-//			public void onActionEnd(ActionEvent event) {
-//				System.out.println("Selected value: " + select.getSelectedOption().getValue());
-//			}
-//
-//			@Override
-//			public void onActionBegin(ActionEvent event) {
-//			}
-//		});
-//		textBox.setFlexLayout(null);
-//		textBox.set(0f, 0f, uiContainer.getWidth() * 0.75f, 25f);
-//
-//		textBoxResult = UiUtils.createLabel("");
-//		checkboxResult = UiUtils.createLabel("Radio Button::responsive = false");
-//		checkbox = UiUtils.createCheckbox(tab1Navigation, "checkbox", new ActionListener() {
-//
-//			@Override
-//			public void onActionEnd(ActionEvent event) {
-//				if(checkbox.isChecked()) {
-//					radioButton.setResponsive(true);
-//				} else {
-//					radioButton.setResponsive(false);
-//				}
-//				checkboxResult.setText("Radio Button::responsive = " + checkbox.isChecked());
-//			}
-//
-//			@Override
-//			public void onActionBegin(ActionEvent event) {}
-//		});
-//
-//		radioButtonResult = UiUtils.createLabel("");
-//		radioButton = UiUtils.createRadioButton(tab1Navigation, "radioButton", new ActionListener() {
-//
-//			@Override
-//			public void onActionEnd(ActionEvent event) {
-//				switch(radioButton.getSelectedOption()) {
-//				case "FlexRow Layout":
-//					radioButton.setFlexDirection(FlexDirection.ROW);
-//					break;
-//				case "FlexRow-Reverse Layout":
-//					radioButton.setFlexDirection(FlexDirection.ROW_REVERSE);
-//					break;
-//				case "Div Layout":
-//					radioButton.setFlexDirection(FlexDirection.COLUMN);
-//					break;
-//				case "Div-Reverse Layout":
-//					radioButton.setFlexDirection(FlexDirection.COLUMN_REVERSE);
-//					break;
-//				}
-//				radioButtonResult.setText(radioButton.getSelectedOption());
-//			}
-//
-//			@Override
-//			public void onActionBegin(ActionEvent event) {}
-//		});
-//		radioButton.addOption("FlexRow Layout");
-//		radioButton.addOption("FlexRow-Reverse Layout");
-//		radioButton.addOption("Column Layout");
-//		radioButton.addOption("Column-Reverse Layout");
-//
-//		slider = new Slider();
-//		slider.setVisibility(Visibility.VISIBLE);
-//		slider.addActionListener(new ActionListener() {
-//
-//			@Override
-//			public void onActionEnd(ActionEvent event) {
-//				sliderResult.setText(String.valueOf(slider.getValue()));
-//			}
-//
-//			@Override
-//			public void onActionBegin(ActionEvent event) {}
-//		});
-//		sliderResult = UiUtils.createLabel("0.0");
-//
-//		TextButton returnButton = UiUtils.createButton(tab1Navigation, "Return to UAT Selection Screen", new ActionListener() {
-//
-//			@Override
-//			public void onActionBegin(ActionEvent event) {}
-//
-//			@Override
-//			public void onActionEnd(ActionEvent event) {
-//				nextScreenId = UATSelectionScreen.SCREEN_ID;
-//			}
-//		});
-//		returnButton.setFlexLayout(null);
-//		returnButton.set(0f, 0f, uiContainer.getWidth() * 0.75f, 20f);
-//
-//		select.addOption("Item 1", "1");
-//		select.addOption("Item 2", "2");
-//		select.addOption("Item 3", "3");
-//
-//		centerContainer = new Container("main-centerContainer");
-//		centerContainer.snapTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
-//
-//		tabView = new TabView("tabView");
-//		tabView.set(0f, 0f, centerContainer.getWidth(), centerContainer.getHeight());
-//		tabView.setVisibility(Visibility.VISIBLE);
-//
-//		Tab tab1 = new Tab("tab1", "Tab 1");
-//		textBox.snapTo(tab1);
-//		textBoxResult.alignEdgeToEdge(textBox, HorizontalAlignment.LEFT, VerticalAlignment.BOTTOM);
-//		select.alignEdgeToEdge(textBoxResult, HorizontalAlignment.LEFT, VerticalAlignment.BOTTOM);
-//		checkbox.alignEdgeToEdge(select, HorizontalAlignment.LEFT, VerticalAlignment.BOTTOM);
-//		checkboxResult.alignEdgeToEdge(checkbox, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
-//		returnButton.snapTo(sliderResult);
-//
-//		tab1.add(FlexRow.withElements("row-textbox", textBox, textBoxResult));
-//		tab1.add(FlexRow.withElements("row-select", select));
-//		tab1.add(FlexRow.withElements("row-checkbox", checkbox, checkboxResult));
-//		tab1.add(FlexRow.withElements("row-radioButton", radioButton, radioButtonResult));
-//		tab1.add(FlexRow.withElements("row-slider", slider, sliderResult));
-//		tab1.add(FlexRow.withElements("row-return-button", returnButton));
-//		tab1.setNavigation(tab1Navigation);
-//		tabView.add(tab1);
+		VerticalUiNavigation tab1Navigation = new VerticalUiNavigation();
+		textBox = UiUtils.createTextBox(tab1Navigation, "textbox", new ActionListener() {
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				textBoxResult.setText(textBox.getValue());
+			}
+
+			@Override
+			public void onActionBegin(ActionEvent event) {
+			}
+		});
+		textBox.setFlexLayout(null);
+		textBox.set(0f, 0f, uiContainer.getWidth() * 0.75f, 25f);
+
+		select = UiUtils.createSelect(tab1Navigation, "select", new ActionListener() {
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				System.out.println("Selected value: " + select.getSelectedOption().getValue());
+			}
+
+			@Override
+			public void onActionBegin(ActionEvent event) {
+			}
+		});
+		select.setFlexLayout(null);
+		select.set(0f, 0f, uiContainer.getWidth() * 0.75f, 25f);
+
+		textBoxResult = UiUtils.createLabel("");
+		checkboxResult = UiUtils.createLabel("Radio Button::responsive = false");
+		checkbox = UiUtils.createCheckbox(tab1Navigation, "checkbox", new ActionListener() {
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				if(checkbox.isChecked()) {
+					radioButton.setResponsive(true);
+				} else {
+					radioButton.setResponsive(false);
+				}
+				checkboxResult.setText("Radio Button::responsive = " + checkbox.isChecked());
+			}
+
+			@Override
+			public void onActionBegin(ActionEvent event) {}
+		});
+
+		radioButtonResult = UiUtils.createLabel("");
+		radioButton = UiUtils.createRadioButton(tab1Navigation, "radioButton", new ActionListener() {
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				switch(radioButton.getSelectedOption()) {
+				case "FlexRow Layout":
+					radioButton.setFlexDirection(FlexDirection.ROW);
+					break;
+				case "FlexRow-Reverse Layout":
+					radioButton.setFlexDirection(FlexDirection.ROW_REVERSE);
+					break;
+				case "Div Layout":
+					radioButton.setFlexDirection(FlexDirection.COLUMN);
+					break;
+				case "Div-Reverse Layout":
+					radioButton.setFlexDirection(FlexDirection.COLUMN_REVERSE);
+					break;
+				}
+				radioButtonResult.setText(radioButton.getSelectedOption());
+			}
+
+			@Override
+			public void onActionBegin(ActionEvent event) {}
+		});
+		radioButton.addOption("FlexRow Layout");
+		radioButton.addOption("FlexRow-Reverse Layout");
+		radioButton.addOption("Column Layout");
+		radioButton.addOption("Column-Reverse Layout");
+
+		slider = new Slider();
+		slider.setVisibility(Visibility.VISIBLE);
+		slider.addActionListener(new ActionListener() {
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				sliderResult.setText(String.valueOf(slider.getValue()));
+			}
+
+			@Override
+			public void onActionBegin(ActionEvent event) {}
+		});
+		sliderResult = UiUtils.createLabel("0.0");
+
+		TextButton returnButton = UiUtils.createButton(tab1Navigation, "Return to UAT Selection Screen", new ActionListener() {
+
+			@Override
+			public void onActionBegin(ActionEvent event) {}
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				nextScreenId = UATSelectionScreen.SCREEN_ID;
+			}
+		});
+		returnButton.setFlexLayout(null);
+		returnButton.set(0f, 0f, uiContainer.getWidth() * 0.75f, 20f);
+
+		select.addOption("Item 1", "1");
+		select.addOption("Item 2", "2");
+		select.addOption("Item 3", "3");
+
+		centerContainer = new Container("main-centerContainer");
+		centerContainer.set(0f, 0f, uiContainer.getWidth(), uiContainer.getHeight());
+		//centerContainer.snapTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
+
+		tabView = new TabView("tabView");
+		tabView.set(0f, 0f, centerContainer.getWidth(), centerContainer.getHeight());
+		tabView.setVisibility(Visibility.VISIBLE);
+
+		Tab tab1 = new Tab("tab1", "Tab 1");
+		final FlexRow textBoxRow = FlexRow.withElements("row-textbox", textBox, textBoxResult);
+		final FlexRow selectRow = FlexRow.withElements("row-select", select);
+		final FlexRow checkboxRow = FlexRow.withElements("row-checkbox", checkbox, checkboxResult);
+		final FlexRow radioButtonRow = FlexRow.withElements("row-radioButton", radioButton, radioButtonResult);
+		final FlexRow sliderRow = FlexRow.withElements("row-slider", slider, sliderResult);
+		final FlexRow returnRow = FlexRow.withElements("row-return-button", returnButton);
+
+		textBoxResult.alignBelow(textBox, HorizontalAlignment.LEFT);
+
+		textBoxRow.snapTo(tab1);
+		selectRow.alignBelow(textBoxRow, HorizontalAlignment.LEFT);
+		checkboxRow.alignBelow(selectRow, HorizontalAlignment.LEFT);
+		radioButtonRow.alignBelow(checkboxRow, HorizontalAlignment.LEFT);
+		sliderRow.alignBelow(radioButtonRow, HorizontalAlignment.LEFT);
+		returnRow.alignBelow(sliderRow, HorizontalAlignment.LEFT);
+
+		tab1.add(textBoxRow);
+		tab1.add(selectRow);
+		tab1.add(checkboxRow);
+		tab1.add(radioButtonRow);
+		tab1.add(sliderRow);
+		tab1.add(returnRow);
+		tab1.setNavigation(tab1Navigation);
+		tabView.add(tab1);
 
 //		Tab tab2 = new Tab("tab2", "Tab 2");
 //
@@ -392,13 +409,14 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 //
 //		tabView.add(tab3);
 
-//		tabView.setNextTabHotkey(Input.Keys.E);
-//		tabView.setPreviousTabHotkey(Input.Keys.Q);
-//
-//		centerContainer.add(tabView);
-//		centerContainer.setVisibility(Visibility.VISIBLE);
-//		centerContainer.setNavigation(tabView.getNavigation());
-//		uiContainer.add(centerContainer);
+		tabView.setNextTabHotkey(Input.Keys.E);
+		tabView.setPreviousTabHotkey(Input.Keys.Q);
+
+		centerContainer.add(tabView);
+		centerContainer.setVisibility(Visibility.VISIBLE);
+		centerContainer.setNavigation(tabView.getNavigation());
+		//centerContainer.shrinkToContents(true);
+		uiContainer.add(centerContainer);
 //
 //		bottomRightContainer = new Container("bottom-right-frame");
 //		bottomRightContainer.set(0f, uiContainer.getHeight() - 25f, uiContainer.getWidth() * 0.33f, 50f);

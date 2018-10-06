@@ -13,6 +13,7 @@ package org.mini2Dx.ui.util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
+import com.badlogic.gdx.assets.AssetManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -20,20 +21,27 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mini2Dx.ui.ScreenSizeScaleMode;
+import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.dummy.DummyUiElement;
+import org.mini2Dx.ui.render.UiContainerRenderTree;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DeferredRunnableTest {
     private final Mockery mockery = new Mockery();
 
+    private AssetManager assetManager;
+    private UiContainer uiContainer;
     private Graphics graphics;
 
     @Before
     public void setUp() {
         mockery.setImposteriser(ClassImposteriser.INSTANCE);
 
+        assetManager = mockery.mock(AssetManager.class);
         graphics = mockery.mock(Graphics.class);
+        uiContainer = mockery.mock(UiContainer.class);
         Gdx.graphics = graphics;
     }
 
@@ -66,10 +74,21 @@ public class DeferredRunnableTest {
             {
                 atLeast(1).of(graphics).getDeltaTime();
                 will(returnValue(0.16f));
+                atLeast(1).of(uiContainer).getZIndex();
+                will(returnValue(0));
+                atLeast(1).of(uiContainer).getWidth();
+                will(returnValue(800f));
+                atLeast(1).of(uiContainer).getHeight();
+                will(returnValue(600f));
+                atLeast(1).of(uiContainer).getFlexLayout();
+                will(returnValue(null));
+                atLeast(1).of(uiContainer).getScreenSizeScaleMode();
+                will(returnValue(ScreenSizeScaleMode.NO_SCALING));
             }
         });
 
         final DummyUiElement element = new DummyUiElement();
+        final UiContainerRenderTree renderTree = new UiContainerRenderTree(uiContainer, assetManager);
 
         final AtomicBoolean flag1 = new AtomicBoolean(false);
         final AtomicBoolean flag2 = new AtomicBoolean(false);
@@ -98,13 +117,15 @@ public class DeferredRunnableTest {
         Assert.assertEquals(false, flag2.get());
         Assert.assertEquals(false, flag3.get());
 
-        element.syncWithUpdate();
+        element.syncWithUpdate(renderTree);
+        renderTree.processUpdateDeferred();
 
         Assert.assertEquals(true, flag1.get());
         Assert.assertEquals(false, flag2.get());
         Assert.assertEquals(true, flag3.get());
 
-        element.syncWithUpdate();
+        element.syncWithUpdate(renderTree);
+        renderTree.processUpdateDeferred();
 
         Assert.assertEquals(true, flag1.get());
         Assert.assertEquals(true, flag2.get());
@@ -117,10 +138,21 @@ public class DeferredRunnableTest {
             {
                 atLeast(1).of(graphics).getDeltaTime();
                 will(returnValue(0.16f));
+                atLeast(1).of(uiContainer).getZIndex();
+                will(returnValue(0));
+                atLeast(1).of(uiContainer).getWidth();
+                will(returnValue(800f));
+                atLeast(1).of(uiContainer).getHeight();
+                will(returnValue(600f));
+                atLeast(1).of(uiContainer).getFlexLayout();
+                will(returnValue(null));
+                atLeast(1).of(uiContainer).getScreenSizeScaleMode();
+                will(returnValue(ScreenSizeScaleMode.NO_SCALING));
             }
         });
 
         final DummyUiElement element = new DummyUiElement();
+        final UiContainerRenderTree renderTree = new UiContainerRenderTree(uiContainer, assetManager);
 
         final AtomicBoolean flag1 = new AtomicBoolean(false);
         final AtomicBoolean flag2 = new AtomicBoolean(false);
@@ -149,13 +181,15 @@ public class DeferredRunnableTest {
         Assert.assertEquals(false, flag2.get());
         Assert.assertEquals(false, flag3.get());
 
-        element.syncWithLayout();
+        element.syncWithLayout(renderTree);
+        renderTree.processLayoutDeferred();
 
         Assert.assertEquals(true, flag1.get());
         Assert.assertEquals(false, flag2.get());
         Assert.assertEquals(true, flag3.get());
 
-        element.syncWithLayout();
+        element.syncWithLayout(renderTree);
+        renderTree.processLayoutDeferred();
 
         Assert.assertEquals(true, flag1.get());
         Assert.assertEquals(true, flag2.get());

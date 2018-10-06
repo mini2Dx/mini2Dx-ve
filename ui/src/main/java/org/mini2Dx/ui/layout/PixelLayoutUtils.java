@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 See AUTHORS file
+ * Copyright (c) 2018 See AUTHORS file
  * All rights reserved.
  * <p>
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -27,17 +27,25 @@ public class PixelLayoutUtils {
 	 * @param parentUiElement The {@link ParentUiElement} to set
 	 */
 	public static void shrinkToContents(final ParentUiElement parentUiElement, final boolean recursive, final Runnable callback) {
-		System.out.println(parentUiElement.getId() + " " + recursive);
+		switch(UiContainer.getState()) {
+		case LAYOUT:
+		case UPDATE:
+			deferShrinkToContentsUntilUpdate(parentUiElement, recursive, callback);
+			break;
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			break;
+		}
+
 		if(recursive) {
 			boolean matchedParent = false;
 			for(int i = 0; i < parentUiElement.getTotalChildren(); i++) {
 				final UiElement child = parentUiElement.getChild(i);
 				if(!(child instanceof ParentUiElement)) {
-					System.out.println(child.getId() + " not a parent " + child.getX() + "," + child.getY() + " " + child.getWidth() + "," + child.getHeight());
 					continue;
 				}
 				final ParentUiElement nestedTree = (ParentUiElement) child;
-				System.out.println(parentUiElement.getId() + " recursive " + nestedTree.getId());
 				nestedTree.shrinkToContents(true, new Runnable() {
 					@Override
 					public void run() {
@@ -53,17 +61,14 @@ public class PixelLayoutUtils {
 		}
 
 		if(!parentUiElement.isInitialLayoutOccurred()) {
-			System.out.println(parentUiElement.getId() + " deferred by initial layout");
 			deferShrinkToContentsUntilLayout(parentUiElement, recursive, callback);
 			return;
 		}
 		if(!parentUiElement.isInitialUpdateOccurred()) {
-			System.out.println(parentUiElement.getId() + " deferred by initial update");
 			deferShrinkToContentsUntilUpdate(parentUiElement, recursive, callback);
 			return;
 		}
 		if(parentUiElement.isRenderNodeDirty()) {
-			System.out.println(parentUiElement.getId() + " deferred by dirty node");
 			deferShrinkToContentsUntilLayout(parentUiElement, recursive, callback);
 			return;
 		}
@@ -72,7 +77,6 @@ public class PixelLayoutUtils {
 		for(int i = 0; i < parentUiElement.getTotalChildren(); i++) {
 			final UiElement child = parentUiElement.getChild(i);
 			if(!child.isInitialLayoutOccurred()) {
-				System.out.println(parentUiElement.getId() + " deferred by " + child.getId());
 				child.deferUntilLayout(new Runnable() {
 					@Override
 					public void run() {
@@ -82,7 +86,6 @@ public class PixelLayoutUtils {
 				return;
 			}
 			if(!child.isInitialUpdateOccurred()) {
-				System.out.println(parentUiElement.getId() + " deferred by " + child.getId());
 				child.deferUntilUpdate(new Runnable() {
 					@Override
 					public void run() {
@@ -92,7 +95,6 @@ public class PixelLayoutUtils {
 				return;
 			}
 			if(child.isRenderNodeDirty()) {
-				System.out.println(parentUiElement.getId() + " deferred by " + child.getId());
 				child.deferUntilLayout(new Runnable() {
 					@Override
 					public void run() {
@@ -104,10 +106,8 @@ public class PixelLayoutUtils {
 			maxX = Math.max(maxX, child.getX() + child.getWidth());
 			maxY = Math.max(maxY, child.getY() + child.getHeight());
 		}
-		System.out.println("MXMY: " + maxX + "," + maxY);
-		parentUiElement.setContentWidth(maxX - parentUiElement.getPaddingLeft());
-		parentUiElement.setContentHeight(maxY - parentUiElement.getPaddingTop());
-		System.out.println("SET TO: " + parentUiElement.getId() + " " + parentUiElement.getWidth() + "," + parentUiElement.getHeight());
+		parentUiElement.setContentWidth(maxX);
+		parentUiElement.setContentHeight(maxY);
 
 		if(callback != null) {
 			parentUiElement.deferUntilLayout(callback);
@@ -164,65 +164,68 @@ public class PixelLayoutUtils {
 	 * 	{@link VerticalAlignment#MIDDLE} aligns the middle of this element to the middle of the align element.
 	 * 	{@link VerticalAlignment#BOTTOM} aligns the top-side of this element to the bottom-side of the align element.
 	 */
-	public static void alignEdgeToEdge(UiElement element, UiElement alignToElement, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
-		if (!element.isInitialLayoutOccurred()) {
-			deferAlignEdgeToEdgeUntilLayout(element, alignToElement, horizontalAlignment, verticalAlignment);
+	public static void alignEdgeToEdge(final UiElement element, final UiElement alignToElement, final HorizontalAlignment horizontalAlignment, final VerticalAlignment verticalAlignment) {
+		if (!element.isInitialised() || element.isRenderNodeDirty()) {
+			alignToElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					alignEdgeToEdge(element, alignToElement, horizontalAlignment, verticalAlignment);
+				}
+			});
 			return;
 		}
-		if (!element.isInitialUpdateOccurred()) {
-			deferAlignEdgeToEdgeUntilUpdate(element, alignToElement, horizontalAlignment, verticalAlignment);
-			return;
-		}
-		if (alignToElement.isRenderNodeDirty() || alignToElement.getWidth() <= 0f) {
-			deferAlignEdgeToEdgeUntilLayout(element, alignToElement, horizontalAlignment, verticalAlignment);
+		if (!alignToElement.isInitialised() || alignToElement.isRenderNodeDirty()) {
+			alignToElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					alignEdgeToEdge(element, alignToElement, horizontalAlignment, verticalAlignment);
+				}
+			});
 			return;
 		}
 
-		final float x,y;
-		switch (horizontalAlignment) {
-		default:
-		case LEFT:
-			x = MathUtils.round(alignToElement.getX() - element.getWidth());
+		switch(UiContainer.getState()) {
+		case LAYOUT:
+		case UPDATE:
+			alignToElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					alignEdgeToEdge(element, alignToElement, horizontalAlignment, verticalAlignment);
+				}
+			});
 			break;
-		case CENTER:
-			x = MathUtils.round(alignToElement.getX() + (alignToElement.getWidth() * 0.5f) - (element.getWidth() * 0.5f));
-			break;
-		case RIGHT:
-			x = MathUtils.round(alignToElement.getX() + alignToElement.getWidth());
-			break;
-		}
-		switch (verticalAlignment) {
-		default:
-		case TOP:
-			y = MathUtils.round(alignToElement.getY() - element.getHeight());
-			break;
-		case MIDDLE:
-			y = MathUtils.round(alignToElement.getY() + (alignToElement.getHeight() * 0.5f) - (element.getHeight() * 0.5f));
-			break;
-		case BOTTOM:
-			y = MathUtils.round(alignToElement.getY() + alignToElement.getHeight());
-			break;
-		}
-
-		element.setXY(x, y);
-	}
-
-	protected static void deferAlignEdgeToEdgeUntilUpdate(final UiElement element, final UiElement alignToElement, final HorizontalAlignment horizontalAlignment, final VerticalAlignment verticalAlignment) {
-		element.deferUntilUpdate(new Runnable() {
-			@Override
-			public void run() {
-				alignEdgeToEdge(element, alignToElement, horizontalAlignment, verticalAlignment);
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			final float x,y;
+			switch (horizontalAlignment) {
+			default:
+			case LEFT:
+				x = MathUtils.round(alignToElement.getX() - element.getWidth());
+				break;
+			case CENTER:
+				x = MathUtils.round(alignToElement.getX() + (alignToElement.getWidth() * 0.5f) - (element.getWidth() * 0.5f));
+				break;
+			case RIGHT:
+				x = MathUtils.round(alignToElement.getX() + alignToElement.getWidth());
+				break;
 			}
-		});
-	}
-
-	protected static void deferAlignEdgeToEdgeUntilLayout(final UiElement element, final UiElement alignToElement, final HorizontalAlignment horizontalAlignment, final VerticalAlignment verticalAlignment) {
-		element.deferUntilLayout(new Runnable() {
-			@Override
-			public void run() {
-				alignEdgeToEdge(element, alignToElement, horizontalAlignment, verticalAlignment);
+			switch (verticalAlignment) {
+			default:
+			case TOP:
+				y = MathUtils.round(alignToElement.getY() - element.getHeight());
+				break;
+			case MIDDLE:
+				y = MathUtils.round(alignToElement.getY() + (alignToElement.getHeight() * 0.5f) - (element.getHeight() * 0.5f));
+				break;
+			case BOTTOM:
+				y = MathUtils.round(alignToElement.getY() + alignToElement.getHeight());
+				break;
 			}
-		});
+
+			element.setXY(x, y);
+			break;
+		}
 	}
 
 	/**
@@ -235,16 +238,7 @@ public class PixelLayoutUtils {
 	 * 	 * 	{@link VerticalAlignment#BOTTOM} aligns the bottom-side of this element to the bottom-side of the align element.
 	 */
 	public static void alignLeftOf(final UiElement element, final UiElement alignToElement, final VerticalAlignment verticalAlignment) {
-		if (!element.isInitialLayoutOccurred()) {
-			element.deferUntilLayout(new Runnable() {
-				@Override
-				public void run() {
-					alignLeftOf(element, alignToElement, verticalAlignment);
-				}
-			});
-			return;
-		}
-		if (!element.isInitialUpdateOccurred()) {
+		if (!element.isInitialised() || element.isRenderNodeDirty()) {
 			element.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
@@ -253,8 +247,8 @@ public class PixelLayoutUtils {
 			});
 			return;
 		}
-		if (alignToElement.isRenderNodeDirty() || alignToElement.getWidth() <= 0f) {
-			element.deferUntilLayout(new Runnable() {
+		if (!alignToElement.isInitialised() || alignToElement.isRenderNodeDirty()) {
+			alignToElement.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
 					alignLeftOf(element, alignToElement, verticalAlignment);
@@ -262,22 +256,38 @@ public class PixelLayoutUtils {
 			});
 			return;
 		}
-		final float x,y;
-		switch (verticalAlignment) {
-		default:
-		case TOP:
-			y = MathUtils.round(alignToElement.getY());
+
+		switch(UiContainer.getState()) {
+		case LAYOUT:
+		case UPDATE:
+			alignToElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					alignLeftOf(element, alignToElement, verticalAlignment);
+				}
+			});
 			break;
-		case MIDDLE:
-			y = MathUtils.round(alignToElement.getY() + (alignToElement.getHeight() * 0.5f) - (element.getHeight() * 0.5f));
-			break;
-		case BOTTOM:
-			y = MathUtils.round(alignToElement.getY() + alignToElement.getHeight() - element.getHeight());
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			final float x,y;
+			switch (verticalAlignment) {
+			default:
+			case TOP:
+				y = MathUtils.round(alignToElement.getY());
+				break;
+			case MIDDLE:
+				y = MathUtils.round(alignToElement.getY() + (alignToElement.getHeight() * 0.5f) - (element.getHeight() * 0.5f));
+				break;
+			case BOTTOM:
+				y = MathUtils.round(alignToElement.getY() + alignToElement.getHeight() - element.getHeight());
+				break;
+			}
+
+			x = MathUtils.round(alignToElement.getX() - element.getWidth());
+			element.setXY(x, y);
 			break;
 		}
-
-		x = MathUtils.round(alignToElement.getX() - element.getWidth());
-		element.setXY(x, y);
 	}
 
 	/**
@@ -290,16 +300,7 @@ public class PixelLayoutUtils {
 	 * 	 * 	{@link VerticalAlignment#BOTTOM} aligns the bottom-side of this element to the bottom-side of the align element.
 	 */
 	public static void alignRightOf(final UiElement element, final UiElement alignToElement, final VerticalAlignment verticalAlignment) {
-		if (!element.isInitialLayoutOccurred()) {
-			element.deferUntilLayout(new Runnable() {
-				@Override
-				public void run() {
-					alignRightOf(element, alignToElement, verticalAlignment);
-				}
-			});
-			return;
-		}
-		if (!element.isInitialUpdateOccurred()) {
+		if (!element.isInitialised() || element.isRenderNodeDirty()) {
 			element.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
@@ -308,8 +309,8 @@ public class PixelLayoutUtils {
 			});
 			return;
 		}
-		if (alignToElement.isRenderNodeDirty() || alignToElement.getWidth() <= 0f) {
-			element.deferUntilLayout(new Runnable() {
+		if (!alignToElement.isInitialised() || alignToElement.isRenderNodeDirty()) {
+			alignToElement.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
 					alignRightOf(element, alignToElement, verticalAlignment);
@@ -318,22 +319,37 @@ public class PixelLayoutUtils {
 			return;
 		}
 
-		final float x, y;
-		switch (verticalAlignment) {
-		default:
-		case TOP:
-			y = MathUtils.round(alignToElement.getY());
+		switch(UiContainer.getState()) {
+		case LAYOUT:
+		case UPDATE:
+			alignToElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					alignRightOf(element, alignToElement, verticalAlignment);
+				}
+			});
 			break;
-		case MIDDLE:
-			y = MathUtils.round(alignToElement.getY() + (alignToElement.getHeight() * 0.5f) - (element.getHeight() * 0.5f));
-			break;
-		case BOTTOM:
-			y = MathUtils.round(alignToElement.getY() + alignToElement.getHeight() - element.getHeight());
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			final float x, y;
+			switch (verticalAlignment) {
+			default:
+			case TOP:
+				y = MathUtils.round(alignToElement.getY());
+				break;
+			case MIDDLE:
+				y = MathUtils.round(alignToElement.getY() + (alignToElement.getHeight() * 0.5f) - (element.getHeight() * 0.5f));
+				break;
+			case BOTTOM:
+				y = MathUtils.round(alignToElement.getY() + alignToElement.getHeight() - element.getHeight());
+				break;
+			}
+			x = MathUtils.round(alignToElement.getX() + alignToElement.getWidth());
+
+			element.setXY(x, y);
 			break;
 		}
-		x = MathUtils.round(alignToElement.getX() + alignToElement.getWidth());
-
-		element.setXY(x, y);
 	}
 
 	/**
@@ -346,16 +362,7 @@ public class PixelLayoutUtils {
 	 * 	{@link HorizontalAlignment#RIGHT} aligns the right-side of this element to the right-side of the align element.
 	 */
 	public static void alignBelow(final UiElement element, final UiElement alignToElement, final HorizontalAlignment horizontalAlignment) {
-		if (!element.isInitialLayoutOccurred()) {
-			element.deferUntilLayout(new Runnable() {
-				@Override
-				public void run() {
-					alignBelow(element, alignToElement, horizontalAlignment);
-				}
-			});
-			return;
-		}
-		if (!element.isInitialUpdateOccurred()) {
+		if (!element.isInitialised()) {
 			element.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
@@ -364,8 +371,8 @@ public class PixelLayoutUtils {
 			});
 			return;
 		}
-		if (alignToElement.isRenderNodeDirty() || alignToElement.getWidth() <= 0f) {
-			element.deferUntilLayout(new Runnable() {
+		if (!alignToElement.isInitialised()) {
+			alignToElement.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
 					alignBelow(element, alignToElement, horizontalAlignment);
@@ -374,22 +381,37 @@ public class PixelLayoutUtils {
 			return;
 		}
 
-		final float x,y;
-		switch (horizontalAlignment) {
-		default:
-		case LEFT:
-			x = MathUtils.round(alignToElement.getX());
+		switch(UiContainer.getState()) {
+		case LAYOUT:
+		case UPDATE:
+			alignToElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					alignBelow(element, alignToElement, horizontalAlignment);
+				}
+			});
 			break;
-		case CENTER:
-			x = MathUtils.round(alignToElement.getX() + (alignToElement.getWidth() * 0.5f) - (element.getWidth() * 0.5f));
-			break;
-		case RIGHT:
-			x = MathUtils.round(alignToElement.getX() + alignToElement.getWidth() - element.getWidth());
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			final float x,y;
+			switch (horizontalAlignment) {
+			default:
+			case LEFT:
+				x = MathUtils.round(alignToElement.getX());
+				break;
+			case CENTER:
+				x = MathUtils.round(alignToElement.getX() + (alignToElement.getWidth() * 0.5f) - (element.getWidth() * 0.5f));
+				break;
+			case RIGHT:
+				x = MathUtils.round(alignToElement.getX() + alignToElement.getWidth() - element.getWidth());
+				break;
+			}
+			y = MathUtils.round(alignToElement.getY() + alignToElement.getHeight());
+
+			element.setXY(x, y);
 			break;
 		}
-		y = MathUtils.round(alignToElement.getY() + alignToElement.getHeight());
-
-		element.setXY(x, y);
 	}
 
 	/**
@@ -402,16 +424,7 @@ public class PixelLayoutUtils {
 	 * 	 * 	{@link HorizontalAlignment#RIGHT} aligns the right-side of this element to the right-side of the align element.
 	 */
 	public static void alignAbove(final UiElement element, final UiElement alignToElement, final HorizontalAlignment horizontalAlignment) {
-		if (!element.isInitialLayoutOccurred()) {
-			element.deferUntilLayout(new Runnable() {
-				@Override
-				public void run() {
-					alignAbove(element, alignToElement, horizontalAlignment);
-				}
-			});
-			return;
-		}
-		if (!element.isInitialUpdateOccurred()) {
+		if (!element.isInitialised()) {
 			element.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
@@ -420,8 +433,8 @@ public class PixelLayoutUtils {
 			});
 			return;
 		}
-		if (alignToElement.isRenderNodeDirty() || alignToElement.getWidth() <= 0f) {
-			element.deferUntilLayout(new Runnable() {
+		if (!alignToElement.isInitialised()) {
+			alignToElement.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
 					alignAbove(element, alignToElement, horizontalAlignment);
@@ -430,22 +443,37 @@ public class PixelLayoutUtils {
 			return;
 		}
 
-		final float x,y;
-		switch (horizontalAlignment) {
-		default:
-		case LEFT:
-			x = MathUtils.round(alignToElement.getX());
+		switch(UiContainer.getState()) {
+		case LAYOUT:
+		case UPDATE:
+			alignToElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					alignAbove(element, alignToElement, horizontalAlignment);
+				}
+			});
 			break;
-		case CENTER:
-			x = MathUtils.round(alignToElement.getX() + (alignToElement.getWidth() * 0.5f) - (element.getWidth() * 0.5f));
-			break;
-		case RIGHT:
-			x = MathUtils.round(alignToElement.getX() + alignToElement.getWidth() - element.getWidth());
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			final float x,y;
+			switch (horizontalAlignment) {
+			default:
+			case LEFT:
+				x = MathUtils.round(alignToElement.getX());
+				break;
+			case CENTER:
+				x = MathUtils.round(alignToElement.getX() + (alignToElement.getWidth() * 0.5f) - (element.getWidth() * 0.5f));
+				break;
+			case RIGHT:
+				x = MathUtils.round(alignToElement.getX() + alignToElement.getWidth() - element.getWidth());
+				break;
+			}
+			y = MathUtils.round(alignToElement.getY() - element.getHeight());
+
+			element.setXY(x, y);
 			break;
 		}
-		y = MathUtils.round(alignToElement.getY() - element.getHeight());
-
-		element.setXY(x, y);
 	}
 
 	/**
@@ -465,64 +493,67 @@ public class PixelLayoutUtils {
 	 * @param horizontalAlignment The {@link HorizontalAlignment} of this element within the area of the align element
 	 * @param verticalAlignment The {@link VerticalAlignment} of this element within the area of the align element
 	 */
-	public static void snapTo(final UiElement element, UiElement snapToElement, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
-		if (!element.isInitialLayoutOccurred()) {
-			deferSnapToUntilLayout(element, snapToElement, horizontalAlignment, verticalAlignment);
+	public static void snapTo(final UiElement element, final UiElement snapToElement, final HorizontalAlignment horizontalAlignment, final VerticalAlignment verticalAlignment) {
+		if (!element.isInitialised() || element.isRenderNodeDirty()) {
+			snapToElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					snapTo(element, snapToElement, horizontalAlignment, verticalAlignment);
+				}
+			});
 			return;
 		}
-		if (!element.isInitialUpdateOccurred()) {
-			deferSnapToUntilUpdate(element, snapToElement, horizontalAlignment, verticalAlignment);
-			return;
-		}
-		if (snapToElement.isRenderNodeDirty() || snapToElement.getWidth() <= 0f) {
-			deferSnapToUntilLayout(element, snapToElement, horizontalAlignment, verticalAlignment);
+		if (!snapToElement.isInitialised() || snapToElement.isRenderNodeDirty()) {
+			snapToElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					snapTo(element, snapToElement, horizontalAlignment, verticalAlignment);
+				}
+			});
 			return;
 		}
 
-		final float x, y;
-		switch (horizontalAlignment) {
-		default:
-		case LEFT:
-			x = MathUtils.round(snapToElement.getX());
+		switch(UiContainer.getState()) {
+		case LAYOUT:
+		case UPDATE:
+			snapToElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					snapTo(element, snapToElement, horizontalAlignment, verticalAlignment);
+				}
+			});
 			break;
-		case CENTER:
-			x = MathUtils.round(snapToElement.getX() + (snapToElement.getWidth() * 0.5f) - (element.getWidth() * 0.5f));
-			break;
-		case RIGHT:
-			x = MathUtils.round(snapToElement.getX() + snapToElement.getWidth() - element.getWidth());
-			break;
-		}
-		switch (verticalAlignment) {
-		default:
-		case TOP:
-			y = MathUtils.round(snapToElement.getY());
-			break;
-		case MIDDLE:
-			y = MathUtils.round(snapToElement.getY() + (snapToElement.getHeight() * 0.5f) - (element.getHeight() * 0.5f));
-			break;
-		case BOTTOM:
-			y = MathUtils.round(snapToElement.getY() + snapToElement.getHeight() - element.getHeight());
-			break;
-		}
-
-		element.setXY(x, y);
-	}
-
-	protected static void deferSnapToUntilUpdate(final UiElement element, final UiElement snapToElement, final HorizontalAlignment horizontalAlignment, final VerticalAlignment verticalAlignment) {
-		element.deferUntilUpdate(new Runnable() {
-			@Override
-			public void run() {
-				snapTo(element, snapToElement, horizontalAlignment, verticalAlignment);
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			final float x, y;
+			switch (horizontalAlignment) {
+			default:
+			case LEFT:
+				x = MathUtils.round(snapToElement.getX());
+				break;
+			case CENTER:
+				x = MathUtils.round(snapToElement.getX() + (snapToElement.getWidth() * 0.5f) - (element.getWidth() * 0.5f));
+				break;
+			case RIGHT:
+				x = MathUtils.round(snapToElement.getX() + snapToElement.getWidth() - element.getWidth());
+				break;
 			}
-		});
-	}
-
-	protected static void deferSnapToUntilLayout(final UiElement element, final UiElement snapToElement, final HorizontalAlignment horizontalAlignment, final VerticalAlignment verticalAlignment) {
-		element.deferUntilLayout(new Runnable() {
-			@Override
-			public void run() {
-				snapTo(element, snapToElement, horizontalAlignment, verticalAlignment);
+			switch (verticalAlignment) {
+			default:
+			case TOP:
+				y = MathUtils.round(snapToElement.getY());
+				break;
+			case MIDDLE:
+				y = MathUtils.round(snapToElement.getY() + (snapToElement.getHeight() * 0.5f) - (element.getHeight() * 0.5f));
+				break;
+			case BOTTOM:
+				y = MathUtils.round(snapToElement.getY() + snapToElement.getHeight() - element.getHeight());
+				break;
 			}
-		});
+
+			element.setXY(x, y);
+			break;
+		}
 	}
 }

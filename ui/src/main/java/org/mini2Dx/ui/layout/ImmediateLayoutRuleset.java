@@ -49,11 +49,11 @@ public class ImmediateLayoutRuleset extends LayoutRuleset {
 				previousOffsetY = 0f;
 			}
 
-			node.setRelativeX(startX + (node.getXOffset() - previousOffsetX));
-			node.setRelativeY(startY + (node.getYOffset()) - previousOffsetY);
+			node.setRelativeX(startX + node.getXOffset());
+			node.setRelativeY(startY + node.getYOffset());
 
-			this.previousOffsetX.put(node.getId(), node.getRelativeX());
-			this.previousOffsetY.put(node.getId(), node.getRelativeY());
+			this.previousOffsetX.put(node.getId(), startX);
+			this.previousOffsetY.put(node.getId(), startY);
 		}
 	}
 

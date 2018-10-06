@@ -99,8 +99,8 @@ public class Div extends ParentUiElement {
 			maxX = Math.max(maxX, elements[i].getX() + elements[i].getWidth());
 			maxY = Math.max(maxY, elements[i].getY() + elements[i].getHeight());
 		}
-		result.setWidth(maxX);
-		result.setHeight(maxY);
+		result.setContentWidth(maxX);
+		result.setContentHeight(maxY);
 		result.setVisibility(Visibility.VISIBLE);
 		return result;
 	}

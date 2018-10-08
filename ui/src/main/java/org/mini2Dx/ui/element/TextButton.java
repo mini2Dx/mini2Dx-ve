@@ -49,7 +49,6 @@ public class TextButton extends Button {
 					   @ConstructorArg(clazz = Float.class, name = "width") float width,
 					   @ConstructorArg(clazz = Float.class, name = "height") float height) {
 		super(id, x, y, width, height);
-		System.out.println("TextButton ID: " + id + " " + getId());
 	}
 	
 	private void checkInitialised() {

@@ -18,6 +18,7 @@ import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
+import org.mini2Dx.ui.layout.HorizontalAlignment;
 import org.mini2Dx.ui.navigation.ControllerHotKeyOperation;
 import org.mini2Dx.ui.navigation.KeyboardHotKeyOperation;
 import org.mini2Dx.ui.navigation.UiNavigation;
@@ -30,9 +31,13 @@ import org.mini2Dx.ui.render.*;
 public class Tab extends Div implements Navigatable {
 	private final Queue<ControllerHotKeyOperation> controllerHotKeyOperations = new LinkedList<ControllerHotKeyOperation>();
 	private final Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations = new LinkedList<KeyboardHotKeyOperation>();
+
+	private static final String FLEX_LAYOUT = "flex-column:xs-12c";
 	
 	private UiNavigation navigation = new VerticalUiNavigation();
 	private boolean titleOrIconChanged = true;
+
+	private FlexRow tabMenuFlexRow;
 	
 	@Field(optional=true)
 	private String title = null;
@@ -117,6 +122,23 @@ public class Tab extends Div implements Navigatable {
 	public void syncWithUpdate(UiContainerRenderTree rootNode) {
 		super.syncWithUpdate(rootNode);
 		((NavigatableRenderNode) renderNode).syncHotkeys(controllerHotKeyOperations, keyboardHotKeyOperations);
+
+		if(tabMenuFlexRow == null) {
+			return;
+		}
+
+		final ParentRenderNode<? extends ParentUiElement, ?> parentRenderNode = renderNode.getParent();
+		final ParentUiElement parentUiElement = parentRenderNode.getElement();
+		if(parentUiElement.getFlexLayout() == null) {
+			boolean alignRequired = renderNode.getRelativeY() == 0f;
+			alignRequired |= setWidth(parentRenderNode.getContentRenderWidth());
+			alignRequired |= setHeight(parentRenderNode.getContentRenderHeight() - tabMenuFlexRow.getHeight());
+			if(alignRequired && tabMenuFlexRow != null) {
+				alignBelow(tabMenuFlexRow, HorizontalAlignment.LEFT);
+			}
+		} else {
+			setFlexLayout(FLEX_LAYOUT);
+		}
 	}
 	
 	@Override
@@ -189,5 +211,9 @@ public class Tab extends Div implements Navigatable {
 			return;
 		}
 		this.navigation = navigation;
+	}
+
+	void setTabMenuFlexRow(FlexRow tabMenuFlexRow) {
+		this.tabMenuFlexRow = tabMenuFlexRow;
 	}
 }

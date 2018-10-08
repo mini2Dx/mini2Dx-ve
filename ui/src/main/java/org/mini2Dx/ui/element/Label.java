@@ -70,7 +70,7 @@ public class Label extends UiElement {
 	 * @param id The unique ID of the {@link Label}
 	 */
 	public Label(@ConstructorArg(clazz=String.class, name = "id") String id) {
-		this(id, 0f, 0f, 9000f, 128f);
+		this(id, 0f, 0f, 300f, 128f);
 	}
 
 	/**

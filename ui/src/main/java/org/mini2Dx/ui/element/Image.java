@@ -57,7 +57,7 @@ public class Image extends UiElement {
 	 * Constructor. Generates a unique ID for this {@link Image}
 	 */
 	public Image() {
-		super(null);
+		this(null, 0f, 0f, 64f, 64f);
 	}
 
 	/**
@@ -67,7 +67,23 @@ public class Image extends UiElement {
 	 *            The unique ID for this {@link Image}
 	 */
 	public Image(@ConstructorArg(clazz = String.class, name = "id") String id) {
-		super(id);
+		this(id, 0f, 0f, 64f, 64f);
+	}
+
+	/**
+	 * Constructor
+	 * @param id The unique ID for this element (if null an ID will be generated)
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public Image(@ConstructorArg(clazz = String.class, name = "id") String id,
+				  @ConstructorArg(clazz = Float.class, name = "x") float x,
+				  @ConstructorArg(clazz = Float.class, name = "y") float y,
+				  @ConstructorArg(clazz = Float.class, name = "width") float width,
+				  @ConstructorArg(clazz = Float.class, name = "height") float height) {
+		super(id, x, y, width, height);
 	}
 
 	/**

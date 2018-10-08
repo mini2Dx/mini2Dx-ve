@@ -68,10 +68,6 @@ public class PixelLayoutUtils {
 			deferShrinkToContentsUntilUpdate(parentUiElement, recursive, callback);
 			return;
 		}
-		if(parentUiElement.isRenderNodeDirty()) {
-			deferShrinkToContentsUntilLayout(parentUiElement, recursive, callback);
-			return;
-		}
 		float maxX = 0f;
 		float maxY = 0f;
 		for(int i = 0; i < parentUiElement.getTotalChildren(); i++) {
@@ -108,6 +104,10 @@ public class PixelLayoutUtils {
 		}
 		parentUiElement.setContentWidth(maxX);
 		parentUiElement.setContentHeight(maxY);
+
+		if(parentUiElement.getId().contains("Selection Screen")) {
+			System.out.println("Selection Screen " + maxY);
+		}
 
 		if(callback != null) {
 			parentUiElement.deferUntilLayout(callback);
@@ -165,8 +165,8 @@ public class PixelLayoutUtils {
 	 * 	{@link VerticalAlignment#BOTTOM} aligns the top-side of this element to the bottom-side of the align element.
 	 */
 	public static void alignEdgeToEdge(final UiElement element, final UiElement alignToElement, final HorizontalAlignment horizontalAlignment, final VerticalAlignment verticalAlignment) {
-		if (!element.isInitialised() || element.isRenderNodeDirty()) {
-			alignToElement.deferUntilUpdate(new Runnable() {
+		if (!element.isInitialised()) {
+			element.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
 					alignEdgeToEdge(element, alignToElement, horizontalAlignment, verticalAlignment);
@@ -174,7 +174,7 @@ public class PixelLayoutUtils {
 			});
 			return;
 		}
-		if (!alignToElement.isInitialised() || alignToElement.isRenderNodeDirty()) {
+		if (!alignToElement.isInitialised()) {
 			alignToElement.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
@@ -238,7 +238,7 @@ public class PixelLayoutUtils {
 	 * 	 * 	{@link VerticalAlignment#BOTTOM} aligns the bottom-side of this element to the bottom-side of the align element.
 	 */
 	public static void alignLeftOf(final UiElement element, final UiElement alignToElement, final VerticalAlignment verticalAlignment) {
-		if (!element.isInitialised() || element.isRenderNodeDirty()) {
+		if (!element.isInitialised()) {
 			element.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
@@ -247,7 +247,7 @@ public class PixelLayoutUtils {
 			});
 			return;
 		}
-		if (!alignToElement.isInitialised() || alignToElement.isRenderNodeDirty()) {
+		if (!alignToElement.isInitialised()) {
 			alignToElement.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
@@ -300,7 +300,7 @@ public class PixelLayoutUtils {
 	 * 	 * 	{@link VerticalAlignment#BOTTOM} aligns the bottom-side of this element to the bottom-side of the align element.
 	 */
 	public static void alignRightOf(final UiElement element, final UiElement alignToElement, final VerticalAlignment verticalAlignment) {
-		if (!element.isInitialised() || element.isRenderNodeDirty()) {
+		if (!element.isInitialised()) {
 			element.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
@@ -309,7 +309,7 @@ public class PixelLayoutUtils {
 			});
 			return;
 		}
-		if (!alignToElement.isInitialised() || alignToElement.isRenderNodeDirty()) {
+		if (!alignToElement.isInitialised()) {
 			alignToElement.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
@@ -494,8 +494,8 @@ public class PixelLayoutUtils {
 	 * @param verticalAlignment The {@link VerticalAlignment} of this element within the area of the align element
 	 */
 	public static void snapTo(final UiElement element, final UiElement snapToElement, final HorizontalAlignment horizontalAlignment, final VerticalAlignment verticalAlignment) {
-		if (!element.isInitialised() || element.isRenderNodeDirty()) {
-			snapToElement.deferUntilUpdate(new Runnable() {
+		if (!element.isInitialised()) {
+			element.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
 					snapTo(element, snapToElement, horizontalAlignment, verticalAlignment);
@@ -503,7 +503,7 @@ public class PixelLayoutUtils {
 			});
 			return;
 		}
-		if (!snapToElement.isInitialised() || snapToElement.isRenderNodeDirty()) {
+		if (!snapToElement.isInitialised()) {
 			snapToElement.deferUntilUpdate(new Runnable() {
 				@Override
 				public void run() {
@@ -551,8 +551,175 @@ public class PixelLayoutUtils {
 				y = MathUtils.round(snapToElement.getY() + snapToElement.getHeight() - element.getHeight());
 				break;
 			}
-
 			element.setXY(x, y);
+			break;
+		}
+	}
+
+	/**
+	 * Sets the width of one {@link UiElement} to match the width of another element
+	 * @param element The {@link UiElement} to set the width on
+	 * @param matchElement The {@link UiElement} to get the width of
+	 */
+	public static void setWidthToWidth(final UiElement element, final UiElement matchElement) {
+		if (!element.isInitialised()) {
+			element.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setWidthToWidth(element, matchElement);
+				}
+			});
+			return;
+		}
+		if (!matchElement.isInitialised()) {
+			matchElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setWidthToWidth(element, matchElement);
+				}
+			});
+			return;
+		}
+		switch(UiContainer.getState()) {
+		case LAYOUT:
+		case UPDATE:
+			matchElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setWidthToWidth(element, matchElement);
+				}
+			});
+			break;
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			element.setWidth(matchElement.getWidth());
+			break;
+		}
+	}
+
+	/**
+	 * Sets the width of one {@link UiElement} to match the content width of another element. Note: content width = (width - margin - padding)
+	 * @param element The {@link UiElement} to set the width on
+	 * @param matchElement The {@link UiElement} to get the content width of
+	 */
+	public static void setWidthToContentWidth(final UiElement element, final UiElement matchElement) {
+		if (!element.isInitialised()) {
+			element.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setWidthToContentWidth(element, matchElement);
+				}
+			});
+			return;
+		}
+		if (!matchElement.isInitialised()) {
+			matchElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setWidthToContentWidth(element, matchElement);
+				}
+			});
+			return;
+		}
+		switch(UiContainer.getState()) {
+		case LAYOUT:
+		case UPDATE:
+			matchElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setWidthToContentWidth(element, matchElement);
+				}
+			});
+			break;
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			element.setWidth(matchElement.getContentWidth());
+			break;
+		}
+	}
+
+	/**
+	 * Sets the height of one {@link UiElement} to match the height of another element
+	 * @param element The {@link UiElement} to set the height on
+	 * @param matchElement The {@link UiElement} to get the height of
+	 */
+	public static void setHeightToHeight(final UiElement element, final UiElement matchElement) {
+		if (!element.isInitialised()) {
+			element.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setHeightToHeight(element, matchElement);
+				}
+			});
+			return;
+		}
+		if (!matchElement.isInitialised()) {
+			matchElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setHeightToHeight(element, matchElement);
+				}
+			});
+			return;
+		}
+		switch(UiContainer.getState()) {
+		case LAYOUT:
+		case UPDATE:
+			matchElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setHeightToHeight(element, matchElement);
+				}
+			});
+			break;
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			element.setHeight(matchElement.getHeight());
+			break;
+		}
+	}
+
+	/**
+	 * Sets the height of one {@link UiElement} to match the content height of another element. Note: content height = (height - margin - padding)
+	 * @param element The {@link UiElement} to set the height on
+	 * @param matchElement The {@link UiElement} to get the content height of
+	 */
+	public static void setHeightToContentHeight(final UiElement element, final UiElement matchElement) {
+		if (!element.isInitialised()) {
+			element.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setHeightToContentHeight(element, matchElement);
+				}
+			});
+			return;
+		}
+		if (!matchElement.isInitialised()) {
+			matchElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setHeightToContentHeight(element, matchElement);
+				}
+			});
+			return;
+		}
+		switch(UiContainer.getState()) {
+		case LAYOUT:
+		case UPDATE:
+			matchElement.deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					setHeightToContentHeight(element, matchElement);
+				}
+			});
+			break;
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			element.setHeight(matchElement.getContentHeight());
 			break;
 		}
 	}

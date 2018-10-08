@@ -51,6 +51,7 @@ public class FlexDirectionTest {
 			{
 				atLeast(1).of(layoutState).getUiContainerRenderTree();
 				will(returnValue(renderTree));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
 			}
 		});
 	}

@@ -224,6 +224,38 @@ public abstract class UiElement implements Hoverable {
 	}
 
 	/**
+	 * Sets the width of this element to match the width of another {@link UiElement}
+	 * @param otherElement The {@link UiElement} to get the width of
+	 */
+	public void setWidthToWidthOf(UiElement otherElement) {
+		PixelLayoutUtils.setWidthToWidth(this, otherElement);
+	}
+
+	/**
+	 * Sets the width of this element to match the content width of another {@link UiElement}. See {@link #getContentWidth()}
+	 * @param otherElement The {@link UiElement} to get the content width of
+	 */
+	public void setWidthToContentWidthOf(UiElement otherElement) {
+		PixelLayoutUtils.setWidthToContentWidth(this, otherElement);
+	}
+
+	/**
+	 * Sets the height of this element to match the height of another {@link UiElement}
+	 * @param otherElement The {@link UiElement} to get the height of
+	 */
+	public void setHeightToHeightOf(UiElement otherElement) {
+		PixelLayoutUtils.setHeightToHeight(this, otherElement);
+	}
+
+	/**
+	 * Sets the height of this element to match the content height of another {@link UiElement}. See {@link #getContentHeight()}
+	 * @param otherElement The {@link UiElement} to get the content height of
+	 */
+	public void setHeightToContentHeightOf(UiElement otherElement) {
+		PixelLayoutUtils.setHeightToContentHeight(this, otherElement);
+	}
+
+	/**
 	 * Attaches a {@link RenderNode} for this element to a parent
 	 * {@link RenderNode}
 	 *
@@ -594,10 +626,36 @@ public abstract class UiElement implements Hoverable {
 		return true;
 	}
 
+	/**
+	 * Returns the width of this element minus its margin and padding
+	 * @return
+	 */
+	public float getContentWidth() {
+		return width - getMarginLeft() - getMarginRight() - getPaddingLeft() - getPaddingRight();
+	}
+
+	/**
+	 * Returns the height of this element minus its margin and padding
+	 * @return
+	 */
+	public float getContentHeight() {
+		return height - getMarginTop() - getMarginBottom() - getPaddingTop() - getPaddingBottom();
+	}
+
+	/**
+	 * Sets the content width. See: {@link #getContentWidth()}
+	 * @param contentWidth
+	 * @return True if the width changed
+	 */
 	public boolean setContentWidth(final float contentWidth) {
 		return setWidth(contentWidth + getMarginLeft() + getMarginRight() + getPaddingLeft() + getPaddingRight());
 	}
 
+	/**
+	 * Sets the content height. See: {@link #getContentHeight()}
+	 * @param contentHeight
+	 * @return True if the height changed
+	 */
 	public boolean setContentHeight(final float contentHeight) {
 		return setHeight(contentHeight + getMarginTop() + getMarginBottom() + getPaddingTop() + getPaddingBottom());
 	}

@@ -1,6 +1,7 @@
 package org.mini2Dx.ui.layout;
 
 import com.badlogic.gdx.utils.Array;
+import org.mini2Dx.ui.element.ScrollBox;
 import org.mini2Dx.ui.element.UiElement;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.RenderNode;
@@ -59,22 +60,22 @@ public class ImmediateLayoutRuleset extends LayoutRuleset {
 
 	@Override
 	public float getPreferredElementRelativeX(LayoutState layoutState) {
-		return element.getX();
+		return xRule.getOffset(layoutState);
 	}
 
 	@Override
 	public float getPreferredElementRelativeY(LayoutState layoutState) {
-		return element.getY();
+		return yRule.getOffset(layoutState);
 	}
 
 	@Override
 	public float getPreferredElementWidth(LayoutState layoutState) {
-		return element.getWidth();
+		return widthRule.getSize(layoutState);
 	}
 
 	@Override
 	public float getPreferredElementHeight(LayoutState layoutState) {
-		return element.getHeight();
+		return heightRule.getSize(layoutState);
 	}
 
 	@Override
@@ -151,6 +152,9 @@ public class ImmediateLayoutRuleset extends LayoutRuleset {
 
 		@Override
 		public float getSize(LayoutState layoutState) {
+			if(element instanceof ScrollBox) {
+				return ((ScrollBox) element).getScrollContentHeight();
+			}
 			return element.getHeight();
 		}
 

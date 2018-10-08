@@ -75,12 +75,28 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 *            The unique ID of this {@link TabView}
 	 */
 	public TabView(@ConstructorArg(clazz = String.class, name = "id") String id) {
-		this(id, null, null);
+		this(id, 0f, 0f, 300f, 300f, null, null);
 	}
 
 	/**
 	 * Constructor
-	 * 
+	 * @param id The unique ID for this element (if null an ID will be generated)
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public TabView(@ConstructorArg(clazz = String.class, name = "id") String id,
+				  @ConstructorArg(clazz = Float.class, name = "x") float x,
+				  @ConstructorArg(clazz = Float.class, name = "y") float y,
+				  @ConstructorArg(clazz = Float.class, name = "width") float width,
+				  @ConstructorArg(clazz = Float.class, name = "height") float height) {
+		this(id, x, y, width, height, null, null);
+	}
+
+	/**
+	 * Constructor
+	 *
 	 * @param id
 	 *            The unique ID of this {@link TabView}
 	 * @param previousTabButton
@@ -88,7 +104,26 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * @param nextTabButton
 	 *            The {@link TabButton} to use for changing to the next tab
 	 */
-	public TabView(String id, TabButton previousTabButton, TabButton nextTabButton) {
+	public TabView(String id,  TabButton previousTabButton, TabButton nextTabButton) {
+		this(id, 0f, 0f, 300f, 300f, previousTabButton, nextTabButton);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param id
+	 *            The unique ID of this {@link TabView}
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 * @param previousTabButton
+	 *            The {@link TabButton} to use for changing to the previous tab
+	 * @param nextTabButton
+	 *            The {@link TabButton} to use for changing to the next tab
+	 */
+	public TabView(String id, float x, float y, float width, float height,
+				   TabButton previousTabButton, TabButton nextTabButton) {
 		super(id);
 		tabMenuFlexRow = new FlexRow(getId() + "-tabMenuFlexRow");
 		tabMenuFlexRow.setVisibility(Visibility.VISIBLE);
@@ -246,37 +281,18 @@ public class TabView extends ParentUiElement implements Navigatable {
 	public void syncWithLayout(UiContainerRenderTree rootNode) {
 		super.syncWithLayout(rootNode);
 
-		for (int i = 0; i < tabs.size(); i++) {
+		for(int i = 0; i < tabs.size(); i++) {
 			final Tab tab = tabs.get(i);
-			if (getFlexLayout() == null) {
-				boolean alignRequired = false;
-				System.out.println("0:" + tab.getId() + " " + tab.getWidth() + " " + alignRequired);
-				alignRequired |= tab.setWidth(renderNode.getContentRenderWidth());
-				System.out.println("1:" + tab.getId() + " " + tab.getWidth() + " " + alignRequired);
-				alignRequired |= tab.setHeight(renderNode.getContentRenderHeight() - tabMenuFlexRow.getHeight());
-				System.out.println("2:" + tab.getId() + " " + alignRequired);
-				if(alignRequired) {
-					tab.alignBelow(tabMenuFlexRow, HorizontalAlignment.LEFT);
-				}
-			} else {
-				tab.setFlexLayout("flex-column:xs-12c");
-			}
+			tab.setTabMenuFlexRow(tabMenuFlexRow);
 		}
 	}
 
 	@Override
 	public void syncWithUpdate(UiContainerRenderTree rootNode) {
-		while (!effects.isEmpty()) {
-			renderNode.applyEffect(effects.poll());
-		}
 		((NavigatableRenderNode) renderNode).syncHotkeys(controllerHotKeyOperations, keyboardHotKeyOperations);
 		syncTabTitles();
 		syncChildStyles();
 
-		x = renderNode.getRelativeX();
-		y = renderNode.getRelativeY();
-		width = renderNode.getOuterWidth();
-		height = renderNode.getOuterHeight();
 		super.syncWithUpdate(rootNode);
 	}
 

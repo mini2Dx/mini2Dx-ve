@@ -20,6 +20,7 @@ import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.effect.UiEffect;
+import org.mini2Dx.ui.element.ParentUiElement;
 import org.mini2Dx.ui.element.UiElement;
 import org.mini2Dx.ui.element.Visibility;
 import org.mini2Dx.ui.layout.LayoutState;
@@ -497,7 +498,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		return element;
 	}
 
-	public ParentRenderNode<?, ?> getParent() {
+	public ParentRenderNode<? extends ParentUiElement, ?> getParent() {
 		return parent;
 	}
 

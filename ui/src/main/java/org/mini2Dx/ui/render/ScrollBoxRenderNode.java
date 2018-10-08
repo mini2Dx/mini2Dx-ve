@@ -43,7 +43,7 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 	private ScrollTo scrollTo = null;
 
 	private ButtonStyleRule topScrollButtonStyleRule, bottomScrollButtonStyleRule;
-	private float contentHeight;
+	private float contentHeight, boxHeight;
 	private float scrollThumbPosition;
 
 	private NodeState topScrollButtonState = NodeState.NORMAL;
@@ -424,6 +424,8 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 
 		scrollThumb.setWidth(style.getScrollBarWidth());
 		scrollThumb.setHeight(scrollTrackHeight * scrollThumbHeightPercentage);
+
+		boxHeight = result;
 		return result;
 	}
 
@@ -498,5 +500,13 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 	@Override
 	public float getPreferredInnerWidth() {
 		return preferredContentWidth + style.getPaddingLeft() + style.getPaddingRight() + scrollTrack.getWidth();
+	}
+
+	public float getBoxHeight() {
+		return boxHeight;
+	}
+
+	public float getScrollContentHeight() {
+		return contentHeight;
 	}
 }

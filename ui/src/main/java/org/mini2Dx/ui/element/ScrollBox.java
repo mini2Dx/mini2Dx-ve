@@ -18,6 +18,7 @@ import java.util.Queue;
 
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
+import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.animation.ScrollTo;
 import org.mini2Dx.ui.listener.ScrollListener;
 import org.mini2Dx.ui.render.ParentRenderNode;
@@ -42,6 +43,8 @@ public class ScrollBox extends Div {
 	private final Queue<ScrollTo> scrollTos = new LinkedList<ScrollTo>();
 	private List<ScrollListener> scrollListeners;
 
+	private float scrollContentHeight;
+
 	/**
 	 * Constructor. Generates a unique ID for this {@link ScrollBox}
 	 */
@@ -56,7 +59,24 @@ public class ScrollBox extends Div {
 	 *            The unique ID for this {@link ScrollBox}
 	 */
 	public ScrollBox(@ConstructorArg(clazz = String.class, name = "id") String id) {
-		super(id);
+		this(id, 0f, 0f, 300f, 300f);
+	}
+
+	/**
+	 * Constructor
+	 * @param id The unique ID for this element (if null an ID will be generated)
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public ScrollBox(@ConstructorArg(clazz = String.class, name = "id") String id,
+						   @ConstructorArg(clazz = Float.class, name = "x") float x,
+						   @ConstructorArg(clazz = Float.class, name = "y") float y,
+						   @ConstructorArg(clazz = Float.class, name = "width") float width,
+						   @ConstructorArg(clazz = Float.class, name = "height") float height) {
+		super(id, x, y, width, height);
+		scrollContentHeight = height;
 	}
 
 	@Override
@@ -71,6 +91,8 @@ public class ScrollBox extends Div {
 		if (renderNode == null) {
 			return;
 		}
+		scrollContentHeight = ((ScrollBoxRenderNode) renderNode).getScrollContentHeight();
+
 		ScrollTo scrollTo = scrollTos.peek();
 		if (scrollTo == null) {
 			return;
@@ -238,6 +260,77 @@ public class ScrollBox extends Div {
 		}
 		for (int i = scrollListeners.size() - 1; i >= 0; i--) {
 			scrollListeners.get(i).onScroll(this, scrollThumbPosition);
+		}
+	}
+
+	/**
+	 * Returns the height of the content within the scroll view
+	 * @return
+	 */
+	public float getScrollContentHeight() {
+		return scrollContentHeight;
+	}
+
+	/**
+	 * Sets the scroll view height. Note: If using flexLayout this will be overriden during layout()
+	 * @param scrollContentHeight
+	 */
+	public void setScrollContentHeight(float scrollContentHeight) {
+		if(MathUtils.isEqual(scrollContentHeight, this.scrollContentHeight)) {
+			return;
+		}
+
+		this.scrollContentHeight = scrollContentHeight;
+		if (renderNode == null) {
+			return;
+		}
+		renderNode.setDirty(true);
+	}
+
+	/**
+	 * Sets the scroll view height to be equal to the max Y of the child elements
+	 */
+	public void resizeScrollContentHeightToContents() {
+		if(!isInitialised()) {
+			deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					resizeScrollContentHeightToContents();
+				}
+			});
+		}
+		switch(UiContainer.getState()) {
+		case LAYOUT:
+		case UPDATE:
+			deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					resizeScrollContentHeightToContents();
+				}
+			});
+			break;
+		case NOOP:
+		case INTERPOLATE:
+		case RENDER:
+			float maxY = 0f;
+			for(int i = 0; i < children.size(); i++) {
+				final UiElement uiElement = children.get(i);
+				if(uiElement == null) {
+					continue;
+				}
+				if(!uiElement.isInitialised()) {
+					deferUntilUpdate(new Runnable() {
+						@Override
+						public void run() {
+							resizeScrollContentHeightToContents();
+						}
+					});
+					return;
+				}
+				maxY = Math.max(maxY, uiElement.getY() + uiElement.getHeight());
+			}
+			setScrollContentHeight(maxY);
+			break;
 		}
 	}
 }

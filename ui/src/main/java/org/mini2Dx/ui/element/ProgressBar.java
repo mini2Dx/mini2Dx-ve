@@ -44,12 +44,27 @@ public class ProgressBar extends UiElement {
 	protected ProgressBarRenderNode renderNode;
 	
 	public ProgressBar() {
-		super();
-		max = 1f;
+		this(null);
 	}
 	
 	public ProgressBar(@ConstructorArg(clazz = String.class, name = "id") String id) {
-		super(id);
+		this(id, 0f, 0f, 300f, 64f);
+	}
+
+	/**
+	 * Constructor
+	 * @param id The unique ID for this element (if null an ID will be generated)
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public ProgressBar(@ConstructorArg(clazz = String.class, name = "id") String id,
+				   @ConstructorArg(clazz = Float.class, name = "x") float x,
+				   @ConstructorArg(clazz = Float.class, name = "y") float y,
+				   @ConstructorArg(clazz = Float.class, name = "width") float width,
+				   @ConstructorArg(clazz = Float.class, name = "height") float height) {
+		super(id, x, y, width, height);
 		max = 1f;
 	}
 	

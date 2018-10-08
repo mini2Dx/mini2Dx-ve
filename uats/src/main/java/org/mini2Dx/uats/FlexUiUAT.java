@@ -126,6 +126,9 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 			UiContainer.setTheme(assetManager.get(UiTheme.DEFAULT_THEME_FILENAME, UiTheme.class));
 		}
     	Gdx.input.setInputProcessor(uiContainer);
+
+		centerContainer.snapTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
+		bottomRightContainer.snapTo(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
 	}
 	
 	@Override

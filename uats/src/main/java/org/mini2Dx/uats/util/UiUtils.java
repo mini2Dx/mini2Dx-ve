@@ -136,7 +136,13 @@ public class UiUtils {
 	}
 	
 	private static Label createLabel(String text, String styleId, Color color, TextAnimation textAnimation, boolean debug) {
-		Label label = new Label("Label: " + text);
+		final String id;
+		if(text == null || text.trim().isEmpty()) {
+			id = null;
+		} else {
+			id = "Label: " + text;
+		}
+		Label label = new Label(id);
 		label.setText(text);
 		label.setStyleId(styleId);
 		label.setColor(color);

@@ -29,6 +29,8 @@ import org.mini2Dx.ui.style.UiTheme;
 
 import junit.framework.Assert;
 
+import java.util.List;
+
 /**
  * Unit tests for {@link DivRenderNode}
  */
@@ -60,7 +62,7 @@ public class DivRenderNodeTest {
 		
 		theme = mockery.mock(UiTheme.class);
 		renderTree = mockery.mock(UiContainerRenderTree.class);
-		div.setFlexLayout("flex-div:xs-3c");
+		div.setFlexLayout("flex-col:xs-3c");
 		
 		div.setVisibility(Visibility.VISIBLE);
 		flexRow1.setVisibility(Visibility.VISIBLE);
@@ -73,6 +75,12 @@ public class DivRenderNodeTest {
 		
 		divRenderNode.addChild(rowRenderNode1);
 		divRenderNode.addChild(rowRenderNode2);
+
+		mockery.checking(new Expectations() {
+			{
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
+			}
+		});
 	}
 	
 	@Test

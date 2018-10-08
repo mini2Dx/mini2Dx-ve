@@ -27,6 +27,8 @@ import org.mini2Dx.ui.layout.ScreenSize;
 
 import junit.framework.Assert;
 
+import java.util.List;
+
 /**
  * Unit tests for {@link RenderNode}
  */
@@ -71,6 +73,13 @@ public class RenderNodeTest {
 	
 	@Test
 	public void testRenderCoordinatesWithParentMargin() {
+		mockery.checking(new Expectations() {
+			{
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferUpdateDeferred(with(any(List.class)));
+			}
+		});
+
 		configureParentWidth();
 		
 		parentRenderNode.getStyle().setMarginLeft(4);
@@ -98,6 +107,13 @@ public class RenderNodeTest {
 	
 	@Test
 	public void testRenderCoordinatesWithParentPadding() {
+		mockery.checking(new Expectations() {
+			{
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferUpdateDeferred(with(any(List.class)));
+			}
+		});
+
 		configureParentWidth();
 		
 		parentRenderNode.getStyle().setPaddingLeft(4);
@@ -127,6 +143,13 @@ public class RenderNodeTest {
 	
 	@Test
 	public void testRenderCoordinatesWithParentMarginAndPadding() {
+		mockery.checking(new Expectations() {
+			{
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferUpdateDeferred(with(any(List.class)));
+			}
+		});
+
 		configureParentWidth();
 		
 		parentRenderNode.getStyle().setPaddingLeft(12);
@@ -160,6 +183,13 @@ public class RenderNodeTest {
 	
 	@Test
 	public void testRenderCoordinatesWithChildAndParentMarginAndPadding() {
+		mockery.checking(new Expectations() {
+			{
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferUpdateDeferred(with(any(List.class)));
+			}
+		});
+
 		configureParentWidth();
 		
 		parentRenderNode.getStyle().setPadding(8);
@@ -197,6 +227,7 @@ public class RenderNodeTest {
 			{
 				atLeast(1).of(layoutState).getUiContainerRenderTree();
 				will(returnValue(renderTree));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
 			}
 		});
 		
@@ -222,6 +253,7 @@ public class RenderNodeTest {
 			{
 				atLeast(1).of(layoutState).getUiContainerRenderTree();
 				will(returnValue(renderTree));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
 			}
 		});
 		
@@ -249,6 +281,7 @@ public class RenderNodeTest {
 			{
 				atLeast(1).of(layoutState).getUiContainerRenderTree();
 				will(returnValue(renderTree));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
 			}
 		});
 		
@@ -278,6 +311,7 @@ public class RenderNodeTest {
 			{
 				atLeast(1).of(layoutState).getUiContainerRenderTree();
 				will(returnValue(renderTree));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
 			}
 		});
 		
@@ -306,8 +340,6 @@ public class RenderNodeTest {
 			{
 				atLeast(1).of(layoutState).getUiContainerRenderTree();
 				will(returnValue(renderTree));
-				atLeast(1).of(layoutState).getScreenSize();
-				will(returnValue(ScreenSize.XS));
 				atLeast(1).of(layoutState).getParentWidth();
 				will(returnValue(0f + PARENT_WIDTH));
 				atLeast(1).of(layoutState).setParentWidth(with(any(Float.class)));

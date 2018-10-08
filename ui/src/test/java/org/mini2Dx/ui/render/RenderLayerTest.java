@@ -28,6 +28,8 @@ import org.mini2Dx.ui.layout.LayoutRuleset;
 import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.layout.ScreenSize;
 
+import java.util.List;
+
 /**
  * Unit tests for {@link RenderLayer}
  */
@@ -60,6 +62,12 @@ public class RenderLayerTest {
 		
 		renderLayer.add(renderNode1);
 		renderLayer.add(renderNode2);
+
+		mockery.checking(new Expectations() {
+			{
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
+			}
+		});
 	}
 	
 	@After
@@ -358,8 +366,6 @@ public class RenderLayerTest {
 			{
 				atLeast(1).of(layoutState).getUiContainerRenderTree();
 				will(returnValue(renderTree));
-				atLeast(1).of(layoutState).getScreenSize();
-				will(returnValue(ScreenSize.XS));
 				atLeast(1).of(layoutState).getParentWidth();
 				will(returnValue(parentWidth));
 				atLeast(1).of(layoutState).setParentWidth(with(any(Float.class)));

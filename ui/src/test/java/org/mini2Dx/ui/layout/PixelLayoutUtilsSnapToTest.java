@@ -181,7 +181,7 @@ public class PixelLayoutUtilsSnapToTest {
 				allowing(childElement).isRenderNodeDirty();
 				will(returnValue(false));
 
-				oneOf(parentElement).deferUntilUpdate(with(any(Runnable.class)));
+				oneOf(childElement).deferUntilUpdate(with(any(Runnable.class)));
 			}
 		});
 

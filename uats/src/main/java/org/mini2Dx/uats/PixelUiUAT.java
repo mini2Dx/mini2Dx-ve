@@ -59,6 +59,7 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 	private RadioButton radioButton;
 	private Slider slider;
 	private Label textBoxResult, checkboxResult, radioButtonResult, sliderResult;
+	private TextButton returnButton;
 
 	private int nextScreenId = -1;
 
@@ -72,7 +73,6 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		uiContainer = new UiContainer(gc, assetManager);
 		uiContainer.setKeyboardNavigationEnabled(UATApplication.USE_KEYBOARD_NAVIGATION);
 		gc.addResizeListener(this);
-		initialiseUi();
 
 		if(Controllers.getControllers().size > 0) {
 			try {
@@ -91,6 +91,7 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 	public void update(GameContainer gc, ScreenManager<? extends GameScreen> screenManager, float delta) {
 		//System.out.println("Row " + uiContainer.getElementById("row-select").isRenderNodeDirty());
 		//System.out.println("Select " + select.isRenderNodeDirty());
+		//System.out.println(returnButton.getLabel().getWidth() + " " + returnButton.getLabel().getHeight());
 
 		uiContainer.update(delta);
 		if (nextScreenId > -1) {
@@ -126,6 +127,9 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		nextScreenId = -1;
 		if (!UiContainer.isThemeApplied()) {
 			UiContainer.setTheme(assetManager.get(UiTheme.DEFAULT_THEME_FILENAME, UiTheme.class));
+		}
+		if(topLeftContainer == null) {
+			initialiseUi();
 		}
 		Gdx.input.setInputProcessor(uiContainer);
 	}
@@ -255,7 +259,7 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		});
 		sliderResult = UiUtils.createLabel("0.0");
 
-		TextButton returnButton = UiUtils.createButton(tab1Navigation, "Return to UAT Selection Screen", new ActionListener() {
+		returnButton = UiUtils.createButton(tab1Navigation, "Return to UAT Selection Screen", new ActionListener() {
 
 			@Override
 			public void onActionBegin(ActionEvent event) {}
@@ -267,17 +271,18 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		});
 		returnButton.setFlexLayout(null);
 		returnButton.set(0f, 0f, uiContainer.getWidth() * 0.75f, 20f);
+		returnButton.shrinkToContents(true);
 
 		select.addOption("Item 1", "1");
 		select.addOption("Item 2", "2");
 		select.addOption("Item 3", "3");
 
 		centerContainer = new Container("main-centerContainer");
-		centerContainer.set(0f, 0f, uiContainer.getWidth(), uiContainer.getHeight());
-		//centerContainer.snapTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
+		centerContainer.set(0f, 0f, uiContainer.getWidth(), uiContainer.getHeight() * 0.6f);
+		centerContainer.snapTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
 
 		tabView = new TabView("tabView");
-		tabView.set(0f, 0f, centerContainer.getWidth(), centerContainer.getHeight());
+		tabView.set(0f, 0f, centerContainer.getContentWidth(), centerContainer.getContentHeight());
 		tabView.setVisibility(Visibility.VISIBLE);
 
 		Tab tab1 = new Tab("tab1", "Tab 1");
@@ -306,108 +311,137 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		tab1.setNavigation(tab1Navigation);
 		tabView.add(tab1);
 
-//		Tab tab2 = new Tab("tab2", "Tab 2");
-//
-//		ProgressBar progressBar = new ProgressBar();
-//		progressBar.set(0f, 0f, 50f, 20f);
-//		progressBar.setValue(0.4f);
-//		progressBar.setVisibility(Visibility.VISIBLE);
-//		tab2.add(FlexRow.withElements(progressBar));
-//
-//		Button reAddElementsButton =  UiUtils.createButton(null, "Re-add tabview", new ActionListener() {
-//
-//			@Override
-//			public void onActionEnd(ActionEvent event) {
-//				centerContainer.remove(tabView);
-//				centerContainer.add(tabView);
-//			}
-//
-//			@Override
-//			public void onActionBegin(ActionEvent event) {}
-//		});
-//		tab2.add(FlexRow.withElements(reAddElementsButton));
-//
-//		tabView.add(tab2);
-//
-//		Tab tab3 = new Tab("tab3", "Tab 3");
-//		Button hiddenButton = UiUtils.createButton(null, "Hidden", new ActionListener() {
-//
-//			@Override
-//			public void onActionEnd(ActionEvent event) {}
-//
-//			@Override
-//			public void onActionBegin(ActionEvent event) {}
-//		});
-//		hiddenButton.setVisibility(Visibility.HIDDEN);
-//		tab3.add(FlexRow.withElements(hiddenButton));
-//		final ScrollBox scrollBox = new ScrollBox("scrollBox");
-//		scrollBox.set(0f, 0f, uiContainer.getWidth() * 0.75f, 300f);
-//		scrollBox.setVisibility(Visibility.VISIBLE);
-//		scrollBox.setMaxHeight(300f);
-//		for(int i = 0; i < 30; i++) {
-//			if(i % 2 == 0) {
-//				Label label = UiUtils.createLabel("Label " + i);
-//				FlexRow row = FlexRow.withElements(label);
-//				row.setVisibility(Visibility.VISIBLE);
-//				scrollBox.add(row);
-//			} else {
-//				Button button = UiUtils.createButton(null, "Test", null);
-//				FlexRow row = FlexRow.withElements(button);
-//				row.setVisibility(Visibility.VISIBLE);
-//				scrollBox.add(row);
-//			}
-//		}
-//		tab3.add(FlexRow.withElements(scrollBox));
-//
-//		Button scrollToTopButton = UiUtils.createButton(null, "Scroll to top (immediate)", new ActionListener() {
-//
-//			@Override
-//			public void onActionEnd(ActionEvent event) {
-//				scrollBox.scrollToTop(true);
-//			}
-//
-//			@Override
-//			public void onActionBegin(ActionEvent event) {}
-//		});
-//		tab3.add(FlexRow.withElements(scrollToTopButton));
-//
-//		Button scrollToBottomButton = UiUtils.createButton(null, "Scroll to bottom (immediate)", new ActionListener() {
-//
-//			@Override
-//			public void onActionEnd(ActionEvent event) {
-//				scrollBox.scrollToBottom(true);
-//			}
-//
-//			@Override
-//			public void onActionBegin(ActionEvent event) {}
-//		});
-//		tab3.add(FlexRow.withElements(scrollToBottomButton));
-//
-//		scrollToTopButton = UiUtils.createButton(null, "Scroll to top (smooth)", new ActionListener() {
-//
-//			@Override
-//			public void onActionEnd(ActionEvent event) {
-//				scrollBox.scrollToTop(false);
-//			}
-//
-//			@Override
-//			public void onActionBegin(ActionEvent event) {}
-//		});
-//		tab3.add(FlexRow.withElements(scrollToTopButton));
-//
-//		scrollToBottomButton = UiUtils.createButton(null, "Scroll to bottom (smooth)", new ActionListener() {
-//
-//			@Override
-//			public void onActionEnd(ActionEvent event) {
-//				scrollBox.scrollToBottom(false);
-//			}
-//
-//			@Override
-//			public void onActionBegin(ActionEvent event) {}
-//		});
-//		tab3.add(FlexRow.withElements(scrollToBottomButton));
-//
-//		tabView.add(tab3);
+		Tab tab2 = new Tab("tab2", "Tab 2");
+
+		ProgressBar progressBar = new ProgressBar();
+		progressBar.set(0f, 0f, 200f, 20f);
+		progressBar.setWidthToContentWidthOf(tab2);
+		progressBar.setValue(0.4f);
+		progressBar.setVisibility(Visibility.VISIBLE);
+
+		final FlexRow progressBarRow = FlexRow.withElements(progressBar);
+		tab2.add(progressBarRow);
+
+		Button reAddElementsButton =  UiUtils.createButton(null, "Re-add tabview", new ActionListener() {
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				centerContainer.remove(tabView);
+				centerContainer.add(tabView);
+			}
+
+			@Override
+			public void onActionBegin(ActionEvent event) {}
+		});
+
+		final FlexRow readdButtonRow = FlexRow.withElements(reAddElementsButton);
+		readdButtonRow.alignBelow(progressBarRow, HorizontalAlignment.LEFT);
+		tab2.add(readdButtonRow);
+
+		tabView.add(tab2);
+
+		Tab tab3 = new Tab("tab3", "Tab 3");
+		Button hiddenButton = UiUtils.createButton(null, "Hidden", new ActionListener() {
+
+			@Override
+			public void onActionEnd(ActionEvent event) {}
+
+			@Override
+			public void onActionBegin(ActionEvent event) {}
+		});
+		hiddenButton.setVisibility(Visibility.HIDDEN);
+		tab3.add(FlexRow.withElements(hiddenButton));
+
+		final ScrollBox scrollBox = new ScrollBox("scrollBox");
+		scrollBox.setWidthToContentWidthOf(tab3);
+		scrollBox.setVisibility(Visibility.VISIBLE);
+		scrollBox.setMaxHeight(150f);
+
+		FlexRow previousRow = null;
+		for(int i = 0; i < 30; i++) {
+			if(i % 2 == 0) {
+				Label label = UiUtils.createLabel("Label " + i);
+				FlexRow row = FlexRow.withElements(label);
+				if(previousRow != null) {
+					row.alignBelow(previousRow, HorizontalAlignment.LEFT);
+				}
+
+				row.setVisibility(Visibility.VISIBLE);
+				scrollBox.add(row);
+				previousRow = row;
+			} else {
+				Button button = UiUtils.createButton(null, "Test", null);
+				FlexRow row = FlexRow.withElements(button);
+				if(previousRow != null) {
+					row.alignBelow(previousRow, HorizontalAlignment.LEFT);
+				}
+
+				row.setVisibility(Visibility.VISIBLE);
+				scrollBox.add(row);
+				previousRow = row;
+			}
+		}
+		scrollBox.resizeScrollContentHeightToContents();
+		final FlexRow scrollBoxRow = FlexRow.withElements(scrollBox);
+		tab3.add(scrollBoxRow);
+
+		Button scrollToTopButton = UiUtils.createButton(null, "Scroll to top (immediate)", new ActionListener() {
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				scrollBox.scrollToTop(true);
+			}
+
+			@Override
+			public void onActionBegin(ActionEvent event) {}
+		});
+		final FlexRow scrollToTopRow = FlexRow.withElements(scrollToTopButton);
+		scrollToTopRow.alignBelow(scrollBoxRow, HorizontalAlignment.LEFT);
+		tab3.add(scrollToTopRow);
+
+		Button scrollToBottomButton = UiUtils.createButton(null, "Scroll to bottom (immediate)", new ActionListener() {
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				scrollBox.scrollToBottom(true);
+			}
+
+			@Override
+			public void onActionBegin(ActionEvent event) {}
+		});
+		final FlexRow scrollToBottomRow = FlexRow.withElements(scrollToBottomButton);
+		scrollToBottomRow.alignBelow(scrollToTopRow, HorizontalAlignment.LEFT);
+		tab3.add(scrollToBottomRow);
+
+		scrollToTopButton = UiUtils.createButton(null, "Scroll to top (smooth)", new ActionListener() {
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				scrollBox.scrollToTop(false);
+			}
+
+			@Override
+			public void onActionBegin(ActionEvent event) {}
+		});
+		final FlexRow smoothScrollToTopRow = FlexRow.withElements(scrollToTopButton);
+		smoothScrollToTopRow.alignBelow(scrollToBottomRow, HorizontalAlignment.LEFT);
+		tab3.add(smoothScrollToTopRow);
+
+		scrollToBottomButton = UiUtils.createButton(null, "Scroll to bottom (smooth)", new ActionListener() {
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				scrollBox.scrollToBottom(false);
+			}
+
+			@Override
+			public void onActionBegin(ActionEvent event) {}
+		});
+		final FlexRow smoothScrollToBottomRow = FlexRow.withElements(scrollToBottomButton);
+		smoothScrollToBottomRow.alignBelow(smoothScrollToTopRow, HorizontalAlignment.LEFT);
+		tab3.add(smoothScrollToBottomRow);
+
+		tabView.add(tab3);
 
 		tabView.setNextTabHotkey(Input.Keys.E);
 		tabView.setPreviousTabHotkey(Input.Keys.Q);
@@ -415,17 +449,17 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		centerContainer.add(tabView);
 		centerContainer.setVisibility(Visibility.VISIBLE);
 		centerContainer.setNavigation(tabView.getNavigation());
-		//centerContainer.shrinkToContents(true);
+		centerContainer.shrinkToContents(true);
 		uiContainer.add(centerContainer);
-//
-//		bottomRightContainer = new Container("bottom-right-frame");
-//		bottomRightContainer.set(0f, uiContainer.getHeight() - 25f, uiContainer.getWidth() * 0.33f, 50f);
-//		bottomRightContainer.setVisibility(Visibility.VISIBLE);
-//		FlexRow bottomFrameFlexRow = FlexRow.withElements("row-os", UiUtils.createHeader("OVERFLOW CLIPPED"));
-//		bottomFrameFlexRow.setHeight(12f);
-//		bottomFrameFlexRow.setOverflowClipped(true);
-//		bottomRightContainer.add(bottomFrameFlexRow);
-//		uiContainer.add(bottomRightContainer);
-//		bottomRightContainer.snapTo(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
+
+		bottomRightContainer = new Container("bottom-right-frame");
+		bottomRightContainer.set(0f, uiContainer.getHeight() - 25f, uiContainer.getWidth() * 0.33f, 50f);
+		bottomRightContainer.setVisibility(Visibility.VISIBLE);
+		FlexRow bottomFrameFlexRow = FlexRow.withElements("row-os", UiUtils.createHeader("OVERFLOW CLIPPED"));
+		bottomFrameFlexRow.setHeight(12f);
+		bottomFrameFlexRow.setOverflowClipped(true);
+		bottomRightContainer.add(bottomFrameFlexRow);
+		uiContainer.add(bottomRightContainer);
+		bottomRightContainer.snapTo(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
 	}
 }

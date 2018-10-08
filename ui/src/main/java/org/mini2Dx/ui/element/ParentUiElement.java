@@ -293,10 +293,12 @@ public abstract class ParentUiElement extends UiElement {
 			remove(asyncRemoveQueue.poll());
 		}
 
-		x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
-		y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
-		width = renderNode.getOuterWidth();
-		height = renderNode.getOuterHeight();
+		if(renderNode != null) {
+			x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
+			y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
+			width = renderNode.getOuterWidth();
+			height = renderNode.getOuterHeight();
+		}
 
 		super.syncWithUpdate(rootNode);
 	}
@@ -410,7 +412,6 @@ public abstract class ParentUiElement extends UiElement {
 		if(result) {
 			if(flexLayout != null) {
 				flexLayout = FlexLayoutRuleset.set(flexLayout, x, y, width, height);
-				System.out.println(getId() + " set all " + flexLayout);
 			}
 		}
 		return result;
@@ -422,7 +423,6 @@ public abstract class ParentUiElement extends UiElement {
 		if(result) {
 			if(flexLayout != null) {
 				flexLayout = FlexLayoutRuleset.setXY(flexLayout, x, y);
-				System.out.println(getId() + " set xy " + flexLayout);
 			}
 		}
 		return result;
@@ -434,7 +434,6 @@ public abstract class ParentUiElement extends UiElement {
 		if(result) {
 			if(flexLayout != null) {
 				flexLayout = FlexLayoutRuleset.setX(flexLayout, x);
-				System.out.println(getId() + " set x " + flexLayout);
 			}
 		}
 		return result;
@@ -446,7 +445,6 @@ public abstract class ParentUiElement extends UiElement {
 		if(result) {
 			if(flexLayout != null) {
 				flexLayout = FlexLayoutRuleset.setY(flexLayout, y);
-				System.out.println(getId() + "  set y " + flexLayout);
 			}
 		}
 		return result;
@@ -458,7 +456,6 @@ public abstract class ParentUiElement extends UiElement {
 		if(result) {
 			if(flexLayout != null) {
 				flexLayout = FlexLayoutRuleset.setWidth(flexLayout, width);
-				System.out.println(getId() + " set width " + flexLayout);
 			}
 		}
 		return result;
@@ -470,7 +467,6 @@ public abstract class ParentUiElement extends UiElement {
 		if(result) {
 			if(flexLayout != null) {
 				flexLayout = FlexLayoutRuleset.setHeight(flexLayout, height);
-				System.out.println(getId() + " set height " + flexLayout);
 			}
 		}
 		return result;

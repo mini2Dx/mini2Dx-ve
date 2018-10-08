@@ -82,8 +82,8 @@ public class UiSerializationUAT extends BasicGameScreen {
 			failureMessage = "'container' is null";
 			return false;
 		}
-		if(container.getElementById("row") == null) {
-			failureMessage = "'row' is null";
+		if(container.getElementById("flexRow") == null) {
+			failureMessage = "'flexRow' is null";
 			return false;
 		}
 		if(container.getElementById("column1") == null) {

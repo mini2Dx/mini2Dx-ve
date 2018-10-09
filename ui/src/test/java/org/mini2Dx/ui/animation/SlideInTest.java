@@ -21,6 +21,8 @@ import org.mini2Dx.core.engine.geom.CollisionBox;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.ui.effect.SlideDirection;
 import org.mini2Dx.ui.effect.SlideIn;
+import org.mini2Dx.ui.element.UiElement;
+import org.mini2Dx.ui.element.Visibility;
 import org.mini2Dx.ui.render.UiContainerRenderTree;
 
 import junit.framework.Assert;
@@ -42,12 +44,14 @@ public class SlideInTest {
 	private final CollisionBox currentArea = new CollisionBox();
 	private final Rectangle targetArea = new Rectangle(TARGET_X, TARGET_Y, TARGET_WIDTH, TARGET_HEIGHT);
 
+	private UiElement uiElement;
 	private UiContainerRenderTree renderTree;
 
 	@Before
 	public void setUp() {
 		mockery.setImposteriser(ClassImposteriser.INSTANCE);
 
+		uiElement = mockery.mock(UiElement.class);
 		renderTree = mockery.mock(UiContainerRenderTree.class);
 	}
 
@@ -64,6 +68,7 @@ public class SlideInTest {
 			
 			mockery.checking(new Expectations() {
 				{
+					oneOf(uiElement).setVisibility(with(Visibility.VISIBLE));
 					oneOf(renderTree).getOuterRenderY();
 					will(returnValue(0));
 					oneOf(renderTree).getOuterRenderHeight();
@@ -72,6 +77,7 @@ public class SlideInTest {
 			});
 			
 			SlideIn slideIn = new SlideIn(SlideDirection.UP, duration);
+			slideIn.preBegin(uiElement);
 			for(int i = 0; i < totalFrames; i++) {
 				if(i < totalFrames - 1) {
 					Assert.assertEquals(false, slideIn.isFinished());
@@ -93,12 +99,14 @@ public class SlideInTest {
 			
 			mockery.checking(new Expectations() {
 				{
+					oneOf(uiElement).setVisibility(with(Visibility.VISIBLE));
 					oneOf(renderTree).getOuterRenderY();
 					will(returnValue(0));
 				}
 			});
 			
 			SlideIn slideIn = new SlideIn(SlideDirection.DOWN, duration);
+			slideIn.preBegin(uiElement);
 			for(int i = 0; i < totalFrames; i++) {
 				if(i < totalFrames - 1) {
 					Assert.assertEquals(false, slideIn.isFinished());
@@ -120,6 +128,7 @@ public class SlideInTest {
 			
 			mockery.checking(new Expectations() {
 				{
+					oneOf(uiElement).setVisibility(with(Visibility.VISIBLE));
 					oneOf(renderTree).getOuterRenderX();
 					will(returnValue(0));
 					oneOf(renderTree).getOuterRenderWidth();
@@ -128,6 +137,7 @@ public class SlideInTest {
 			});
 			
 			SlideIn slideIn = new SlideIn(SlideDirection.LEFT, duration);
+			slideIn.preBegin(uiElement);
 			for(int i = 0; i < totalFrames; i++) {
 				if(i < totalFrames - 1) {
 					Assert.assertEquals(false, slideIn.isFinished());
@@ -149,12 +159,14 @@ public class SlideInTest {
 			
 			mockery.checking(new Expectations() {
 				{
+					oneOf(uiElement).setVisibility(with(Visibility.VISIBLE));
 					oneOf(renderTree).getOuterRenderX();
 					will(returnValue(0));
 				}
 			});
 			
 			SlideIn slideIn = new SlideIn(SlideDirection.RIGHT, duration);
+			slideIn.preBegin(uiElement);
 			for(int i = 0; i < totalFrames; i++) {
 				if(i < totalFrames - 1) {
 					Assert.assertEquals(false, slideIn.isFinished());
@@ -179,6 +191,7 @@ public class SlideInTest {
 		
 		mockery.checking(new Expectations() {
 			{
+				oneOf(uiElement).setVisibility(with(Visibility.VISIBLE));
 				oneOf(renderTree).getOuterRenderY();
 				will(returnValue(0));
 				oneOf(renderTree).getOuterRenderHeight();
@@ -187,6 +200,7 @@ public class SlideInTest {
 		});
 		
 		SlideIn slideIn = new SlideIn(SlideDirection.UP, duration);
+		slideIn.preBegin(uiElement);
 		for(int i = 0; i < halfTotalFrames; i++) {
 			slideIn.update(renderTree, currentArea, targetArea, DELTA);
 		}

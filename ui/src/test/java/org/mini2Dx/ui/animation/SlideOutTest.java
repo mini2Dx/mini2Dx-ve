@@ -22,6 +22,8 @@ import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.ui.effect.SlideDirection;
 import org.mini2Dx.ui.effect.SlideIn;
 import org.mini2Dx.ui.effect.SlideOut;
+import org.mini2Dx.ui.element.UiElement;
+import org.mini2Dx.ui.element.Visibility;
 import org.mini2Dx.ui.render.UiContainerRenderTree;
 
 import com.badlogic.gdx.math.MathUtils;
@@ -45,12 +47,14 @@ public class SlideOutTest {
 	private final CollisionBox currentArea = new CollisionBox(CURRENT_X, CURRENT_Y, CURRENT_WIDTH, CURRENT_HEIGHT);
 	private final Rectangle targetArea = new Rectangle();
 
+	private UiElement uiElement;
 	private UiContainerRenderTree renderTree;
 
 	@Before
 	public void setUp() {
 		mockery.setImposteriser(ClassImposteriser.INSTANCE);
 
+		uiElement = mockery.mock(UiElement.class);
 		renderTree = mockery.mock(UiContainerRenderTree.class);
 	}
 
@@ -67,7 +71,14 @@ public class SlideOutTest {
 			final float expectedSpeed = (CURRENT_Y + CURRENT_HEIGHT) / duration;
 			final int totalFrames = (duration * 60);
 
+			mockery.checking(new Expectations() {
+				{
+					oneOf(uiElement).setVisibility(Visibility.HIDDEN);
+				}
+			});
+
 			SlideOut slideOut = new SlideOut(SlideDirection.UP, duration);
+			slideOut.preBegin(uiElement);
 			for (int i = 0; i < totalFrames; i++) {
 				if (i < totalFrames - 1) {
 					Assert.assertEquals(false, slideOut.isFinished());
@@ -97,7 +108,14 @@ public class SlideOutTest {
 			final float expectedSpeed = (CONTAINER_HEIGHT - CURRENT_Y) / duration;
 			final int totalFrames = (duration * 60);
 
+			mockery.checking(new Expectations() {
+				{
+					oneOf(uiElement).setVisibility(Visibility.HIDDEN);
+				}
+			});
+
 			SlideOut slideOut = new SlideOut(SlideDirection.DOWN, duration);
+			slideOut.preBegin(uiElement);
 			for (int i = 0; i < totalFrames; i++) {
 				if (i < totalFrames - 1) {
 					Assert.assertEquals(false, slideOut.isFinished());
@@ -119,7 +137,14 @@ public class SlideOutTest {
 			final float expectedSpeed = (CURRENT_X + CURRENT_WIDTH) / duration;
 			final int totalFrames = (duration * 60);
 
+			mockery.checking(new Expectations() {
+				{
+					oneOf(uiElement).setVisibility(Visibility.HIDDEN);
+				}
+			});
+
 			SlideOut slideOut = new SlideOut(SlideDirection.LEFT, duration);
+			slideOut.preBegin(uiElement);
 			for (int i = 0; i < totalFrames; i++) {
 				if (i < totalFrames - 1) {
 					Assert.assertEquals(false, slideOut.isFinished());
@@ -149,7 +174,14 @@ public class SlideOutTest {
 			final float expectedSpeed = (CONTAINER_WIDTH - CURRENT_X) / duration;
 			final int totalFrames = (duration * 60);
 
+			mockery.checking(new Expectations() {
+				{
+					oneOf(uiElement).setVisibility(Visibility.HIDDEN);
+				}
+			});
+
 			SlideOut slideOut = new SlideOut(SlideDirection.RIGHT, duration);
+			slideOut.preBegin(uiElement);
 			for (int i = 0; i < totalFrames; i++) {
 				if (i < totalFrames - 1) {
 					Assert.assertEquals(false, slideOut.isFinished());

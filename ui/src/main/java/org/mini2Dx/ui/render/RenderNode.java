@@ -254,26 +254,11 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		if(dirty1 && this.dirty == dirty1) {
 			return;
 		}
-		switch(UiContainer.getState()) {
-		case NOOP:
-		case INTERPOLATE:
-		case RENDER:
-			this.dirty = dirty1;
-			if (parent == null) {
-				return;
-			}
-			parent.setChildDirty(dirty1);
-			break;
-		case LAYOUT:
-		case UPDATE:
-			element.deferUntilUpdate(new Runnable() {
-				@Override
-				public void run() {
-					setDirty(dirty1);
-				}
-			});
-			break;
+		this.dirty = dirty1;
+		if (parent == null) {
+			return;
 		}
+		parent.setChildDirty(dirty1);
 	}
 
 	public void applyEffect(UiEffect effect) {

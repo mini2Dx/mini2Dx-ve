@@ -293,7 +293,7 @@ public abstract class ParentUiElement extends UiElement {
 			remove(asyncRemoveQueue.poll());
 		}
 
-		if(renderNode != null) {
+		if(renderNode != null && flexLayout != null) {
 			x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
 			y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
 			width = renderNode.getOuterWidth();

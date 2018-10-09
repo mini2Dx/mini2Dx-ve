@@ -144,10 +144,12 @@ public class TextBox extends UiElement implements Actionable {
 			renderNode.applyEffect(effects.poll());
 		}
 
-		x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
-		y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
-		width = renderNode.getOuterWidth();
-		height = renderNode.getOuterHeight();
+		if(flexLayout != null) {
+			x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
+			y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
+			width = renderNode.getOuterWidth();
+			height = renderNode.getOuterHeight();
+		}
 
 		super.syncWithUpdate(rootNode);
 	}

@@ -32,6 +32,8 @@ import org.mini2Dx.uats.util.UATSelectionScreen;
 import org.mini2Dx.uats.util.UiUtils;
 import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.controller.ControllerUiInput;
+import org.mini2Dx.ui.effect.SlideDirection;
+import org.mini2Dx.ui.effect.SlideIn;
 import org.mini2Dx.ui.element.*;
 import org.mini2Dx.ui.event.ActionEvent;
 import org.mini2Dx.ui.layout.FlexDirection;
@@ -92,6 +94,7 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		//System.out.println("Row " + uiContainer.getElementById("row-select").isRenderNodeDirty());
 		//System.out.println("Select " + select.isRenderNodeDirty());
 		//System.out.println(returnButton.getLabel().getWidth() + " " + returnButton.getLabel().getHeight());
+		System.out.println(topLeftContainer.isRenderNodeDirty());
 
 		uiContainer.update(delta);
 		if (nextScreenId > -1) {
@@ -131,6 +134,7 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		if(topLeftContainer == null) {
 			initialiseUi();
 		}
+		centerContainer.applyEffect(new SlideIn(SlideDirection.UP, 0.5f));
 		Gdx.input.setInputProcessor(uiContainer);
 	}
 
@@ -337,6 +341,21 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		final FlexRow readdButtonRow = FlexRow.withElements(reAddElementsButton);
 		readdButtonRow.alignBelow(progressBarRow, HorizontalAlignment.LEFT);
 		tab2.add(readdButtonRow);
+
+		Button slideInButton = UiUtils.createButton(null, "Slide In", new ActionListener() {
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				centerContainer.applyEffect(new SlideIn(SlideDirection.UP, 0.5f));
+			}
+
+			@Override
+			public void onActionBegin(ActionEvent event) {}
+		});
+
+		final FlexRow slideInRow = FlexRow.withElements(slideInButton);
+		slideInRow.alignBelow(readdButtonRow, HorizontalAlignment.LEFT);
+		tab2.add(slideInRow);
 
 		tabView.add(tab2);
 

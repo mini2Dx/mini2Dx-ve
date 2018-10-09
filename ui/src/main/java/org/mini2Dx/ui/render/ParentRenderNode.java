@@ -308,27 +308,12 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 
 	@Override
 	public void setDirty(final boolean dirty) {
-		switch(UiContainer.getState()) {
-		case NOOP:
-		case INTERPOLATE:
-		case RENDER:
-			if (layers == null || layers.size == 0) {
-				super.setDirty(dirty);
-			} else {
-				for (RenderLayer layer : layers.values()) {
-					layer.setDirty(dirty);
-				}
+		if (layers == null || layers.size == 0) {
+			super.setDirty(dirty);
+		} else {
+			for (RenderLayer layer : layers.values()) {
+				layer.setDirty(dirty);
 			}
-			break;
-		case LAYOUT:
-		case UPDATE:
-			element.deferUntilUpdate(new Runnable() {
-				@Override
-				public void run() {
-					setDirty(dirty);
-				}
-			});
-			break;
 		}
 	}
 

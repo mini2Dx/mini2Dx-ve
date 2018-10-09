@@ -37,7 +37,7 @@ public class Div extends ParentUiElement {
 	 *            The unique ID for this {@link Div}
 	 */
 	public Div(@ConstructorArg(clazz = String.class, name = "id") String id) {
-		this(id, 0f, 0f, 9000f, 9000f);
+		this(id, 0f, 0f, 300f, 300f);
 	}
 
 	/**

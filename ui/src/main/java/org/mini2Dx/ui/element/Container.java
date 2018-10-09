@@ -54,7 +54,7 @@ public class Container extends Div implements Navigatable {
 	 * @param id The unique ID for the {@link Container}
 	 */
 	public Container(@ConstructorArg(clazz = String.class, name = "id") String id) {
-		this(id, 0f, 0f, 9000f, 9000f);
+		this(id, 0f, 0f, 300f, 300f);
 	}
 
 	/**

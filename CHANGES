@@ -9,6 +9,7 @@
 - Improved UI theme JSON consistency
 - Improved scrolling when dragging scroll thumb in ScrollBox
 - Fixed UI elements changing state within margin area
+- Fixed SlideIn/SlideOut visibility timing
 
 [1.7.14]
 - (#76) Added support for Tiled object shapes

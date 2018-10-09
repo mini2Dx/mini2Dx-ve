@@ -38,6 +38,8 @@ public class SlideIn implements UiEffect {
 	private boolean speedCalculated = false;
 	private boolean finished = false;
 
+	private UiElement element;
+
 	/**
 	 * Slide in from bottom of screen with {@link #DEFAULT_DURATION}
 	 */
@@ -101,6 +103,7 @@ public class SlideIn implements UiEffect {
 		switch (direction) {
 		case UP:
 			if (!started) {
+				element.setVisibility(Visibility.VISIBLE);
 				currentArea.forceTo(targetX, uiContainer.getOuterRenderY() + uiContainer.getOuterRenderHeight() + 1f,
 						targetArea.getWidth(), targetArea.getHeight());
 				started = true;
@@ -120,6 +123,7 @@ public class SlideIn implements UiEffect {
 			break;
 		case DOWN:
 			if (!started) {
+				element.setVisibility(Visibility.VISIBLE);
 				currentArea.forceTo(targetX, uiContainer.getOuterRenderY() - targetArea.getHeight() - 1f,
 						targetArea.getWidth(), targetArea.getHeight());
 				started = true;
@@ -139,6 +143,7 @@ public class SlideIn implements UiEffect {
 			break;
 		case LEFT:
 			if (!started) {
+				element.setVisibility(Visibility.VISIBLE);
 				currentArea.forceTo(uiContainer.getOuterRenderX() + uiContainer.getOuterRenderWidth() + 1f, targetY,
 						targetArea.getWidth(), targetArea.getHeight());
 				started = true;
@@ -158,6 +163,7 @@ public class SlideIn implements UiEffect {
 			break;
 		case RIGHT:
 			if (!started) {
+				element.setVisibility(Visibility.VISIBLE);
 				currentArea.forceTo(uiContainer.getOuterRenderX() - targetArea.getWidth() - 1f, targetY,
 						targetArea.getWidth(), targetArea.getHeight());
 				started = true;
@@ -183,7 +189,7 @@ public class SlideIn implements UiEffect {
 
 	@Override
 	public void preBegin(UiElement element) {
-		element.setVisibility(Visibility.VISIBLE);
+		this.element = element;
 	}
 
 	@Override

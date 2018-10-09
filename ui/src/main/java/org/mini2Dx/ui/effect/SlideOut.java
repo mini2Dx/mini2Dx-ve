@@ -34,6 +34,8 @@ public class SlideOut implements UiEffect {
 	private boolean started = false;
 	private boolean finished = false;
 
+	private UiElement element;
+
 	/**
 	 * Slide out via top of screen with {@link #DEFAULT_DURATION}
 	 */
@@ -96,8 +98,10 @@ public class SlideOut implements UiEffect {
 			}
 			if (currentArea.getY() + currentArea.getHeight() <= 0f) {
 				finished = true;
+				element.setVisibility(Visibility.HIDDEN);
 			} else if (MathUtils.isEqual(currentArea.getY() + currentArea.getHeight(), 0f, 0.1f)) {
 				finished = true;
+				element.setVisibility(Visibility.HIDDEN);
 			}
 			break;
 		case DOWN:
@@ -112,8 +116,10 @@ public class SlideOut implements UiEffect {
 			}
 			if (currentArea.getY() >= uiContainer.getOuterRenderHeight()) {
 				finished = true;
+				element.setVisibility(Visibility.HIDDEN);
 			} else if (MathUtils.isEqual(currentArea.getY(), uiContainer.getOuterRenderHeight(), 0.1f)) {
 				finished = true;
+				element.setVisibility(Visibility.HIDDEN);
 			}
 			break;
 		case LEFT:
@@ -126,8 +132,10 @@ public class SlideOut implements UiEffect {
 			}
 			if (currentArea.getX() + currentArea.getWidth() <= 0f) {
 				finished = true;
+				element.setVisibility(Visibility.HIDDEN);
 			} else if (MathUtils.isEqual(currentArea.getX() + currentArea.getWidth(), 0f, 0.1f)) {
 				finished = true;
+				element.setVisibility(Visibility.HIDDEN);
 			}
 			break;
 		case RIGHT:
@@ -142,23 +150,25 @@ public class SlideOut implements UiEffect {
 			} 
 			if (currentArea.getX() >= uiContainer.getOuterRenderWidth()) {
 				finished = true;
+				element.setVisibility(Visibility.HIDDEN);
 			} else if (MathUtils.isEqual(currentArea.getX(), uiContainer.getOuterRenderWidth(), 0.1f)) {
 				finished = true;
+				element.setVisibility(Visibility.HIDDEN);
 			}
 			break;
 		default:
 			break;
 		}
-		return true;
+		return !finished;
 	}
 
 	@Override
 	public void preBegin(UiElement element) {
+		this.element = element;
 	}
 
 	@Override
 	public void postEnd(UiElement element) {
-		element.setVisibility(Visibility.HIDDEN);
 	}
 
 	@Override

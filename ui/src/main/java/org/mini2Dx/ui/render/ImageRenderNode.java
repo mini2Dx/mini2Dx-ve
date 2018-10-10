@@ -77,12 +77,20 @@ public class ImageRenderNode extends RenderNode<Image, StyleRule> {
 
 	@Override
 	protected float determineXOffset(LayoutState layoutState) {
-		return 0f;
+		if(parent.getLayoutRuleset().isFlexLayout()) {
+			return 0f;
+		} else {
+			return element.getX();
+		}
 	}
 
 	@Override
 	protected float determineYOffset(LayoutState layoutState) {
-		return 0f;
+		if(parent.getLayoutRuleset().isFlexLayout()) {
+			return 0f;
+		} else {
+			return element.getY();
+		}
 	}
 
 	@Override

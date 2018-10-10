@@ -293,11 +293,19 @@ public class SliderRenderNode extends RenderNode<Slider, SliderStyleRule> implem
 
 	@Override
 	protected float determineXOffset(LayoutState layoutState) {
-		return 0f;
+		if(parent.getLayoutRuleset().isFlexLayout()) {
+			return 0f;
+		} else {
+			return element.getX();
+		}
 	}
 
 	@Override
 	protected float determineYOffset(LayoutState layoutState) {
-		return 0f;
+		if(parent.getLayoutRuleset().isFlexLayout()) {
+			return 0f;
+		} else {
+			return element.getY();
+		}
 	}
 }

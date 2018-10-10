@@ -202,6 +202,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 			preferredContentHeight = 0f;
 			xOffset = 0f;
 			yOffset = 0f;
+			element.syncWithLayout(rootNode);
 			return;
 		default:
 			preferredContentWidth = determinePreferredContentWidth(layoutState);

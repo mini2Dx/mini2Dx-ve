@@ -91,11 +91,6 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 
 	@Override
 	public void update(GameContainer gc, ScreenManager<? extends GameScreen> screenManager, float delta) {
-		//System.out.println("Row " + uiContainer.getElementById("row-select").isRenderNodeDirty());
-		//System.out.println("Select " + select.isRenderNodeDirty());
-		//System.out.println(returnButton.getLabel().getWidth() + " " + returnButton.getLabel().getHeight());
-		System.out.println(topLeftContainer.isRenderNodeDirty());
-
 		uiContainer.update(delta);
 		if (nextScreenId > -1) {
 			screenManager.enterGameScreen(nextScreenId, new FadeOutTransition(), new FadeInTransition());
@@ -143,6 +138,15 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		topLeftContainer.setStyleId("no-background");
 
 		final Label header = UiUtils.createHeader("UI UAT");
+		header.set(50f, 50f, 50f, 50f);
+		header.setVisibility(Visibility.HIDDEN);
+		topLeftContainer.deferUntilUpdate(new Runnable() {
+			@Override
+			public void run() {
+				System.out.println("HERE");
+				header.setVisibility(Visibility.VISIBLE);
+			}
+		}, 5f);
 
 		Div topLeftHeaderDiv = Div.withElements("top-left-header", header);
 		topLeftContainer.add(topLeftHeaderDiv);

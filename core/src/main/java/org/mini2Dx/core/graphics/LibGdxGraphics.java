@@ -11,22 +11,9 @@
  */
 package org.mini2Dx.core.graphics;
 
-import org.mini2Dx.core.game.GameWrapper;
-import org.mini2Dx.core.geom.Rectangle;
-import org.mini2Dx.core.geom.Shape;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
-import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.SpriteCache;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -39,6 +26,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import org.mini2Dx.core.game.GameWrapper;
+import org.mini2Dx.core.geom.Rectangle;
+import org.mini2Dx.core.geom.Shape;
 
 /**
  * LibGDX implementation of {@link Graphics}
@@ -531,16 +521,20 @@ public class LibGdxGraphics implements Graphics {
 			endRendering();
 		}
 
-		clip = new Rectangle(x, y, width, height);
+		if(MathUtils.isEqual(0f, x) && MathUtils.isEqual(0f, y) &&
+				MathUtils.isEqual(getViewportWidth(), width) &&
+				MathUtils.isEqual(getViewportHeight(), height)) {
+			clip = null;
+		} else if(clip == null) {
+			clip = new Rectangle(x, y, width, height);
+		} else {
+			clip.set(x, y, width, height);
+		}
 	}
 
 	@Override
 	public void setClip(Rectangle clip) {
-		if (rendering) {
-			endRendering();
-		}
-
-		this.clip = clip;
+		setClip(clip.getX(), clip.getY(), clip.getWidth(), clip.getHeight());
 	}
 
 	@Override

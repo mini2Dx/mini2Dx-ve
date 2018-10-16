@@ -528,7 +528,6 @@ public class DesktopXmlSerializer implements XmlSerializer {
 			}
 			if (detectedAnnotations.size() == attributes.size()) {
 				//Found exact match
-				System.out.println("Matched exact constructor with " + detectedAnnotations.size() + " annotations");
 				bestMatchedConstructor = constructors[i];
 				break;
 			}
@@ -537,7 +536,6 @@ public class DesktopXmlSerializer implements XmlSerializer {
 			} else if (detectedAnnotations.size() > bestMatchedConstructor.getParameterAnnotations().length) {
 				bestMatchedConstructor = constructors[i];
 			}
-			System.out.println("Best constructor with " + detectedAnnotations.size() + " annotations");
 		}
 		if (bestMatchedConstructor == null || detectedAnnotations.size() == 0) {
 			if(Gdx.app != null && detectedAnnotations.size() > 0) {

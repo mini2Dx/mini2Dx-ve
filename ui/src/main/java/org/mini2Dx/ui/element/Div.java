@@ -42,6 +42,20 @@ public class Div extends ParentUiElement {
 
 	/**
 	 * Constructor
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public Div(@ConstructorArg(clazz = Float.class, name = "x") float x,
+			   @ConstructorArg(clazz = Float.class, name = "y") float y,
+			   @ConstructorArg(clazz = Float.class, name = "width") float width,
+			   @ConstructorArg(clazz = Float.class, name = "height") float height) {
+		super(null, x, y, width, height);
+	}
+
+	/**
+	 * Constructor
 	 * @param id The unique ID for this element (if null an ID will be generated)
 	 * @param x The x coordinate of this element relative to its parent
 	 * @param y The y coordinate of this element relative to its parent

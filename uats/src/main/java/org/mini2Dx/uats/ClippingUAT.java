@@ -93,6 +93,13 @@ public class ClippingUAT extends BasicGameScreen {
         g.setClip(0, 256, 64, 64);
         g.drawString("Hello, world!", 0, 256);
         g.removeClip();
+
+        g.setScale(2f, 2f);
+        g.setClip(0, 196f, 64, 64);
+        g.drawString("Hello, world 2!", 0, 196);
+        g.setClip(0, 0f, g.getViewportWidth(), g.getViewportHeight());
+        g.drawString("Hello, world 3!", 0, 224);
+        g.removeClip();
     }
 
     @Override

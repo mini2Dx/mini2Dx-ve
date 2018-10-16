@@ -13,6 +13,7 @@ package org.mini2Dx.ui.element;
 
 import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.event.ActionEvent;
@@ -36,6 +37,53 @@ public abstract class CustomUiElement extends UiElement implements Actionable {
 
 	@Field(optional=true)
 	private boolean enabled = true;
+
+	/**
+	 * Constructor. Generates a unique ID for this {@link Checkbox}
+	 */
+	public CustomUiElement() {
+		this(null);
+	}
+
+	/**
+	 * Constructor
+	 *
+	 * @param id
+	 *            The unique ID for this {@link Checkbox}
+	 */
+	public CustomUiElement(@ConstructorArg(clazz = String.class, name = "id") String id) {
+		this(id, 0f, 0f, 20f, 20f);
+	}
+
+	/**
+	 * Constructor
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public CustomUiElement(@ConstructorArg(clazz = Float.class, name = "x") float x,
+					@ConstructorArg(clazz = Float.class, name = "y") float y,
+					@ConstructorArg(clazz = Float.class, name = "width") float width,
+					@ConstructorArg(clazz = Float.class, name = "height") float height) {
+		this(null, x, y, width, height);
+	}
+
+	/**
+	 * Constructor
+	 * @param id The unique ID for this element (if null an ID will be generated)
+	 * @param x The x coordinate of this element relative to its parent
+	 * @param y The y coordinate of this element relative to its parent
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public CustomUiElement(@ConstructorArg(clazz = String.class, name = "id") String id,
+					@ConstructorArg(clazz = Float.class, name = "x") float x,
+					@ConstructorArg(clazz = Float.class, name = "y") float y,
+					@ConstructorArg(clazz = Float.class, name = "width") float width,
+					@ConstructorArg(clazz = Float.class, name = "height") float height) {
+		super(id, x, y, width, height);
+	}
 
 	/**
 	 * Update the UI state

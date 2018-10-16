@@ -30,7 +30,9 @@ public class DivTest {
 	@Test
 	public void testSerialization() {
 		Div div = new Div("div-1");
+		div.set(10f, 100f, 1000f, 10000f);
 		div.setZIndex(22);
+		div.setOverflowClipped(true);
 		div.add(new Label());
 		div.add(new TextButton("button-1"));
 		
@@ -41,6 +43,48 @@ public class DivTest {
 			
 			Assert.assertEquals(div.getId(), result.getId());
 			Assert.assertEquals(div.getZIndex(), result.getZIndex());
+			Assert.assertEquals(10f, result.getX(), 0.01f);
+			Assert.assertEquals(100f, result.getY(), 0.01f);
+			Assert.assertEquals(1000f, result.getWidth(), 0.01f);
+			Assert.assertEquals(10000f, result.getHeight(), 0.01f);
+			Assert.assertEquals(div.isOverflowClipped(), result.isOverflowClipped());
+			Assert.assertEquals(div.children.size, result.children.size);
+			for(int i = 0; i < div.children.size; i++) {
+				Assert.assertEquals(div.children.get(i).getId(), result.children.get(i).getId());
+			}
+		} catch (SerializationException e) {
+			e.printStackTrace();
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testSerializationAsChild() {
+		FlexRow parent = new FlexRow();
+
+		Div div = new Div("div-1");
+		div.set(10f, 100f, 1000f, 10000f);
+		div.setZIndex(22);
+		div.setOverflowClipped(true);
+		div.add(new Label());
+		div.add(new TextButton("button-1"));
+
+		parent.add(div);
+
+		try {
+			String xml = Mdx.xml.toXml(parent);
+			System.out.println(xml);
+
+			FlexRow rowResult = Mdx.xml.fromXml(xml, FlexRow.class);
+			Div result = (Div) rowResult.get(0);
+
+			Assert.assertEquals(div.getId(), result.getId());
+			Assert.assertEquals(div.getZIndex(), result.getZIndex());
+			Assert.assertEquals(10f, result.getX(), 0.01f);
+			Assert.assertEquals(100f, result.getY(), 0.01f);
+			Assert.assertEquals(1000f, result.getWidth(), 0.01f);
+			Assert.assertEquals(10000f, result.getHeight(), 0.01f);
+			Assert.assertEquals(div.isOverflowClipped(), result.isOverflowClipped());
 			Assert.assertEquals(div.children.size, result.children.size);
 			for(int i = 0; i < div.children.size; i++) {
 				Assert.assertEquals(div.children.get(i).getId(), result.children.get(i).getId());

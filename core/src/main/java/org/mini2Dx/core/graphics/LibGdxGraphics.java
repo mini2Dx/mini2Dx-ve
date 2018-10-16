@@ -34,6 +34,8 @@ import org.mini2Dx.core.geom.Shape;
  * LibGDX implementation of {@link Graphics}
  */
 public class LibGdxGraphics implements Graphics {
+	private static final String LOGGING_TAG = LibGdxGraphics.class.getSimpleName();
+
 	private final GameWrapper gameWrapper;
 	private final SpriteBatch spriteBatch;
 	private final ShapeTextureCache colorTextureCache;

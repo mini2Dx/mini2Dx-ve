@@ -16,12 +16,8 @@ import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mini2Dx.core.serialization.dummy.TestAbstractImplObject;
-import org.mini2Dx.core.serialization.dummy.TestChildObject;
-import org.mini2Dx.core.serialization.dummy.TestConstuctorArgObject;
-import org.mini2Dx.core.serialization.dummy.TestInterface;
-import org.mini2Dx.core.serialization.dummy.TestInterfaceImpl;
-import org.mini2Dx.core.serialization.dummy.TestParentObject;
+import org.mini2Dx.core.Mdx;
+import org.mini2Dx.core.serialization.dummy.*;
 import org.mini2Dx.natives.Os;
 
 import com.badlogic.gdx.utils.Array;
@@ -281,6 +277,39 @@ public abstract class XmlSerializerTest {
 		for(int i = 0; i < parentObject.getGdxArray().size; i++) {
 			Assert.assertEquals(parentObject.getGdxArray().get(i), result.getGdxArray().get(i));
 		}
+	}
+
+	@Test
+	public void testComplexConstructorMatching() throws SerializationException {
+		final TestComplexConstructorArgObject expected1 = new TestComplexConstructorArgObject();
+		String xml = xmlSerializer.toXml(expected1);
+		TestComplexConstructorArgObject result1 = xmlSerializer.fromXml(xml, TestComplexConstructorArgObject.class);
+		Assert.assertEquals(expected1, result1);
+		result1 = xmlSerializer.fromXml("<?xml version=\"1.0\" ?><data></data>", TestComplexConstructorArgObject.class);
+		Assert.assertEquals(expected1, result1);
+
+		final TestComplexConstructorArgObject expected2 = new TestComplexConstructorArgObject(99);
+		xml = xmlSerializer.toXml(expected2);
+		TestComplexConstructorArgObject result2 = xmlSerializer.fromXml(xml, TestComplexConstructorArgObject.class);
+		Assert.assertEquals(expected2, result2);
+		result2 = xmlSerializer.fromXml("<?xml version=\"1.0\" ?><data id=\"99\"></data>", TestComplexConstructorArgObject.class);
+		Assert.assertEquals(expected2, result2);
+
+		final TestComplexConstructorArgObject expected3 = new TestComplexConstructorArgObject(101, 1, 2, 3, 4);
+		xml = xmlSerializer.toXml(expected3);
+		TestComplexConstructorArgObject result3 = xmlSerializer.fromXml(xml, TestComplexConstructorArgObject.class);
+		Assert.assertEquals(expected3, result3);
+		result3 = xmlSerializer.fromXml("<?xml version=\"1.0\" ?><data id=\"101\" x=\"1\" y=\"2\" width=\"3\" height=\"4\"></data>", TestComplexConstructorArgObject.class);
+		Assert.assertEquals(expected3, result3);
+
+		final TestComplexConstructorParentObject expected4 = new TestComplexConstructorParentObject();
+		expected4.getChildren().add(expected3);
+		xml = xmlSerializer.toXml(expected4);
+		System.out.println(xml);
+		TestComplexConstructorParentObject result4 = xmlSerializer.fromXml(xml, TestComplexConstructorParentObject.class);
+		Assert.assertEquals(expected4, result4);
+		result4 = xmlSerializer.fromXml("<?xml version=\"1.0\" ?><data><children length=\"1\"><value class=\"org.mini2Dx.core.serialization.dummy.TestComplexConstructorArgObject\" id=\"101\" width=\"3\" height=\"4\" x=\"1\" y=\"2\"></value></children></data>", TestComplexConstructorParentObject.class);
+		Assert.assertEquals(expected4, result4);
 	}
 	
 	protected TestParentObject createTestParentObject() {

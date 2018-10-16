@@ -53,7 +53,7 @@ public class TabButton extends Button {
 			return;
 		}
 		renderNode = new TabButtonRenderNode(parentRenderNode, this);
-		for(int i = 0; i < children.size(); i++) {
+		for(int i = 0; i < children.size; i++) {
 			children.get(i).attach(renderNode);
 		}
 		parentRenderNode.addChild(renderNode);

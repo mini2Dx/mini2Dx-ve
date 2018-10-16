@@ -11,9 +11,7 @@
  */
 package org.mini2Dx.ui.element;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
+import com.badlogic.gdx.utils.Queue;
 import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
@@ -29,8 +27,8 @@ import org.mini2Dx.ui.render.*;
  * A tab that contains {@link UiElement}s. Add to a {@link TabView}
  */
 public class Tab extends Div implements Navigatable {
-	private final Queue<ControllerHotKeyOperation> controllerHotKeyOperations = new LinkedList<ControllerHotKeyOperation>();
-	private final Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations = new LinkedList<KeyboardHotKeyOperation>();
+	private final Queue<ControllerHotKeyOperation> controllerHotKeyOperations = new Queue<ControllerHotKeyOperation>();
+	private final Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations = new Queue<KeyboardHotKeyOperation>();
 
 	private static final String FLEX_LAYOUT = "flex-column:xs-12c";
 	
@@ -167,32 +165,32 @@ public class Tab extends Div implements Navigatable {
 	
 	@Override
 	public void setHotkey(ControllerButton button, Actionable actionable) {
-		controllerHotKeyOperations.offer(new ControllerHotKeyOperation(button, actionable, true));
+		controllerHotKeyOperations.addLast(new ControllerHotKeyOperation(button, actionable, true));
 	}
 	
 	@Override
 	public void setHotkey(int keycode, Actionable actionable) {
-		keyboardHotKeyOperations.offer(new KeyboardHotKeyOperation(keycode, actionable, true));
+		keyboardHotKeyOperations.addLast(new KeyboardHotKeyOperation(keycode, actionable, true));
 	}
 	
 	@Override
 	public void unsetHotkey(ControllerButton button) {
-		controllerHotKeyOperations.offer(new ControllerHotKeyOperation(button, null, false));
+		controllerHotKeyOperations.addLast(new ControllerHotKeyOperation(button, null, false));
 	}
 	
 	@Override
 	public void unsetHotkey(int keycode) {
-		keyboardHotKeyOperations.offer(new KeyboardHotKeyOperation(keycode, null, false));
+		keyboardHotKeyOperations.addLast(new KeyboardHotKeyOperation(keycode, null, false));
 	}
 	
 	@Override
 	public void clearControllerHotkeys() {
-		controllerHotKeyOperations.offer(new ControllerHotKeyOperation(null, null, false));
+		controllerHotKeyOperations.addLast(new ControllerHotKeyOperation(null, null, false));
 	}
 
 	@Override
 	public void clearKeyboardHotkeys() {
-		keyboardHotKeyOperations.offer(new KeyboardHotKeyOperation(Integer.MAX_VALUE, null, false));
+		keyboardHotKeyOperations.addLast(new KeyboardHotKeyOperation(Integer.MAX_VALUE, null, false));
 	}
 	
 	@Override

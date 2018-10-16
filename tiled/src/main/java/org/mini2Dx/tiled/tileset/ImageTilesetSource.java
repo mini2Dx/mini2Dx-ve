@@ -11,14 +11,6 @@
  */
 package org.mini2Dx.tiled.tileset;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.badlogic.gdx.utils.IntMap;
-import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.core.graphics.Sprite;
-import org.mini2Dx.tiled.Tile;
-
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
@@ -28,6 +20,11 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.ObjectMap;
+import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.core.graphics.Sprite;
+import org.mini2Dx.tiled.Tile;
 
 /**
  * A {@link TilesetSource} referenced by image directly in a TMX file
@@ -40,7 +37,7 @@ public class ImageTilesetSource extends TilesetSource {
 	private final int spacing, margin;
 	
 	private String name, tilesetImagePath, transparentColorValue;
-	private Map<String, String> properties;
+	private ObjectMap<String, String> properties;
 	private int widthInTiles, heightInTiles;
 	
 	private Texture texture;
@@ -209,12 +206,12 @@ public class ImageTilesetSource extends TilesetSource {
 	@Override
 	public void setProperty(String propertyName, String value) {
 		if(properties == null)
-			properties = new HashMap<String, String>();
+			properties = new ObjectMap<String, String>();
 		properties.put(propertyName, value);
 	}
 	
 	@Override
-	public Map<String, String> getProperties() {
+	public ObjectMap<String, String> getProperties() {
 		return properties;
 	}
 	

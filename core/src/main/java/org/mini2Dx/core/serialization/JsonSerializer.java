@@ -11,35 +11,24 @@
  */
 package org.mini2Dx.core.serialization;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.mini2Dx.core.serialization.annotation.ConstructorArg;
-import org.mini2Dx.core.serialization.annotation.NonConcrete;
-import org.mini2Dx.core.serialization.annotation.PostDeserialize;
-
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.reflect.Annotation;
-import com.badlogic.gdx.utils.reflect.ArrayReflection;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.Field;
-import com.badlogic.gdx.utils.reflect.Method;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
+import com.badlogic.gdx.utils.reflect.*;
+import org.mini2Dx.core.serialization.annotation.ConstructorArg;
+import org.mini2Dx.core.serialization.annotation.NonConcrete;
+import org.mini2Dx.core.serialization.annotation.PostDeserialize;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 /**
  * Serializes objects to/from JSON based on
@@ -47,8 +36,8 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
  */
 @SuppressWarnings("unchecked")
 public class JsonSerializer {
-	private final Map<String, Method[]> methodCache = new HashMap<String, Method[]>();
-	private final Map<String, Field[]> fieldCache = new HashMap<String, Field[]>();
+	private final ObjectMap<String, Method[]> methodCache = new ObjectMap<String, Method[]>();
+	private final ObjectMap<String, Field[]> fieldCache = new ObjectMap<String, Field[]>();
 
 	/**
 	 * Reads a JSON document and converts it into an object of the specified

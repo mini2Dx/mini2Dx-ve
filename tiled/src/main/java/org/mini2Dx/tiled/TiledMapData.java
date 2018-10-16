@@ -11,31 +11,26 @@
  */
 package org.mini2Dx.tiled;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.mini2Dx.tiled.exception.TiledException;
-import org.mini2Dx.tiled.exception.TiledParsingException;
-
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
+import org.mini2Dx.tiled.exception.TiledException;
+import org.mini2Dx.tiled.exception.TiledParsingException;
+
+import java.io.IOException;
 
 /**
  * Data parsed from a TMX file created with Tiled
  */
 public class TiledMapData implements TiledParserListener {
 	protected final FileHandle fileHandle;
-	protected final List<Tileset> tilesets = new ArrayList<Tileset>();
-	protected final List<Layer> layers = new ArrayList<Layer>();
-	protected final Map<String, TiledObjectGroup> objectGroups = new HashMap<String, TiledObjectGroup>();
+	protected final Array<Tileset> tilesets = new Array<Tileset>(true, 2, Tileset.class);
+	protected final Array<Layer> layers = new Array<Layer>(true, 2, Layer.class);
+	protected final ObjectMap<String, TiledObjectGroup> objectGroups = new ObjectMap<String, TiledObjectGroup>();
 
 	private String orientationValue;
 	private Orientation orientation;
@@ -43,8 +38,8 @@ public class TiledMapData implements TiledParserListener {
 	private StaggerIndex staggerIndex;
 	private int width, height, tileWidth, tileHeight, pixelWidth, pixelHeight, sideLength;
 	private Color backgroundColor;
-	private List<Tile> animatedTiles;
-	private Map<String, String> properties;
+	private Array<Tile> animatedTiles;
+	private ObjectMap<String, String> properties;
 
 	/**
 	 * 
@@ -77,14 +72,14 @@ public class TiledMapData implements TiledParserListener {
 
 	public Array<AssetDescriptor> getDependencies() {
 		Array<AssetDescriptor> dependencies = new Array<AssetDescriptor>();
-		for (int i = 0; i < tilesets.size(); i++) {
+		for (int i = 0; i < tilesets.size; i++) {
 			dependencies.addAll(tilesets.get(i).getDependencies(fileHandle));
 		}
 		return dependencies;
 	}
 
 	public void loadTilesetTextures() {
-		for (int i = 0; i < tilesets.size(); i++) {
+		for (int i = 0; i < tilesets.size; i++) {
 			if (!tilesets.get(i).isTextureLoaded()) {
 				tilesets.get(i).loadTexture(fileHandle);
 			}
@@ -92,7 +87,7 @@ public class TiledMapData implements TiledParserListener {
 	}
 
 	public void loadTilesetTextures(AssetManager assetManager) {
-		for (int i = 0; i < tilesets.size(); i++) {
+		for (int i = 0; i < tilesets.size; i++) {
 			if (!tilesets.get(i).isTextureLoaded()) {
 				tilesets.get(i).loadTexture(assetManager, fileHandle);
 			}
@@ -196,7 +191,7 @@ public class TiledMapData implements TiledParserListener {
 	 */
 	public void setProperty(String propertyName, String value) {
 		if (properties == null)
-			properties = new HashMap<String, String>();
+			properties = new ObjectMap<String, String>();
 		properties.put(propertyName, value);
 	}
 
@@ -211,7 +206,7 @@ public class TiledMapData implements TiledParserListener {
 			return;
 		}
 		if (animatedTiles == null) {
-			animatedTiles = new ArrayList<Tile>(1);
+			animatedTiles = new Array<Tile>(true,1, Tile.class);
 		}
 		animatedTiles.add(tile);
 	}
@@ -223,13 +218,13 @@ public class TiledMapData implements TiledParserListener {
 
 	@Override
 	public void onTileLayerParsed(TileLayer parsedLayer) {
-		parsedLayer.setIndex(layers.size());
+		parsedLayer.setIndex(layers.size);
 		layers.add(parsedLayer);
 	}
 
 	@Override
 	public void onObjectGroupParsed(TiledObjectGroup parsedObjectGroup) {
-		parsedObjectGroup.setIndex(layers.size());
+		parsedObjectGroup.setIndex(layers.size);
 		layers.add(parsedObjectGroup);
 		objectGroups.put(parsedObjectGroup.getName(), parsedObjectGroup);
 	}
@@ -262,7 +257,7 @@ public class TiledMapData implements TiledParserListener {
 	 * @return Null if the index is out of bounds
 	 */
 	public TileLayer getTileLayer(int index) {
-		if (index < 0 || index >= layers.size()) {
+		if (index < 0 || index >= layers.size) {
 			return null;
 		}
 		return (TileLayer) layers.get(index);
@@ -284,8 +279,8 @@ public class TiledMapData implements TiledParserListener {
 	 * 
 	 * @return Null if there are no {@link TiledObjectGroup}s
 	 */
-	public Collection<TiledObjectGroup> getObjectGroups() {
-		if (objectGroups.isEmpty()) {
+	public Iterable<TiledObjectGroup> getObjectGroups() {
+		if (objectGroups.size == 0) {
 			return null;
 		}
 		return objectGroups.values();
@@ -301,7 +296,7 @@ public class TiledMapData implements TiledParserListener {
 	 *         {@link TiledObjectGroup}
 	 */
 	public int getLayerIndex(String name) {
-		for (int i = 0; i < layers.size(); i++) {
+		for (int i = 0; i < layers.size; i++) {
 			Layer layer = layers.get(i);
 			if (layer.getName().compareTo(name) == 0) {
 				return i;
@@ -320,7 +315,7 @@ public class TiledMapData implements TiledParserListener {
 	 *         {@link TiledObjectGroup}
 	 */
 	public int getLayerIndexIgnoreCase(String name) {
-		for (int i = 0; i < layers.size(); i++) {
+		for (int i = 0; i < layers.size; i++) {
 			Layer layer = layers.get(i);
 			if (layer.getName().compareToIgnoreCase(name) == 0) {
 				return i;
@@ -337,7 +332,7 @@ public class TiledMapData implements TiledParserListener {
 	 * @return Null if there is no {@link Tile} with the given ID
 	 */
 	public Tile getTile(int tileId) {
-		for (int i = 0; i < tilesets.size(); i++) {
+		for (int i = 0; i < tilesets.size; i++) {
 			if (tilesets.get(i).contains(tileId)) {
 				return tilesets.get(i).getTile(tileId);
 			}
@@ -459,7 +454,7 @@ public class TiledMapData implements TiledParserListener {
 	 * 
 	 * @return An empty list if none have been loaded
 	 */
-	public List<Tileset> getTilesets() {
+	public Array<Tileset> getTilesets() {
 		return tilesets;
 	}
 
@@ -468,11 +463,11 @@ public class TiledMapData implements TiledParserListener {
 	 * 
 	 * @return
 	 */
-	public List<Layer> getLayers() {
+	public Array<Layer> getLayers() {
 		return layers;
 	}
 
-	public List<Tile> getAnimatedTiles() {
+	public Array<Tile> getAnimatedTiles() {
 		return animatedTiles;
 	}
 
@@ -482,7 +477,7 @@ public class TiledMapData implements TiledParserListener {
 	 * @return
 	 */
 	public int getTotalObjectGroups() {
-		return objectGroups.size();
+		return objectGroups.size;
 	}
 
 	/**
@@ -491,7 +486,7 @@ public class TiledMapData implements TiledParserListener {
 	 * @return
 	 */
 	public int getTotalLayers() {
-		return layers.size();
+		return layers.size;
 	}
 
 	/**
@@ -512,7 +507,7 @@ public class TiledMapData implements TiledParserListener {
 		if (animatedTiles == null) {
 			return false;
 		}
-		return !animatedTiles.isEmpty();
+		return animatedTiles.size > 0;
 	}
 
 	/**
@@ -541,7 +536,7 @@ public class TiledMapData implements TiledParserListener {
 		if (!disposeTilesets) {
 			return;
 		}
-		for (int i = 0; i < tilesets.size(); i++) {
+		for (int i = 0; i < tilesets.size; i++) {
 			tilesets.get(i).dispose();
 		}
 	}

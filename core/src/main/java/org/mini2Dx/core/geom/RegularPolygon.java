@@ -11,10 +11,9 @@
  */
 package org.mini2Dx.core.geom;
 
+import com.badlogic.gdx.math.Vector2;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.util.EdgeIterator;
-
-import com.badlogic.gdx.math.Vector2;
 
 /**
  * A polygon that is both equilateral and equiangular.

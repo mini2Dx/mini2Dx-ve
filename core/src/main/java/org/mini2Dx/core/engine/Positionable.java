@@ -13,8 +13,6 @@ package org.mini2Dx.core.engine;
 
 import org.mini2Dx.core.geom.Point;
 
-import com.badlogic.gdx.math.Vector2;
-
 /**
  * A common interface for objects that can be positioned with an x and y
  * coordinate

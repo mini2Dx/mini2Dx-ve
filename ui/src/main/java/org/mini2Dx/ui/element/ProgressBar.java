@@ -11,18 +11,11 @@
  */
 package org.mini2Dx.ui.element;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
-import com.badlogic.gdx.math.MathUtils;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.ui.UiContainer;
-import org.mini2Dx.ui.layout.HorizontalAlignment;
-import org.mini2Dx.ui.layout.LayoutRuleset;
 import org.mini2Dx.ui.layout.ScreenSize;
-import org.mini2Dx.ui.layout.VerticalAlignment;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.ProgressBarRenderNode;
 import org.mini2Dx.ui.render.UiContainerRenderTree;
@@ -70,8 +63,8 @@ public class ProgressBar extends UiElement {
 	
 	@Override
 	public void syncWithUpdate(UiContainerRenderTree rootNode) {
-		while (!effects.isEmpty()) {
-			renderNode.applyEffect(effects.poll());
+		while (effects.size > 0) {
+			renderNode.applyEffect(effects.removeFirst());
 		}
 
 		if(renderNode.isIncludedInLayout()) {

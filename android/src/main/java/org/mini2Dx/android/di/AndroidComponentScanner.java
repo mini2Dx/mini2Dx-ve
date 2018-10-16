@@ -11,20 +11,18 @@
  */
 package org.mini2Dx.android.di;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-
+import android.content.Context;
+import android.util.Log;
+import com.badlogic.gdx.utils.Array;
+import dalvik.system.DexFile;
 import org.mini2Dx.core.di.ComponentScanner;
 import org.mini2Dx.core.di.DependencyInjection;
 import org.mini2Dx.core.di.annotation.Prototype;
 import org.mini2Dx.core.di.annotation.Singleton;
 
-import android.content.Context;
-import android.util.Log;
-import dalvik.system.DexFile;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.Enumeration;
 
 /**
  * Android implementation of {@link ComponentScanner}
@@ -34,14 +32,14 @@ public class AndroidComponentScanner implements ComponentScanner {
 			.getSimpleName();
 
 	private Context applicationContext;
-	private List<Class<?>> singletonClasses;
-	private List<Class<?>> prototypeClasses;
+	private Array<Class<?>> singletonClasses;
+	private Array<Class<?>> prototypeClasses;
 
 	public AndroidComponentScanner(Context applicationContext) {
 		this.applicationContext = applicationContext;
 		
-		singletonClasses = new ArrayList<Class<?>>();
-		prototypeClasses = new ArrayList<Class<?>>();
+		singletonClasses = new Array<Class<?>>();
+		prototypeClasses = new Array<Class<?>>();
 	}
 
 	@Override
@@ -98,12 +96,12 @@ public class AndroidComponentScanner implements ComponentScanner {
 	}
 
 	@Override
-	public List<Class<?>> getSingletonClasses() {
+	public Array<Class<?>> getSingletonClasses() {
 		return singletonClasses;
 	}
 
 	@Override
-	public List<Class<?>> getPrototypeClasses() {
+	public Array<Class<?>> getPrototypeClasses() {
 		return prototypeClasses;
 	}
 

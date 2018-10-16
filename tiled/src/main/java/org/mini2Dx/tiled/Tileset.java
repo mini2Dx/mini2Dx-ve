@@ -11,16 +11,14 @@
  */
 package org.mini2Dx.tiled;
 
-import java.util.Map;
-
-import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.tiled.tileset.TilesetSource;
-
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.ObjectMap;
+import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.tiled.tileset.TilesetSource;
 
 /**
  * A tileset loaded with a {@link TiledMap}
@@ -73,11 +71,11 @@ public class Tileset implements Disposable {
 	}
 
 	/**
-	 * Returns the properties {@link Map} of this {@link Tileset}
+	 * Returns the properties {@link ObjectMap} of this {@link Tileset}
 	 * 
 	 * @return Null if there are no properties
 	 */
-	public Map<String, String> getProperties() {
+	public ObjectMap<String, String> getProperties() {
 		return tilesetSource.getProperties();
 	}
 

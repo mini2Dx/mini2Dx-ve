@@ -58,7 +58,7 @@ public class ImageButton extends Button {
 		if(image != null) {
 			return;
 		}
-		for(int i = 0; i < children.size(); i++) {
+		for(int i = 0; i < children.size; i++) {
 			if(children.get(i) instanceof Image) {
 				image = (Image) children.get(i);
 				return;

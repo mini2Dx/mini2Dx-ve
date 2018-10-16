@@ -34,9 +34,9 @@ public class DesktopComponentScannerTest {
 		componentScanner.scan(new String[] { "org.mini2Dx.core.di.dummy" });
 
 		Assert.assertEquals(true, componentScanner.getPrototypeClasses()
-				.contains(TestPrototypeBean.class));
+				.contains(TestPrototypeBean.class, false));
 		Assert.assertEquals(true, componentScanner.getSingletonClasses()
-				.contains(TestDependency.class));
+				.contains(TestDependency.class, false));
 	}
 
 }

@@ -11,12 +11,9 @@
  */
 package org.mini2Dx.ui.element;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Queue;
 import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
@@ -41,12 +38,12 @@ import org.mini2Dx.ui.style.StyleRule;
 public class TabView extends ParentUiElement implements Navigatable {
 	private static final String DEFAULT_CHANGE_TAB_BTN_LAYOUT = "flex-col:xs-3c sm-2c md-2c lg-1c";
 
-	private final Queue<ControllerHotKeyOperation> controllerHotKeyOperations = new LinkedList<ControllerHotKeyOperation>();
-	private final Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations = new LinkedList<KeyboardHotKeyOperation>();
+	private final Queue<ControllerHotKeyOperation> controllerHotKeyOperations = new Queue<ControllerHotKeyOperation>();
+	private final Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations = new Queue<KeyboardHotKeyOperation>();
 
 	private final FlexRow tabMenuFlexRow;
 	private final TabButton previousTabButton, nextTabButton;
-	private final List<TabButton> tabButtons = new ArrayList<TabButton>(1);
+	private final Array<TabButton> tabButtons = new Array<TabButton>(true, 1, TabButton.class);
 
 	private int currentTabIndex = 0;
 	private int tabButtonViewIndex = 0;
@@ -54,7 +51,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	@Field(optional=true)
 	private String tabButtonLayout = "flex-column:xs-3c sm-4c md-2c lg-2c";
 	@Field(optional = true)
-	protected final List<Tab> tabs = new ArrayList<Tab>(1);
+	protected final Array<Tab> tabs = new Array<Tab>(true, 1, Tab.class);
 
 	private final TabViewUiNavigation navigation = new TabViewUiNavigation(this, tabs);
 	
@@ -183,7 +180,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 		if (tab == null) {
 			throw new MdxException("Cannot add null element to " + TabView.class.getSimpleName());
 		}
-		if (tabs.size() == 0) {
+		if (tabs.size == 0) {
 			tab.activateTab();
 		} else {
 			tab.deactivateTab();
@@ -204,12 +201,12 @@ public class TabView extends ParentUiElement implements Navigatable {
 		if (tab == null) {
 			throw new MdxException("Cannot add null element to " + TabView.class.getSimpleName());
 		}
-		if (tabs.size() == 0) {
+		if (tabs.size == 0) {
 			tab.activateTab();
 		} else {
 			tab.deactivateTab();
 		}
-		tabs.add(index, tab);
+		tabs.insert(index, tab);
 		super.add(index + 1, tab);
 	}
 
@@ -224,8 +221,8 @@ public class TabView extends ParentUiElement implements Navigatable {
 		if (renderNode != null) {
 			tab.detach(renderNode);
 		}
-		children.remove(tab);
-		return tabs.remove(tab);
+		children.removeValue(tab, false);
+		return tabs.removeValue(tab, false);
 	}
 
 	/**
@@ -239,8 +236,8 @@ public class TabView extends ParentUiElement implements Navigatable {
 		if (renderNode != null) {
 			tabs.get(index).detach(renderNode);
 		}
-		children.remove(index + 1);
-		return tabs.remove(index);
+		children.removeIndex(index + 1);
+		return tabs.removeIndex(index);
 	}
 
 	/**
@@ -260,7 +257,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * @return True if the {@link Tab} is added to this {@link TabView}
 	 */
 	public boolean containsTab(Tab tab) {
-		for(int i = 0; i < tabs.size(); i++) {
+		for(int i = 0; i < tabs.size; i++) {
 			if(tabs.get(i).getId().equals(tab.getId())) {
 				return true;
 			}
@@ -274,14 +271,14 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * @return 0 if no {@link Tab}s have been added
 	 */
 	public int getTotalTabs() {
-		return tabs.size();
+		return tabs.size;
 	}
 
 	@Override
 	public void syncWithLayout(UiContainerRenderTree rootNode) {
 		super.syncWithLayout(rootNode);
 
-		for(int i = 0; i < tabs.size(); i++) {
+		for(int i = 0; i < tabs.size; i++) {
 			final Tab tab = tabs.get(i);
 			tab.setTabMenuFlexRow(tabMenuFlexRow);
 		}
@@ -297,9 +294,9 @@ public class TabView extends ParentUiElement implements Navigatable {
 	}
 
 	private void syncTabTitles() {
-		if (tabs.size() > tabButtons.size()) {
+		if (tabs.size > tabButtons.size) {
 			// Tabs added
-			for (int i = tabButtons.size(); i < tabs.size(); i++) {
+			for (int i = tabButtons.size; i < tabs.size; i++) {
 				TabButton tabButton = new TabButton(getId() + "-tabButton-" + i);
 				tabButton.setFlexLayout(tabButtonLayout);
 				tabButton.setText(tabs.get(i).getTitle());
@@ -310,20 +307,20 @@ public class TabView extends ParentUiElement implements Navigatable {
 			tabMenuFlexRow.removeAll();
 
 			tabMenuFlexRow.add(previousTabButton);
-			for (int i = 0; i < tabButtons.size(); i++) {
+			for (int i = 0; i < tabButtons.size; i++) {
 				tabMenuFlexRow.add(tabButtons.get(i));
 			}
 			tabMenuFlexRow.add(nextTabButton);
-		} else if (tabs.size() < tabButtons.size()) {
+		} else if (tabs.size < tabButtons.size) {
 			// Tabs removed
-			for (int i = tabButtons.size() - 1; tabButtons.size() > tabs.size(); i--) {
-				TabButton button = tabButtons.remove(i);
+			for (int i = tabButtons.size - 1; tabButtons.size > tabs.size; i--) {
+				TabButton button = tabButtons.removeIndex(i);
 				tabMenuFlexRow.remove(button);
 			}
 		}
 
 		availablePixelsForTabButtons = MathUtils.round(renderNode.getOuterRenderWidth() - previousTabButton.getWidth() - nextTabButton.getWidth());
-		if (tabButtons.size() > 0) {
+		if (tabButtons.size > 0) {
 			pixelsPerTabButton = MathUtils.round(tabButtons.get(0).getWidth());
 		}
 
@@ -342,7 +339,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 			displayedButtonViewOffset = tabButtonViewIndex * pixelsPerTabButton;
 		}
 
-		for (int i = 0; i < tabs.size(); i++) {
+		for (int i = 0; i < tabs.size; i++) {
 			Tab tab = tabs.get(i);
 			TabButton tabButton = tabButtons.get(i);
 
@@ -376,7 +373,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	private void syncChildStyles() {
 		final TabViewRenderNode tabViewRenderNode = (TabViewRenderNode) renderNode;
 		tabMenuFlexRow.setStyleId(tabViewRenderNode.getTabMenuStyleId());
-		for (int i = 0; i < tabs.size(); i++) {
+		for (int i = 0; i < tabs.size; i++) {
 			tabs.get(i).setStyleId(tabViewRenderNode.getTabContentStyleId());
 			tabButtons.get(i).setStyleId(tabViewRenderNode.getTabButtonStyleId());
 			tabButtons.get(i).setLabelStyle(tabViewRenderNode.getTabButtonLabelStyleId());
@@ -463,7 +460,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 *            the {@link TabView}
 	 */
 	public void setCurrentTab(Tab tab) {
-		int tabIndex = tabs.indexOf(tab);
+		int tabIndex = tabs.indexOf(tab, false);
 		if (tabIndex < 0) {
 			throw new MdxException(tab + " cannot be set to current tab as it was not added to "
 					+ TabView.class.getSimpleName() + ":" + getId());
@@ -479,7 +476,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	public int getCurrentTabIndex() {
 		if(currentTabIndex < 0) {
 			currentTabIndex = 0;
-		} else if(currentTabIndex >= tabs.size()) {
+		} else if(currentTabIndex >= tabs.size) {
 			currentTabIndex = 0;
 		}
 		return currentTabIndex;
@@ -495,7 +492,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 		if (currentTabIndex < 0) {
 			return;
 		}
-		if (currentTabIndex >= tabs.size()) {
+		if (currentTabIndex >= tabs.size) {
 			return;
 		}
 		if (this.currentTabIndex == currentTabIndex) {
@@ -512,7 +509,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 			previousTabButton.setEnabled(true);
 		}
 
-		if (this.currentTabIndex >= tabs.size() - 1) {
+		if (this.currentTabIndex >= tabs.size - 1) {
 			nextTabButton.setEnabled(false);
 		} else {
 			nextTabButton.setEnabled(true);
@@ -529,7 +526,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * this will loop back to the first tab.
 	 */
 	public void nextTab() {
-		if (currentTabIndex >= tabs.size() - 1) {
+		if (currentTabIndex >= tabs.size - 1) {
 			setCurrentTabIndex(0);
 		} else {
 			setCurrentTabIndex(currentTabIndex + 1);
@@ -542,7 +539,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 */
 	public void previousTab() {
 		if (currentTabIndex <= 0) {
-			setCurrentTabIndex(tabs.size() - 1);
+			setCurrentTabIndex(tabs.size - 1);
 		} else {
 			setCurrentTabIndex(currentTabIndex - 1);
 		}
@@ -553,7 +550,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 		if (renderNode == null) {
 			return null;
 		}
-		if (currentTabIndex >= tabs.size()) {
+		if (currentTabIndex >= tabs.size) {
 			return null;
 		}
 		return tabs.get(currentTabIndex).navigate(keycode);
@@ -568,7 +565,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 		if (result != null) {
 			return result;
 		}
-		if (currentTabIndex >= tabs.size()) {
+		if (currentTabIndex >= tabs.size) {
 			return null;
 		}
 		return tabs.get(currentTabIndex).hotkey(keycode);
@@ -583,7 +580,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 		if (result != null) {
 			return result;
 		}
-		if (currentTabIndex >= tabs.size()) {
+		if (currentTabIndex >= tabs.size) {
 			return null;
 		}
 		return tabs.get(currentTabIndex).hotkey(button);
@@ -599,7 +596,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * @param keycode The {@link Keys} keycode
 	 */
 	public void setPreviousTabHotkey(int keycode) {
-		keyboardHotKeyOperations.offer(new KeyboardHotKeyOperation(keycode, previousTabButton, true));
+		keyboardHotKeyOperations.addLast(new KeyboardHotKeyOperation(keycode, previousTabButton, true));
 	}
 
 	/**
@@ -607,7 +604,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * @param button The {@link ControllerButton}
 	 */
 	public void setPreviousTabHotkey(ControllerButton button) {
-		controllerHotKeyOperations.offer(new ControllerHotKeyOperation(button, previousTabButton, true));
+		controllerHotKeyOperations.addLast(new ControllerHotKeyOperation(button, previousTabButton, true));
 	}
 	
 	/**
@@ -615,7 +612,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * @param keycode The {@link Keys} keycode
 	 */
 	public void setNextTabHotkey(int keycode) {
-		keyboardHotKeyOperations.offer(new KeyboardHotKeyOperation(keycode, nextTabButton, true));
+		keyboardHotKeyOperations.addLast(new KeyboardHotKeyOperation(keycode, nextTabButton, true));
 	}
 
 	/**
@@ -623,7 +620,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * @param button The {@link ControllerButton}
 	 */
 	public void setNextTabHotkey(ControllerButton button) {
-		controllerHotKeyOperations.offer(new ControllerHotKeyOperation(button, nextTabButton, true));
+		controllerHotKeyOperations.addLast(new ControllerHotKeyOperation(button, nextTabButton, true));
 	}
 
 	/**
@@ -631,7 +628,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * @param keycode The {@link Keys} keycode
 	 */
 	public void unsetPreviousTabHotkey(int keycode) {
-		keyboardHotKeyOperations.offer(new KeyboardHotKeyOperation(keycode, previousTabButton, false));
+		keyboardHotKeyOperations.addLast(new KeyboardHotKeyOperation(keycode, previousTabButton, false));
 	}
 
 	/**
@@ -639,7 +636,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * @param button The {@link ControllerButton}
 	 */
 	public void unsetPreviousTabHotkey(ControllerButton button) {
-		controllerHotKeyOperations.offer(new ControllerHotKeyOperation(button, previousTabButton, false));
+		controllerHotKeyOperations.addLast(new ControllerHotKeyOperation(button, previousTabButton, false));
 	}
 
 	/**
@@ -647,7 +644,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * @param keycode The {@link Keys} keycode
 	 */
 	public void unsetNextTabHotkey(int keycode) {
-		keyboardHotKeyOperations.offer(new KeyboardHotKeyOperation(keycode, nextTabButton, false));
+		keyboardHotKeyOperations.addLast(new KeyboardHotKeyOperation(keycode, nextTabButton, false));
 	}
 
 	/**
@@ -655,7 +652,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 	 * @param button The {@link ControllerButton}
 	 */
 	public void unsetNextTabHotkey(ControllerButton button) {
-		controllerHotKeyOperations.offer(new ControllerHotKeyOperation(button, nextTabButton, false));
+		controllerHotKeyOperations.addLast(new ControllerHotKeyOperation(button, nextTabButton, false));
 	}
 
 	@Override
@@ -710,7 +707,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 
 	public void setTabButtonLayout(String flexLayout) {
 		this.tabButtonLayout = flexLayout;
-		for (int i = 0; i < tabs.size(); i++) {
+		for (int i = 0; i < tabs.size; i++) {
 			tabs.get(i).setFlexLayout(flexLayout);
 		}
 	}
@@ -728,7 +725,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 		if (getId().equals(id)) {
 			return this;
 		}
-		for (int i = 0; i < tabs.size(); i++) {
+		for (int i = 0; i < tabs.size; i++) {
 			UiElement result = tabs.get(i).getElementById(id);
 			if (result != null) {
 				return result;

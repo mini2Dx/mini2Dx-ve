@@ -4,6 +4,8 @@
 package org.mini2Dx.ui.render;
 
 import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.Queue;
 import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.ui.element.Actionable;
 import org.mini2Dx.ui.element.Tab;
@@ -11,16 +13,12 @@ import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.navigation.ControllerHotKeyOperation;
 import org.mini2Dx.ui.navigation.KeyboardHotKeyOperation;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
-
 /**
  * {@link RenderNode} implementation for {@link Tab}
  */
 public class TabRenderNode extends DivRenderNode implements NavigatableRenderNode {
 	private IntMap<String> keyboardHotkeys = new IntMap<String>();
-	private Map<String, String> controllerHotkeys = new HashMap<String, String>();
+	private ObjectMap<String, String> controllerHotkeys = new ObjectMap<String, String>();
 
 	public TabRenderNode(ParentRenderNode<?, ?> parent, Tab tab) {
 		super(parent, tab);
@@ -54,9 +52,9 @@ public class TabRenderNode extends DivRenderNode implements NavigatableRenderNod
 
 	@Override
 	public void syncHotkeys(Queue<ControllerHotKeyOperation> controllerHotKeyOperations,
-			Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations) {
-		while (!controllerHotKeyOperations.isEmpty()) {
-			ControllerHotKeyOperation hotKeyOperation = controllerHotKeyOperations.poll();
+							Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations) {
+		while (controllerHotKeyOperations.size > 0) {
+			ControllerHotKeyOperation hotKeyOperation = controllerHotKeyOperations.removeFirst();
 			if (hotKeyOperation.isMapOperation()) {
 				controllerHotkeys.put(hotKeyOperation.getControllerButton().getAbsoluteValue(),
 						hotKeyOperation.getActionable().getId());
@@ -68,8 +66,8 @@ public class TabRenderNode extends DivRenderNode implements NavigatableRenderNod
 				}
 			}
 		}
-		while (!keyboardHotKeyOperations.isEmpty()) {
-			KeyboardHotKeyOperation hotKeyOperation = keyboardHotKeyOperations.poll();
+		while (keyboardHotKeyOperations.size > 0) {
+			KeyboardHotKeyOperation hotKeyOperation = keyboardHotKeyOperations.removeFirst();
 			if (hotKeyOperation.isMapOperation()) {
 				keyboardHotkeys.put(hotKeyOperation.getKeycode(), hotKeyOperation.getActionable().getId());
 			} else {

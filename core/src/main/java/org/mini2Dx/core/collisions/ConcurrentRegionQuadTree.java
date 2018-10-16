@@ -11,17 +11,13 @@
  */
 package org.mini2Dx.core.collisions;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.engine.geom.CollisionShape;
 import org.mini2Dx.core.geom.LineSegment;
 import org.mini2Dx.core.geom.Point;
 import org.mini2Dx.core.geom.Shape;
 import org.mini2Dx.core.graphics.Graphics;
-
-import com.badlogic.gdx.graphics.Color;
 
 /**
  * Implements a thread-safe region quadtree
@@ -167,11 +163,11 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 	}
 	
 	@Override
-	public void addAll(List<T> elements) {
-		if (elements == null || elements.isEmpty())
+	public void addAll(Array<T> elements) {
+		if (elements == null || elements.size == 0)
 			return;
-		
-		List<T> elementsWithinQuad = new ArrayList<T>();
+
+		Array<T> elementsWithinQuad = new Array<T>();
 		for(T element : elements) {
 			if (this.contains(element.getShape()) || this.intersects(element.getShape())) {
 				elementsWithinQuad.add(element);
@@ -184,27 +180,27 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 		if(topLeft != null) {
 			lock.readLock().lock();
 			lock.writeLock().unlock();
-			for(int i = elementsWithinQuad.size() - 1; i >= 0; i--) {
+			for(int i = elementsWithinQuad.size - 1; i >= 0; i--) {
 				T element = elementsWithinQuad.get(i);
 				if (topLeft.add(element)) {
-					elementsWithinQuad.remove(i);
+					elementsWithinQuad.removeIndex(i);
 					continue;
 				}
 				if (topRight.add(element)) {
-					elementsWithinQuad.remove(i);
+					elementsWithinQuad.removeIndex(i);
 					continue;
 				}
 				if (bottomLeft.add(element)) {
-					elementsWithinQuad.remove(i);
+					elementsWithinQuad.removeIndex(i);
 					continue;
 				}
 				if (bottomRight.add(element)) {
-					elementsWithinQuad.remove(i);
+					elementsWithinQuad.removeIndex(i);
 					continue;
 				}
 			}
 			lock.readLock().unlock();
-			if(elementsWithinQuad.isEmpty()) {
+			if(elementsWithinQuad.size == 0) {
 				return;
 			}
 			lock.writeLock().lock();
@@ -214,7 +210,7 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 		for(T element : elementsWithinQuad) {
 			element.addPostionChangeListener(this);
 		}
-		int totalElements = this.elements.size();
+		int totalElements = this.elements.size;
 		lock.writeLock().unlock();
 		
 		if (totalElements > elementLimitPerQuad && getWidth() >= 2f && getHeight() >= 2f) {
@@ -257,7 +253,7 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 		elements.add(element);
 		element.addPostionChangeListener(this);
 
-		if (elements.size() > elementLimitPerQuad && getWidth() >= 2f && getHeight() >= 2f) {
+		if (elements.size > elementLimitPerQuad && getWidth() >= 2f && getHeight() >= 2f) {
 			subdivide();
 		}
 		lock.writeLock().unlock();
@@ -316,11 +312,11 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 		bottomLeft = new ConcurrentRegionQuadTree<T>(this, getX(), getY() + halfHeight, halfWidth, halfHeight);
 		bottomRight = new ConcurrentRegionQuadTree<T>(this, getX() + halfWidth, getY() + halfHeight, halfWidth, halfHeight);
 
-		for (int i = elements.size() - 1; i >= 0; i--) {
+		for (int i = elements.size - 1; i >= 0; i--) {
 			lock.readLock().lock();
 			T element = elements.get(i);
 			if (addElementToChild(element)) {
-				elements.remove(element);
+				elements.removeValue(element, false);
 				element.removePositionChangeListener(this);
 			}
 		}
@@ -329,13 +325,13 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 	}
 	
 	@Override
-	public void removeAll(List<T> elementsToRemove) {
-		if(elementsToRemove == null || elementsToRemove.isEmpty()) {
+	public void removeAll(Array<T> elementsToRemove) {
+		if(elementsToRemove == null || elementsToRemove.size == 0) {
 			return;
 		}
 		clearTotalElementsCache();
-		
-		List<T> elementsWithinQuad = new ArrayList<T>();
+
+		Array<T> elementsWithinQuad = new Array<T>();
 		for(T element : elementsToRemove) {
 			if(this.contains(element.getShape()) || this.intersects(element.getShape())) {
 				elementsWithinQuad.add(element);
@@ -344,22 +340,22 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 		
 		lock.readLock().lock();
 		if(topLeft != null) {
-			for(int i = elementsWithinQuad.size() - 1; i >= 0; i--) {
+			for(int i = elementsWithinQuad.size - 1; i >= 0; i--) {
 				T element = elementsWithinQuad.get(i);
 				if (topLeft.remove(element)) {
-					elementsWithinQuad.remove(i);
+					elementsWithinQuad.removeIndex(i);
 					continue;
 				}
 				if (topRight.remove(element)) {
-					elementsWithinQuad.remove(i);
+					elementsWithinQuad.removeIndex(i);
 					continue;
 				}
 				if (bottomLeft.remove(element)) {
-					elementsWithinQuad.remove(i);
+					elementsWithinQuad.removeIndex(i);
 					continue;
 				}
 				if (bottomRight.remove(element)) {
-					elementsWithinQuad.remove(i);
+					elementsWithinQuad.removeIndex(i);
 					continue;
 				}
 			}
@@ -367,7 +363,7 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 		lock.readLock().unlock();
 		
 		lock.writeLock().lock();
-		elements.removeAll(elementsWithinQuad);
+		elements.removeAll(elementsWithinQuad, false);
 		lock.writeLock().unlock();
 		
 		for(T element : elementsWithinQuad) {
@@ -409,7 +405,7 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 			lock.writeLock().lock();
 		}
 		
-		boolean result = elements.remove(element);
+		boolean result = elements.removeValue(element, false);
 		lock.writeLock().unlock();
 		element.removePositionChangeListener(this);
 
@@ -429,14 +425,14 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 	}
 
 	@Override
-	public List<T> getElementsWithinArea(Shape area) {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElementsWithinArea(Shape area) {
+		Array<T> result = new Array<T>();
 		getElementsWithinArea(result, area);
 		return result;
 	}
 
 	@Override
-	public void getElementsWithinArea(Collection<T> result, Shape area) {
+	public void getElementsWithinArea(Array<T> result, Shape area) {
 		lock.readLock().lock();
 		if (topLeft != null) {
 			if (topLeft.contains(area) || topLeft.intersects(area)) {
@@ -452,7 +448,7 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 				bottomRight.getElementsWithinArea(result, area);
 			}
 		}
-		for (int i = elements.size() - 1; i >= 0; i--) {
+		for (int i = elements.size - 1; i >= 0; i--) {
 			T element = elements.get(i);
 			if (element == null)
 				continue;
@@ -464,14 +460,14 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 	}
 
 	@Override
-	public List<T> getElementsContainingPoint(Point point) {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElementsContainingPoint(Point point) {
+		Array<T> result = new Array<T>();
 		getElementsContainingPoint(result, point);
 		return result;
 	}
 
 	@Override
-	public void getElementsContainingPoint(Collection<T> result, Point point) {
+	public void getElementsContainingPoint(Array<T> result, Point point) {
 		lock.readLock().lock();
 		if (topLeft != null) {
 			if (topLeft.contains(point)) {
@@ -487,7 +483,7 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 				bottomRight.getElementsContainingPoint(result, point);
 			}
 		}
-		for (int i = elements.size() - 1; i >= 0; i--) {
+		for (int i = elements.size - 1; i >= 0; i--) {
 			T element = elements.get(i);
 			if (element != null && element.contains(point)) {
 				result.add(element);
@@ -497,14 +493,14 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 	}
 
 	@Override
-	public List<T> getElementsIntersectingLineSegment(LineSegment lineSegment) {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElementsIntersectingLineSegment(LineSegment lineSegment) {
+		Array<T> result = new Array<T>();
 		getElementsIntersectingLineSegment(result, lineSegment);
 		return result;
 	}
 
 	@Override
-	public void getElementsIntersectingLineSegment(Collection<T> result, LineSegment lineSegment) {
+	public void getElementsIntersectingLineSegment(Array<T> result, LineSegment lineSegment) {
 		lock.readLock().lock();
 		if (topLeft != null) {
 			if (topLeft.intersects(lineSegment) || topLeft.contains(lineSegment.getPointA())
@@ -524,7 +520,7 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 				bottomRight.getElementsIntersectingLineSegment(result, lineSegment);
 			}
 		}
-		for (int i = elements.size() - 1; i >= 0; i--) {
+		for (int i = elements.size - 1; i >= 0; i--) {
 			T element = elements.get(i);
 			if (element != null && element.intersects(lineSegment)) {
 				result.add(element);
@@ -534,14 +530,14 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 	}
 
 	@Override
-	public List<T> getElements() {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElements() {
+		Array<T> result = new Array<T>();
 		getElements(result);
-		return new ArrayList<T>(result);
+		return result;
 	}
 
 	@Override
-	public void getElements(List<T> result) {
+	public void getElements(Array<T> result) {
 		lock.readLock().lock();
 		if (topLeft != null) {
 			((ConcurrentRegionQuadTree<T>) topLeft).getElements(result);
@@ -568,7 +564,7 @@ public class ConcurrentRegionQuadTree<T extends CollisionShape> extends Concurre
 			totalElementsCache += bottomLeft.getTotalElements();
 			totalElementsCache += bottomRight.getTotalElements();
 		}
-		totalElementsCache += elements.size();
+		totalElementsCache += elements.size;
 		lock.readLock().unlock();
 		return totalElementsCache;
 	}

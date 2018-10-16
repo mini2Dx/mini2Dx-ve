@@ -11,9 +11,9 @@
  */
 package org.mini2Dx.ui.render;
 
-import java.util.*;
-
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.core.controller.ControllerType;
 import org.mini2Dx.ui.InputSource;
 import org.mini2Dx.ui.UiContainer;
@@ -33,13 +33,13 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 	private static final String LOGGING_TAG = UiContainerRenderTree.class.getSimpleName();
 
 	private final AssetManager assetManager;
-	private final Map<String, RenderNode<?, ?>> elementIdLookupCache = new HashMap<String, RenderNode<?, ?>>();
+	private final ObjectMap<String, RenderNode<?, ?>> elementIdLookupCache = new ObjectMap<String, RenderNode<?, ?>>();
 
-	protected final List<DeferredRunnable> deferredLayout = new ArrayList<DeferredRunnable>(1);
-	protected final List<DeferredRunnable> deferredUpdate = new ArrayList<DeferredRunnable>(1);
-	protected final List<DeferredRunnable> deferredRender = new ArrayList<DeferredRunnable>(1);
+	protected final Array<DeferredRunnable> deferredLayout = new Array<DeferredRunnable>(true,1, DeferredRunnable.class);
+	protected final Array<DeferredRunnable> deferredUpdate = new Array<DeferredRunnable>(true,1, DeferredRunnable.class);
+	protected final Array<DeferredRunnable> deferredRender = new Array<DeferredRunnable>(true,1, DeferredRunnable.class);
 
-	private List<ScreenSizeListener> screenSizeListeners;
+	private Array<ScreenSizeListener> screenSizeListeners;
 	private ScreenSize currentScreenSize = ScreenSize.XS;
 	private boolean screenSizeChanged = false;
 	private float screenSizeScale = 1f;
@@ -108,62 +108,62 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 		setDirty(true);
 	}
 
-	public void transferUpdateDeferred(List<DeferredRunnable> deferredUpdate) {
-		deferredUpdateSortRequired |= !deferredUpdate.isEmpty();
+	public void transferUpdateDeferred(Array<DeferredRunnable> deferredUpdate) {
+		deferredUpdateSortRequired |= deferredUpdate.size > 0;
 		this.deferredUpdate.addAll(deferredUpdate);
 		deferredUpdate.clear();
 	}
 
-	public void transferLayoutDeferred(List<DeferredRunnable> deferredLayout) {
-		deferredLayoutSortRequired |= !deferredLayout.isEmpty();
+	public void transferLayoutDeferred(Array<DeferredRunnable> deferredLayout) {
+		deferredLayoutSortRequired |= deferredLayout.size > 0;
 		this.deferredLayout.addAll(deferredLayout);
 		deferredLayout.clear();
 	}
 
-	public void transferRenderDeferred(List<DeferredRunnable> deferredRender) {
-		deferredRenderSortRequired |= !deferredRender.isEmpty();
+	public void transferRenderDeferred(Array<DeferredRunnable> deferredRender) {
+		deferredRenderSortRequired |= deferredRender.size > 0;
 		this.deferredRender.addAll(deferredRender);
 		deferredRender.clear();
 	}
 
 	public void processUpdateDeferred() {
 		if (deferredUpdateSortRequired) {
-			Collections.sort(deferredUpdate);
+			deferredUpdate.sort();
 			deferredUpdateSortRequired = false;
 		}
 
-		for (int i = deferredUpdate.size() - 1; i >= 0; i--) {
+		for (int i = deferredUpdate.size - 1; i >= 0; i--) {
 			DeferredRunnable runnable = deferredUpdate.get(i);
 			if (runnable.run()) {
-				deferredUpdate.remove(i);
+				deferredUpdate.removeIndex(i);
 			}
 		}
 	}
 
 	public void processLayoutDeferred() {
 		if (deferredLayoutSortRequired) {
-			Collections.sort(deferredLayout);
+			deferredLayout.sort();
 			deferredLayoutSortRequired = false;
 		}
 
-		for (int i = deferredLayout.size() - 1; i >= 0; i--) {
+		for (int i = deferredLayout.size - 1; i >= 0; i--) {
 			DeferredRunnable runnable = deferredLayout.get(i);
 			if (runnable.run()) {
-				deferredLayout.remove(i);
+				deferredLayout.removeIndex(i);
 			}
 		}
 	}
 
 	public void processRenderDeferred() {
 		if (deferredRenderSortRequired) {
-			Collections.sort(deferredRender);
+			deferredRender.sort();
 			deferredRenderSortRequired = false;
 		}
 
-		for (int i = deferredRender.size() - 1; i >= 0; i--) {
+		for (int i = deferredRender.size - 1; i >= 0; i--) {
 			DeferredRunnable runnable = deferredRender.get(i);
 			if (runnable.run()) {
-				deferredRender.remove(i);
+				deferredRender.removeIndex(i);
 			}
 		}
 	}
@@ -201,14 +201,14 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 		if (screenSizeListeners == null) {
 			return;
 		}
-		for (int i = screenSizeListeners.size() - 1; i >= 0; i--) {
+		for (int i = screenSizeListeners.size - 1; i >= 0; i--) {
 			screenSizeListeners.get(i).onScreenSizeChanged(currentScreenSize);
 		}
 	}
 
 	public void addScreenSizeListener(ScreenSizeListener listener) {
 		if (screenSizeListeners == null) {
-			screenSizeListeners = new ArrayList<ScreenSizeListener>(1);
+			screenSizeListeners = new Array<ScreenSizeListener>(true, 1, ScreenSizeListener.class);
 		}
 		screenSizeListeners.add(listener);
 	}
@@ -217,7 +217,7 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 		if (screenSizeListeners == null) {
 			return;
 		}
-		screenSizeListeners.remove(listener);
+		screenSizeListeners.removeValue(listener, false);
 	}
 
 	@Override

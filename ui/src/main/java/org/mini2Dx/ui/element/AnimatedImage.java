@@ -389,8 +389,8 @@ public class AnimatedImage extends UiElement {
 
 	@Override
 	public void syncWithUpdate(UiContainerRenderTree rootNode) {
-		while (!effects.isEmpty()) {
-			renderNode.applyEffect(effects.poll());
+		while (effects.size > 0) {
+			renderNode.applyEffect(effects.removeFirst());
 		}
 
 		if(renderNode.isIncludedInLayout()) {

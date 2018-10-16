@@ -11,9 +11,8 @@
  */
 package org.mini2Dx.core.util;
 
-import org.mini2Dx.core.exception.MdxException;
-
 import com.badlogic.gdx.graphics.Color;
+import org.mini2Dx.core.exception.MdxException;
 
 /**
  * Static utility methods for {@link Color}s

@@ -11,17 +11,13 @@
  */
 package org.mini2Dx.core.collisions;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.engine.geom.CollisionShape;
 import org.mini2Dx.core.geom.LineSegment;
 import org.mini2Dx.core.geom.Point;
 import org.mini2Dx.core.geom.Shape;
 import org.mini2Dx.core.graphics.Graphics;
-
-import com.badlogic.gdx.graphics.Color;
 
 /**
  * Implements a region quadtree
@@ -164,13 +160,13 @@ public class RegionQuadTree<T extends CollisionShape> extends PointQuadTree<T> {
 	}
 
 	@Override
-	public void addAll(List<T> elementsToAdd) {
-		if (elementsToAdd == null || elementsToAdd.isEmpty()) {
+	public void addAll(Array<T> elementsToAdd) {
+		if (elementsToAdd == null || elementsToAdd.size == 0) {
 			return;
 		}
 		clearTotalElementsCache();
 
-		List<T> elementsWithinQuad = new ArrayList<T>();
+		Array<T> elementsWithinQuad = new Array<T>();
 		for (T element : elementsToAdd) {
 			if (this.contains(element.getShape()) || this.intersects(element.getShape())) {
 				elementsWithinQuad.add(element);
@@ -239,7 +235,7 @@ public class RegionQuadTree<T extends CollisionShape> extends PointQuadTree<T> {
 		bottomLeft = new RegionQuadTree<T>(this, getX(), getY() + halfHeight, halfWidth, halfHeight);
 		bottomRight = new RegionQuadTree<T>(this, getX() + halfWidth, getY() + halfHeight, halfWidth, halfHeight);
 
-		for (int i = elements.size() - 1; i >= 0; i--) {
+		for (int i = elements.size - 1; i >= 0; i--) {
 			if (addElementToChild(elements.get(i))) {
 				removeElement(elements.get(i));
 			}
@@ -282,14 +278,14 @@ public class RegionQuadTree<T extends CollisionShape> extends PointQuadTree<T> {
 	}
 
 	@Override
-	public List<T> getElementsWithinArea(Shape area) {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElementsWithinArea(Shape area) {
+		Array<T> result = new Array<T>();
 		getElementsWithinArea(result, area);
 		return result;
 	}
 
 	@Override
-	public void getElementsWithinArea(Collection<T> result, Shape area) {
+	public void getElementsWithinArea(Array<T> result, Shape area) {
 		if (topLeft != null) {
 			if (topLeft.contains(area) || topLeft.intersects(area))
 				topLeft.getElementsWithinArea(result, area);
@@ -300,7 +296,7 @@ public class RegionQuadTree<T extends CollisionShape> extends PointQuadTree<T> {
 			if (bottomRight.contains(area) || bottomRight.intersects(area))
 				bottomRight.getElementsWithinArea(result, area);
 		}
-		for (int i = elements.size() - 1; i >= 0; i--) {
+		for (int i = elements.size - 1; i >= 0; i--) {
 			T element = elements.get(i);
 			if (element == null)
 				continue;
@@ -311,14 +307,14 @@ public class RegionQuadTree<T extends CollisionShape> extends PointQuadTree<T> {
 	}
 
 	@Override
-	public List<T> getElementsContainingPoint(Point point) {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElementsContainingPoint(Point point) {
+		Array<T> result = new Array<T>();
 		getElementsContainingPoint(result, point);
 		return result;
 	}
 
 	@Override
-	public void getElementsContainingPoint(Collection<T> result, Point point) {
+	public void getElementsContainingPoint(Array<T> result, Point point) {
 		if (topLeft != null) {
 			if (topLeft.contains(point))
 				topLeft.getElementsContainingPoint(result, point);
@@ -329,7 +325,7 @@ public class RegionQuadTree<T extends CollisionShape> extends PointQuadTree<T> {
 			if (bottomRight.contains(point))
 				bottomRight.getElementsContainingPoint(result, point);
 		}
-		for (int i = elements.size() - 1; i >= 0; i--) {
+		for (int i = elements.size - 1; i >= 0; i--) {
 			T element = elements.get(i);
 			if (element != null && element.contains(point)) {
 				result.add(element);
@@ -338,14 +334,14 @@ public class RegionQuadTree<T extends CollisionShape> extends PointQuadTree<T> {
 	}
 
 	@Override
-	public List<T> getElementsIntersectingLineSegment(LineSegment lineSegment) {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElementsIntersectingLineSegment(LineSegment lineSegment) {
+		Array<T> result = new Array<T>();
 		getElementsIntersectingLineSegment(result, lineSegment);
 		return result;
 	}
 
 	@Override
-	public void getElementsIntersectingLineSegment(Collection<T> result, LineSegment lineSegment) {
+	public void getElementsIntersectingLineSegment(Array<T> result, LineSegment lineSegment) {
 		if (topLeft != null) {
 			if (topLeft.intersects(lineSegment) || topLeft.contains(lineSegment.getPointA())
 					|| topLeft.contains(lineSegment.getPointB())) {
@@ -364,7 +360,7 @@ public class RegionQuadTree<T extends CollisionShape> extends PointQuadTree<T> {
 				bottomRight.getElementsIntersectingLineSegment(result, lineSegment);
 			}
 		}
-		for (int i = elements.size() - 1; i >= 0; i--) {
+		for (int i = elements.size - 1; i >= 0; i--) {
 			T element = elements.get(i);
 			if (element != null && element.intersects(lineSegment)) {
 				result.add(element);
@@ -373,14 +369,14 @@ public class RegionQuadTree<T extends CollisionShape> extends PointQuadTree<T> {
 	}
 
 	@Override
-	public List<T> getElements() {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElements() {
+		Array<T> result = new Array<T>();
 		getElements(result);
-		return new ArrayList<T>(result);
+		return result;
 	}
 
 	@Override
-	public void getElements(List<T> result) {
+	public void getElements(Array<T> result) {
 		if (topLeft != null) {
 			((RegionQuadTree<T>) topLeft).getElements(result);
 			((RegionQuadTree<T>) topRight).getElements(result);
@@ -403,7 +399,7 @@ public class RegionQuadTree<T extends CollisionShape> extends PointQuadTree<T> {
 			totalElementsCache += bottomLeft.getTotalElements();
 			totalElementsCache += bottomRight.getTotalElements();
 		}
-		totalElementsCache += elements.size();
+		totalElementsCache += elements.size;
 		return totalElementsCache;
 	}
 

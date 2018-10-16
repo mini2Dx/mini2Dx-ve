@@ -11,87 +11,33 @@
  */
 package org.mini2Dx.core.di.injection;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
+import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.core.di.bean.PrototypeBean;
 
 /**
- * An implementation of {@link Map} that produces prototypes when get() is called
+ * An implementation of {@link ObjectMap} that produces prototypes when get() is called
  */
-public class PrototypeInjectionMap implements Map<String, Object> {
-	private Map<String, Object> prototypes;
+public class PrototypeInjectionMap extends ObjectMap<String, Object> {
 	
-	public PrototypeInjectionMap(Map<String, Object> prototypes) {
-		this.prototypes = prototypes;
+	public PrototypeInjectionMap(ObjectMap<String, Object> prototypes) {
+		super(prototypes);
 	}
 
 	@Override
-	public int size() {
-		return prototypes.size();
+	public Object get(String key) {
+		return get(key, null);
 	}
 
 	@Override
-	public boolean isEmpty() {
-		return prototypes.isEmpty();
-	}
+	public Object get(String key, Object defaultValue) {
+		Object prototype = super.get((String) key);
 
-	@Override
-	public boolean containsKey(Object key) {
-		return prototypes.containsKey(key);
-	}
-
-	@Override
-	public boolean containsValue(Object value) {
-		return prototypes.containsValue(value);
-	}
-
-	@Override
-	public Object get(Object key) {
-		Object prototype = prototypes.get(key);
-		
 		try {
 			return PrototypeBean.duplicate(prototype);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		return null;
-	}
 
-	@Override
-	public Object put(String key, Object value) {
-		return prototypes.put(key, value);
-	}
-
-	@Override
-	public Object remove(Object key) {
-		return prototypes.remove(key);
-	}
-
-	@Override
-	public void putAll(Map<? extends String, ? extends Object> m) {
-		prototypes.putAll(m);
-	}
-
-	@Override
-	public void clear() {
-		prototypes.clear();
-	}
-
-	@Override
-	public Set<String> keySet() {
-		return prototypes.keySet();
-	}
-
-	@Override
-	public Collection<Object> values() {
-		return prototypes.values();
-	}
-
-	@Override
-	public Set<java.util.Map.Entry<String, Object>> entrySet() {
-		return prototypes.entrySet();
+		return defaultValue;
 	}
 }

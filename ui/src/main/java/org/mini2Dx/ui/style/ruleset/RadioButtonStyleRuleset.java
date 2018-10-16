@@ -11,31 +11,28 @@
  */
 package org.mini2Dx.ui.style.ruleset;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.badlogic.gdx.assets.AssetDescriptor;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.style.RadioButtonStyleRule;
 import org.mini2Dx.ui.style.StyleRuleset;
 import org.mini2Dx.ui.style.UiTheme;
 
-import com.badlogic.gdx.assets.AssetDescriptor;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.utils.Array;
-
 /**
  *
  */
 public class RadioButtonStyleRuleset extends StyleRuleset<RadioButtonStyleRule> {
 	@Field
-	private Map<ScreenSize, RadioButtonStyleRule> rules;
+	private ObjectMap<ScreenSize, RadioButtonStyleRule> rules;
 	
 	@Override
 	public void putStyleRule(ScreenSize screenSize, RadioButtonStyleRule rule) {
 		if(rules == null) {
-			rules = new HashMap<ScreenSize, RadioButtonStyleRule>();
+			rules = new ObjectMap<ScreenSize, RadioButtonStyleRule>();
 		}
 		rules.put(screenSize, rule);
 	}

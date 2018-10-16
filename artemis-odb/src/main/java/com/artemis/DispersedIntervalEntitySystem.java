@@ -11,17 +11,11 @@
  */
 package com.artemis;
 
-import com.artemis.*;
-import com.artemis.Aspect.Builder;
-import com.artemis.annotations.DelayedComponentRemoval;
 import com.artemis.utils.Bag;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Queue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static com.artemis.utils.reflect.ReflectionUtil.implementsObserver;
 

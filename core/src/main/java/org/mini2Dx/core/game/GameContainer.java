@@ -11,17 +11,10 @@
  */
 package org.mini2Dx.core.game;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.mini2Dx.core.graphics.Graphics;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import org.mini2Dx.core.graphics.Graphics;
 
 /**
  * Base class for mini2Dx game containers. All games using mini2Dx must extend
@@ -34,7 +27,7 @@ public abstract class GameContainer {
 	protected int width, height;
 	protected Graphics graphics;
 	private boolean isInitialised = false;
-	private List<GameResizeListener> gameResizeListeners;
+	private Array<GameResizeListener> gameResizeListeners;
 	
 	/**
 	 * Initialse the game
@@ -90,7 +83,7 @@ public abstract class GameContainer {
 	 * Internal pre-initialisation code
 	 */
 	protected void preinit(Graphics g) {
-		this.gameResizeListeners = new ArrayList<GameResizeListener>(1);
+		this.gameResizeListeners = new Array<GameResizeListener>(true,1);
 		this.graphics = g;
 	}
 	
@@ -120,7 +113,7 @@ public abstract class GameContainer {
 	}
 	
 	public void removeResizeListener(GameResizeListener listener) {
-		gameResizeListeners.remove(listener);
+		gameResizeListeners.removeValue(listener, false);
 	}
 
 	public int getWidth() {

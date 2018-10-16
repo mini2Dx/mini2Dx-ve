@@ -14,6 +14,7 @@ package org.mini2Dx.core.collisions;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.engine.geom.CollisionBox;
 import org.mini2Dx.core.geom.LineSegment;
 import org.mini2Dx.core.geom.Rectangle;
@@ -46,8 +47,8 @@ public class RegionQuadTreePerformanceTest {
 		public LineSegment lineSegment = new LineSegment(25f, 25f, 75f, 75f);
 		public Rectangle rectangle = new Rectangle(25f, 25f, 50f, 50f);
 		
-		public List<CollisionBox> basicCollisions = new ArrayList<CollisionBox>();
-		public List<CollisionBox> complexCollisions = new ArrayList<CollisionBox>();
+		public Array<CollisionBox> basicCollisions = new Array<CollisionBox>();
+		public Array<CollisionBox> complexCollisions = new Array<CollisionBox>();
 		
 		{
 			basicCollisions.add(new CollisionBox(0f, 0f, 20f, 20f));

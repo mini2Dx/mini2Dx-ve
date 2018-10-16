@@ -11,29 +11,15 @@
  */
 package org.mini2Dx.tiled;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.mini2Dx.core.exception.MdxException;
-import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.tiled.exception.TiledException;
-import org.mini2Dx.tiled.exception.TiledParsingException;
-import org.mini2Dx.tiled.exception.UnsupportedOrientationException;
-import org.mini2Dx.tiled.renderer.HexagonalTileLayerRenderer;
-import org.mini2Dx.tiled.renderer.IsometricTileLayerRenderer;
-import org.mini2Dx.tiled.renderer.OrthogonalTileLayerRenderer;
-import org.mini2Dx.tiled.renderer.TileLayerRenderer;
-import org.mini2Dx.tiled.renderer.TiledObjectGroupRenderer;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
+import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.tiled.exception.TiledException;
+import org.mini2Dx.tiled.exception.UnsupportedOrientationException;
+import org.mini2Dx.tiled.renderer.*;
 
 /**
  * A Tiled map instance
@@ -120,10 +106,10 @@ public class TiledMap {
 	 * @return True if they have been loaded
 	 */
 	public boolean isTilesetTexturesLoaded() {
-		final List<Tileset> tilesets = tiledMapData.getTilesets();
+		final Array<Tileset> tilesets = tiledMapData.getTilesets();
 
 		boolean result = true;
-		for (int i = 0; i < tilesets.size(); i++) {
+		for (int i = 0; i < tilesets.size; i++) {
 			if (!tilesets.get(i).isTextureLoaded()) {
 				return false;
 			}
@@ -156,7 +142,7 @@ public class TiledMap {
 		if (tiledMapData.getAnimatedTiles() == null) {
 			return;
 		}
-		for (int i = 0; i < tiledMapData.getAnimatedTiles().size(); i++) {
+		for (int i = 0; i < tiledMapData.getAnimatedTiles().size; i++) {
 			tiledMapData.getAnimatedTiles().get(i).update(delta);
 		}
 	}
@@ -396,7 +382,7 @@ public class TiledMap {
 	 * 
 	 * @return Null if there are no {@link TiledObjectGroup}s
 	 */
-	public Collection<TiledObjectGroup> getObjectGroups() {
+	public Iterable<TiledObjectGroup> getObjectGroups() {
 		return tiledMapData.getObjectGroups();
 	}
 
@@ -567,7 +553,7 @@ public class TiledMap {
 	 * 
 	 * @return An empty list if none have been loaded
 	 */
-	public List<Tileset> getTilesets() {
+	public Array<Tileset> getTilesets() {
 		return tiledMapData.getTilesets();
 	}
 
@@ -576,7 +562,7 @@ public class TiledMap {
 	 * 
 	 * @return
 	 */
-	public List<Layer> getLayers() {
+	public Array<Layer> getLayers() {
 		return tiledMapData.getLayers();
 	}
 

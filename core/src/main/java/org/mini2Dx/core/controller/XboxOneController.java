@@ -11,16 +11,12 @@
  */
 package org.mini2Dx.core.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.controller.button.XboxOneButton;
 import org.mini2Dx.core.controller.deadzone.DeadZone;
 import org.mini2Dx.core.controller.deadzone.NoopDeadZone;
-import org.mini2Dx.core.controller.xbox360.Xbox360ControllerListener;
 import org.mini2Dx.core.controller.xboxone.XboxOneControllerListener;
-
-import com.badlogic.gdx.controllers.Controller;
 
 /**
  * Base class for Xbox One controller mapping implementations
@@ -29,7 +25,7 @@ public abstract class XboxOneController implements MdxController<XboxOneControll
 	public static final String ID = "xbox one";
 
 	private final Controller controller;
-	private final List<XboxOneControllerListener> listeners = new ArrayList<>();
+	private final Array<XboxOneControllerListener> listeners = new Array<>();
 	
 	private DeadZone leftStickDeadZone, rightStickDeadZone;
 	
@@ -129,7 +125,7 @@ public abstract class XboxOneController implements MdxController<XboxOneControll
 	
 	@Override
     public void addListener(int index, XboxOneControllerListener listener) {
-    	listeners.add(index, listener);
+    	listeners.insert(index, listener);
     }
 	
 	@Override
@@ -139,12 +135,12 @@ public abstract class XboxOneController implements MdxController<XboxOneControll
 	
 	@Override
     public void removeListener(int index) {
-    	listeners.remove(index);
+    	listeners.removeIndex(index);
     }
     
     @Override
     public void removeListener(XboxOneControllerListener listener) {
-    	listeners.remove(listener);
+    	listeners.removeValue(listener, false);
     }
     
     @Override
@@ -159,7 +155,7 @@ public abstract class XboxOneController implements MdxController<XboxOneControll
 	
     @Override
 	public int getTotalListeners() {
-		return listeners.size();
+		return listeners.size;
 	}
 	
 	@Override

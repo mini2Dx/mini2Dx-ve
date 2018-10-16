@@ -11,14 +11,13 @@
  */
 package org.mini2Dx.core.controller.ps4;
 
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.PovDirection;
+import com.badlogic.gdx.math.Vector3;
 import org.mini2Dx.core.controller.PS4Controller;
 import org.mini2Dx.core.controller.button.PS4Button;
 import org.mini2Dx.core.controller.deadzone.DeadZone;
 import org.mini2Dx.core.controller.deadzone.NoopDeadZone;
-
-import com.badlogic.gdx.controllers.Controller;
-import com.badlogic.gdx.controllers.PovDirection;
-import com.badlogic.gdx.math.Vector3;
 
 /**
  * Windows bindings for PS4 controller

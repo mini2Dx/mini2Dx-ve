@@ -11,13 +11,12 @@
  */
 package org.mini2Dx.core.controller.xbox360;
 
-import org.mini2Dx.core.controller.Xbox360Controller;
-import org.mini2Dx.core.controller.button.Xbox360Button;
-import org.mini2Dx.core.controller.deadzone.DeadZone;
-
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.math.Vector3;
+import org.mini2Dx.core.controller.Xbox360Controller;
+import org.mini2Dx.core.controller.button.Xbox360Button;
+import org.mini2Dx.core.controller.deadzone.DeadZone;
 
 /**
  * Linux bindings for Xbox 360 controller

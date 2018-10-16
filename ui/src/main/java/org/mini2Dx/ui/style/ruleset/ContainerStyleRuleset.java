@@ -11,31 +11,28 @@
  */
 package org.mini2Dx.ui.style.ruleset;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.badlogic.gdx.assets.AssetDescriptor;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.style.ContainerStyleRule;
 import org.mini2Dx.ui.style.StyleRuleset;
 import org.mini2Dx.ui.style.UiTheme;
 
-import com.badlogic.gdx.assets.AssetDescriptor;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.utils.Array;
-
 /**
  * {@link StyleRuleset} implementation for {@link ContainerStyleRule}s
  */
 public class ContainerStyleRuleset extends StyleRuleset<ContainerStyleRule> {
 	@Field
-	private Map<ScreenSize, ContainerStyleRule> rules;
+	private ObjectMap<ScreenSize, ContainerStyleRule> rules;
 	
 	@Override
 	public void putStyleRule(ScreenSize screenSize, ContainerStyleRule rule) {
 		if(rules == null) {
-			rules = new HashMap<ScreenSize, ContainerStyleRule>();
+			rules = new ObjectMap<ScreenSize, ContainerStyleRule>();
 		}
 		rules.put(screenSize, rule);
 	}

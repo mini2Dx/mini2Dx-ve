@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.ui.render;
 
+import com.badlogic.gdx.utils.Array;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -78,7 +79,7 @@ public class DivRenderNodeTest {
 
 		mockery.checking(new Expectations() {
 			{
-				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(Array.class)));
 			}
 		});
 	}

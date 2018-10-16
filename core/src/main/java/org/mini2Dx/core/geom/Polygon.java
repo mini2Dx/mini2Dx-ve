@@ -12,18 +12,17 @@
  */
 package org.mini2Dx.core.geom;
 
-import java.util.Arrays;
-
-import org.mini2Dx.core.exception.MdxException;
-import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.core.util.EdgeIterator;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.math.GeometryUtils;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ShortArray;
+import org.mini2Dx.core.exception.MdxException;
+import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.core.util.EdgeIterator;
+
+import java.util.Arrays;
 
 /**
  * Implements a rotatable polygon. Adds extra functionality to the default

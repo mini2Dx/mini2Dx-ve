@@ -11,13 +11,12 @@
  */
 package org.mini2Dx.core.screen.transition;
 
+import com.badlogic.gdx.graphics.Color;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.screen.GameScreen;
 import org.mini2Dx.core.screen.Transition;
 import org.mini2Dx.core.util.ColorUtils;
-
-import com.badlogic.gdx.graphics.Color;
 
 /**
  * Implements a fade out transition

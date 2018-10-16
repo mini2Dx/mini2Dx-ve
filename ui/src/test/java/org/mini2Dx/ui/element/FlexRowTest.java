@@ -41,8 +41,8 @@ public class FlexRowTest {
 			
 			Assert.assertEquals(flexRow.getId(), result.getId());
 			Assert.assertEquals(flexRow.getZIndex(), result.getZIndex());
-			Assert.assertEquals(flexRow.children.size(), result.children.size());
-			for(int i = 0; i < flexRow.children.size(); i++) {
+			Assert.assertEquals(flexRow.children.size, result.children.size);
+			for(int i = 0; i < flexRow.children.size; i++) {
 				Assert.assertEquals(flexRow.children.get(i).getId(), result.children.get(i).getId());
 			}
 		} catch (SerializationException e) {

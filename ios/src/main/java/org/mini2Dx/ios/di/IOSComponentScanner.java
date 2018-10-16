@@ -11,15 +11,14 @@
  */
 package org.mini2Dx.ios.di;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.di.ComponentScanner;
 import org.mini2Dx.core.di.annotation.Prototype;
 import org.mini2Dx.core.di.annotation.Singleton;
 import org.reflections.Reflections;
+
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * iOS implementation of {@link ComponentScanner}
@@ -27,15 +26,15 @@ import org.reflections.Reflections;
  * @author Thomas Cashman
  */
 public class IOSComponentScanner implements ComponentScanner {
-    private List<Class<?>> singletonClasses;
-    private List<Class<?>> prototypeClasses;
+    private Array<Class<?>> singletonClasses;
+    private Array<Class<?>> prototypeClasses;
 
     /**
      * Constructor
      */
     public IOSComponentScanner() {
-        singletonClasses = new ArrayList<Class<?>>();
-        prototypeClasses = new ArrayList<Class<?>>();
+        singletonClasses = new Array<Class<?>>();
+        prototypeClasses = new Array<Class<?>>();
     }
 
     /**
@@ -64,18 +63,22 @@ public class IOSComponentScanner implements ComponentScanner {
         Reflections reflections = new Reflections(packageName);
         Set<Class<?>> singletons = reflections
                 .getTypesAnnotatedWith(Singleton.class);
-        singletonClasses.addAll(singletons);
+        for(Class<?> clazz : singletons) {
+            singletonClasses.add(clazz);
+        }
 
         Set<Class<?>> prototypes = reflections
                 .getTypesAnnotatedWith(Prototype.class);
-        prototypeClasses.addAll(prototypes);
+        for(Class<?> clazz : prototypes) {
+            prototypeClasses.addAll(clazz);
+        }
     }
 
-    public List<Class<?>> getSingletonClasses() {
+    public Array<Class<?>> getSingletonClasses() {
         return singletonClasses;
     }
 
-    public List<Class<?>> getPrototypeClasses() {
+    public Array<Class<?>> getPrototypeClasses() {
         return prototypeClasses;
     }
 }

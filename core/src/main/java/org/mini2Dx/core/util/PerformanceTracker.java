@@ -11,11 +11,10 @@
  */
 package org.mini2Dx.core.util;
 
-import org.mini2Dx.core.game.GameContainer;
-import org.mini2Dx.core.graphics.Graphics;
-
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.utils.Align;
+import org.mini2Dx.core.game.GameContainer;
+import org.mini2Dx.core.graphics.Graphics;
 
 /**
  * Tracks the following performance metrics during gameplay:<br>

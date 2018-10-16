@@ -11,11 +11,10 @@
  */
 package org.mini2Dx.core.graphics.pipeline;
 
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.util.Ref;
-
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 /**
  * Ends a {@link FrameBuffer} during the {@link #apply} phase

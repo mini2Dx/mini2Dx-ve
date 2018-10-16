@@ -11,22 +11,21 @@
  */
 package org.mini2Dx.tiled;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Represents a group of {@link TiledObject}s loaded from a {@link TiledMap}
  */
 public class TiledObjectGroup extends Layer {
 	private int width, height;
-	private List<TiledObject> objects;
+	private Array<TiledObject> objects;
 	
 	/**
 	 * Constructor
 	 */
 	public TiledObjectGroup() {
 		super(LayerType.OBJECT);
-		objects = new ArrayList<TiledObject>();
+		objects = new Array<TiledObject>(true, 2, TiledObject.class);
 	}
 
 	/**
@@ -65,7 +64,7 @@ public class TiledObjectGroup extends Layer {
 	 * Returns the objects within this group
 	 * @return An empty list if none
 	 */
-	public List<TiledObject> getObjects() {
+	public Array<TiledObject> getObjects() {
 		return objects;
 	}
 
@@ -75,7 +74,7 @@ public class TiledObjectGroup extends Layer {
 	 * @return Null if this layer does not contain an object with the specified ID
 	 */
 	public TiledObject getObjectById(int id) {
-		for(int i = 0; i < objects.size(); i++) {
+		for(int i = 0; i < objects.size; i++) {
 			final TiledObject tiledObject = objects.get(i);
 			if(tiledObject.getId() < 0) {
 				continue;
@@ -97,7 +96,7 @@ public class TiledObjectGroup extends Layer {
 		if(name == null) {
 			return null;
 		}
-		for(int i = 0; i < objects.size(); i++) {
+		for(int i = 0; i < objects.size; i++) {
 			final TiledObject tiledObject = objects.get(i);
 			if(tiledObject.getName() == null) {
 				continue;

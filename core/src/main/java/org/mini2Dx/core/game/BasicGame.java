@@ -11,10 +11,9 @@
  */
 package org.mini2Dx.core.game;
 
-import org.mini2Dx.core.graphics.Graphics;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import org.mini2Dx.core.graphics.Graphics;
 
 /**
  * A simplified {@link GameContainer} for beginners to build upon

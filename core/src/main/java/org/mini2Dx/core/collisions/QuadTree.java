@@ -11,9 +11,7 @@
  */
 package org.mini2Dx.core.collisions;
 
-import java.util.Collection;
-import java.util.List;
-
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.engine.PositionChangeListener;
 import org.mini2Dx.core.engine.Positionable;
 import org.mini2Dx.core.geom.LineSegment;
@@ -32,25 +30,25 @@ public interface QuadTree<T extends Positionable> extends PositionChangeListener
 	
 	public boolean remove(T element);
 	
-	public void addAll(List<T> elements);
+	public void addAll(Array<T> elements);
 	
-	public void removeAll(List<T> elements);
+	public void removeAll(Array<T> elements);
 	
-	public List<T> getElementsWithinArea(Shape area);
+	public Array<T> getElementsWithinArea(Shape area);
 	
-	public void getElementsWithinArea(Collection<T> result, Shape area);
+	public void getElementsWithinArea(Array<T> result, Shape area);
 	
-	public List<T> getElementsIntersectingLineSegment(LineSegment lineSegment);
+	public Array<T> getElementsIntersectingLineSegment(LineSegment lineSegment);
 	
-	public void getElementsIntersectingLineSegment(Collection<T> result, LineSegment lineSegment);
+	public void getElementsIntersectingLineSegment(Array<T> result, LineSegment lineSegment);
 	
-	public List<T> getElementsContainingPoint(Point point);
+	public Array<T> getElementsContainingPoint(Point point);
 	
-	public void getElementsContainingPoint(Collection<T> result, Point point);
+	public void getElementsContainingPoint(Array<T> result, Point point);
 	
-	public List<T> getElements();
+	public Array<T> getElements();
 	
-	public void getElements(List<T> result);
+	public void getElements(Array<T> result);
 	
 	public int getTotalQuads();
 	

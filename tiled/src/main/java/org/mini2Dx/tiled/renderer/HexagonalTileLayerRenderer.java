@@ -11,12 +11,11 @@
  */
 package org.mini2Dx.tiled.renderer;
 
+import com.badlogic.gdx.math.MathUtils;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.tiled.TileLayer;
 import org.mini2Dx.tiled.TiledMap;
 import org.mini2Dx.tiled.Tileset;
-
-import com.badlogic.gdx.math.MathUtils;
 
 /**
  * Renders hexagonal {@link TileLayer}s
@@ -164,7 +163,7 @@ public class HexagonalTileLayerRenderer implements TileLayerRenderer {
 	}
 
 	private void renderTile(Graphics g, int tileId, int tileRenderX, int tileRenderY) {
-		for (int i = 0; i < tiledMap.getTilesets().size(); i++) {
+		for (int i = 0; i < tiledMap.getTilesets().size; i++) {
 			Tileset tileset = tiledMap.getTilesets().get(i);
 			if (tileset.contains(tileId)) {
 				tileset.getTile(tileId).draw(g, tileRenderX, tileRenderY);

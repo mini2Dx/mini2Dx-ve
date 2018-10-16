@@ -11,11 +11,10 @@
  */
 package org.mini2Dx.ui.layout;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
+
+import java.util.Iterator;
 
 /**
  * Represents different screen size categories
@@ -42,7 +41,7 @@ public enum ScreenSize {
 	 */
 	XL(1600);
 	
-	private static final List<ScreenSize> smallestToLargest = new ArrayList<ScreenSize>() {
+	private static final Array<ScreenSize> smallestToLargest = new Array<ScreenSize>(true, 5, ScreenSize.class) {
 		{
 			add(XS);
 			add(SM);
@@ -51,7 +50,7 @@ public enum ScreenSize {
 			add(XL);
 		}
 	};
-	private static final List<ScreenSize> largestToSmallest = new ArrayList<ScreenSize>() {
+	private static final Array<ScreenSize> largestToSmallest = new Array<ScreenSize>(true, 5, ScreenSize.class) {
 		{
 			add(XL);
 			add(LG);

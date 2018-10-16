@@ -11,12 +11,7 @@
  */
 package org.mini2Dx.ui.element;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
@@ -25,15 +20,15 @@ import org.mini2Dx.ui.layout.PixelLayoutUtils;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.UiContainerRenderTree;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Base class for {@link UiElement}s that can contain child {@link UiElement}s
  */
 public abstract class ParentUiElement extends UiElement {
 	@Field(optional = true)
-	protected final List<UiElement> children = new ArrayList<UiElement>(1);
+	protected final Array<UiElement> children = new Array<UiElement>(true,1, UiElement.class);
 
-	protected final Queue<UiElement> asyncAddQueue = new ConcurrentLinkedQueue<UiElement>();
-	protected final Queue<UiElement> asyncRemoveQueue = new ConcurrentLinkedQueue<UiElement>();
 	protected final AtomicBoolean asyncRemoveAll = new AtomicBoolean(false);
 
 	@Field(optional = true)
@@ -125,22 +120,12 @@ public abstract class ParentUiElement extends UiElement {
 		if (element == null) {
 			throw new MdxException("Cannot add null element to ParentUiElement");
 		}
-		children.add(index, element);
+		children.insert(index, element);
 
 		if (renderNode == null) {
 			return;
 		}
 		element.attach(renderNode);
-	}
-
-	/**
-	 * Adds a {@link UiElement} safely from a non-OpenGL thread
-	 * 
-	 * @param element
-	 *            The {@link UiElement} to be added
-	 */
-	public void addAsync(UiElement element) {
-		asyncAddQueue.offer(element);
 	}
 
 	/**
@@ -155,17 +140,7 @@ public abstract class ParentUiElement extends UiElement {
 		if (renderNode != null) {
 			element.detach(renderNode);
 		}
-		return children.remove(element);
-	}
-
-	/**
-	 * Removes a {@link UiElement} safely from a non-OpenGL thread
-	 * 
-	 * @param element
-	 *            The {@link UiElement} to be remove
-	 */
-	public void removeAsync(UiElement element) {
-		asyncRemoveQueue.offer(element);
+		return children.removeValue(element, false);
 	}
 
 	/**
@@ -179,15 +154,15 @@ public abstract class ParentUiElement extends UiElement {
 		if (renderNode != null) {
 			children.get(index).detach(renderNode);
 		}
-		return children.remove(index);
+		return children.removeIndex(index);
 	}
 
 	/**
 	 * Removes all children from this {@link ParentUiElement}
 	 */
 	public void removeAll() {
-		for (int i = children.size() - 1; i >= 0; i--) {
-			UiElement element = children.remove(i);
+		for (int i = children.size - 1; i >= 0; i--) {
+			UiElement element = children.removeIndex(i);
 			if (renderNode != null) {
 				element.detach(renderNode);
 			}
@@ -227,7 +202,7 @@ public abstract class ParentUiElement extends UiElement {
 			return;
 		}
 		renderNode = createRenderNode(parentRenderNode);
-		for (int i = 0; i < children.size(); i++) {
+		for (int i = 0; i < children.size; i++) {
 			children.get(i).attach(renderNode);
 		}
 		parentRenderNode.addChild(renderNode);
@@ -238,7 +213,7 @@ public abstract class ParentUiElement extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		for (int i = 0; i < children.size(); i++) {
+		for (int i = 0; i < children.size; i++) {
 			children.get(i).detach(renderNode);
 		}
 		parentRenderNode.removeChild(renderNode);
@@ -279,18 +254,12 @@ public abstract class ParentUiElement extends UiElement {
 
 	@Override
 	public void syncWithUpdate(UiContainerRenderTree rootNode) {
-		while (!effects.isEmpty()) {
-			renderNode.applyEffect(effects.poll());
+		while (effects.size > 0) {
+			renderNode.applyEffect(effects.removeFirst());
 		}
 		if (asyncRemoveAll.get()) {
 			removeAll();
 			asyncRemoveAll.set(false);
-		}
-		while (!asyncAddQueue.isEmpty()) {
-			add(asyncAddQueue.poll());
-		}
-		while (!asyncRemoveQueue.isEmpty()) {
-			remove(asyncRemoveQueue.poll());
 		}
 
 		if(renderNode != null && flexLayout != null) {
@@ -338,7 +307,7 @@ public abstract class ParentUiElement extends UiElement {
 	 * @return 0 is there are no children
 	 */
 	public int getTotalChildren() {
-		return children.size();
+		return children.size;
 	}
 
 	public String getFlexLayout() {
@@ -365,7 +334,7 @@ public abstract class ParentUiElement extends UiElement {
 		if (getId().equals(id)) {
 			return this;
 		}
-		for (int i = 0; i < children.size(); i++) {
+		for (int i = 0; i < children.size; i++) {
 			UiElement result = children.get(i).getElementById(id);
 			if (result != null) {
 				return result;

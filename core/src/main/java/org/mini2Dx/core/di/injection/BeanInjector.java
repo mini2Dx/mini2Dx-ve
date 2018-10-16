@@ -11,13 +11,8 @@
  */
 package org.mini2Dx.core.di.injection;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.core.di.annotation.Autowired;
 import org.mini2Dx.core.di.annotation.PostInject;
 import org.mini2Dx.core.di.bean.Bean;
@@ -26,18 +21,24 @@ import org.mini2Dx.core.di.bean.SingletonBean;
 import org.mini2Dx.core.di.exception.NoSuchBeanException;
 import org.mini2Dx.core.di.exception.PostInjectException;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.concurrent.ExecutorService;
+
 /**
  * Injects beans into each other
  */
 public class BeanInjector {
-	private Map<String, Object> singletons;
-	private Map<String, Object> prototypes;
-	private Map<String, NoSuchBeanException> exceptions;
+	private ObjectMap<String, Object> singletons;
+	private ObjectMap<String, Object> prototypes;
+	private ObjectMap<String, NoSuchBeanException> exceptions;
 
-	public BeanInjector(Map<String, Object> singletons, Map<String, Object> prototypes) {
+	public BeanInjector(ObjectMap<String, Object> singletons, ObjectMap<String, Object> prototypes) {
+		super();
 		this.singletons = singletons;
 		this.prototypes = prototypes;
-		this.exceptions = new HashMap<String, NoSuchBeanException>();
+		this.exceptions = new ObjectMap<String, NoSuchBeanException>();
 	}
 
 	public void inject() throws NoSuchBeanException, IllegalArgumentException, IllegalAccessException {
@@ -45,7 +46,7 @@ public class BeanInjector {
 		injectPrototypes();
 		checkInjectionSuccessful();
 
-		for (String key : prototypes.keySet()) {
+		for (String key : prototypes.keys()) {
 			Object object = prototypes.get(key);
 			try {
 				invokePostInject(object);
@@ -54,7 +55,7 @@ public class BeanInjector {
 			}
 		}
 
-		for (String key : singletons.keySet()) {
+		for (String key : singletons.keys()) {
 			Object object = singletons.get(key);
 			try {
 				invokePostInject(object);
@@ -63,22 +64,22 @@ public class BeanInjector {
 			}
 		}
 
-		if (exceptions.size() > 0) {
-			for (String key : exceptions.keySet()) {
+		if (exceptions.size > 0) {
+			for (String key : exceptions.keys()) {
 				throw exceptions.get(key);
 			}
 		}
 	}
 
-	public Map<String, Bean> getInjectionResult(ExecutorService prototypeExecutorService) {
-		Map<String, Bean> result = new HashMap<String, Bean>();
+	public ObjectMap<String, Bean> getInjectionResult(ExecutorService prototypeExecutorService) {
+		ObjectMap<String, Bean> result = new ObjectMap<String, Bean>();
 
-		for (String key : singletons.keySet()) {
+		for (String key : singletons.keys()) {
 			Object object = singletons.get(key);
 			result.put(key, new SingletonBean(object));
 		}
 
-		for (String key : prototypes.keySet()) {
+		for (String key : prototypes.keys()) {
 			Object object = prototypes.get(key);
 			PrototypeBean prototypeBean = new PrototypeBean(object, prototypeExecutorService);
 			prototypeExecutorService.submit(prototypeBean);
@@ -102,38 +103,49 @@ public class BeanInjector {
 	}
 
 	private void injectPrototypes() throws NoSuchBeanException, IllegalArgumentException, IllegalAccessException {
-		Map<String, Object> prototypeInjectionMap = new PrototypeInjectionMap(prototypes);
+		ObjectMap<String, Object> prototypeInjectionMap = new PrototypeInjectionMap(prototypes);
 
-		for (String key : prototypes.keySet()) {
+		for (String key : prototypes.keys()) {
 			Object object = prototypes.get(key);
 			inject(object, key, prototypeInjectionMap);
 		}
 
-		for (String key : singletons.keySet()) {
+		for (String key : singletons.keys()) {
 			Object object = singletons.get(key);
 			inject(object, key, prototypeInjectionMap);
 		}
 	}
 
 	private void injectSingletons() throws NoSuchBeanException, IllegalArgumentException, IllegalAccessException {
-		for (String key : singletons.keySet()) {
+		//Copy keys to array to prevent nested key iterators
+		Array<String> singletonKeys = new Array<String>();
+		Array<String> prototypeKeys = new Array<String>();
+
+		for (String key : singletons.keys()) {
+			singletonKeys.add(key);
+		}
+		for (String key : prototypes.keys()) {
+			prototypeKeys.add(key);
+		}
+
+		for (String key : singletonKeys) {
 			Object object = singletons.get(key);
 			inject(object, key, singletons);
 		}
 
-		for (String key : prototypes.keySet()) {
+		for (String key : prototypeKeys) {
 			Object object = prototypes.get(key);
 			inject(object, key, singletons);
 		}
 	}
 	
 	private void checkInjectionSuccessful() throws NoSuchBeanException, IllegalArgumentException, IllegalAccessException {
-		for (String key : singletons.keySet()) {
+		for (String key : singletons.keys()) {
 			Object object = singletons.get(key);
 			checkInjectionSuccessful(object, key);
 		}
 
-		for (String key : prototypes.keySet()) {
+		for (String key : prototypes.keys()) {
 			Object object = prototypes.get(key);
 			checkInjectionSuccessful(object, key);
 		}
@@ -167,7 +179,7 @@ public class BeanInjector {
 		}
 	}
 
-	private void inject(Object object, String objectKey, Map<String, Object> beans)
+	private void inject(Object object, String objectKey, ObjectMap<String, Object> beans)
 			throws NoSuchBeanException, IllegalArgumentException, IllegalAccessException {
 		Class<?> currentClass = object.getClass();
 		while (!currentClass.equals(Object.class)) {
@@ -196,7 +208,7 @@ public class BeanInjector {
 					/*
 					 * Injecting a dependency implementation for an interface
 					 */
-					for (String beanKey : beans.keySet()) {
+					for (String beanKey : beans.keys()) {
 						if (beanKey.compareTo(objectKey) != 0) {
 							Object beanToInject = beans.get(beanKey);
 

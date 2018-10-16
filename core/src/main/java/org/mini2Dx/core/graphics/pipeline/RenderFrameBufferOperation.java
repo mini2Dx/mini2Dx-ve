@@ -11,15 +11,14 @@
  */
 package org.mini2Dx.core.graphics.pipeline;
 
-import org.mini2Dx.core.game.GameContainer;
-import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.core.util.Ref;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import org.mini2Dx.core.game.GameContainer;
+import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.core.util.Ref;
 
 /**
  * Renders a {@link FrameBuffer} at 0,0 during the {@link #apply} phase.

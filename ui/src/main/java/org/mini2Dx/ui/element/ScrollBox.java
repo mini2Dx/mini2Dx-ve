@@ -11,11 +11,8 @@
  */
 package org.mini2Dx.ui.element;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Queue;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.ui.UiContainer;
@@ -40,8 +37,8 @@ public class ScrollBox extends Div {
 	@Field(optional = true)
 	private float maxHeight = Float.MAX_VALUE;
 
-	private final Queue<ScrollTo> scrollTos = new LinkedList<ScrollTo>();
-	private List<ScrollListener> scrollListeners;
+	private final Queue<ScrollTo> scrollTos = new Queue<ScrollTo>();
+	private Array<ScrollListener> scrollListeners;
 
 	private float scrollContentHeight;
 
@@ -93,12 +90,12 @@ public class ScrollBox extends Div {
 		}
 		scrollContentHeight = ((ScrollBoxRenderNode) renderNode).getScrollContentHeight();
 
-		ScrollTo scrollTo = scrollTos.peek();
-		if (scrollTo == null) {
+		if(scrollTos.size == 0) {
 			return;
 		}
+		final ScrollTo scrollTo = scrollTos.first();
 		if (((ScrollBoxRenderNode) renderNode).offerScrollTo(scrollTo)) {
-			scrollTos.poll();
+			scrollTos.removeFirst();
 		}
 	}
 
@@ -112,7 +109,7 @@ public class ScrollBox extends Div {
 	 *            False if the scrolling should be smooth.
 	 */
 	public void scrollTo(UiElement element, boolean immediate) {
-		scrollTos.offer(new ScrollTo(element, immediate));
+		scrollTos.addLast(new ScrollTo(element, immediate));
 	}
 
 	/**
@@ -123,10 +120,10 @@ public class ScrollBox extends Div {
 	 *            False if the scrolling should be smooth.
 	 */
 	public void scrollToTop(boolean immediate) {
-		if (children.size() == 0) {
+		if (children.size == 0) {
 			return;
 		}
-		scrollTos.offer(new ScrollTo(children.get(0), immediate));
+		scrollTos.addLast(new ScrollTo(children.get(0), immediate));
 	}
 
 	/**
@@ -137,10 +134,10 @@ public class ScrollBox extends Div {
 	 *            False if the scrolling should be smooth.
 	 */
 	public void scrollToBottom(boolean immediate) {
-		if (children.size() == 0) {
+		if (children.size == 0) {
 			return;
 		}
-		scrollTos.offer(new ScrollTo(children.get(children.size() - 1), immediate));
+		scrollTos.addLast(new ScrollTo(children.get(children.size - 1), immediate));
 	}
 
 	/**
@@ -229,7 +226,7 @@ public class ScrollBox extends Div {
 	 */
 	public void addScrollListener(ScrollListener listener) {
 		if (scrollListeners == null) {
-			scrollListeners = new ArrayList<ScrollListener>(1);
+			scrollListeners = new Array<ScrollListener>(true, 1, ScrollListener.class);
 		}
 		scrollListeners.add(listener);
 	}
@@ -244,7 +241,7 @@ public class ScrollBox extends Div {
 		if (scrollListeners == null) {
 			return;
 		}
-		scrollListeners.remove(listener);
+		scrollListeners.removeValue(listener, false);
 	}
 
 	/**
@@ -258,7 +255,7 @@ public class ScrollBox extends Div {
 		if (scrollListeners == null) {
 			return;
 		}
-		for (int i = scrollListeners.size() - 1; i >= 0; i--) {
+		for (int i = scrollListeners.size - 1; i >= 0; i--) {
 			scrollListeners.get(i).onScroll(this, scrollThumbPosition);
 		}
 	}
@@ -313,7 +310,7 @@ public class ScrollBox extends Div {
 		case INTERPOLATE:
 		case RENDER:
 			float maxY = 0f;
-			for(int i = 0; i < children.size(); i++) {
+			for(int i = 0; i < children.size; i++) {
 				final UiElement uiElement = children.get(i);
 				if(uiElement == null) {
 					continue;

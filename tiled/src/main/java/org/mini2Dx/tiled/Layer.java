@@ -11,8 +11,7 @@
  */
 package org.mini2Dx.tiled;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.badlogic.gdx.utils.ObjectMap;
 
 /**
  * Base class for {@link TiledMap} layers
@@ -22,7 +21,7 @@ public abstract class Layer {
 
 	private String name;
 	private int index;
-	private Map<String, String> properties;
+	private ObjectMap<String, String> properties;
 	private boolean visible;
 
 	public Layer(LayerType layerType) {
@@ -103,15 +102,15 @@ public abstract class Layer {
 	 */
 	public void setProperty(String propertyName, String value) {
 		if (properties == null)
-			properties = new HashMap<String, String>();
+			properties = new ObjectMap<String, String>();
 		properties.put(propertyName, value);
 	}
 	
 	/**
-	 * Returns the properties {@link Map} of this {@link Layer}
+	 * Returns the properties {@link ObjectMap} of this {@link Layer}
 	 * @return Null if there are no properties
 	 */
-	public Map<String, String> getProperties() {
+	public ObjectMap<String, String> getProperties() {
 		return properties;
 	}
 

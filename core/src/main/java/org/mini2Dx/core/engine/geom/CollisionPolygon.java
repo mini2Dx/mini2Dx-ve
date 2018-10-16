@@ -11,11 +11,9 @@
  */
 package org.mini2Dx.core.engine.geom;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.engine.PositionChangeListener;
 import org.mini2Dx.core.engine.Positionable;
 import org.mini2Dx.core.engine.SizeChangeListener;
@@ -25,8 +23,8 @@ import org.mini2Dx.core.geom.Polygon;
 import org.mini2Dx.core.geom.Shape;
 import org.mini2Dx.core.graphics.Graphics;
 
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
+import java.util.Objects;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  *
@@ -39,8 +37,8 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 	private final ReentrantReadWriteLock positionChangeListenerLock;
 	private final ReentrantReadWriteLock sizeChangeListenerLock;
 	
-	private List<PositionChangeListener> positionChangeListeners;
-	private List<SizeChangeListener> sizeChangeListeners;
+	private Array<PositionChangeListener> positionChangeListeners;
+	private Array<SizeChangeListener> sizeChangeListeners;
 
 	private Polygon previousPolygon;
 	private Polygon renderPolygon;
@@ -125,7 +123,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 			PositionChangeListener<T> listener) {
 		positionChangeListenerLock.writeLock().lock();
 		if (positionChangeListeners == null) {
-			positionChangeListeners = new ArrayList<PositionChangeListener>(1);
+			positionChangeListeners = new Array<PositionChangeListener>(true, 1);
 		}
 		positionChangeListeners.add(listener);
 		positionChangeListenerLock.writeLock().unlock();
@@ -142,7 +140,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		positionChangeListenerLock.readLock().unlock();
 		
 		positionChangeListenerLock.writeLock().lock();
-		positionChangeListeners.remove(listener);
+		positionChangeListeners.removeValue(listener, false);
 		positionChangeListenerLock.writeLock().unlock();
 	}
 
@@ -152,9 +150,9 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 			positionChangeListenerLock.readLock().unlock();
 			return;
 		}
-		for (int i = positionChangeListeners.size() - 1; i >= 0; i--) {
-			if(i >= positionChangeListeners.size()) {
-				i = positionChangeListeners.size() - 1;
+		for (int i = positionChangeListeners.size - 1; i >= 0; i--) {
+			if(i >= positionChangeListeners.size) {
+				i = positionChangeListeners.size - 1;
 			}
 			PositionChangeListener listener = positionChangeListeners.get(i);
 			positionChangeListenerLock.readLock().unlock();
@@ -168,7 +166,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 	public <T extends Sizeable> void addSizeChangeListener(SizeChangeListener<T> listener) {
 		sizeChangeListenerLock.writeLock().lock();
 		if (sizeChangeListeners == null) {
-			sizeChangeListeners = new ArrayList<SizeChangeListener>(1);
+			sizeChangeListeners = new Array<SizeChangeListener>(true, 1);
 		}
 		sizeChangeListeners.add(listener);
 		sizeChangeListenerLock.writeLock().unlock();
@@ -184,7 +182,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		sizeChangeListenerLock.readLock().unlock();
 		
 		sizeChangeListenerLock.writeLock().lock();
-		sizeChangeListeners.remove(listener);
+		sizeChangeListeners.removeValue(listener, false);
 		sizeChangeListenerLock.writeLock().unlock();
 	}
 	
@@ -194,9 +192,9 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 			sizeChangeListenerLock.readLock().unlock();
 			return;
 		}
-		for (int i = sizeChangeListeners.size() - 1; i >= 0; i--) {
-			if(i >= sizeChangeListeners.size()) {
-				i = sizeChangeListeners.size() - 1;
+		for (int i = sizeChangeListeners.size - 1; i >= 0; i--) {
+			if(i >= sizeChangeListeners.size) {
+				i = sizeChangeListeners.size - 1;
 			}
 			SizeChangeListener listener = sizeChangeListeners.get(i);
 			sizeChangeListenerLock.readLock().unlock();

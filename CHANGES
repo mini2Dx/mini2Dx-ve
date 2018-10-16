@@ -1,5 +1,6 @@
 [1.8.0-SNAPSHOT]
 - Update to LibGDX 1.9.8, RoboVM 2.3.3
+- [BREAKING] Replace usages of Java collections with GDX collections to improve performance
 - [BREAKING] UI Modal and Containers are now unified into a single Container class
 - [BREAKING] Deferred UI tasks can now be deferred until update() or layout()
 - [BREAKING] UI elements now default to pixel coordinate UI layout
@@ -10,6 +11,7 @@
 - Improved scrolling when dragging scroll thumb in ScrollBox
 - Fixed UI elements changing state within margin area
 - Fixed SlideIn/SlideOut visibility timing
+- Fixed graphics context unnecessarily applying clip when clip is same size as viewport
 
 [1.7.14]
 - (#76) Added support for Tiled object shapes

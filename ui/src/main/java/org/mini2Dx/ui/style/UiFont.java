@@ -11,9 +11,6 @@
  */
 package org.mini2Dx.ui.style;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.core.util.ColorUtils;
 

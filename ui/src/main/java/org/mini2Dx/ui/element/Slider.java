@@ -11,11 +11,7 @@
  */
 package org.mini2Dx.ui.element;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.ui.UiContainer;
@@ -44,7 +40,7 @@ public class Slider extends UiElement implements Actionable {
 	private boolean enabled = true;
 
 	private SliderRenderNode renderNode;
-	private List<ActionListener> actionListeners;
+	private Array<ActionListener> actionListeners;
 
 	/**
 	 * Constructor. Generates a unique ID for this {@link Slider}
@@ -128,8 +124,8 @@ public class Slider extends UiElement implements Actionable {
 	
 	@Override
 	public void syncWithUpdate(UiContainerRenderTree rootNode) {
-		while (!effects.isEmpty()) {
-			renderNode.applyEffect(effects.poll());
+		while (effects.size > 0) {
+			renderNode.applyEffect(effects.removeFirst());
 		}
 
 		if(renderNode.isIncludedInLayout()) {
@@ -177,7 +173,7 @@ public class Slider extends UiElement implements Actionable {
 		}
 		ActionEvent event = ActionEventPool.allocate();
 		event.set(this, eventTrigger, eventTriggerParams);
-		for (int i = actionListeners.size() - 1; i >= 0; i--) {
+		for (int i = actionListeners.size - 1; i >= 0; i--) {
 			actionListeners.get(i).onActionBegin(event);
 		}
 		ActionEventPool.release(event);
@@ -190,7 +186,7 @@ public class Slider extends UiElement implements Actionable {
 		}
 		ActionEvent event = ActionEventPool.allocate();
 		event.set(this, eventTrigger, eventTriggerParams);
-		for (int i = actionListeners.size() - 1; i >= 0; i--) {
+		for (int i = actionListeners.size - 1; i >= 0; i--) {
 			actionListeners.get(i).onActionEnd(event);
 		}
 		ActionEventPool.release(event);
@@ -199,7 +195,7 @@ public class Slider extends UiElement implements Actionable {
 	@Override
 	public void addActionListener(ActionListener listener) {
 		if (actionListeners == null) {
-			actionListeners = new ArrayList<ActionListener>(1);
+			actionListeners = new Array<ActionListener>(true,1, ActionListener.class);
 		}
 		actionListeners.add(listener);
 	}
@@ -209,7 +205,7 @@ public class Slider extends UiElement implements Actionable {
 		if (actionListeners == null) {
 			return;
 		}
-		actionListeners.remove(listener);
+		actionListeners.removeValue(listener, false);
 	}
 
 	/**

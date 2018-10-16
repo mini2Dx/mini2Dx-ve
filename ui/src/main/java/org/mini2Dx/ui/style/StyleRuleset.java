@@ -12,8 +12,8 @@
 package org.mini2Dx.ui.style;
 
 import java.util.Iterator;
-import java.util.Map;
 
+import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.ui.layout.ScreenSize;
 
@@ -37,7 +37,7 @@ public abstract class StyleRuleset<T extends StyleRule> {
 	
 	public abstract void prepareAssets(UiTheme theme, FileHandleResolver fileHandleResolver, AssetManager assetManager);
 	
-	protected T getStyleRule(ScreenSize screenSize, Map<ScreenSize, T> rules) {
+	protected T getStyleRule(ScreenSize screenSize, ObjectMap<ScreenSize, T> rules) {
 		Iterator<ScreenSize> screenSizes = ScreenSize.largestToSmallest();
 		while(screenSizes.hasNext()) {
 			ScreenSize nextSize = screenSizes.next();
@@ -52,7 +52,7 @@ public abstract class StyleRuleset<T extends StyleRule> {
 		return null;
 	}
 	
-	protected void validate(UiTheme theme, Map<ScreenSize, T> rules) {
+	protected void validate(UiTheme theme, ObjectMap<ScreenSize, T> rules) {
 		if(!rules.containsKey(ScreenSize.XS)) {
 			throw new MdxException("XS screen size style required for all style rules");
 		}
@@ -61,13 +61,13 @@ public abstract class StyleRuleset<T extends StyleRule> {
 		}
 	}
 	
-	protected void loadDependencies(UiTheme theme, Array<AssetDescriptor> dependencies, Map<ScreenSize, T> rules) {
+	protected void loadDependencies(UiTheme theme, Array<AssetDescriptor> dependencies, ObjectMap<ScreenSize, T> rules) {
 		for(T rule : rules.values()) {
 			rule.loadDependencies(theme, dependencies);
 		}
 	}
 	
-	protected void prepareAssets(UiTheme theme, FileHandleResolver fileHandleResolver, AssetManager assetManager, Map<ScreenSize, T> rules) {
+	protected void prepareAssets(UiTheme theme, FileHandleResolver fileHandleResolver, AssetManager assetManager, ObjectMap<ScreenSize, T> rules) {
 		for(T rule : rules.values()) {
 			rule.prepareAssets(theme, fileHandleResolver, assetManager);
 		}

@@ -11,10 +11,9 @@
  */
 package org.mini2Dx.ui.render;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.TextureRegion;
@@ -41,7 +40,7 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 	protected static final GlyphLayout GLYPH_LAYOUT = new GlyphLayout();
 	protected static final BitmapFont DEFAULT_FONT = new BitmapFont(true);
 
-	protected final List<Rectangle> buttonRenderPositions = new ArrayList<Rectangle>();
+	protected final Array<Rectangle> buttonRenderPositions = new Array<Rectangle>(true, 1, Rectangle.class);
 
 	protected BitmapFontCache bitmapFontCache = DEFAULT_FONT.newFontCache();
 	protected String previousFont;
@@ -57,7 +56,7 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 	public boolean mouseMoved(int screenX, int screenY) {
 		boolean result = super.mouseMoved(screenX, screenY);
 		hoveredIndex = -1;
-		for (int i = 0; i < buttonRenderPositions.size(); i++) {
+		for (int i = 0; i < buttonRenderPositions.size; i++) {
 			if (buttonRenderPositions.get(i).contains(screenX - getContentRenderX(), screenY - getContentRenderY())) {
 				hoveredIndex = i;
 				break;
@@ -127,7 +126,7 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 
 	@Override
 	protected void renderElement(Graphics g) {
-		if (element.getTotalOptions() != buttonRenderPositions.size()) {
+		if (element.getTotalOptions() != buttonRenderPositions.size) {
 			return;
 		}
 		renderBackground(g);
@@ -193,7 +192,7 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 			int clickX = mouseEventTriggerParams.getMouseX() - getContentRenderX();
 			int clickY = mouseEventTriggerParams.getMouseY() - getContentRenderY();
 
-			for (int i = 0; i < buttonRenderPositions.size(); i++) {
+			for (int i = 0; i < buttonRenderPositions.size; i++) {
 				if (buttonRenderPositions.get(i).contains(clickX, clickY)) {
 					element.setSelectedOptionIndex(i);
 					break;
@@ -368,7 +367,7 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 	}
 
 	private void pushButtonRenderPosition(int index, int x, int y, int width, int height) {
-		if (index < buttonRenderPositions.size()) {
+		if (index < buttonRenderPositions.size) {
 			buttonRenderPositions.get(index).set(x, y, width, height);
 		} else {
 			buttonRenderPositions.add(new Rectangle(x, y, width, height));

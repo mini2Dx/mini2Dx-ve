@@ -11,20 +11,17 @@
  */
 package org.mini2Dx.core.assets;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.mini2Dx.core.exception.MdxException;
-
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
+import org.mini2Dx.core.exception.MdxException;
 
 /**
  * A {@link FileHandleResolver} that checks for files using multiple
  * {@link FileHandleResolver}s in a priority order
  */
 public class FallbackFileHandleResolver implements FileHandleResolver {
-	private List<FileHandleResolver> resolvers;
+	private Array<FileHandleResolver> resolvers;
 
 	/**
 	 * Constructor
@@ -39,7 +36,7 @@ public class FallbackFileHandleResolver implements FileHandleResolver {
 					+ FileHandleResolver.class.getSimpleName());
 		}
 
-		this.resolvers = new ArrayList<FileHandleResolver>();
+		this.resolvers = new Array<FileHandleResolver>(true, resolvers.length, FileHandleResolver.class);
 		for (int i = 0; i < resolvers.length; i++) {
 			this.resolvers.add(resolvers[i]);
 		}

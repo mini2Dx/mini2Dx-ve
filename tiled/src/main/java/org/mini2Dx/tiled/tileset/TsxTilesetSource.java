@@ -11,23 +11,20 @@
  */
 package org.mini2Dx.tiled.tileset;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.core.graphics.Sprite;
-import org.mini2Dx.tiled.Tile;
-import org.mini2Dx.tiled.TiledParser;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
+import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.core.graphics.Sprite;
+import org.mini2Dx.tiled.Tile;
+import org.mini2Dx.tiled.TiledParser;
+
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A {@link TilesetSource} loaded from a TSX file. Allows for sharing data
@@ -37,8 +34,8 @@ public class TsxTilesetSource extends TilesetSource {
 	private static final String LOGGING_TAG = TsxTilesetSource.class.getSimpleName();
 
 	private static final TiledParser TSX_PARSER = new TiledParser();
-	private static final Map<String, ImageTilesetSource> TILESETS = new ConcurrentHashMap<String, ImageTilesetSource>();
-	private static final Map<String, AtomicInteger> TILESET_REFS = new HashMap<String, AtomicInteger>();
+	private static final ObjectMap<String, ImageTilesetSource> TILESETS = new ObjectMap<String, ImageTilesetSource>();
+	private static final ObjectMap<String, AtomicInteger> TILESET_REFS = new ObjectMap<String, AtomicInteger>();
 
 	private final String tsxPath;
 	private final ImageTilesetSource tileset;
@@ -161,7 +158,7 @@ public class TsxTilesetSource extends TilesetSource {
 	}
 
 	@Override
-	public Map<String, String> getProperties() {
+	public ObjectMap<String, String> getProperties() {
 		return tileset.getProperties();
 	}
 

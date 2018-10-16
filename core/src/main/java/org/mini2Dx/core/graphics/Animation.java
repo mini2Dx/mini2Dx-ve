@@ -11,17 +11,15 @@
  */
 package org.mini2Dx.core.graphics;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Implements an animation with frames of variable or fixed duration
  */
 public class Animation<T extends Sprite> {
-	private List<T> frames;
-	private List<Float> durations;
+	private Array<T> frames;
+	private Array<Float> durations;
 	private int currentFrameIndex;
 	private float elapsed;
 	private boolean looping;
@@ -37,8 +35,8 @@ public class Animation<T extends Sprite> {
 	 */
 	public Animation() {
 		currentFrameIndex = 0;
-		frames = new ArrayList<T>();
-		durations = new ArrayList<Float>();
+		frames = new Array<T>(true, 2);
+		durations = new Array<Float>(true, 2);
 		elapsed = 0f;
 		looping = false;
 	}
@@ -67,8 +65,8 @@ public class Animation<T extends Sprite> {
 	 *            The index of the frame to be removed
 	 */
 	public void removeFrame(int index) {
-		durations.remove(index);
-		frames.remove(index);
+		durations.removeIndex(index);
+		frames.removeIndex(index);
 	}
 
 	/**
@@ -89,13 +87,13 @@ public class Animation<T extends Sprite> {
 	public void update(float delta) {
 		elapsed += delta;
 		
-		if(durations.size() == 0)
+		if(durations.size == 0)
 			return;
 		
 		float duration = durations.get(currentFrameIndex);
 		while (elapsed >= duration) {
 			elapsed = elapsed - duration;
-			if(currentFrameIndex == frames.size() - 1) {
+			if(currentFrameIndex == frames.size - 1) {
 				if(looping) {
 					currentFrameIndex = 0;
 				}
@@ -113,7 +111,7 @@ public class Animation<T extends Sprite> {
 	 *            The {@link Graphics} context available for rendering
 	 */
 	public void draw(Graphics g) {
-		if(currentFrameIndex >= frames.size())
+		if(currentFrameIndex >= frames.size)
 			return;
 		
 		T sprite = getCurrentFrame();
@@ -136,7 +134,7 @@ public class Animation<T extends Sprite> {
 	 *            The y coordinate to render at
 	 */
 	public void draw(Graphics g, float x, float y) {
-		if(currentFrameIndex >= frames.size())
+		if(currentFrameIndex >= frames.size)
 			return;
 		
 		T sprite = getCurrentFrame();
@@ -172,7 +170,7 @@ public class Animation<T extends Sprite> {
 	 * @return A value greater than or equal to 0
 	 */
 	public int getNumberOfFrames() {
-		return frames.size();
+		return frames.size;
 	}
 
 	/**
@@ -347,7 +345,7 @@ public class Animation<T extends Sprite> {
 		if(looping) {
 			return false;
 		}
-		if(currentFrameIndex != frames.size() - 1)
+		if(currentFrameIndex != frames.size - 1)
 			return false;
 		return elapsed >= durations.get(currentFrameIndex);
 	}

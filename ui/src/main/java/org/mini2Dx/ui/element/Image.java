@@ -11,9 +11,11 @@
  */
 package org.mini2Dx.ui.element;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import org.mini2Dx.core.graphics.TextureRegion;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
@@ -22,12 +24,6 @@ import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.render.ImageRenderNode;
 import org.mini2Dx.ui.render.ParentRenderNode;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import org.mini2Dx.ui.render.UiContainerRenderTree;
 import org.mini2Dx.ui.style.StyleRule;
 
@@ -340,8 +336,8 @@ public class Image extends UiElement {
 	
 	@Override
 	public void syncWithUpdate(UiContainerRenderTree rootNode) {
-		while (!effects.isEmpty()) {
-			renderNode.applyEffect(effects.poll());
+		while (effects.size > 0) {
+			renderNode.applyEffect(effects.removeFirst());
 		}
 
 		if(renderNode.isIncludedInLayout()) {

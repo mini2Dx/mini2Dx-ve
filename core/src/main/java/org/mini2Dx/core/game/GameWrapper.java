@@ -11,13 +11,12 @@
  */
 package org.mini2Dx.core.game;
 
-import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.core.graphics.LibGdxGraphics;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.core.graphics.LibGdxGraphics;
 
 /**
  * An abstract implementation of {@link Game} for launching mini2Dx games

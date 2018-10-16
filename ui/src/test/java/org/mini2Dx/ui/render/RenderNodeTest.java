@@ -11,6 +11,8 @@
  */
 package org.mini2Dx.ui.render;
 
+import com.badlogic.gdx.utils.Array;
+import junit.framework.Assert;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -23,11 +25,6 @@ import org.mini2Dx.ui.dummy.DummyRenderNode;
 import org.mini2Dx.ui.dummy.DummyUiElement;
 import org.mini2Dx.ui.element.Visibility;
 import org.mini2Dx.ui.layout.LayoutState;
-import org.mini2Dx.ui.layout.ScreenSize;
-
-import junit.framework.Assert;
-
-import java.util.List;
 
 /**
  * Unit tests for {@link RenderNode}
@@ -75,8 +72,8 @@ public class RenderNodeTest {
 	public void testRenderCoordinatesWithParentMargin() {
 		mockery.checking(new Expectations() {
 			{
-				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
-				atLeast(1).of(renderTree).transferUpdateDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(Array.class)));
+				atLeast(1).of(renderTree).transferUpdateDeferred(with(any(Array.class)));
 			}
 		});
 
@@ -109,8 +106,8 @@ public class RenderNodeTest {
 	public void testRenderCoordinatesWithParentPadding() {
 		mockery.checking(new Expectations() {
 			{
-				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
-				atLeast(1).of(renderTree).transferUpdateDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(Array.class)));
+				atLeast(1).of(renderTree).transferUpdateDeferred(with(any(Array.class)));
 			}
 		});
 
@@ -145,8 +142,8 @@ public class RenderNodeTest {
 	public void testRenderCoordinatesWithParentMarginAndPadding() {
 		mockery.checking(new Expectations() {
 			{
-				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
-				atLeast(1).of(renderTree).transferUpdateDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(Array.class)));
+				atLeast(1).of(renderTree).transferUpdateDeferred(with(any(Array.class)));
 			}
 		});
 
@@ -185,8 +182,8 @@ public class RenderNodeTest {
 	public void testRenderCoordinatesWithChildAndParentMarginAndPadding() {
 		mockery.checking(new Expectations() {
 			{
-				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
-				atLeast(1).of(renderTree).transferUpdateDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(Array.class)));
+				atLeast(1).of(renderTree).transferUpdateDeferred(with(any(Array.class)));
 			}
 		});
 
@@ -227,7 +224,7 @@ public class RenderNodeTest {
 			{
 				atLeast(1).of(layoutState).getUiContainerRenderTree();
 				will(returnValue(renderTree));
-				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(Array.class)));
 			}
 		});
 		
@@ -253,7 +250,7 @@ public class RenderNodeTest {
 			{
 				atLeast(1).of(layoutState).getUiContainerRenderTree();
 				will(returnValue(renderTree));
-				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(Array.class)));
 			}
 		});
 		
@@ -281,7 +278,7 @@ public class RenderNodeTest {
 			{
 				atLeast(1).of(layoutState).getUiContainerRenderTree();
 				will(returnValue(renderTree));
-				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(Array.class)));
 			}
 		});
 		
@@ -311,7 +308,7 @@ public class RenderNodeTest {
 			{
 				atLeast(1).of(layoutState).getUiContainerRenderTree();
 				will(returnValue(renderTree));
-				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(Array.class)));
 			}
 		});
 		

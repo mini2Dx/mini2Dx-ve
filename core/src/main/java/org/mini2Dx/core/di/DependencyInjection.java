@@ -11,29 +11,28 @@
  */
 package org.mini2Dx.core.di;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
+import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.core.di.annotation.Autowired;
 import org.mini2Dx.core.di.annotation.Prototype;
 import org.mini2Dx.core.di.annotation.Singleton;
 import org.mini2Dx.core.di.bean.Bean;
 import org.mini2Dx.core.di.injection.BeanInjector;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * Provides dependency injection to mini2Dx games
  */
 @SuppressWarnings(value = { "unchecked", "rawtypes" })
 public class DependencyInjection {
-	private final Map<String, Object> presetSingletons = new HashMap<String, Object>();
-	private final Map<String, Object> presetPrototypes = new HashMap<String, Object>();
+	private final ObjectMap<String, Object> presetSingletons = new ObjectMap<String, Object>();
+	private final ObjectMap<String, Object> presetPrototypes = new ObjectMap<String, Object>();
 
 	private final BeanUtils beanUtils;
 	private final ComponentScanner componentScanner;
 
-	private Map<String, Bean> beans;
+	private ObjectMap<String, Bean> beans;
 	private ExecutorService prototypeService;
 
 	public DependencyInjection(BeanUtils beanUtils, ComponentScanner componentScanner) {
@@ -91,8 +90,8 @@ public class DependencyInjection {
 	public void scan(String... packageNames) throws Exception {
 		componentScanner.scan(packageNames);
 
-		Map<String, Object> singletons = new HashMap<String, Object>(presetSingletons);
-		Map<String, Object> prototypes = new HashMap<String, Object>(presetPrototypes);
+		ObjectMap<String, Object> singletons = new ObjectMap<String, Object>(presetSingletons);
+		ObjectMap<String, Object> prototypes = new ObjectMap<String, Object>(presetPrototypes);
 
 		for (Class clazz : componentScanner.getSingletonClasses()) {
 			String key = Bean.getClassKey(clazz);

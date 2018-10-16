@@ -11,12 +11,8 @@
  */
 package org.mini2Dx.core.collisions;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.engine.Positionable;
 import org.mini2Dx.core.geom.LineSegment;
 import org.mini2Dx.core.geom.Point;
@@ -24,7 +20,8 @@ import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.geom.Shape;
 import org.mini2Dx.core.graphics.Graphics;
 
-import com.badlogic.gdx.graphics.Color;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Implements a thread-safe point quadtree
@@ -40,7 +37,7 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 
 	protected ConcurrentPointQuadTree<T> parent;
 	protected ConcurrentPointQuadTree<T> topLeft, topRight, bottomLeft, bottomRight;
-	protected List<T> elements;
+	protected Array<T> elements;
 
 	protected final int elementLimitPerQuad;
 	protected final int mergeWatermark;
@@ -158,7 +155,7 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 		this.minimumQuadHeight = minimumQuadHeight;
 		this.lock = new ReentrantReadWriteLock(false);
 
-		elements = new ArrayList<T>();
+		elements = new Array<T>(true, elementLimitPerQuad);
 	}
 
 	public void debugRender(Graphics g) {
@@ -199,12 +196,12 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 		lock.readLock().unlock();
 	}
 
-	public void addAll(List<T> elementsToAdd) {
-		if (elementsToAdd == null || elementsToAdd.isEmpty())
+	public void addAll(Array<T> elementsToAdd) {
+		if (elementsToAdd == null || elementsToAdd.size == 0)
 			return;
 		clearTotalElementsCache();
 
-		List<T> elementsWithinQuad = new ArrayList<T>();
+		Array<T> elementsWithinQuad = new Array<T>();
 		for (T element : elementsToAdd) {
 			if (this.contains(element.getX(), element.getY())) {
 				elementsWithinQuad.add(element);
@@ -238,7 +235,7 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 		for (T element : elementsWithinQuad) {
 			element.addPostionChangeListener(this);
 		}
-		int totalElements = this.elements.size();
+		int totalElements = this.elements.size;
 		lock.writeLock().unlock();
 
 		if (totalElements > elementLimitPerQuad && (getWidth() * 0.5f) >= minimumQuadWidth
@@ -270,7 +267,7 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 
 		elements.add(element);
 		element.addPostionChangeListener(this);
-		int totalElements = elements.size();
+		int totalElements = elements.size;
 		lock.writeLock().unlock();
 
 		if (totalElements > elementLimitPerQuad && (getWidth() * 0.5f) >= minimumQuadWidth
@@ -326,8 +323,8 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 		bottomRight = new ConcurrentPointQuadTree<T>(this, getX() + halfWidth, getY() + halfHeight, halfWidth,
 				halfHeight);
 
-		for (int i = elements.size() - 1; i >= 0; i--) {
-			T element = elements.remove(i);
+		for (int i = elements.size - 1; i >= 0; i--) {
+			T element = elements.removeIndex(i);
 			element.removePositionChangeListener(this);
 			lock.readLock().lock();
 			addElementToChild(element);
@@ -391,13 +388,13 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 		bottomRight.getElements(elements);
 
 		for (T element : elements) {
-			topLeft.elements.remove(element);
+			topLeft.elements.removeValue(element, false);
 			element.removePositionChangeListener(topLeft);
-			topRight.elements.remove(element);
+			topRight.elements.removeValue(element, false);
 			element.removePositionChangeListener(topRight);
-			bottomLeft.elements.remove(element);
+			bottomLeft.elements.removeValue(element, false);
 			element.removePositionChangeListener(bottomLeft);
-			bottomRight.elements.remove(element);
+			bottomRight.elements.removeValue(element, false);
 			element.removePositionChangeListener(bottomRight);
 			element.addPostionChangeListener(this);
 		}
@@ -417,13 +414,13 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 		lock.readLock().lock();
 	}
 
-	public void removeAll(List<T> elementsToRemove) {
-		if (elementsToRemove == null || elementsToRemove.isEmpty()) {
+	public void removeAll(Array<T> elementsToRemove) {
+		if (elementsToRemove == null || elementsToRemove.size == 0) {
 			return;
 		}
 		clearTotalElementsCache();
 
-		List<T> elementsWithinQuad = new ArrayList<T>();
+		Array<T> elementsWithinQuad = new Array<T>();
 		for (T element : elementsToRemove) {
 			if (this.contains(element.getX(), element.getY())) {
 				elementsWithinQuad.add(element);
@@ -432,22 +429,22 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 
 		lock.readLock().lock();
 		if (topLeft != null) {
-			for (int i = elementsWithinQuad.size() - 1; i >= 0; i--) {
+			for (int i = elementsWithinQuad.size - 1; i >= 0; i--) {
 				T element = elementsWithinQuad.get(i);
 				if (topLeft.remove(element)) {
-					elementsWithinQuad.remove(i);
+					elementsWithinQuad.removeIndex(i);
 					continue;
 				}
 				if (topRight.remove(element)) {
-					elementsWithinQuad.remove(i);
+					elementsWithinQuad.removeIndex(i);
 					continue;
 				}
 				if (bottomLeft.remove(element)) {
-					elementsWithinQuad.remove(i);
+					elementsWithinQuad.removeIndex(i);
 					continue;
 				}
 				if (bottomRight.remove(element)) {
-					elementsWithinQuad.remove(i);
+					elementsWithinQuad.removeIndex(i);
 					continue;
 				}
 			}
@@ -455,7 +452,7 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 		lock.readLock().unlock();
 
 		lock.writeLock().lock();
-		elements.removeAll(elementsWithinQuad);
+		elements.removeAll(elementsWithinQuad, false);
 		lock.writeLock().unlock();
 
 		for (T element : elementsWithinQuad) {
@@ -518,7 +515,7 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 			return removeElementFromChild(element);
 		}
 
-		boolean result = elements.remove(element);
+		boolean result = elements.removeValue(element, false);
 		lock.writeLock().unlock();
 		element.removePositionChangeListener(this);
 
@@ -538,14 +535,14 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 	}
 
 	@Override
-	public List<T> getElementsWithinArea(Shape area) {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElementsWithinArea(Shape area) {
+		Array<T> result = new Array<T>();
 		getElementsWithinArea(result, area);
 		return result;
 	}
 
 	@Override
-	public void getElementsWithinArea(Collection<T> result, Shape area) {
+	public void getElementsWithinArea(Array<T> result, Shape area) {
 		lock.readLock().lock();
 		if (topLeft != null) {
 			topLeft.getElementsWithinArea(result, area);
@@ -553,7 +550,7 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 			bottomLeft.getElementsWithinArea(result, area);
 			bottomRight.getElementsWithinArea(result, area);
 		} else {
-			for (int i = elements.size() - 1; i >= 0; i--) {
+			for (int i = elements.size - 1; i >= 0; i--) {
 				T element = elements.get(i);
 				if (element != null && area.contains(element.getX(), element.getY())) {
 					result.add(element);
@@ -564,14 +561,14 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 	}
 
 	@Override
-	public List<T> getElementsContainingPoint(Point point) {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElementsContainingPoint(Point point) {
+		Array<T> result = new Array<T>();
 		getElementsContainingPoint(result, point);
 		return result;
 	}
 
 	@Override
-	public void getElementsContainingPoint(Collection<T> result, Point point) {
+	public void getElementsContainingPoint(Array<T> result, Point point) {
 		lock.readLock().lock();
 		if (topLeft != null) {
 			if (topLeft.contains(point)) {
@@ -587,7 +584,7 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 				bottomRight.getElementsContainingPoint(result, point);
 			}
 		} else {
-			for (int i = elements.size() - 1; i >= 0; i--) {
+			for (int i = elements.size - 1; i >= 0; i--) {
 				T element = elements.get(i);
 				if (element == null) {
 					continue;
@@ -604,13 +601,13 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 		lock.readLock().unlock();
 	}
 
-	public List<T> getElementsIntersectingLineSegment(LineSegment lineSegment) {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElementsIntersectingLineSegment(LineSegment lineSegment) {
+		Array<T> result = new Array<T>();
 		getElementsIntersectingLineSegment(result, lineSegment);
 		return result;
 	}
 
-	public void getElementsIntersectingLineSegment(Collection<T> result, LineSegment lineSegment) {
+	public void getElementsIntersectingLineSegment(Array<T> result, LineSegment lineSegment) {
 		lock.readLock().lock();
 		if (topLeft != null) {
 			if (topLeft.intersects(lineSegment) || topLeft.contains(lineSegment.getPointA())
@@ -630,7 +627,7 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 				bottomRight.getElementsIntersectingLineSegment(result, lineSegment);
 			}
 		} else {
-			for (int i = elements.size() - 1; i >= 0; i--) {
+			for (int i = elements.size - 1; i >= 0; i--) {
 				T element = elements.get(i);
 				if (element != null && lineSegment.contains(element.getX(), element.getY())) {
 					result.add(element);
@@ -640,13 +637,13 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 		lock.readLock().unlock();
 	}
 
-	public List<T> getElements() {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElements() {
+		Array<T> result = new Array<T>();
 		getElements(result);
 		return result;
 	}
 
-	public void getElements(List<T> result) {
+	public void getElements(Array<T> result) {
 		lock.readLock().lock();
 		if (topLeft != null) {
 			topLeft.getElements(result);
@@ -685,7 +682,7 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 			totalElementsCache += bottomLeft.getTotalElements();
 			totalElementsCache += bottomRight.getTotalElements();
 		} else {
-			totalElementsCache = elements.size();
+			totalElementsCache = elements.size;
 		}
 		lock.readLock().unlock();
 		return totalElementsCache;

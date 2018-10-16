@@ -11,13 +11,10 @@
  */
 package org.mini2Dx.tiled;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.tiled.renderer.TileRenderer;
-
-import com.badlogic.gdx.utils.Disposable;
 
 /**
  * Represents a tileset tile
@@ -25,7 +22,7 @@ import com.badlogic.gdx.utils.Disposable;
 public class Tile implements Disposable {
 	private int tileId;
 	private TileRenderer tileRenderer;
-	private Map<String, String> properties;
+	private ObjectMap<String, String> properties;
 
 	public void update(float delta) {
 		if (tileRenderer == null) {
@@ -84,16 +81,16 @@ public class Tile implements Disposable {
 	 */
 	public void setProperty(String propertyName, String value) {
 		if (properties == null)
-			properties = new HashMap<String, String>();
+			properties = new ObjectMap<String, String>();
 		properties.put(propertyName, value);
 	}
 
 	/**
-	 * Returns the properties {@link Map} of this {@link Tile}
+	 * Returns the properties {@link ObjectMap} of this {@link Tile}
 	 * 
 	 * @return Null if there are no properties
 	 */
-	public Map<String, String> getProperties() {
+	public ObjectMap<String, String> getProperties() {
 		return properties;
 	}
 

@@ -11,13 +11,9 @@
  */
 package org.mini2Dx.ui.element;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Queue;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.core.serialization.annotation.NonConcrete;
@@ -42,11 +38,11 @@ import org.mini2Dx.ui.util.IdAllocator;
 @NonConcrete
 public abstract class UiElement implements Hoverable {
 	private final String id;
-	protected final Queue<UiEffect> effects = new LinkedList<UiEffect>();
+	protected final Queue<UiEffect> effects = new Queue<UiEffect>();
 
-	protected final List<DeferredRunnable> deferredLayout = new ArrayList<DeferredRunnable>(1);
-	protected final List<DeferredRunnable> deferredUpdate = new ArrayList<DeferredRunnable>(1);
-	protected final List<DeferredRunnable> deferredRender = new ArrayList<DeferredRunnable>(1);
+	protected final Array<DeferredRunnable> deferredLayout = new Array<DeferredRunnable>(true,1, DeferredRunnable.class);
+	protected final Array<DeferredRunnable> deferredUpdate = new Array<DeferredRunnable>(true,1, DeferredRunnable.class);
+	protected final Array<DeferredRunnable> deferredRender = new Array<DeferredRunnable>(true,1, DeferredRunnable.class);
 
 	@Field(optional = true)
 	protected Visibility visibility = UiContainer.getDefaultVisibility();
@@ -60,8 +56,8 @@ public abstract class UiElement implements Hoverable {
 	protected float width;
 	protected float height;
 
-	private List<UiEffectListener> effectListeners;
-	private List<HoverListener> hoverListeners;
+	private Array<UiEffectListener> effectListeners;
+	private Array<HoverListener> hoverListeners;
 	private boolean debugEnabled = false;
 
 	/**
@@ -280,7 +276,7 @@ public abstract class UiElement implements Hoverable {
 	 *            The {@link UiEffect} to be applied
 	 */
 	public void applyEffect(UiEffect effect) {
-		effects.offer(effect);
+		effects.addLast(effect);
 	}
 
 	/**
@@ -386,7 +382,7 @@ public abstract class UiElement implements Hoverable {
 	@Override
 	public void addHoverListener(HoverListener listener) {
 		if (hoverListeners == null) {
-			hoverListeners = new ArrayList<HoverListener>(1);
+			hoverListeners = new Array<HoverListener>(true,1, HoverListener.class);
 		}
 		hoverListeners.add(listener);
 	}
@@ -396,7 +392,7 @@ public abstract class UiElement implements Hoverable {
 		if (hoverListeners == null) {
 			return;
 		}
-		hoverListeners.remove(listener);
+		hoverListeners.removeValue(listener, false);
 	}
 
 	/**
@@ -406,7 +402,7 @@ public abstract class UiElement implements Hoverable {
 		if (hoverListeners == null) {
 			return;
 		}
-		for (int i = hoverListeners.size() - 1; i >= 0; i--) {
+		for (int i = hoverListeners.size - 1; i >= 0; i--) {
 			hoverListeners.get(i).onHoverBegin(this);
 		}
 	}
@@ -417,7 +413,7 @@ public abstract class UiElement implements Hoverable {
 	 */
 	public void addEffectListener(UiEffectListener listener) {
 		if (effectListeners == null) {
-			effectListeners = new ArrayList<UiEffectListener>(1);
+			effectListeners = new Array<UiEffectListener>(true,1, UiEffectListener.class);
 		}
 		effectListeners.add(listener);
 	}
@@ -430,7 +426,7 @@ public abstract class UiElement implements Hoverable {
 		if (effectListeners == null) {
 			return;
 		}
-		effectListeners.remove(listener);
+		effectListeners.removeValue(listener, false);
 	}
 
 	/**
@@ -440,7 +436,7 @@ public abstract class UiElement implements Hoverable {
 		if (hoverListeners == null) {
 			return;
 		}
-		for (int i = hoverListeners.size() - 1; i >= 0; i--) {
+		for (int i = hoverListeners.size - 1; i >= 0; i--) {
 			hoverListeners.get(i).onHoverEnd(this);
 		}
 	}
@@ -453,7 +449,7 @@ public abstract class UiElement implements Hoverable {
 		if (effectListeners == null) {
 			return;
 		}
-		for (int i = effectListeners.size() - 1; i >= 0; i--) {
+		for (int i = effectListeners.size - 1; i >= 0; i--) {
 			effectListeners.get(i).onEffectFinished(this, effect);
 		}
 	}

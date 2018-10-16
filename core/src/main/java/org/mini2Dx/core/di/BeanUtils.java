@@ -11,10 +11,10 @@
  */
 package org.mini2Dx.core.di;
 
+import org.mini2Dx.core.exception.MdxException;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-
-import org.mini2Dx.core.exception.MdxException;
 
 /**
  * Bean utility functions

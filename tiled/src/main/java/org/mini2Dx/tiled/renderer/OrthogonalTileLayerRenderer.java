@@ -11,18 +11,14 @@
  */
 package org.mini2Dx.tiled.renderer;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.badlogic.gdx.graphics.g2d.SpriteCache;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.IntIntMap;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.tiled.TileLayer;
 import org.mini2Dx.tiled.TiledMap;
 import org.mini2Dx.tiled.Tileset;
-
-import com.badlogic.gdx.graphics.g2d.SpriteCache;
-import com.badlogic.gdx.math.MathUtils;
 
 /**
  * Renders orthogonal {@link TileLayer}s
@@ -135,7 +131,7 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 					continue;
 				}
 
-				for (int i = 0; i < tiledMap.getTilesets().size(); i++) {
+				for (int i = 0; i < tiledMap.getTilesets().size; i++) {
 					Tileset tileset = tiledMap.getTilesets().get(i);
 					if (tileset.contains(tileId)) {
 						tileset.getTile(tileId).draw(g, tileRenderX, tileRenderY, flipHorizontally, flipVertically, flipDiagonally);
@@ -164,7 +160,7 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 				int tileRenderX = x * tiledMap.getTileWidth();
 				int tileRenderY = y * tiledMap.getTileHeight();
 
-				for (int i = 0; i < tiledMap.getTilesets().size(); i++) {
+				for (int i = 0; i < tiledMap.getTilesets().size; i++) {
 					Tileset tileset = tiledMap.getTilesets().get(i);
 					if (tileset.contains(tileId)) {
 						layerCache.add(tileset.getTile(tileId).getTileRenderer().getCurrentTileImage(), tileRenderX,

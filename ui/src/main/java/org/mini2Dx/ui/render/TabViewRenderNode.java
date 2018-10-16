@@ -11,11 +11,9 @@
  */
 package org.mini2Dx.ui.render;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
-
 import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.Queue;
 import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.ui.element.Actionable;
 import org.mini2Dx.ui.element.TabView;
@@ -29,9 +27,9 @@ import org.mini2Dx.ui.style.TabStyleRule;
  * {@link RenderNode} implementation for {@link TabView}
  */
 public class TabViewRenderNode extends ParentRenderNode<TabView, TabStyleRule>implements NavigatableRenderNode {
-	private final Map<String, RenderNode<?, ?>> elementIdLookupCache = new HashMap<String, RenderNode<?, ?>>();
+	private final ObjectMap<String, RenderNode<?, ?>> elementIdLookupCache = new ObjectMap<String, RenderNode<?, ?>>();
 	private final IntMap<String> keyboardHotkeys = new IntMap<String>();
-	private final Map<String, String> controllerHotkeys = new HashMap<String, String>();
+	private final ObjectMap<String, String> controllerHotkeys = new ObjectMap<String, String>();
 
 	public TabViewRenderNode(ParentRenderNode<?, ?> parent, TabView tabView) {
 		super(parent, tabView);
@@ -73,9 +71,9 @@ public class TabViewRenderNode extends ParentRenderNode<TabView, TabStyleRule>im
 
 	@Override
 	public void syncHotkeys(Queue<ControllerHotKeyOperation> controllerHotKeyOperations,
-			Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations) {
-		while (!controllerHotKeyOperations.isEmpty()) {
-			ControllerHotKeyOperation hotKeyOperation = controllerHotKeyOperations.poll();
+							Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations) {
+		while (controllerHotKeyOperations.size > 0) {
+			ControllerHotKeyOperation hotKeyOperation = controllerHotKeyOperations.removeFirst();
 			if (hotKeyOperation.isMapOperation()) {
 				controllerHotkeys.put(hotKeyOperation.getControllerButton().getAbsoluteValue(),
 						hotKeyOperation.getActionable().getId());
@@ -87,8 +85,8 @@ public class TabViewRenderNode extends ParentRenderNode<TabView, TabStyleRule>im
 				}
 			}
 		}
-		while (!keyboardHotKeyOperations.isEmpty()) {
-			KeyboardHotKeyOperation hotKeyOperation = keyboardHotKeyOperations.poll();
+		while (keyboardHotKeyOperations.size > 0) {
+			KeyboardHotKeyOperation hotKeyOperation = keyboardHotKeyOperations.removeFirst();
 			if (hotKeyOperation.isMapOperation()) {
 				keyboardHotkeys.put(hotKeyOperation.getKeycode(), hotKeyOperation.getActionable().getId());
 			} else {

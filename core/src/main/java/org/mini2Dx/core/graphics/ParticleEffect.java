@@ -11,18 +11,17 @@
  */
 package org.mini2Dx.core.graphics;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import org.mini2Dx.core.engine.Updatable;
-import org.mini2Dx.core.game.GameContainer;
-
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import org.mini2Dx.core.engine.Updatable;
+import org.mini2Dx.core.game.GameContainer;
+
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Wraps {@link com.badlogic.gdx.graphics.g2d.ParticleEffect} to match mini2Dx's

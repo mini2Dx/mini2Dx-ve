@@ -11,10 +11,9 @@
  */
 package org.mini2Dx.core.engine.geom;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.engine.PositionChangeListener;
 import org.mini2Dx.core.engine.Positionable;
 import org.mini2Dx.core.engine.SizeChangeListener;
@@ -23,8 +22,7 @@ import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.geom.Shape;
 
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
+import java.util.Objects;
 
 /**
  * A {@link Rectangle} implementation of {@link CollisionShape} that does not
@@ -37,8 +35,8 @@ public class StaticCollisionBox extends Rectangle implements CollisionShape {
 
 	private final int id;
 
-	private List<PositionChangeListener> positionChangeListeners;
-	private List<SizeChangeListener> sizeChangeListeners;
+	private Array<PositionChangeListener> positionChangeListeners;
+	private Array<SizeChangeListener> sizeChangeListeners;
 
 	public StaticCollisionBox() {
 		this(0f, 0f, 1f, 1f);
@@ -281,7 +279,7 @@ public class StaticCollisionBox extends Rectangle implements CollisionShape {
 	@Override
 	public <T extends Positionable> void addPostionChangeListener(PositionChangeListener<T> listener) {
 		if (positionChangeListeners == null) {
-			positionChangeListeners = new ArrayList<PositionChangeListener>(1);
+			positionChangeListeners = new Array<PositionChangeListener>(true,1);
 		}
 		positionChangeListeners.add(listener);
 	}
@@ -294,16 +292,16 @@ public class StaticCollisionBox extends Rectangle implements CollisionShape {
 		if (positionChangeListeners == null) {
 			return;
 		}
-		positionChangeListeners.remove(listener);
+		positionChangeListeners.removeValue(listener, false);
 	}
 
 	private void notifyPositionChangeListeners() {
 		if (positionChangeListeners == null) {
 			return;
 		}
-		for (int i = positionChangeListeners.size() - 1; i >= 0; i--) {
-			if (i >= positionChangeListeners.size()) {
-				i = positionChangeListeners.size() - 1;
+		for (int i = positionChangeListeners.size - 1; i >= 0; i--) {
+			if (i >= positionChangeListeners.size) {
+				i = positionChangeListeners.size - 1;
 			}
 			PositionChangeListener listener = positionChangeListeners.get(i);
 			listener.positionChanged(this);
@@ -313,7 +311,7 @@ public class StaticCollisionBox extends Rectangle implements CollisionShape {
 	@Override
 	public <T extends Sizeable> void addSizeChangeListener(SizeChangeListener<T> listener) {
 		if (sizeChangeListeners == null) {
-			sizeChangeListeners = new ArrayList<SizeChangeListener>(1);
+			sizeChangeListeners = new Array<SizeChangeListener>(true,1);
 		}
 		sizeChangeListeners.add(listener);
 	}
@@ -323,16 +321,16 @@ public class StaticCollisionBox extends Rectangle implements CollisionShape {
 		if (sizeChangeListeners == null) {
 			return;
 		}
-		sizeChangeListeners.remove(listener);
+		sizeChangeListeners.removeValue(listener, false);
 	}
 
 	private void notifySizeChangeListeners() {
 		if (sizeChangeListeners == null) {
 			return;
 		}
-		for (int i = sizeChangeListeners.size() - 1; i >= 0; i--) {
-			if (i >= sizeChangeListeners.size()) {
-				i = sizeChangeListeners.size() - 1;
+		for (int i = sizeChangeListeners.size - 1; i >= 0; i--) {
+			if (i >= sizeChangeListeners.size) {
+				i = sizeChangeListeners.size - 1;
 			}
 			SizeChangeListener listener = sizeChangeListeners.get(i);
 			listener.sizeChanged(this);

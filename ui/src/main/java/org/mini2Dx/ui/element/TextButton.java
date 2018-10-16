@@ -55,7 +55,7 @@ public class TextButton extends Button {
 		if(label != null) {
 			return;
 		}
-		for(int i = 0; i < children.size(); i++) {
+		for(int i = 0; i < children.size; i++) {
 			if(children.get(i) instanceof Label) {
 				label = (Label) children.get(i);
 				return;

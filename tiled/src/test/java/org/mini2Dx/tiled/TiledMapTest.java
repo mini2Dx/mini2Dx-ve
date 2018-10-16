@@ -77,7 +77,7 @@ public class TiledMapTest {
 	public void testGetTileWidth() {
 		Assert.assertEquals(32, tiledMap.getTileWidth());
 
-		for (int i = 0; i < tiledMap.getTilesets().size(); i++) {
+		for (int i = 0; i < tiledMap.getTilesets().size; i++) {
 			Assert.assertEquals(32, tiledMap.getTilesets().get(i)
 					.getTileWidth());
 		}
@@ -87,7 +87,7 @@ public class TiledMapTest {
 	public void testGetTileHeight() {
 		Assert.assertEquals(32, tiledMap.getTileHeight());
 
-		for (int i = 0; i < tiledMap.getTilesets().size(); i++) {
+		for (int i = 0; i < tiledMap.getTilesets().size; i++) {
 			Assert.assertEquals(32, tiledMap.getTilesets().get(i)
 					.getTileHeight());
 		}
@@ -95,7 +95,7 @@ public class TiledMapTest {
 
 	@Test
 	public void testGetTilesets() {
-		Assert.assertEquals(1, tiledMap.getTilesets().size());
+		Assert.assertEquals(1, tiledMap.getTilesets().size);
 	}
 
 	@Test
@@ -156,9 +156,9 @@ public class TiledMapTest {
 
 		TiledObjectGroup group = tiledMap.getObjectGroup("Objects");
 		Assert.assertEquals("Objects", group.getName());
-		Assert.assertEquals(3, group.getObjects().size());
+		Assert.assertEquals(3, group.getObjects().size);
 
-		for(int i = 0; i < group.getObjects().size(); i++) {
+		for(int i = 0; i < group.getObjects().size; i++) {
 			TiledObject obj = group.getObjects().get(i);
 			switch(obj.getName()) {
 			case "test1":

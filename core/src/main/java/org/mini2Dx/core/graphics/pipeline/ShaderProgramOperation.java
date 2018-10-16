@@ -11,12 +11,11 @@
  */
 package org.mini2Dx.core.graphics.pipeline;
 
-import org.mini2Dx.core.game.GameContainer;
-import org.mini2Dx.core.graphics.Graphics;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import org.mini2Dx.core.game.GameContainer;
+import org.mini2Dx.core.graphics.Graphics;
 
 /**
  * Applies/unapplies a {@link ShaderProgram}

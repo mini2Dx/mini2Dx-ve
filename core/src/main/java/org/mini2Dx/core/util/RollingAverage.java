@@ -11,14 +11,13 @@
  */
 package org.mini2Dx.core.util;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import com.badlogic.gdx.utils.Queue;
 
 /**
  * Utility class for tracking a rolling average
  */
 public class RollingAverage {
-	private final Queue<Long> queue = new LinkedList<Long>();
+	private final Queue<Long> queue = new Queue<>();
 	private int size;
 	private double average;
 
@@ -28,17 +27,17 @@ public class RollingAverage {
 	}
 
 	public void mark(long value) {
-		if (queue.size() < size) {
-			queue.offer(value);
+		if (queue.size < size) {
+			queue.addLast(value);
 			long sum = 0;
 			for (long i : queue) {
 				sum += i;
 			}
-			average = (double) sum / queue.size();
+			average = (double) sum / queue.size;
 		} else {
-			long head = queue.poll();
+			long head = queue.removeFirst();
 			double minus = (double) head / size;
-			queue.offer(value);
+			queue.addLast(value);
 			double add = (double) value / size;
 			average = average + add - minus;
 		}

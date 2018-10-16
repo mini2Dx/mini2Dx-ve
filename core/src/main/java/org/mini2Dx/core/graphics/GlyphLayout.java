@@ -14,7 +14,6 @@ package org.mini2Dx.core.graphics;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.Glyph;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Align;
 
 /**

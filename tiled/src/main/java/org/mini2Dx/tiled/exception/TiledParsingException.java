@@ -11,9 +11,9 @@
  */
 package org.mini2Dx.tiled.exception;
 
-import java.io.IOException;
-
 import org.mini2Dx.tiled.TiledMap;
+
+import java.io.IOException;
 
 /**
  * Wraps an {@link IOException} thrown when parsing a {@link TiledMap}

@@ -11,18 +11,14 @@
  */
 package org.mini2Dx.core.collisions;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.engine.Positionable;
 import org.mini2Dx.core.geom.LineSegment;
 import org.mini2Dx.core.geom.Point;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.geom.Shape;
 import org.mini2Dx.core.graphics.Graphics;
-
-import com.badlogic.gdx.graphics.Color;
 
 /**
  * Implements a point quadtree
@@ -39,7 +35,7 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 
 	protected PointQuadTree<T> parent;
 	protected PointQuadTree<T> topLeft, topRight, bottomLeft, bottomRight;
-	protected List<T> elements;
+	protected Array<T> elements;
 	protected final int elementLimitPerQuad;
 	protected final int mergeWatermark;
 	protected final float minimumQuadWidth, minimumQuadHeight;
@@ -151,7 +147,7 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 		this.mergeWatermark = mergeWatermark;
 		this.minimumQuadWidth = minimumQuadWidth;
 		this.minimumQuadHeight = minimumQuadHeight;
-		elements = new ArrayList<T>(elementLimitPerQuad);
+		elements = new Array<T>(true, elementLimitPerQuad);
 	}
 
 	public void debugRender(Graphics g) {
@@ -190,12 +186,12 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 		g.setColor(tmp);
 	}
 
-	public void addAll(List<T> elementsToAdd) {
-		if (elementsToAdd == null || elementsToAdd.isEmpty()) {
+	public void addAll(Array<T> elementsToAdd) {
+		if (elementsToAdd == null || elementsToAdd.size == 0) {
 			return;
 		}
 
-		List<T> elementsWithinQuad = new ArrayList<T>();
+		Array<T> elementsWithinQuad = new Array<T>();
 		for (T element : elementsToAdd) {
 			if (this.contains(element.getX(), element.getY())) {
 				elementsWithinQuad.add(element);
@@ -214,7 +210,7 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 			elements.add(element);
 			element.addPostionChangeListener(this);
 		}
-		if (elements.size() > elementLimitPerQuad && (getWidth() * 0.5f) >= minimumQuadWidth
+		if (elements.size > elementLimitPerQuad && (getWidth() * 0.5f) >= minimumQuadWidth
 				&& (getHeight() * 0.5f) >= minimumQuadHeight) {
 			subdivide();
 		}
@@ -239,7 +235,7 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 		elements.add(element);
 		element.addPostionChangeListener(this);
 
-		if (elements.size() > elementLimitPerQuad && (getWidth() * 0.5f) >= minimumQuadWidth
+		if (elements.size > elementLimitPerQuad && (getWidth() * 0.5f) >= minimumQuadWidth
 				&& (getHeight() * 0.5f) >= minimumQuadHeight) {
 			subdivide();
 		}
@@ -271,8 +267,8 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 		bottomLeft = new PointQuadTree<T>(this, getX(), getY() + halfHeight, halfWidth, halfHeight);
 		bottomRight = new PointQuadTree<T>(this, getX() + halfWidth, getY() + halfHeight, halfWidth, halfHeight);
 
-		for (int i = elements.size() - 1; i >= 0; i--) {
-			T element = elements.remove(i);
+		for (int i = elements.size - 1; i >= 0; i--) {
+			T element = elements.removeIndex(i);
 			element.removePositionChangeListener(this);
 			addElementToChild(element);
 		}
@@ -314,20 +310,20 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 			return;
 		}
 
-		elements = new ArrayList<>();
+		elements = new Array<>(true, elementLimitPerQuad);
 		topLeft.getElements(elements);
 		topRight.getElements(elements);
 		bottomLeft.getElements(elements);
 		bottomRight.getElements(elements);
 
 		for (T element : elements) {
-			topLeft.elements.remove(element);
+			topLeft.elements.removeValue(element, false);
 			element.removePositionChangeListener(topLeft);
-			topRight.elements.remove(element);
+			topRight.elements.removeValue(element, false);
 			element.removePositionChangeListener(topRight);
-			bottomLeft.elements.remove(element);
+			bottomLeft.elements.removeValue(element, false);
 			element.removePositionChangeListener(bottomLeft);
-			bottomRight.elements.remove(element);
+			bottomRight.elements.removeValue(element, false);
 			element.removePositionChangeListener(bottomRight);
 			element.addPostionChangeListener(this);
 		}
@@ -338,12 +334,12 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 		bottomRight = null;
 	}
 
-	public void removeAll(List<T> elementsToRemove) {
-		if (elementsToRemove == null || elementsToRemove.isEmpty()) {
+	public void removeAll(Array<T> elementsToRemove) {
+		if (elementsToRemove == null || elementsToRemove.size == 0) {
 			return;
 		}
 
-		List<T> elementsWithinQuad = new ArrayList<T>();
+		Array<T> elementsWithinQuad = new Array<T>();
 		for (T element : elementsToRemove) {
 			if (this.contains(element.getX(), element.getY())) {
 				elementsWithinQuad.add(element);
@@ -360,7 +356,7 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 		if (elements == null) {
 			return;
 		}
-		elements.removeAll(elementsWithinQuad);
+		elements.removeAll(elementsWithinQuad, false);
 		for (T element : elementsWithinQuad) {
 			element.removePositionChangeListener(this);
 		}
@@ -417,7 +413,7 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 	}
 
 	protected boolean removeElement(T element) {
-		boolean result = elements.remove(element);
+		boolean result = elements.removeValue(element, false);
 		element.removePositionChangeListener(this);
 
 		if (parent == null) {
@@ -430,21 +426,21 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 	}
 
 	@Override
-	public List<T> getElementsWithinArea(Shape area) {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElementsWithinArea(Shape area) {
+		Array<T> result = new Array<T>();
 		getElementsWithinArea(result, area);
 		return result;
 	}
 
 	@Override
-	public void getElementsWithinArea(Collection<T> result, Shape area) {
+	public void getElementsWithinArea(Array<T> result, Shape area) {
 		if (topLeft != null) {
 			topLeft.getElementsWithinArea(result, area);
 			topRight.getElementsWithinArea(result, area);
 			bottomLeft.getElementsWithinArea(result, area);
 			bottomRight.getElementsWithinArea(result, area);
 		} else {
-			for (int i = elements.size() - 1; i >= 0; i--) {
+			for (int i = elements.size - 1; i >= 0; i--) {
 				T element = elements.get(i);
 				if (element != null && area.contains(element.getX(), element.getY())) {
 					result.add(element);
@@ -454,14 +450,14 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 	}
 
 	@Override
-	public List<T> getElementsContainingPoint(Point point) {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElementsContainingPoint(Point point) {
+		Array<T> result = new Array<T>();
 		getElementsContainingPoint(result, point);
 		return result;
 	}
 
 	@Override
-	public void getElementsContainingPoint(Collection<T> result, Point point) {
+	public void getElementsContainingPoint(Array<T> result, Point point) {
 		if (topLeft != null) {
 			if (topLeft.contains(point)) {
 				topLeft.getElementsContainingPoint(result, point);
@@ -476,7 +472,7 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 				bottomRight.getElementsContainingPoint(result, point);
 			}
 		} else {
-			for (int i = elements.size() - 1; i >= 0; i--) {
+			for (int i = elements.size - 1; i >= 0; i--) {
 				T element = elements.get(i);
 				if (element == null) {
 					continue;
@@ -492,13 +488,13 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 		}
 	}
 
-	public List<T> getElementsIntersectingLineSegment(LineSegment lineSegment) {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElementsIntersectingLineSegment(LineSegment lineSegment) {
+		Array<T> result = new Array<T>();
 		getElementsIntersectingLineSegment(result, lineSegment);
 		return result;
 	}
 
-	public void getElementsIntersectingLineSegment(Collection<T> result, LineSegment lineSegment) {
+	public void getElementsIntersectingLineSegment(Array<T> result, LineSegment lineSegment) {
 		if (topLeft != null) {
 			if (topLeft.intersects(lineSegment) || topLeft.contains(lineSegment.getPointA())
 					|| topLeft.contains(lineSegment.getPointB())) {
@@ -517,7 +513,7 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 				bottomRight.getElementsIntersectingLineSegment(result, lineSegment);
 			}
 		} else {
-			for (int i = elements.size() - 1; i >= 0; i--) {
+			for (int i = elements.size - 1; i >= 0; i--) {
 				T element = elements.get(i);
 				if (element != null && lineSegment.contains(element.getX(), element.getY())) {
 					result.add(element);
@@ -526,13 +522,13 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 		}
 	}
 
-	public List<T> getElements() {
-		List<T> result = new ArrayList<T>();
+	public Array<T> getElements() {
+		Array<T> result = new Array<T>();
 		getElements(result);
 		return result;
 	}
 
-	public void getElements(List<T> result) {
+	public void getElements(Array<T> result) {
 		if (topLeft != null) {
 			topLeft.getElements(result);
 			topRight.getElements(result);
@@ -565,7 +561,7 @@ public class PointQuadTree<T extends Positionable> extends Rectangle implements 
 			totalElementsCache += bottomLeft.getTotalElements();
 			totalElementsCache += bottomRight.getTotalElements();
 		} else {
-			totalElementsCache = elements.size();
+			totalElementsCache = elements.size;
 		}
 		return totalElementsCache;
 	}

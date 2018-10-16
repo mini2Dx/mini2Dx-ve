@@ -11,9 +11,7 @@
  */
 package org.mini2Dx.ui.navigation;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.ui.element.Actionable;
 import org.mini2Dx.ui.element.UiElement;
 import org.mini2Dx.ui.layout.ScreenSize;
@@ -25,7 +23,7 @@ import com.badlogic.gdx.Input.Keys;
  * stacked vertically
  */
 public class VerticalUiNavigation implements UiNavigation {
-	private final List<Actionable> navigation = new ArrayList<Actionable>();
+	private final Array<Actionable> navigation = new Array<Actionable>(true, 1, Actionable.class);
 	private int cursor;
 	
 	@Override
@@ -35,7 +33,7 @@ public class VerticalUiNavigation implements UiNavigation {
 
 	@Override
 	public void remove(Actionable actionable) {
-		navigation.remove(actionable);
+		navigation.removeValue(actionable, false);
 	}
 	
 	@Override
@@ -46,24 +44,24 @@ public class VerticalUiNavigation implements UiNavigation {
 
 	@Override
 	public void set(int index, Actionable actionable) {
-		if (navigation.size() > index) {
+		if (navigation.size > index) {
 			navigation.set(index, actionable);
 		} else {
-			navigation.add(index, actionable);
+			navigation.insert(index, actionable);
 		}
 	}
 
 	@Override
 	public Actionable navigate(int keycode) {
-		if (navigation.isEmpty()) {
+		if (navigation.size == 0) {
 			return null;
 		}
 		switch (keycode) {
 		case Keys.UP:
-			cursor = cursor > 0 ? cursor - 1 : navigation.size() - 1;
+			cursor = cursor > 0 ? cursor - 1 : navigation.size - 1;
 			break;
 		case Keys.DOWN:
-			cursor = cursor < navigation.size() - 1 ? cursor + 1 : 0;
+			cursor = cursor < navigation.size - 1 ? cursor + 1 : 0;
 			break;
 		}
 		return navigation.get(cursor);
@@ -72,7 +70,7 @@ public class VerticalUiNavigation implements UiNavigation {
 	@Override
 	public Actionable resetCursor() {
 		cursor = 0;
-		if(navigation.isEmpty()) {
+		if(navigation.size == 0) {
 			return null;
 		}
 		return navigation.get(cursor);
@@ -80,7 +78,7 @@ public class VerticalUiNavigation implements UiNavigation {
 	
 	@Override
 	public Actionable getCursor() {
-		if(navigation.isEmpty()) {
+		if(navigation.size == 0) {
 			return null;
 		}
 		return navigation.get(cursor);

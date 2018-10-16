@@ -11,15 +11,12 @@
  */
 package org.mini2Dx.core.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.controller.button.PS4Button;
 import org.mini2Dx.core.controller.deadzone.DeadZone;
 import org.mini2Dx.core.controller.deadzone.NoopDeadZone;
 import org.mini2Dx.core.controller.ps4.PS4ControllerListener;
-
-import com.badlogic.gdx.controllers.Controller;
 
 /**
  * Base class for PS4 controller mapping implementations
@@ -29,7 +26,7 @@ public abstract class PS4Controller implements MdxController<PS4ControllerListen
 	public static final String MAC_ID = "Sony Interactive Entertainment Wireless Controller".toLowerCase();
 	
 	private final Controller controller;
-	private final List<PS4ControllerListener> listeners = new ArrayList<PS4ControllerListener>();
+	private final Array<PS4ControllerListener> listeners = new Array<PS4ControllerListener>(true, 2);
 	
     private DeadZone leftStickDeadZone, rightStickDeadZone;
     
@@ -134,7 +131,7 @@ public abstract class PS4Controller implements MdxController<PS4ControllerListen
 	
 	@Override
     public void addListener(int index, PS4ControllerListener listener) {
-		listeners.add(index, listener);
+		listeners.insert(index, listener);
 	}
 	
 	@Override
@@ -144,12 +141,12 @@ public abstract class PS4Controller implements MdxController<PS4ControllerListen
 	
 	@Override
     public void removeListener(int index) {
-		listeners.remove(index);
+		listeners.removeIndex(index);
 	}
     
     @Override
     public void removeListener(PS4ControllerListener listener) {
-    	listeners.remove(listener);
+    	listeners.removeValue(listener, false);
     }
     
     @Override
@@ -159,7 +156,7 @@ public abstract class PS4Controller implements MdxController<PS4ControllerListen
 	
     @Override
 	public int getTotalListeners() {
-		return listeners.size();
+		return listeners.size;
 	}
     
     @Override

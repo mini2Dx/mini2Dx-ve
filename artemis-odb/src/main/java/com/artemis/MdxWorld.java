@@ -11,13 +11,10 @@
  */
 package com.artemis;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.mini2Dx.core.graphics.Graphics;
-
 import com.artemis.listener.WorldListener;
 import com.artemis.utils.Bag;
+import com.badlogic.gdx.utils.Array;
+import org.mini2Dx.core.graphics.Graphics;
 
 /**
  * Extends {@link World} to allow for interpolating and rendering of {@link System}s
@@ -28,7 +25,7 @@ public class MdxWorld extends World {
 	
 	private final MdxInvocationStrategy mdxInvocationStrategy;
 	
-	private List<WorldListener> worldListeners;
+	private Array<WorldListener> worldListeners;
 	public float alpha;
 	
 	/**
@@ -99,7 +96,7 @@ public class MdxWorld extends World {
 		if(worldListeners == null) {
 			return;
 		}
-		for(int i = worldListeners.size() - 1; i >= 0; i--) {
+		for(int i = worldListeners.size - 1; i >= 0; i--) {
 			worldListeners.get(i).afterEntityCreated(this, entityId);
 		}
 	}
@@ -108,7 +105,7 @@ public class MdxWorld extends World {
 		if(worldListeners == null) {
 			return;
 		}
-		for(int i = worldListeners.size() - 1; i >= 0; i--) {
+		for(int i = worldListeners.size - 1; i >= 0; i--) {
 			worldListeners.get(i).beforeEntityDeleted(this, entityId);
 		}
 	}
@@ -119,7 +116,7 @@ public class MdxWorld extends World {
 	 */
 	public void addWorldListener(WorldListener listener) {
 		if(worldListeners == null) {
-			worldListeners = new ArrayList<WorldListener>();
+			worldListeners = new Array<WorldListener>();
 		}
 		worldListeners.add(listener);
 	}
@@ -132,7 +129,7 @@ public class MdxWorld extends World {
 		if(worldListeners == null) {
 			return;
 		}
-		worldListeners.remove(listener);
+		worldListeners.removeValue(listener, false);
 	}
 	
 	/**

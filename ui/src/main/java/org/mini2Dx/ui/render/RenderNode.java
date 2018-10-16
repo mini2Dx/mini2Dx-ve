@@ -11,9 +11,7 @@
  */
 package org.mini2Dx.ui.render;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.engine.geom.CollisionBox;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.geom.Rectangle;
@@ -32,7 +30,7 @@ import com.badlogic.gdx.Gdx;
  * Base class for implementing rendering of {@link UiElement} implementations
  */
 public abstract class RenderNode<T extends UiElement, S extends StyleRule> implements HoverableRenderNode {
-	protected final List<UiEffect> effects = new ArrayList<UiEffect>(1);
+	protected final Array<UiEffect> effects = new Array<UiEffect>(true, 1, UiEffect.class);
 	protected final CollisionBox outerArea = new CollisionBox();
 	protected final Rectangle innerArea = new Rectangle();
 	protected final Rectangle targetOuterArea = new Rectangle();
@@ -77,14 +75,14 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		outerArea.preUpdate();
 
 		boolean visible = isScheduledToRender();
-		if (effects.size() == 0) {
+		if (effects.size == 0) {
 			outerArea.forceTo(targetOuterArea);
 		} else {
-			for (int i = 0; i < effects.size(); i++) {
+			for (int i = 0; i < effects.size; i++) {
 				UiEffect effect = effects.get(i);
 				if (effect.isFinished()) {
 					effect.postEnd(element);
-					effects.remove(i);
+					effects.removeIndex(i);
 					element.notifyEffectListenersOnFinished(effect);
 					i--;
 					continue;
@@ -125,11 +123,11 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 					+ getOuterRenderWidth() + ", height: " + getOuterRenderHeight());
 		}
 
-		for (int i = 0; i < effects.size(); i++) {
+		for (int i = 0; i < effects.size; i++) {
 			effects.get(i).preRender(g);
 		}
 		renderElement(g);
-		for (int i = 0; i < effects.size(); i++) {
+		for (int i = 0; i < effects.size; i++) {
 			effects.get(i).postRender(g);
 		}
 

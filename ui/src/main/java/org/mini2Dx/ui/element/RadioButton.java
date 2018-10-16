@@ -11,12 +11,9 @@
  */
 package org.mini2Dx.ui.element;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
@@ -38,7 +35,7 @@ import org.mini2Dx.ui.style.StyleRule;
  */
 public class RadioButton extends UiElement implements Actionable {
 	@Field(optional=true)
-	private final List<String> options = new ArrayList<String>(2);
+	private final Array<String> options = new Array<String>(true,2, String.class);
 	@Field(optional = true)
 	private String defaultSelectedOption = null;
 	@Field(optional = true)
@@ -48,7 +45,7 @@ public class RadioButton extends UiElement implements Actionable {
 	@Field(optional=true)
 	private FlexDirection flexDirection = FlexDirection.ROW;
 	
-	private List<ActionListener> actionListeners;
+	private Array<ActionListener> actionListeners;
 	private RadioButtonRenderNode renderNode;
 	private int selectedOptionIndex = -1;
 	
@@ -110,7 +107,7 @@ public class RadioButton extends UiElement implements Actionable {
 		}
 		ActionEvent event = ActionEventPool.allocate();
 		event.set(this, eventTrigger, eventTriggerParams);
-		for(int i = actionListeners.size() - 1; i >= 0; i--) {
+		for(int i = actionListeners.size - 1; i >= 0; i--) {
 			actionListeners.get(i).onActionBegin(event);
 		}
 		ActionEventPool.release(event);
@@ -123,7 +120,7 @@ public class RadioButton extends UiElement implements Actionable {
 		}
 		ActionEvent event = ActionEventPool.allocate();
 		event.set(this, eventTrigger, eventTriggerParams);
-		for(int i = actionListeners.size() - 1; i >= 0; i--) {
+		for(int i = actionListeners.size - 1; i >= 0; i--) {
 			actionListeners.get(i).onActionEnd(event);
 		}
 		ActionEventPool.release(event);
@@ -160,8 +157,8 @@ public class RadioButton extends UiElement implements Actionable {
 	
 	@Override
 	public void syncWithUpdate(UiContainerRenderTree rootNode) {
-		while (!effects.isEmpty()) {
-			renderNode.applyEffect(effects.poll());
+		while (effects.size > 0) {
+			renderNode.applyEffect(effects.removeFirst());
 		}
 
 		if(renderNode.isIncludedInLayout()) {
@@ -197,7 +194,7 @@ public class RadioButton extends UiElement implements Actionable {
 	@Override
 	public void addActionListener(ActionListener listener) {
 		if(actionListeners == null) {
-			actionListeners = new ArrayList<ActionListener>(1);
+			actionListeners = new Array<ActionListener>(true, 1, ActionListener.class);
 		}
 		actionListeners.add(listener);
 	}
@@ -207,7 +204,7 @@ public class RadioButton extends UiElement implements Actionable {
 		if(actionListeners == null) {
 			return;
 		}
-		actionListeners.remove(listener);
+		actionListeners.removeValue(listener, false);
 	}
 
 	@Override
@@ -274,7 +271,7 @@ public class RadioButton extends UiElement implements Actionable {
 	}
 	
 	public void removeOption(String option) {
-		options.remove(option);
+		options.removeValue(option, false);
 		
 		if (renderNode == null) {
 			return;
@@ -291,13 +288,13 @@ public class RadioButton extends UiElement implements Actionable {
 	}
 	
 	public int getTotalOptions() {
-		return options.size();
+		return options.size;
 	}
 
 	public int getSelectedOptionIndex() {
 		if(selectedOptionIndex < 0) {
-			if(defaultSelectedOption != null && options.contains(defaultSelectedOption)) {
-				selectedOptionIndex = options.indexOf(defaultSelectedOption);
+			if(defaultSelectedOption != null && options.contains(defaultSelectedOption, false)) {
+				selectedOptionIndex = options.indexOf(defaultSelectedOption, false);
 			} else {
 				selectedOptionIndex = 0;
 			}
@@ -309,7 +306,7 @@ public class RadioButton extends UiElement implements Actionable {
 		if(selectedOptionIndex < 0) {
 			return;
 		}
-		if(selectedOptionIndex >= options.size()) {
+		if(selectedOptionIndex >= options.size) {
 			return;
 		}
 		this.selectedOptionIndex = selectedOptionIndex;
@@ -320,10 +317,10 @@ public class RadioButton extends UiElement implements Actionable {
 	}
 
 	public void setSelectedOption(String selectedOption) {
-		int index = options.indexOf(selectedOption);
+		int index = options.indexOf(selectedOption, false);
 		if(index < 0) {
-			if(defaultSelectedOption != null && options.contains(defaultSelectedOption)) {
-				selectedOptionIndex = options.indexOf(defaultSelectedOption);
+			if(defaultSelectedOption != null && options.contains(defaultSelectedOption, false)) {
+				selectedOptionIndex = options.indexOf(defaultSelectedOption, false);
 			} else {
 				selectedOptionIndex = 0;
 			}
@@ -335,14 +332,14 @@ public class RadioButton extends UiElement implements Actionable {
 	public void selectNextOption() {
 		int selectedOption = getSelectedOptionIndex();
 		selectedOption++;
-		selectedOptionIndex = selectedOption % options.size();
+		selectedOptionIndex = selectedOption % options.size;
 	}
 	
 	public void selectPreviousOption() {
 		int selectedOption = getSelectedOptionIndex();
 		selectedOption--;
 		if(selectedOption < 0) {
-			selectedOptionIndex = options.size() - 1;
+			selectedOptionIndex = options.size - 1;
 		} else {
 			selectedOptionIndex = selectedOption;
 		}

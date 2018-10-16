@@ -11,9 +11,6 @@
  */
 package org.mini2Dx.core.graphics;
 
-import org.mini2Dx.core.geom.Rectangle;
-import org.mini2Dx.core.geom.Shape;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -26,6 +23,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import org.mini2Dx.core.geom.Rectangle;
+import org.mini2Dx.core.geom.Shape;
 
 /**
  * LibGDX headless implementation of {@link Graphics}

@@ -1,21 +1,19 @@
 package org.mini2Dx.ui.layout;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.ui.element.ScrollBox;
 import org.mini2Dx.ui.element.UiElement;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.RenderNode;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ImmediateLayoutRuleset extends LayoutRuleset {
 	private final UiElement element;
 	private final OffsetRule xRule, yRule;
 	private final SizeRule widthRule, heightRule;
 
-	private final Map<String, Float> previousOffsetX = new HashMap<String, Float>();
-	private final Map<String, Float> previousOffsetY = new HashMap<String, Float>();
+	private final ObjectMap<String, Float> previousOffsetX = new ObjectMap<String, Float>();
+	private final ObjectMap<String, Float> previousOffsetY = new ObjectMap<String, Float>();
 
 	public ImmediateLayoutRuleset(UiElement element) {
 		super();

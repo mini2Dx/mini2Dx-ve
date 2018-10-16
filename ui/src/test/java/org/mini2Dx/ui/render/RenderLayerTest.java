@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.ui.render;
 
+import com.badlogic.gdx.utils.Array;
 import junit.framework.Assert;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -65,7 +66,7 @@ public class RenderLayerTest {
 
 		mockery.checking(new Expectations() {
 			{
-				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(List.class)));
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(Array.class)));
 			}
 		});
 	}

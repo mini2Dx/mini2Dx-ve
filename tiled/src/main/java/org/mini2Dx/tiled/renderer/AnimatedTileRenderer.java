@@ -11,11 +11,10 @@
  */
 package org.mini2Dx.tiled.renderer;
 
+import com.badlogic.gdx.Gdx;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.Sprite;
 import org.mini2Dx.tiled.tileset.TilesetSource;
-
-import com.badlogic.gdx.Gdx;
 
 /**
  * A {@link TileRenderer} for animated tiles

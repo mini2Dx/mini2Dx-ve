@@ -11,10 +11,9 @@
  */
 package org.mini2Dx.core.graphics.pipeline;
 
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
-
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 /**
  * Clears the current {@link ShaderProgram} applied to the {@link Graphics}

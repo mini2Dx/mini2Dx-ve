@@ -11,11 +11,10 @@
  */
 package org.mini2Dx.tiled.renderer;
 
+import com.badlogic.gdx.utils.Disposable;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.Sprite;
 import org.mini2Dx.tiled.Tile;
-
-import com.badlogic.gdx.utils.Disposable;
 
 /**
  * Common interface for tile renderers

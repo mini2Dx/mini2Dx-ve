@@ -11,10 +11,9 @@
  */
 package org.mini2Dx.core.graphics.pipeline;
 
+import com.badlogic.gdx.math.Vector2;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
-
-import com.badlogic.gdx.math.Vector2;
 
 /**
  * Applies/unapplies {@link Graphics#scale(float, float)}. This class must be

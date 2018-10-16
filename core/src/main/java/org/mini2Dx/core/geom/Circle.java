@@ -11,12 +11,11 @@
  */
 package org.mini2Dx.core.geom;
 
-import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.core.util.EdgeIterator;
-
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.core.util.EdgeIterator;
 
 /**
  * Implements a circle

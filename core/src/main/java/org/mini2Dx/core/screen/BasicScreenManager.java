@@ -11,14 +11,12 @@
  */
 package org.mini2Dx.core.screen;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.screen.transition.NullTransition;
+
+import java.util.Iterator;
 
 /**
  * A basic screen manager implementation based on Slick implementation by Kevin

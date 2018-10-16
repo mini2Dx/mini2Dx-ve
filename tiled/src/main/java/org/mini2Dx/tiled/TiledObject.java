@@ -12,14 +12,12 @@
 package org.mini2Dx.tiled;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.geom.Circle;
 import org.mini2Dx.core.geom.Point;
 import org.mini2Dx.core.geom.Polygon;
 import org.mini2Dx.core.geom.Rectangle;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Represents an object loaded from a {@link TiledMap}
@@ -36,7 +34,7 @@ public class TiledObject {
 	private boolean visible;
 	private int gid;
 	private boolean gidFlipHorizontally, gidFlipVertically, gidFlipDiagonally;
-	private Map<String, String> properties;
+	private ObjectMap<String, String> properties;
 
 	private float [] points;
 	private String text;
@@ -55,7 +53,7 @@ public class TiledObject {
 	 * Returns this object's properties
 	 * @return Null if there are no properties
 	 */
-	public Map<String, String> getProperties() {
+	public ObjectMap<String, String> getProperties() {
 		return properties;
 	}
 	
@@ -88,7 +86,7 @@ public class TiledObject {
 	 */
 	public void setProperty(String propertyName, String value) {
 		if(properties == null)
-			properties = new HashMap<String, String>();
+			properties = new ObjectMap<String, String>();
 		properties.put(propertyName, value);
 	}
 

@@ -11,8 +11,7 @@
  */
 package org.mini2Dx.ui.render;
 
-import java.util.Queue;
-
+import com.badlogic.gdx.utils.Queue;
 import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.ui.navigation.ControllerHotKeyOperation;
 import org.mini2Dx.ui.navigation.KeyboardHotKeyOperation;
@@ -26,7 +25,7 @@ public interface NavigatableRenderNode {
 	public ActionableRenderNode hotkey(ControllerButton controllerButton);
 
 	public void syncHotkeys(Queue<ControllerHotKeyOperation> controllerHotKeyOperations,
-			Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations);
+							Queue<KeyboardHotKeyOperation> keyboardHotKeyOperations);
 
 	public ActionableRenderNode navigate(int keycode);
 	

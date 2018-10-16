@@ -11,24 +11,22 @@
  */
 package org.mini2Dx.core.graphics;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.ObjectMap;
 
 /**
  * Implements a cache of textures for shapes
  */
 public class ShapeTextureCache {
-	private Map<Integer, Texture> filledRectangleTextures;
+	private ObjectMap<Integer, Texture> filledRectangleTextures;
 
 	/**
 	 * Constructor
 	 */
 	public ShapeTextureCache() {
-		filledRectangleTextures = new HashMap<Integer, Texture>();
+		filledRectangleTextures = new ObjectMap<Integer, Texture>();
 	}
 
 	/**

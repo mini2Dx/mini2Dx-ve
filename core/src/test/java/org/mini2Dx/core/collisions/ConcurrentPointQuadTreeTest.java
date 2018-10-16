@@ -11,25 +11,22 @@
  */
 package org.mini2Dx.core.collisions;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
+import junit.framework.Assert;
+import net.jodah.concurrentunit.Waiter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mini2Dx.core.engine.geom.CollisionPoint;
 import org.mini2Dx.core.geom.LineSegment;
 import org.mini2Dx.core.geom.Rectangle;
 
-import com.badlogic.gdx.math.MathUtils;
-
-import junit.framework.Assert;
-import net.jodah.concurrentunit.Waiter;
+import java.util.Queue;
+import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Unit tests for {@link ConcurrentPointQuadTree}
@@ -64,50 +61,50 @@ public class ConcurrentPointQuadTreeTest implements Runnable {
 		Random random = new Random();
 		for (int i = 0; i < 100; i++) {
 			rootQuad.add(new CollisionPoint(random.nextInt(128), random.nextInt(128)));
-			Assert.assertEquals(i + 1, rootQuad.getElements().size());
+			Assert.assertEquals(i + 1, rootQuad.getElements().size);
 		}
 	}
 
 	@Test
 	public void testAddAll() {
 		Random random = new Random();
-		List<CollisionPoint> points = new ArrayList<CollisionPoint>();
+		Array<CollisionPoint> points = new Array<CollisionPoint>();
 		for (int i = 0; i < 100; i++) {
 			points.add(new CollisionPoint(random.nextInt(128), random.nextInt(128)));
 		}
 		rootQuad.addAll(points);
-		Assert.assertEquals(points.size(), rootQuad.getTotalElements());
+		Assert.assertEquals(points.size, rootQuad.getTotalElements());
 	}
 
 	@Test
 	public void testRemove() {
 		Random random = new Random();
-		List<CollisionPoint> CollisionPoints = new ArrayList<CollisionPoint>();
+		Array<CollisionPoint> collisionPoints = new Array<CollisionPoint>();
 		for (int i = 0; i < 1000; i++) {
-			CollisionPoints.add(new CollisionPoint(random.nextInt(128), random.nextInt(128)));
+			collisionPoints.add(new CollisionPoint(random.nextInt(128), random.nextInt(128)));
 		}
 
-		for (int i = 0; i < CollisionPoints.size(); i++) {
-			Assert.assertEquals(true, rootQuad.add(CollisionPoints.get(i)));
-			Assert.assertEquals(i + 1, rootQuad.getElements().size());
+		for (int i = 0; i < collisionPoints.size; i++) {
+			Assert.assertEquals(true, rootQuad.add(collisionPoints.get(i)));
+			Assert.assertEquals(i + 1, rootQuad.getElements().size);
 		}
 
-		for (int i = CollisionPoints.size() - 1; i >= 0; i--) {
-			Assert.assertEquals(i + 1, rootQuad.getElements().size());
-			rootQuad.remove(CollisionPoints.get(i));
-			Assert.assertEquals(i, rootQuad.getElements().size());
+		for (int i = collisionPoints.size - 1; i >= 0; i--) {
+			Assert.assertEquals(i + 1, rootQuad.getElements().size);
+			rootQuad.remove(collisionPoints.get(i));
+			Assert.assertEquals(i, rootQuad.getElements().size);
 		}
 	}
 
 	@Test
 	public void testRemoveAll() {
 		Random random = new Random();
-		List<CollisionPoint> points = new ArrayList<CollisionPoint>();
+		Array<CollisionPoint> points = new Array<CollisionPoint>();
 		for (int i = 0; i < 100; i++) {
 			points.add(new CollisionPoint(random.nextInt(128), random.nextInt(128)));
 		}
 		rootQuad.addAll(points);
-		Assert.assertEquals(points.size(), rootQuad.getTotalElements());
+		Assert.assertEquals(points.size, rootQuad.getTotalElements());
 		rootQuad.removeAll(points);
 		Assert.assertEquals(0, rootQuad.getTotalElements());
 	}
@@ -115,22 +112,22 @@ public class ConcurrentPointQuadTreeTest implements Runnable {
 	@Test
 	public void testSubdivide() {
 		rootQuad.add(point1);
-		Assert.assertEquals(1, rootQuad.getElements().size());
+		Assert.assertEquals(1, rootQuad.getElements().size);
 		Assert.assertEquals(1, rootQuad.getTotalQuads());
 		rootQuad.add(point2);
-		Assert.assertEquals(2, rootQuad.getElements().size());
+		Assert.assertEquals(2, rootQuad.getElements().size);
 		Assert.assertEquals(1, rootQuad.getTotalQuads());
 		rootQuad.add(point3);
-		Assert.assertEquals(3, rootQuad.getElements().size());
+		Assert.assertEquals(3, rootQuad.getElements().size);
 		Assert.assertEquals(4, rootQuad.getTotalQuads());
 		rootQuad.add(point4);
-		Assert.assertEquals(4, rootQuad.getElements().size());
+		Assert.assertEquals(4, rootQuad.getElements().size);
 		Assert.assertEquals(4, rootQuad.getTotalQuads());
 		rootQuad.add(new CollisionPoint(32, 32));
-		Assert.assertEquals(5, rootQuad.getElements().size());
+		Assert.assertEquals(5, rootQuad.getElements().size);
 		Assert.assertEquals(4, rootQuad.getTotalQuads());
 		rootQuad.add(new CollisionPoint(48, 48));
-		Assert.assertEquals(6, rootQuad.getElements().size());
+		Assert.assertEquals(6, rootQuad.getElements().size);
 		Assert.assertEquals(7, rootQuad.getTotalQuads());
 	}
 
@@ -154,7 +151,7 @@ public class ConcurrentPointQuadTreeTest implements Runnable {
 			rootQuad.remove(point2);
 			Assert.assertEquals(1, rootQuad.getTotalQuads());
 			Assert.assertEquals(2, rootQuad.getTotalElements());
-			Assert.assertEquals(true, rootQuad.getElements().contains(point1));
+			Assert.assertEquals(true, rootQuad.getElements().contains(point1, false));
 			rootQuad.remove(point5);
 		}
 	}
@@ -166,8 +163,8 @@ public class ConcurrentPointQuadTreeTest implements Runnable {
 		Assert.assertEquals(1, rootQuad.getTotalQuads());
 
 		CollisionPoint point5 = new CollisionPoint(32, 32);
-		
-		List<CollisionPoint> points = new ArrayList<CollisionPoint>();
+
+		Array<CollisionPoint> points = new Array<CollisionPoint>();
 		points.add(point2);
 		points.add(point3);
 		points.add(point4);
@@ -182,7 +179,7 @@ public class ConcurrentPointQuadTreeTest implements Runnable {
 			rootQuad.removeAll(points);
 			Assert.assertEquals(1, rootQuad.getTotalQuads());
 			Assert.assertEquals(2, rootQuad.getTotalElements());
-			Assert.assertEquals(true, rootQuad.getElements().contains(point1));
+			Assert.assertEquals(true, rootQuad.getElements().contains(point1, false));
 			rootQuad.remove(point5);
 		}
 	}
@@ -214,32 +211,32 @@ public class ConcurrentPointQuadTreeTest implements Runnable {
 		rootQuad.add(point3);
 		rootQuad.add(point4);
 
-		List<CollisionPoint> CollisionPoints = rootQuad.getElementsWithinArea(new Rectangle(0, 0, 64, 64));
-		Assert.assertEquals(1, CollisionPoints.size());
-		Assert.assertEquals(point1, CollisionPoints.get(0));
+		Array<CollisionPoint> collisionPoints = rootQuad.getElementsWithinArea(new Rectangle(0, 0, 64, 64));
+		Assert.assertEquals(1, collisionPoints.size);
+		Assert.assertEquals(point1, collisionPoints.get(0));
 
-		CollisionPoints = rootQuad.getElementsWithinArea(new Rectangle(64, 0, 64, 64));
-		Assert.assertEquals(1, CollisionPoints.size());
-		Assert.assertEquals(point2, CollisionPoints.get(0));
+		collisionPoints = rootQuad.getElementsWithinArea(new Rectangle(64, 0, 64, 64));
+		Assert.assertEquals(1, collisionPoints.size);
+		Assert.assertEquals(point2, collisionPoints.get(0));
 
-		CollisionPoints = rootQuad.getElementsWithinArea(new Rectangle(0, 64, 64, 64));
-		Assert.assertEquals(1, CollisionPoints.size());
-		Assert.assertEquals(point3, CollisionPoints.get(0));
+		collisionPoints = rootQuad.getElementsWithinArea(new Rectangle(0, 64, 64, 64));
+		Assert.assertEquals(1, collisionPoints.size);
+		Assert.assertEquals(point3, collisionPoints.get(0));
 
-		CollisionPoints = rootQuad.getElementsWithinArea(new Rectangle(64, 64, 64, 64));
-		Assert.assertEquals(1, CollisionPoints.size());
-		Assert.assertEquals(point4, CollisionPoints.get(0));
+		collisionPoints = rootQuad.getElementsWithinArea(new Rectangle(64, 64, 64, 64));
+		Assert.assertEquals(1, collisionPoints.size);
+		Assert.assertEquals(point4, collisionPoints.get(0));
 
-		CollisionPoint CollisionPoint5 = new CollisionPoint(32, 32);
-		CollisionPoint CollisionPoint6 = new CollisionPoint(48, 48);
-		rootQuad.add(CollisionPoint5);
-		rootQuad.add(CollisionPoint6);
+		CollisionPoint collisionPoint5 = new CollisionPoint(32, 32);
+		CollisionPoint collisionPoint6 = new CollisionPoint(48, 48);
+		rootQuad.add(collisionPoint5);
+		rootQuad.add(collisionPoint6);
 
-		CollisionPoints = rootQuad.getElementsWithinArea(new Rectangle(0, 0, 64, 64));
-		Assert.assertEquals(3, CollisionPoints.size());
-		Assert.assertEquals(true, CollisionPoints.contains(point1));
-		Assert.assertEquals(true, CollisionPoints.contains(CollisionPoint5));
-		Assert.assertEquals(true, CollisionPoints.contains(CollisionPoint6));
+		collisionPoints = rootQuad.getElementsWithinArea(new Rectangle(0, 0, 64, 64));
+		Assert.assertEquals(3, collisionPoints.size);
+		Assert.assertEquals(true, collisionPoints.contains(point1, false));
+		Assert.assertEquals(true, collisionPoints.contains(collisionPoint5, false));
+		Assert.assertEquals(true, collisionPoints.contains(collisionPoint6, false));
 	}
 
 	@Test
@@ -249,12 +246,12 @@ public class ConcurrentPointQuadTreeTest implements Runnable {
 		rootQuad.add(point3);
 		rootQuad.add(point4);
 
-		List<CollisionPoint> CollisionPoints = rootQuad
+		Array<CollisionPoint> collisionPoints = rootQuad
 				.getElementsIntersectingLineSegment(new LineSegment(0, 0, 128, 128));
-		Assert.assertEquals(true, CollisionPoints.contains(point1));
-		Assert.assertEquals(false, CollisionPoints.contains(point2));
-		Assert.assertEquals(false, CollisionPoints.contains(point3));
-		Assert.assertEquals(true, CollisionPoints.contains(point4));
+		Assert.assertEquals(true, collisionPoints.contains(point1, false));
+		Assert.assertEquals(false, collisionPoints.contains(point2, false));
+		Assert.assertEquals(false, collisionPoints.contains(point3, false));
+		Assert.assertEquals(true, collisionPoints.contains(point4, false));
 	}
 
 	@Test
@@ -286,7 +283,7 @@ public class ConcurrentPointQuadTreeTest implements Runnable {
 	@Override
 	public void run() {
 		boolean readerThread = totalThreads.incrementAndGet() % 2 == 0;
-		List<CollisionPoint> collisions = new ArrayList<CollisionPoint>();
+		Array<CollisionPoint> collisions = new Array<CollisionPoint>();
 
 		while (rootQuad.getTotalMergeOperations() < 10 || collisionsFound.get() == 0) {
 			try {
@@ -299,7 +296,7 @@ public class ConcurrentPointQuadTreeTest implements Runnable {
 					rootQuad.getElementsWithinArea(collisions,
 							new Rectangle(MathUtils.random(TREE_WIDTH / 2f), MathUtils.random(TREE_HEIGHT / 2f),
 									MathUtils.random(TREE_HEIGHT / 3f), MathUtils.random(TREE_HEIGHT / 3f)));
-					collisionsFound.addAndGet(collisions.size());
+					collisionsFound.addAndGet(collisions.size);
 					collisions.clear();
 				} else {
 					rootQuad.remove(threadCollisions.poll());

@@ -11,13 +11,12 @@
  */
 package org.mini2Dx.core.screen;
 
-import java.util.Iterator;
-
+import com.badlogic.gdx.Screen;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.game.GameResizeListener;
 import org.mini2Dx.core.graphics.Graphics;
 
-import com.badlogic.gdx.Screen;
+import java.util.Iterator;
 
 /**
  * Updates and renders {@link GameScreen}s and {@link Transition}s between them

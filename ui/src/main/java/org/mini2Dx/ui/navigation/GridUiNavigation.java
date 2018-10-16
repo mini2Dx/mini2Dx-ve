@@ -11,25 +11,23 @@
  */
 package org.mini2Dx.ui.navigation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.ui.element.Actionable;
 import org.mini2Dx.ui.element.UiElement;
 import org.mini2Dx.ui.layout.ScreenSize;
 
 import com.badlogic.gdx.Input.Keys;
 
+import java.util.Iterator;
+
 /**
  * A {@link UiNavigation} implementation that treats all {@link UiElement}s as
  * placed inside a grid
  */
 public class GridUiNavigation implements UiNavigation {
-	private final List<Actionable> navigation = new ArrayList<Actionable>();
-	private final Map<ScreenSize, Integer> screenSizeColumns = new HashMap<ScreenSize, Integer>();
+	private final Array<Actionable> navigation = new Array<Actionable>(true, 1, Actionable.class);
+	private final ObjectMap<ScreenSize, Integer> screenSizeColumns = new ObjectMap<ScreenSize, Integer>();
 
 	private int columns;
 	private int cursorX, cursorY;
@@ -85,7 +83,7 @@ public class GridUiNavigation implements UiNavigation {
 
 	@Override
 	public void remove(Actionable actionable) {
-		navigation.remove(actionable);
+		navigation.removeValue(actionable, true);
 	}
 	
 	@Override
@@ -96,7 +94,7 @@ public class GridUiNavigation implements UiNavigation {
 	
 	@Override
 	public void set(int index, Actionable actionable) {
-		while(navigation.size() <= index) {
+		while(navigation.size <= index) {
 			navigation.add(null);
 		}
 		navigation.set(index, actionable);
@@ -118,7 +116,7 @@ public class GridUiNavigation implements UiNavigation {
 
 	@Override
 	public Actionable navigate(int keycode) {
-		if (navigation.isEmpty()) {
+		if (navigation.size == 0) {
 			return null;
 		}
 		switch (keycode) {
@@ -156,7 +154,7 @@ public class GridUiNavigation implements UiNavigation {
 	
 	@Override
 	public Actionable getCursor() {
-		if(navigation.isEmpty()) {
+		if(navigation.size == 0) {
 			return null;
 		}
 		return navigation.get(getIndex(cursorX, cursorY));
@@ -166,7 +164,7 @@ public class GridUiNavigation implements UiNavigation {
 	public Actionable resetCursor() {
 		cursorX = 0;
 		cursorY = 0;
-		if(navigation.isEmpty()) {
+		if(navigation.size == 0) {
 			return null;
 		}
 		return navigation.get(getIndex(cursorX, cursorY));
@@ -197,8 +195,8 @@ public class GridUiNavigation implements UiNavigation {
 	 * @return
 	 */
 	public int getTotalRows() {
-		int rows = navigation.size() / columns;
-		if (navigation.size() % columns != 0) {
+		int rows = navigation.size / columns;
+		if (navigation.size % columns != 0) {
 			rows++;
 		}
 		return rows;

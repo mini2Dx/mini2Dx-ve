@@ -11,9 +11,7 @@
  */
 package org.mini2Dx.ui.style;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.ui.UiContainer;
@@ -69,33 +67,33 @@ public class UiTheme {
 	@Field
 	private String atlas;
 	@Field
-	private Map<String, ButtonStyleRuleset> buttons;
+	private ObjectMap<String, ButtonStyleRuleset> buttons;
 	@Field
-	private Map<String, CheckboxStyleRuleset> checkboxes;
+	private ObjectMap<String, CheckboxStyleRuleset> checkboxes;
 	@Field
-	private Map<String, ColumnStyleRuleset> columns;
+	private ObjectMap<String, ColumnStyleRuleset> columns;
 	@Field
-	private Map<String, ContainerStyleRuleset> containers;
+	private ObjectMap<String, ContainerStyleRuleset> containers;
 	@Field
-	private Map<String, UiFont> fonts;
+	private ObjectMap<String, UiFont> fonts;
 	@Field
-	private Map<String, DefaultStyleRuleset> images;
+	private ObjectMap<String, DefaultStyleRuleset> images;
 	@Field
-	private Map<String, LabelStyleRuleset> labels;
+	private ObjectMap<String, LabelStyleRuleset> labels;
 	@Field
-	private Map<String, ProgressBarStyleRuleset> progressBars;
+	private ObjectMap<String, ProgressBarStyleRuleset> progressBars;
 	@Field
-	private Map<String, RadioButtonStyleRuleset> radioButtons;
+	private ObjectMap<String, RadioButtonStyleRuleset> radioButtons;
 	@Field
-	private Map<String, SelectStyleRuleset> selects;
+	private ObjectMap<String, SelectStyleRuleset> selects;
 	@Field
-	private Map<String, ScrollBoxStyleRuleset> scrollBoxes;
+	private ObjectMap<String, ScrollBoxStyleRuleset> scrollBoxes;
 	@Field
-	private Map<String, SliderStyleRuleset> sliders;
+	private ObjectMap<String, SliderStyleRuleset> sliders;
 	@Field
-	private Map<String, TabStyleRuleset> tabs;
+	private ObjectMap<String, TabStyleRuleset> tabs;
 	@Field
-	private Map<String, TextBoxStyleRuleset> textboxes;
+	private ObjectMap<String, TextBoxStyleRuleset> textboxes;
 	
 	private TextureAtlas textureAtlas;
 	private boolean headless;
@@ -186,67 +184,67 @@ public class UiTheme {
 		}
 		
 		Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Atlas: " + atlas + "]");
-		for (String id : buttons.keySet()) {
+		for (String id : buttons.keys()) {
 			StyleRuleset<ButtonStyleRule> buttonRuleset = buttons.get(id);
 			buttonRuleset.loadDependencies(this, dependencies);
 			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Button Ruleset: " + id + "] Dependencies loaded");
 		}
-		for (String id : checkboxes.keySet()) {
+		for (String id : checkboxes.keys()) {
 			StyleRuleset<CheckboxStyleRule> columnRuleset = checkboxes.get(id);
 			columnRuleset.loadDependencies(this, dependencies);
 			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Checkbox Ruleset: " + id + "] Dependencies loaded");
 		}
-		for (String id : columns.keySet()) {
+		for (String id : columns.keys()) {
 			StyleRuleset<ParentStyleRule> columnRuleset = columns.get(id);
 			columnRuleset.loadDependencies(this, dependencies);
 			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Div Ruleset: " + id + "] Dependencies loaded");
 		}
-		for (String id : containers.keySet()) {
+		for (String id : containers.keys()) {
 			StyleRuleset<ContainerStyleRule> containerRuleset = containers.get(id);
 			containerRuleset.loadDependencies(this, dependencies);
 			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Container Ruleset: " + id + "] Dependencies loaded");
 		}
-		for (String id : images.keySet()) {
+		for (String id : images.keys()) {
 			StyleRuleset<StyleRule> imageRuleset = images.get(id);
 			imageRuleset.loadDependencies(this, dependencies);
 			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Image Ruleset: " + id + "] Dependencies loaded");
 		}
-		for (String id : labels.keySet()) {
+		for (String id : labels.keys()) {
 			StyleRuleset<LabelStyleRule> labelRuleset = labels.get(id);
 			labelRuleset.loadDependencies(this, dependencies);
 			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Label Ruleset: " + id + "] Dependencies loaded");
 		}
-		for (String id : progressBars.keySet()) {
+		for (String id : progressBars.keys()) {
 			StyleRuleset<ProgressBarStyleRule> progressBarRuleset = progressBars.get(id);
 			progressBarRuleset.loadDependencies(this, dependencies);
 			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Progress Bar Ruleset: " + id + "] Dependencies loaded");
 		}
-		for (String id : radioButtons.keySet()) {
+		for (String id : radioButtons.keys()) {
 			StyleRuleset<RadioButtonStyleRule> scrollBoxRuleset = radioButtons.get(id);
 			scrollBoxRuleset.loadDependencies(this, dependencies);
 			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", RadioButton Ruleset: " + id + "] Dependencies loaded");
 		}
-		for (String id : scrollBoxes.keySet()) {
+		for (String id : scrollBoxes.keys()) {
 			StyleRuleset<ScrollBoxStyleRule> scrollBoxRuleset = scrollBoxes.get(id);
 			scrollBoxRuleset.loadDependencies(this, dependencies);
 			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", ScrollBox Ruleset: " + id + "] Dependencies loaded");
 		}
-		for (String id : selects.keySet()) {
+		for (String id : selects.keys()) {
 			StyleRuleset<SelectStyleRule> selectRuleset = selects.get(id);
 			selectRuleset.loadDependencies(this, dependencies);
 			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Select Ruleset: " + id + "] Dependencies loaded");
 		}
-		for (String id : sliders.keySet()) {
+		for (String id : sliders.keys()) {
 			StyleRuleset<SliderStyleRule> sliderRuleset = sliders.get(id);
 			sliderRuleset.loadDependencies(this, dependencies);
 			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Slider Ruleset: " + id + "] Dependencies loaded");
 		}
-		for (String id : tabs.keySet()) {
+		for (String id : tabs.keys()) {
 			StyleRuleset<TabStyleRule> tabRuleset = tabs.get(id);
 			tabRuleset.loadDependencies(this, dependencies);
 			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Tab Ruleset: " + id + "] Dependencies loaded");
 		}
-		for (String id : textboxes.keySet()) {
+		for (String id : textboxes.keys()) {
 			StyleRuleset<TextBoxStyleRule> textboxRuleset = textboxes.get(id);
 			textboxRuleset.loadDependencies(this, dependencies);
 			Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", TextBox Ruleset: " + id + "] Dependencies loaded");
@@ -379,7 +377,7 @@ public class UiTheme {
 	}
 
 	private StyleRule getStyleRule(UiElement element, ScreenSize screenSize,
-			Map<String, DefaultStyleRuleset> rules) {
+			ObjectMap<String, DefaultStyleRuleset> rules) {
 		StyleRuleset<?> ruleset = rules.get(element.getStyleId());
 		if (ruleset == null) {
 			Gdx.app.error(LOGGING_TAG, "No style found with ID " + element.getStyleId());
@@ -511,77 +509,77 @@ public class UiTheme {
 	
 	public void putButtonStyleRuleset(String rulesetId, ButtonStyleRuleset ruleset) {
 		if(buttons == null) {
-			buttons = new HashMap<String, ButtonStyleRuleset>();
+			buttons = new ObjectMap<String, ButtonStyleRuleset>();
 		}
 		buttons.put(rulesetId, ruleset);
 	}
 	
 	public void putColumnStyleRuleset(String rulesetId, ColumnStyleRuleset ruleset) {
 		if(columns == null) {
-			columns = new HashMap<String, ColumnStyleRuleset>();
+			columns = new ObjectMap<String, ColumnStyleRuleset>();
 		}
 		columns.put(rulesetId, ruleset);
 	}
 	
 	public void putContainerStyleRuleset(String rulesetId, ContainerStyleRuleset ruleset) {
 		if(containers == null) {
-			containers = new HashMap<String, ContainerStyleRuleset>();
+			containers = new ObjectMap<String, ContainerStyleRuleset>();
 		}
 		containers.put(rulesetId, ruleset);
 	}
 	
 	public void putImageStyleRuleset(String rulesetId,DefaultStyleRuleset ruleset) {
 		if(images == null) {
-			images = new HashMap<String, DefaultStyleRuleset>();
+			images = new ObjectMap<String, DefaultStyleRuleset>();
 		}
 		images.put(rulesetId, ruleset);
 	}
 	
 	public void putLabelStyleRuleset(String rulesetId, LabelStyleRuleset ruleset) {
 		if(labels == null) {
-			labels = new HashMap<String, LabelStyleRuleset>();
+			labels = new ObjectMap<String, LabelStyleRuleset>();
 		}
 		labels.put(rulesetId, ruleset);
 	}
 	
 	public void putProgressBarStyleRuleset(String rulesetId, ProgressBarStyleRuleset ruleset) {
 		if(progressBars == null) {
-			progressBars = new HashMap<String, ProgressBarStyleRuleset>();
+			progressBars = new ObjectMap<String, ProgressBarStyleRuleset>();
 		}
 		progressBars.put(rulesetId, ruleset);
 	}
 	
 	public void putScrollBoxStyleRuleset(String rulesetId, ScrollBoxStyleRuleset ruleset) {
 		if(scrollBoxes == null) {
-			scrollBoxes = new HashMap<String, ScrollBoxStyleRuleset>();
+			scrollBoxes = new ObjectMap<String, ScrollBoxStyleRuleset>();
 		}
 		scrollBoxes.put(rulesetId, ruleset);
 	}
 	
 	public void putSelectStyleRuleset(String rulesetId, SelectStyleRuleset ruleset) {
 		if(selects == null) {
-			selects = new HashMap<String, SelectStyleRuleset>();
+			selects = new ObjectMap<String, SelectStyleRuleset>();
 		}
 		selects.put(rulesetId, ruleset);
 	}
 	
 	public void putTabStyleRuleset(String rulesetId, TabStyleRuleset ruleset) {
 		if(tabs == null) {
-			tabs = new HashMap<String, TabStyleRuleset>();
+			tabs = new ObjectMap<String, TabStyleRuleset>();
 		}
 		tabs.put(rulesetId, ruleset);
 	}
 	
 	public void putTextBoxStyleRuleset(String rulesetId, TextBoxStyleRuleset ruleset) {
 		if(textboxes == null) {
-			textboxes = new HashMap<String, TextBoxStyleRuleset>();
+			textboxes = new ObjectMap<String, TextBoxStyleRuleset>();
 		}
 		textboxes.put(rulesetId, ruleset);
 	}
 	
 	public void putFont(String id, String path) {
 		if(fonts == null) {
-			fonts = new HashMap<String, UiFont>();
+			fonts = new ObjectMap<String, UiFont>();
 		}
 		UiFont font = new UiFont();
 		font.setPath(path);
@@ -604,59 +602,59 @@ public class UiTheme {
 		return headless;
 	}
 
-	public Map<String, ButtonStyleRuleset> getButtonRulesets() {
+	public ObjectMap<String, ButtonStyleRuleset> getButtonRulesets() {
 		return buttons;
 	}
 
-	public Map<String, CheckboxStyleRuleset> getCheckboxRulesets() {
+	public ObjectMap<String, CheckboxStyleRuleset> getCheckboxRulesets() {
 		return checkboxes;
 	}
 
-	public Map<String, ColumnStyleRuleset> getColumnRulesets() {
+	public ObjectMap<String, ColumnStyleRuleset> getColumnRulesets() {
 		return columns;
 	}
 
-	public Map<String, ContainerStyleRuleset> getContainerRulesets() {
+	public ObjectMap<String, ContainerStyleRuleset> getContainerRulesets() {
 		return containers;
 	}
 
-	public Map<String, UiFont> getFonts() {
+	public ObjectMap<String, UiFont> getFonts() {
 		return fonts;
 	}
 
-	public Map<String, DefaultStyleRuleset> getImageRulesets() {
+	public ObjectMap<String, DefaultStyleRuleset> getImageRulesets() {
 		return images;
 	}
 
-	public Map<String, LabelStyleRuleset> getLabelRulesets() {
+	public ObjectMap<String, LabelStyleRuleset> getLabelRulesets() {
 		return labels;
 	}
 
-	public Map<String, ProgressBarStyleRuleset> getProgressBarRulesets() {
+	public ObjectMap<String, ProgressBarStyleRuleset> getProgressBarRulesets() {
 		return progressBars;
 	}
 
-	public Map<String, RadioButtonStyleRuleset> getRadioButtonRulesets() {
+	public ObjectMap<String, RadioButtonStyleRuleset> getRadioButtonRulesets() {
 		return radioButtons;
 	}
 
-	public Map<String, SelectStyleRuleset> getSelectRulesets() {
+	public ObjectMap<String, SelectStyleRuleset> getSelectRulesets() {
 		return selects;
 	}
 
-	public Map<String, ScrollBoxStyleRuleset> getScrollBoxRulesets() {
+	public ObjectMap<String, ScrollBoxStyleRuleset> getScrollBoxRulesets() {
 		return scrollBoxes;
 	}
 
-	public Map<String, SliderStyleRuleset> getSliderRulesets() {
+	public ObjectMap<String, SliderStyleRuleset> getSliderRulesets() {
 		return sliders;
 	}
 
-	public Map<String, TabStyleRuleset> getTabRulesets() {
+	public ObjectMap<String, TabStyleRuleset> getTabRulesets() {
 		return tabs;
 	}
 
-	public Map<String, TextBoxStyleRuleset> getTextBoxRulesets() {
+	public ObjectMap<String, TextBoxStyleRuleset> getTextBoxRulesets() {
 		return textboxes;
 	}
 }

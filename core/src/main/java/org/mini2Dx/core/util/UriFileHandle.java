@@ -11,10 +11,9 @@
  */
 package org.mini2Dx.core.util;
 
-import org.mini2Dx.core.exception.MdxException;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import org.mini2Dx.core.exception.MdxException;
 
 /**
  * Wraps Gdx.files with a URI scheme

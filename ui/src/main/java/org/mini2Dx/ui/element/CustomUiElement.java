@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.ui.element;
 
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.ui.UiContainer;
@@ -26,14 +27,11 @@ import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.UiContainerRenderTree;
 import org.mini2Dx.ui.style.StyleRule;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Base class for implementing custom {@link UiElement}s
  */
 public abstract class CustomUiElement extends UiElement implements Actionable {
-	private List<ActionListener> actionListeners;
+	private Array<ActionListener> actionListeners;
 	private CustomUiElementRenderNode renderNode;
 
 	@Field(optional=true)
@@ -166,7 +164,7 @@ public abstract class CustomUiElement extends UiElement implements Actionable {
 		}
 		ActionEvent event = ActionEventPool.allocate();
 		event.set(this, eventTrigger, eventTriggerParams);
-		for(int i = actionListeners.size() - 1; i >= 0; i--) {
+		for(int i = actionListeners.size - 1; i >= 0; i--) {
 			actionListeners.get(i).onActionBegin(event);
 		}
 		ActionEventPool.release(event);
@@ -179,7 +177,7 @@ public abstract class CustomUiElement extends UiElement implements Actionable {
 		}
 		ActionEvent event = ActionEventPool.allocate();
 		event.set(this, eventTrigger, eventTriggerParams);
-		for(int i = actionListeners.size() - 1; i >= 0; i--) {
+		for(int i = actionListeners.size - 1; i >= 0; i--) {
 			actionListeners.get(i).onActionEnd(event);
 		}
 		ActionEventPool.release(event);
@@ -198,7 +196,7 @@ public abstract class CustomUiElement extends UiElement implements Actionable {
 	@Override
 	public void addActionListener(ActionListener listener) {
 		if(actionListeners == null) {
-			actionListeners = new ArrayList<ActionListener>(1);
+			actionListeners = new Array<ActionListener>(true, 1, ActionListener.class);
 		}
 		actionListeners.add(listener);
 	}
@@ -208,6 +206,6 @@ public abstract class CustomUiElement extends UiElement implements Actionable {
 		if(actionListeners == null) {
 			return;
 		}
-		actionListeners.remove(listener);
+		actionListeners.removeValue(listener, false);
 	}
 }

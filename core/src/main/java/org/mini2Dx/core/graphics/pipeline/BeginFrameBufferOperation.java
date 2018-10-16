@@ -11,13 +11,12 @@
  */
 package org.mini2Dx.core.graphics.pipeline;
 
-import org.mini2Dx.core.game.GameContainer;
-import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.core.util.Ref;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import org.mini2Dx.core.game.GameContainer;
+import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.core.util.Ref;
 
 /**
  * Begins a {@link FrameBuffer} and (optionally) clears the buffer

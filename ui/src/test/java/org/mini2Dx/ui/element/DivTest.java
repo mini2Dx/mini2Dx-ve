@@ -41,8 +41,8 @@ public class DivTest {
 			
 			Assert.assertEquals(div.getId(), result.getId());
 			Assert.assertEquals(div.getZIndex(), result.getZIndex());
-			Assert.assertEquals(div.children.size(), result.children.size());
-			for(int i = 0; i < div.children.size(); i++) {
+			Assert.assertEquals(div.children.size, result.children.size);
+			for(int i = 0; i < div.children.size; i++) {
 				Assert.assertEquals(div.children.get(i).getId(), result.children.get(i).getId());
 			}
 		} catch (SerializationException e) {

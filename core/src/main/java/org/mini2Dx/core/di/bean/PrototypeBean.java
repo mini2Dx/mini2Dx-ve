@@ -11,12 +11,12 @@
  */
 package org.mini2Dx.core.di.bean;
 
+import org.mini2Dx.core.Mdx;
+import org.mini2Dx.core.exception.MdxException;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
-
-import org.mini2Dx.core.Mdx;
-import org.mini2Dx.core.exception.MdxException;
 
 /**
  * An implementation of {@link Bean} based on the

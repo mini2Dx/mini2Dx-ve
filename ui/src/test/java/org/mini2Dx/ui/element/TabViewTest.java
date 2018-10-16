@@ -56,8 +56,8 @@ public class TabViewTest {
 				Assert.assertEquals(expectedTab.getId(), resultTab.getId());
 				Assert.assertEquals(expectedTab.getTitle(), resultTab.getTitle());
 				Assert.assertEquals(expectedTab.getIconPath(), resultTab.getIconPath());
-				Assert.assertEquals(expectedTab.children.size(), resultTab.children.size());
-				for(int j = 0; j < expectedTab.children.size(); j++) {
+				Assert.assertEquals(expectedTab.children.size, resultTab.children.size);
+				for(int j = 0; j < expectedTab.children.size; j++) {
 					Assert.assertEquals(expectedTab.children.get(j).getId(), resultTab.children.get(j).getId());
 				}
 			}

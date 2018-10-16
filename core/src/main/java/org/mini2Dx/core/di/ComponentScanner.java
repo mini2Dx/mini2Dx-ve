@@ -11,11 +11,11 @@
  */
 package org.mini2Dx.core.di;
 
-import java.io.IOException;
-import java.util.List;
-
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.di.annotation.Prototype;
 import org.mini2Dx.core.di.annotation.Singleton;
+
+import java.io.IOException;
 
 /**
  * A common interface to component scanning implementations.
@@ -33,7 +33,7 @@ public interface ComponentScanner {
 	 */
 	public void scan(String[] packageNames) throws IOException, NullPointerException, ClassNotFoundException;
 
-	public List<Class<?>> getSingletonClasses();
+	public Array<Class<?>> getSingletonClasses();
 
-	public List<Class<?>> getPrototypeClasses();
+	public Array<Class<?>> getPrototypeClasses();
 }

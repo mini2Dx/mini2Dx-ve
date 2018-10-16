@@ -11,16 +11,14 @@
  */
 package org.mini2Dx.ui.animation;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.ui.listener.TextAnimationListener;
 
 /**
  * A base class for {@link TextAnimation} implementations
  */
 public abstract class BaseTextAnimation implements TextAnimation {
-	private List<TextAnimationListener> listeners;
+	private Array<TextAnimationListener> listeners;
 
 	private boolean finished;
 	
@@ -59,7 +57,7 @@ public abstract class BaseTextAnimation implements TextAnimation {
 	@Override
 	public void addTextAnimationListener(TextAnimationListener listener) {
 		if (listeners == null) {
-			listeners = new ArrayList<TextAnimationListener>(1);
+			listeners = new Array<TextAnimationListener>(true, 1, TextAnimationListener.class);
 		}
 		listeners.add(listener);
 	}
@@ -69,14 +67,14 @@ public abstract class BaseTextAnimation implements TextAnimation {
 		if (listeners == null) {
 			return;
 		}
-		listeners.remove(listener);
+		listeners.removeValue(listener, false);
 	}
 
 	private void notifyTextAnimationListeners() {
 		if (listeners == null) {
 			return;
 		}
-		for (int i = listeners.size() - 1; i >= 0; i--) {
+		for (int i = listeners.size - 1; i >= 0; i--) {
 			listeners.get(i).onAnimationFinished(this);
 		}
 	}

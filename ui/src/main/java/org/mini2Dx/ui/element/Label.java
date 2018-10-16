@@ -11,9 +11,7 @@
  */
 package org.mini2Dx.ui.element;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import org.mini2Dx.core.graphics.GlyphLayout;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
@@ -28,8 +26,6 @@ import org.mini2Dx.ui.render.UiContainerRenderTree;
 import org.mini2Dx.ui.style.LabelStyleRule;
 import org.mini2Dx.ui.style.StyleRule;
 import org.mini2Dx.ui.style.UiTheme;
-
-import com.badlogic.gdx.graphics.Color;
 
 /**
  * A text label {@link UiElement}
@@ -178,8 +174,8 @@ public class Label extends UiElement {
 	
 	@Override
 	public void syncWithUpdate(UiContainerRenderTree rootNode) {
-		while (!effects.isEmpty()) {
-			renderNode.applyEffect(effects.poll());
+		while (effects.size > 0) {
+			renderNode.applyEffect(effects.removeFirst());
 		}
 
 		if(renderNode.isIncludedInLayout()) {

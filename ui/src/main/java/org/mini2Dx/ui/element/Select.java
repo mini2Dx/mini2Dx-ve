@@ -11,9 +11,7 @@
  */
 package org.mini2Dx.ui.element;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.ui.UiContainer;
@@ -36,8 +34,8 @@ import org.mini2Dx.ui.style.StyleRule;
  * the selection.
  */
 public class Select<V> extends UiElement implements Actionable {
-	private final List<SelectOption<V>> options = new ArrayList<SelectOption<V>>(1);
-	private List<ActionListener> actionListeners;
+	private final Array<SelectOption<V>> options = new Array<SelectOption<V>>(true,1, SelectOption.class);
+	private Array<ActionListener> actionListeners;
 
 	private int selectedIndex = 0;
 	private Color enabledTextColor = null;
@@ -136,8 +134,8 @@ public class Select<V> extends UiElement implements Actionable {
 	
 	@Override
 	public void syncWithUpdate(UiContainerRenderTree rootNode) {
-		while (!effects.isEmpty()) {
-			renderNode.applyEffect(effects.poll());
+		while (effects.size > 0) {
+			renderNode.applyEffect(effects.removeFirst());
 		}
 
 		if(flexLayout != null) {
@@ -182,7 +180,7 @@ public class Select<V> extends UiElement implements Actionable {
 	 *            The {@link SelectOption} to remove
 	 */
 	public void removeOption(SelectOption<V> option) {
-		options.remove(option);
+		options.removeValue(option, false);
 	}
 
 	/**
@@ -194,9 +192,9 @@ public class Select<V> extends UiElement implements Actionable {
 	 * @return True if the option was found
 	 */
 	public boolean removeOptionByLabel(String label) {
-		for (int i = 0; i < options.size(); i++) {
+		for (int i = 0; i < options.size; i++) {
 			if (options.get(i).getLabel().equals(label)) {
-				options.remove(i);
+				options.removeIndex(i);
 				return true;
 			}
 		}
@@ -212,9 +210,9 @@ public class Select<V> extends UiElement implements Actionable {
 	 * @return True if the option was found
 	 */
 	public boolean removeOptionByValue(V value) {
-		for (int i = 0; i < options.size(); i++) {
+		for (int i = 0; i < options.size; i++) {
 			if (options.get(i).getValue().equals(value)) {
-				options.remove(i);
+				options.removeIndex(i);
 				return true;
 			}
 		}
@@ -263,7 +261,7 @@ public class Select<V> extends UiElement implements Actionable {
 	 * @return 0 if no options have been added
 	 */
 	public int getTotalOptions() {
-		return options.size();
+		return options.size;
 	}
 
 	/**
@@ -290,7 +288,7 @@ public class Select<V> extends UiElement implements Actionable {
 	 * current selection is the last option then this method does nothing.
 	 */
 	public void nextOption() {
-		if (selectedIndex >= options.size() - 1) {
+		if (selectedIndex >= options.size - 1) {
 			return;
 		}
 		selectedIndex++;
@@ -315,7 +313,7 @@ public class Select<V> extends UiElement implements Actionable {
 		}
 		ActionEvent event = ActionEventPool.allocate();
 		event.set(this, eventTrigger, eventTriggerParams);
-		for (int i = actionListeners.size() - 1; i >= 0; i--) {
+		for (int i = actionListeners.size - 1; i >= 0; i--) {
 			actionListeners.get(i).onActionBegin(event);
 		}
 		ActionEventPool.release(event);
@@ -328,7 +326,7 @@ public class Select<V> extends UiElement implements Actionable {
 		}
 		ActionEvent event = ActionEventPool.allocate();
 		event.set(this, eventTrigger, eventTriggerParams);
-		for (int i = actionListeners.size() - 1; i >= 0; i--) {
+		for (int i = actionListeners.size - 1; i >= 0; i--) {
 			actionListeners.get(i).onActionEnd(event);
 		}
 		ActionEventPool.release(event);
@@ -337,7 +335,7 @@ public class Select<V> extends UiElement implements Actionable {
 	@Override
 	public void addActionListener(ActionListener listener) {
 		if (actionListeners == null) {
-			actionListeners = new ArrayList<ActionListener>(1);
+			actionListeners = new Array<ActionListener>(true,1, ActionListener.class);
 		}
 		actionListeners.add(listener);
 	}
@@ -347,7 +345,7 @@ public class Select<V> extends UiElement implements Actionable {
 		if (actionListeners == null) {
 			return;
 		}
-		actionListeners.remove(listener);
+		actionListeners.removeValue(listener, false);
 	}
 
 	@Override

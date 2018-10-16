@@ -11,9 +11,7 @@
  */
 package org.mini2Dx.core.graphics.pipeline;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
 
@@ -26,11 +24,11 @@ import org.mini2Dx.core.graphics.Graphics;
  * If you do not require the operations to be unapplied, {@link #setOneWay(boolean)} to true.
  */
 public class RenderPipeline {
-	private List<RenderOperation> operations;
+	private Array<RenderOperation> operations;
 	private boolean oneWay;
 	
 	public RenderPipeline() {
-		operations = new ArrayList<RenderOperation>();
+		operations = new Array<RenderOperation>(true, 2);
 		oneWay = false;
 	}
 	
@@ -55,7 +53,7 @@ public class RenderPipeline {
 			return;
 		}
 		
-		for(int i = operations.size() - 1; i >= 0; i--) {
+		for(int i = operations.size - 1; i >= 0; i--) {
 			operations.get(i).unapply(gc, g);
 		}
 	}
@@ -65,7 +63,7 @@ public class RenderPipeline {
 	}
 	
 	public void remove(RenderOperation operation) {
-		operations.remove(operation);
+		operations.removeValue(operation, true);
 	}
 
 	public boolean isOneWay() {

@@ -11,19 +11,17 @@
  */
 package org.mini2Dx.core.engine.geom;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.engine.PositionChangeListener;
 import org.mini2Dx.core.engine.Positionable;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.geom.Point;
 
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
+import java.util.Objects;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * An implementation of {@link Point} that allows for interpolation. Game
@@ -40,7 +38,7 @@ public class CollisionPoint extends Point implements Positionable {
 	private final int id;
 	private final ReadWriteLock positionChangeListenerLock;
 	
-	private List<PositionChangeListener> positionChangeListeners;
+	private Array<PositionChangeListener> positionChangeListeners;
 	
 	private Point previousPosition;
 	private Point renderPosition;
@@ -126,9 +124,9 @@ public class CollisionPoint extends Point implements Positionable {
 			return;
 		}
 		positionChangeListenerLock.readLock().lock();
-		for (int i = positionChangeListeners.size() - 1; i >= 0; i--) {
-			if(i >= positionChangeListeners.size()) {
-				i = positionChangeListeners.size() - 1;
+		for (int i = positionChangeListeners.size - 1; i >= 0; i--) {
+			if(i >= positionChangeListeners.size) {
+				i = positionChangeListeners.size - 1;
 			}
 			PositionChangeListener listener = positionChangeListeners.get(i);
 			positionChangeListenerLock.readLock().unlock();
@@ -143,7 +141,7 @@ public class CollisionPoint extends Point implements Positionable {
 			PositionChangeListener<T> listener) {
 		positionChangeListenerLock.writeLock().lock();
 		if (positionChangeListeners == null) {
-			positionChangeListeners = new ArrayList<PositionChangeListener>(1);
+			positionChangeListeners = new Array<PositionChangeListener>(true,1);
 		}
 		positionChangeListeners.add(listener);
 		positionChangeListenerLock.writeLock().unlock();
@@ -156,7 +154,7 @@ public class CollisionPoint extends Point implements Positionable {
 			return;
 		}
 		positionChangeListenerLock.writeLock().lock();
-		positionChangeListeners.remove(listener);
+		positionChangeListeners.removeValue(listener, false);
 		positionChangeListenerLock.writeLock().unlock();
 	}
 	

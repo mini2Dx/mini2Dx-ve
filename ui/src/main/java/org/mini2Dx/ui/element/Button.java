@@ -11,9 +11,7 @@
  */
 package org.mini2Dx.ui.element;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.ui.UiContainer;
@@ -31,7 +29,7 @@ import org.mini2Dx.ui.style.StyleRule;
  * A button implementation that stores child elements such as {@link Label}, {@link Image}, etc.
  */
 public class Button extends ParentUiElement implements Actionable {
-	private List<ActionListener> actionListeners;
+	private Array<ActionListener> actionListeners;
 	
 	@Field(optional=true)
 	private boolean enabled = true;
@@ -79,7 +77,7 @@ public class Button extends ParentUiElement implements Actionable {
 		}
 		ActionEvent event = ActionEventPool.allocate();
 		event.set(this, eventTrigger, eventTriggerParams);
-		for(int i = actionListeners.size() - 1; i >= 0; i--) {
+		for(int i = actionListeners.size - 1; i >= 0; i--) {
 			actionListeners.get(i).onActionBegin(event);
 		}
 		ActionEventPool.release(event);
@@ -92,7 +90,7 @@ public class Button extends ParentUiElement implements Actionable {
 		}
 		ActionEvent event = ActionEventPool.allocate();
 		event.set(this, eventTrigger, eventTriggerParams);
-		for(int i = actionListeners.size() - 1; i >= 0; i--) {
+		for(int i = actionListeners.size - 1; i >= 0; i--) {
 			actionListeners.get(i).onActionEnd(event);
 		}
 		ActionEventPool.release(event);
@@ -101,7 +99,7 @@ public class Button extends ParentUiElement implements Actionable {
 	@Override
 	public void addActionListener(ActionListener listener) {
 		if(actionListeners == null) {
-			actionListeners = new ArrayList<ActionListener>(1);
+			actionListeners = new Array<ActionListener>(true, 1, ActionListener.class);
 		}
 		actionListeners.add(listener);
 	}
@@ -111,7 +109,7 @@ public class Button extends ParentUiElement implements Actionable {
 		if(actionListeners == null) {
 			return;
 		}
-		actionListeners.remove(listener);
+		actionListeners.removeValue(listener, false);
 	}
 	
 	@Override

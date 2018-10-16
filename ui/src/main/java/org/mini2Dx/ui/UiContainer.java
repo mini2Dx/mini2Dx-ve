@@ -11,12 +11,11 @@
  */
 package org.mini2Dx.ui;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntSet;
+import com.badlogic.gdx.utils.ObjectSet;
 import org.mini2Dx.core.Mdx;
 import org.mini2Dx.core.controller.ControllerType;
 import org.mini2Dx.core.controller.button.ControllerButton;
@@ -60,16 +59,16 @@ import com.badlogic.gdx.math.MathUtils;
  */
 public class UiContainer extends ParentUiElement implements InputProcessor {
 	private static final String LOGGING_TAG = UiContainer.class.getSimpleName();
-	private static final List<UiContainer> uiContainerInstances = new ArrayList<UiContainer>();
+	private static final Array<UiContainer> uiContainerInstances = new Array<UiContainer>(true, 2, UiContainer.class);
 	private static Visibility defaultVisibility = Visibility.HIDDEN;
 	private static UiTheme UI_THEME;
 	private static UiContainerState STATE = UiContainerState.NOOP;
 
-	private final List<ControllerUiInput<?>> controllerInputs = new ArrayList<ControllerUiInput<?>>(1);
-	private final List<UiContainerListener> listeners = new ArrayList<UiContainerListener>(1);
+	private final Array<ControllerUiInput<?>> controllerInputs = new Array<ControllerUiInput<?>>(true,1, ControllerUiInput.class);
+	private final Array<UiContainerListener> listeners = new Array<UiContainerListener>(true,1, UiContainerListener.class);
 
-	private final Set<Integer> receivedKeyDowns = new HashSet<Integer>();
-	private final Set<String> receivedButtonDowns = new HashSet<String>();
+	private final IntSet receivedKeyDowns = new IntSet();
+	private final ObjectSet<String> receivedButtonDowns = new ObjectSet<String>();
 
 	private final AtomicBoolean forceRenderTreeLayout = new AtomicBoolean(false);
 	private final UiContainerRenderTree renderTree;
@@ -132,7 +131,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	
 	public static void relayoutAllUiContainers() {
 		Gdx.app.log(LOGGING_TAG, "Triggering re-layout for all UiContainer instances");
-		for(int i = uiContainerInstances.size() - 1; i >= 0; i--) {
+		for(int i = uiContainerInstances.size - 1; i >= 0; i--) {
 			uiContainerInstances.get(i).forceRenderTreeLayout();
 		}
 	}
@@ -142,7 +141,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	}
 	
 	public void dispose() {
-		uiContainerInstances.remove(this);
+		uiContainerInstances.removeValue(this, false);
 	}
 
 	@Override
@@ -181,7 +180,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		}
 		
 		notifyPreUpdate(delta);
-		for (int i = controllerInputs.size() - 1; i >= 0; i--) {
+		for (int i = controllerInputs.size - 1; i >= 0; i--) {
 			controllerInputs.get(i).update(delta);
 		}
 		if (renderTree.isDirty()) {
@@ -881,7 +880,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	 *            The instance to remove
 	 */
 	public void removeControllerInput(ControllerUiInput<?> input) {
-		controllerInputs.remove(input);
+		controllerInputs.removeValue(input, false);
 	}
 
 	@Override
@@ -965,60 +964,60 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	 *            The {@link UiContainerListener} to stop receiving events
 	 */
 	public void removeListener(UiContainerListener listener) {
-		listeners.remove(listener);
+		listeners.removeValue(listener, false);
 		removeScreenSizeListener(listener);
 	}
 
 	private void notifyPreUpdate(float delta) {
-		for (int i = listeners.size() - 1; i >= 0; i--) {
+		for (int i = listeners.size - 1; i >= 0; i--) {
 			listeners.get(i).preUpdate(this, delta);
 		}
 	}
 
 	private void notifyPostUpdate(float delta) {
-		for (int i = listeners.size() - 1; i >= 0; i--) {
+		for (int i = listeners.size - 1; i >= 0; i--) {
 			listeners.get(i).postUpdate(this, delta);
 		}
 	}
 
 	private void notifyPreInterpolate(float alpha) {
-		for (int i = listeners.size() - 1; i >= 0; i--) {
+		for (int i = listeners.size - 1; i >= 0; i--) {
 			listeners.get(i).preInterpolate(this, alpha);
 		}
 	}
 
 	private void notifyPostInterpolate(float alpha) {
-		for (int i = listeners.size() - 1; i >= 0; i--) {
+		for (int i = listeners.size - 1; i >= 0; i--) {
 			listeners.get(i).postInterpolate(this, alpha);
 		}
 	}
 
 	private void notifyPreRender(Graphics g) {
-		for (int i = listeners.size() - 1; i >= 0; i--) {
+		for (int i = listeners.size - 1; i >= 0; i--) {
 			listeners.get(i).preRender(this, g);
 		}
 	}
 
 	private void notifyPostRender(Graphics g) {
-		for (int i = listeners.size() - 1; i >= 0; i--) {
+		for (int i = listeners.size - 1; i >= 0; i--) {
 			listeners.get(i).postRender(this, g);
 		}
 	}
 
 	private void notifyInputSourceChange(InputSource oldSource, InputSource newSource) {
-		for (int i = listeners.size() - 1; i >= 0; i--) {
+		for (int i = listeners.size - 1; i >= 0; i--) {
 			listeners.get(i).inputSourceChanged(this, oldSource, newSource);
 		}
 	}
 
 	private void notifyControllerTypeChange(ControllerType oldControllerType, ControllerType newControllerType) {
-		for (int i = listeners.size() - 1; i >= 0; i--) {
+		for (int i = listeners.size - 1; i >= 0; i--) {
 			listeners.get(i).controllerTypeChanged(this, oldControllerType, newControllerType);
 		}
 	}
 
 	private void notifyElementActivated(ActionableRenderNode actionable) {
-		for (int i = listeners.size() - 1; i >= 0; i--) {
+		for (int i = listeners.size - 1; i >= 0; i--) {
 			listeners.get(i).onElementAction(this, actionable.getElement());
 		}
 	}

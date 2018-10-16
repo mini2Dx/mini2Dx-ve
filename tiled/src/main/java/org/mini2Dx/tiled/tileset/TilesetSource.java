@@ -11,18 +11,16 @@
  */
 package org.mini2Dx.tiled.tileset;
 
-import java.util.Map;
-
-import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.core.graphics.Sprite;
-import org.mini2Dx.tiled.Tile;
-import org.mini2Dx.tiled.Tileset;
-
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.ObjectMap;
+import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.core.graphics.Sprite;
+import org.mini2Dx.tiled.Tile;
+import org.mini2Dx.tiled.Tileset;
 
 /**
  * Base class for tileset sources
@@ -278,9 +276,9 @@ public abstract class TilesetSource implements Disposable {
 	public abstract void setProperty(String propertyName, String value);
 
 	/**
-	 * Returns the properties {@link Map} of this {@link Tileset}
+	 * Returns the properties {@link ObjectMap} of this {@link Tileset}
 	 * 
 	 * @return Null if there are no properties
 	 */
-	public abstract Map<String, String> getProperties();
+	public abstract ObjectMap<String, String> getProperties();
 }

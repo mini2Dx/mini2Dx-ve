@@ -11,21 +11,6 @@
  */
 package org.mini2Dx.tiled;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.DataFormatException;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.Inflater;
-
-import org.mini2Dx.tiled.renderer.AnimatedTileRenderer;
-import org.mini2Dx.tiled.renderer.StaticTileRenderer;
-import org.mini2Dx.tiled.renderer.TileFrame;
-import org.mini2Dx.tiled.tileset.ImageTilesetSource;
-import org.mini2Dx.tiled.tileset.TilesetSource;
-import org.mini2Dx.tiled.tileset.TsxTilesetSource;
-
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
@@ -33,6 +18,18 @@ import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
+import org.mini2Dx.tiled.renderer.AnimatedTileRenderer;
+import org.mini2Dx.tiled.renderer.StaticTileRenderer;
+import org.mini2Dx.tiled.renderer.TileFrame;
+import org.mini2Dx.tiled.tileset.ImageTilesetSource;
+import org.mini2Dx.tiled.tileset.TilesetSource;
+import org.mini2Dx.tiled.tileset.TsxTilesetSource;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.zip.DataFormatException;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.Inflater;
 
 /**
  * Parses Tiled XML files and notifies {@link TiledParserListener}s of map data
@@ -46,14 +43,14 @@ public class TiledParser implements TiledParserNotifier {
 	protected static final int MASK_CLEAR = 0xE0000000;
 
 	private XmlReader xmlReader;
-	private List<TiledParserListener> listeners;
+	private Array<TiledParserListener> listeners;
 
 	/**
 	 * Constructor
 	 */
 	public TiledParser() {
 		xmlReader = new XmlReader();
-		listeners = new ArrayList<TiledParserListener>();
+		listeners = new Array<TiledParserListener>();
 	}
 
 	/**
@@ -524,7 +521,7 @@ public class TiledParser implements TiledParserNotifier {
 	 */
 	@Override
 	public void removeListener(TiledParserListener tiledParserListener) {
-		listeners.remove(tiledParserListener);
+		listeners.removeValue(tiledParserListener, false);
 	}
 
 	@Override

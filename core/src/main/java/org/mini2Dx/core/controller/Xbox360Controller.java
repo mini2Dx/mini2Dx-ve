@@ -12,13 +12,11 @@
 package org.mini2Dx.core.controller;
 
 import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.controller.button.Xbox360Button;
 import org.mini2Dx.core.controller.deadzone.DeadZone;
 import org.mini2Dx.core.controller.deadzone.NoopDeadZone;
 import org.mini2Dx.core.controller.xbox360.Xbox360ControllerListener;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Base class for Xbox 360 controller mapping implementations
@@ -27,7 +25,7 @@ public abstract class Xbox360Controller implements MdxController<Xbox360Controll
 	public static final String ID = "360";
 	
 	private final Controller controller;
-    private final List<Xbox360ControllerListener> listeners = new ArrayList<>(1);
+    private final Array<Xbox360ControllerListener> listeners = new Array<>(true,2);
     
     private DeadZone leftStickDeadZone, rightStickDeadZone;
     
@@ -127,7 +125,7 @@ public abstract class Xbox360Controller implements MdxController<Xbox360Controll
 	
 	@Override
     public void addListener(int index, Xbox360ControllerListener listener) {
-    	listeners.add(index, listener);
+    	listeners.insert(index, listener);
     }
 	
 	@Override
@@ -137,12 +135,12 @@ public abstract class Xbox360Controller implements MdxController<Xbox360Controll
 	
 	@Override
     public void removeListener(int index) {
-    	listeners.remove(index);
+    	listeners.removeIndex(index);
     }
     
     @Override
     public void removeListener(Xbox360ControllerListener listener) {
-    	listeners.remove(listener);
+    	listeners.removeValue(listener, false);
     }
 
 	@Override
@@ -157,7 +155,7 @@ public abstract class Xbox360Controller implements MdxController<Xbox360Controll
 	
     @Override
 	public int getTotalListeners() {
-		return listeners.size();
+		return listeners.size;
 	}
     
     public ControllerType getControllerType() {

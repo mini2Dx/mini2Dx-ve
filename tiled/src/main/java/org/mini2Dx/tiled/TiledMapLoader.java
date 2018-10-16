@@ -11,11 +11,6 @@
  */
 package org.mini2Dx.tiled;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.mini2Dx.tiled.TiledMapLoader.TiledMapParameter;
-
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;
@@ -24,14 +19,20 @@ import com.badlogic.gdx.assets.loaders.AsynchronousAssetLoader;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
+import org.mini2Dx.tiled.TiledMapLoader.TiledMapParameter;
+
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * An {@link AssetLoader} implementation for loading {@link TiledMap} instances
  */
 public class TiledMapLoader extends AsynchronousAssetLoader<TiledMap, TiledMapParameter> {
 	private static final TiledMapParameter DEFAULT_PARAMETERS = new TiledMapParameter();
-	
-	private final Map<String, TiledMapData> tiledMapData = new ConcurrentHashMap<String, TiledMapData>();
+
+	private final ReadWriteLock lock = new ReentrantReadWriteLock();
+	private final ObjectMap<String, TiledMapData> tiledMapData = new ObjectMap<String, TiledMapData>();
 	private final TiledParser tiledParser = new TiledParser();
 	
 	private TiledMap nextTiledMap;
@@ -82,10 +83,19 @@ public class TiledMapLoader extends AsynchronousAssetLoader<TiledMap, TiledMapPa
 	}
 	
 	private TiledMapData getTiledMapData(String fileName, FileHandle file) {
+		lock.readLock().lock();
+		final TiledMapData result;
 		if(!tiledMapData.containsKey(fileName)) {
-			tiledMapData.put(fileName, new TiledMapData(tiledParser, file));
+			lock.readLock().unlock();
+			lock.writeLock().lock();
+			result = new TiledMapData(tiledParser, file);
+			tiledMapData.put(fileName, result);
+			lock.writeLock().unlock();
+		} else {
+			result = tiledMapData.get(fileName);
+			lock.readLock().unlock();
 		}
-		return tiledMapData.get(fileName);
+		return result;
 	}
 	
 	static public class TiledMapParameter extends AssetLoaderParameters<TiledMap> {

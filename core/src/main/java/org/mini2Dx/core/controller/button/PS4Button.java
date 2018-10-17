@@ -20,7 +20,7 @@ public enum PS4Button implements ControllerButton {
 	LEFT("ps4-left"),
 	RIGHT("ps4-right"),
 	
-	X("ps4-x"),
+	CROSS("ps4-cross"),
 	SQUARE("ps4-square"),
 	CIRCLE("ps4-circle"),
 	TRIANGLE("ps4-triangle"),

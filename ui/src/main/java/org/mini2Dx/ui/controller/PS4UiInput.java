@@ -36,7 +36,7 @@ public class PS4UiInput extends PS4ControllerAdapter implements ControllerUiInpu
 	private float stickRepeatTimer = 0.25f;
 	private float stickThreshold = 0.25f;
 	private boolean enabled = true;
-	private PS4Button actionButton = PS4Button.X;
+	private PS4Button actionButton = PS4Button.CROSS;
 	
 	/* Internal fields */
 	private float leftTimer = stickRepeatTimer;

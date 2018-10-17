@@ -26,7 +26,7 @@ public class MacPS4Controller extends PS4Controller {
 	public static final int BUTTON_TRIANGLE = 3;
 	public static final int BUTTON_SQUARE = 0;
 	public static final int BUTTON_CIRCLE = 2;
-	public static final int BUTTON_X = 1;
+	public static final int BUTTON_CROSS = 1;
 	
 	public static final int BUTTON_L1 = 4;
 	public static final int BUTTON_L2 = 6;
@@ -79,8 +79,8 @@ public class MacPS4Controller extends PS4Controller {
 			return notifyButtonDown(PS4Button.TRIANGLE);
 		case BUTTON_SQUARE:
 			return notifyButtonDown(PS4Button.SQUARE);
-		case BUTTON_X:
-			return notifyButtonDown(PS4Button.X);
+		case BUTTON_CROSS:
+			return notifyButtonDown(PS4Button.CROSS);
 		case BUTTON_L1:
 			return notifyButtonDown(PS4Button.L1);
 		case BUTTON_L2:
@@ -114,8 +114,8 @@ public class MacPS4Controller extends PS4Controller {
 			return notifyButtonUp(PS4Button.TRIANGLE);
 		case BUTTON_SQUARE:
 			return notifyButtonUp(PS4Button.SQUARE);
-		case BUTTON_X:
-			return notifyButtonUp(PS4Button.X);
+		case BUTTON_CROSS:
+			return notifyButtonUp(PS4Button.CROSS);
 		case BUTTON_L1:
 			return notifyButtonUp(PS4Button.L1);
 		case BUTTON_L2:

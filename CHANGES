@@ -10,6 +10,7 @@
 - Added support for static, ninepatch and tiling UI element backgrounds
 - Improved UI theme JSON consistency
 - Improved scrolling when dragging scroll thumb in ScrollBox
+- Fixed TypingTextAnimation not resetting correctly
 - Fixed UI elements changing state within margin area
 - Fixed SlideIn/SlideOut visibility timing
 - Fixed graphics context unnecessarily applying clip when clip is same size as viewport

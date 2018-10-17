@@ -45,7 +45,7 @@ public abstract class BaseTextAnimation implements TextAnimation {
 	 *            True if finished
 	 */
 	protected void setFinished(boolean finished) {
-		if (this.finished) {
+		if (this.finished == finished) {
 			return;
 		}
 		this.finished = finished;

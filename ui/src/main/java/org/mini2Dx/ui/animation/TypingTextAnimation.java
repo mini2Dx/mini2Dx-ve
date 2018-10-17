@@ -88,6 +88,7 @@ public class TypingTextAnimation extends BaseTextAnimation {
 
 	@Override
 	protected void resetState() {
+		characterIndex = 0;
 		timer = 0f;
 		skip = false;
 	}

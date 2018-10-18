@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.ui.animation;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.ui.listener.TextAnimationListener;
 
@@ -20,7 +21,7 @@ import org.mini2Dx.ui.listener.TextAnimationListener;
 public abstract class BaseTextAnimation implements TextAnimation {
 	private Array<TextAnimationListener> listeners;
 
-	private boolean finished;
+	protected boolean finished;
 	
 	protected abstract void resetState();
 

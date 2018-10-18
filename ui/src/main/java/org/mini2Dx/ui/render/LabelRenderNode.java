@@ -44,11 +44,11 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 		super.update(uiContainer, delta);
 
 		if(bitmapCacheReset) {
-			bitmapFontCache.clear();
-			nullAnimation.reset();
-
-			if(element.getTextAnimation() != null) {
-				element.getTextAnimation().reset();;
+			nullAnimation.onResize(bitmapFontCache, element.getText(), preferredContentWidth,
+					element.getHorizontalAlignment().getAlignValue());
+			if (element.getTextAnimation() != null) {
+				element.getTextAnimation().onResize(bitmapFontCache, element.getText(), preferredContentWidth,
+						element.getHorizontalAlignment().getAlignValue());
 			}
 			bitmapCacheReset = false;
 		}
@@ -155,13 +155,7 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 	@Override
 	protected LabelStyleRule determineStyleRule(LayoutState layoutState) {
 		if (bitmapFontCache != null) {
-			bitmapFontCache.clear();
 			bitmapFontCache = null;
-			nullAnimation.reset();
-
-			if (element.getTextAnimation() != null) {
-				element.getTextAnimation().reset();
-			}
 		}
 		bitmapCacheReset = true;
 

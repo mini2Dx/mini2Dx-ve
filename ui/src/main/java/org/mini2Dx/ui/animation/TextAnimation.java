@@ -65,6 +65,11 @@ public interface TextAnimation {
 	 * Resets the animation
 	 */
 	public void reset();
+
+	/**
+	 * Handles label resizing
+	 */
+	public void onResize(BitmapFontCache cache, String text, float renderWidth, int hAlign);
 	
 	/**
 	 * Adds a {@link TextAnimationListener} to this {@link TextAnimation}

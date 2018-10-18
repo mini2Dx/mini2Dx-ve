@@ -81,6 +81,19 @@ public class TypingTextAnimation extends BaseTextAnimation {
 		skip = true;
 	}
 
+	@Override
+	public void onResize(BitmapFontCache cache, String text, float renderWidth, int hAlign) {
+		cache.clear();
+		if(characterIndex == 0) {
+			return;
+		}
+		if(characterIndex >= text.length() - 1) {
+			cache.addText(text, 0f, 0f, renderWidth, hAlign, true);
+		} else {
+			cache.addText(text.substring(0, characterIndex), 0f, 0f, renderWidth, hAlign, true);
+		}
+	}
+
 	@ConstructorArg(clazz=Float.class, name="charactersPerSecond")
 	public float getCharactersPerSecond() {
 		return charactersPerSecond;

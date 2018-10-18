@@ -24,6 +24,12 @@ public class NullTextAnimation extends BaseTextAnimation {
 	public void skip() {}
 
 	@Override
+	public void onResize(BitmapFontCache cache, String text, float renderWidth, int hAlign) {
+		cache.clear();
+		finished = false;
+	}
+
+	@Override
 	public void update(BitmapFontCache cache, String text, float renderWidth, int hAlign, float delta) {
 		if(!isFinished()) {
 			cache.addText(text, 0f, 0f, renderWidth, hAlign, true);

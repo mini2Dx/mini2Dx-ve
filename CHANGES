@@ -15,6 +15,7 @@
 - Fixed UI elements changing state within margin area
 - Fixed SlideIn/SlideOut visibility timing
 - Fixed graphics context unnecessarily applying clip when clip is same size as viewport
+- Seperated resize events from reset events in text animations
 
 [1.7.14]
 - (#76) Added support for Tiled object shapes

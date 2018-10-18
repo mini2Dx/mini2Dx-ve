@@ -8,6 +8,7 @@
 - Added CustomUiElement class to simplify implementing custom UI elements
 - Added support for both flex and pixel coordinate UI layouts
 - Added support for static, ninepatch and tiling UI element backgrounds
+- Added multiple images to ImageButton to allow for images based on button state
 - Improved UI theme JSON consistency
 - Improved scrolling when dragging scroll thumb in ScrollBox
 - Fixed TypingTextAnimation not resetting correctly

@@ -16,12 +16,15 @@ import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import org.mini2Dx.ui.event.ActionEvent;
+import org.mini2Dx.ui.listener.ActionListener;
+import org.mini2Dx.ui.listener.HoverListener;
 
 /**
  * Utility implementation of {@link Button} that contains an {@link Image}
  */
-public class ImageButton extends Button {	
-	protected Image image;
+public class ImageButton extends Button implements ActionListener, HoverListener {
+	protected Image normalImage, hoverImage, actionImage, disabledImage;
 	
 	/**
 	 * Constructor. Generates a unique ID for this {@link ImageButton}
@@ -66,23 +69,87 @@ public class ImageButton extends Button {
 				   @ConstructorArg(clazz = Float.class, name = "width") float width,
 				   @ConstructorArg(clazz = Float.class, name = "height") float height) {
 		super(id, x, y, width, height);
+		addHoverListener(this);
+		addActionListener(this);
 	}
 	
 	private void checkInitialised() {
-		if(image != null) {
+		if(normalImage != null) {
 			return;
 		}
 		for(int i = 0; i < children.size; i++) {
-			if(children.get(i) instanceof Image) {
-				image = (Image) children.get(i);
-				return;
+			if(!(children.get(i) instanceof Image)) {
+				continue;
+			}
+			final Image image = (Image) children.get(i);
+			final String imageId = image.getId().toLowerCase();
+			if(imageId.contains("hover")) {
+				hoverImage = image;
+			} else if(imageId.contains("action")) {
+				actionImage = image;
+			} else if(imageId.contains("disable")) {
+				disabledImage = image;
+			} else if(imageId.contains("normal")) {
+				normalImage = image;
+			} else if(normalImage == null) {
+				normalImage = image;
 			}
 		}
-		
-		image = new Image(getId() + "-backingImage");
-		image.setResponsive(false);
-		image.setVisibility(Visibility.VISIBLE);
-		add(image);
+
+		if(actionImage == null) {
+			actionImage = new Image(getId() + "-actionImage");
+			if(hoverImage != null) {
+				actionImage.setAtlas(hoverImage.getAtlas());
+				actionImage.setTexturePath(hoverImage.getTexturePath());
+				actionImage.setResponsive(hoverImage.isResponsive());
+			} else if(normalImage != null) {
+				actionImage.setAtlas(normalImage.getAtlas());
+				actionImage.setTexturePath(normalImage.getTexturePath());
+				actionImage.setResponsive(normalImage.isResponsive());
+			} else {
+				actionImage.setResponsive(false);
+			}
+			add(actionImage);
+		}
+		if(hoverImage == null) {
+			hoverImage = new Image(getId() + "-hoverImage");
+			if(normalImage != null) {
+				hoverImage.setAtlas(normalImage.getAtlas());
+				hoverImage.setTexturePath(normalImage.getTexturePath());
+				hoverImage.setResponsive(normalImage.isResponsive());
+			} else {
+				hoverImage.setResponsive(false);
+			}
+			add(hoverImage);
+		}
+		if(disabledImage == null) {
+			disabledImage = new Image(getId() + "-disabledImage");
+			if(normalImage != null) {
+				disabledImage.setAtlas(normalImage.getAtlas());
+				disabledImage.setTexturePath(normalImage.getTexturePath());
+				disabledImage.setResponsive(normalImage.isResponsive());
+			} else {
+				disabledImage.setResponsive(false);
+			}
+			add(disabledImage);
+		}
+		if(normalImage == null) {
+			normalImage = new Image(getId() + "-normalImage");
+			normalImage.setResponsive(false);
+			add(normalImage);
+		}
+
+		if(isEnabled()) {
+			normalImage.setVisibility(Visibility.VISIBLE);
+			hoverImage.setVisibility(Visibility.HIDDEN);
+			actionImage.setVisibility(Visibility.HIDDEN);
+			disabledImage.setVisibility(Visibility.HIDDEN);
+		} else {
+			normalImage.setVisibility(Visibility.HIDDEN);
+			hoverImage.setVisibility(Visibility.HIDDEN);
+			actionImage.setVisibility(Visibility.HIDDEN);
+			disabledImage.setVisibility(Visibility.VISIBLE);
+		}
 	}
 	
 	/**
@@ -94,50 +161,190 @@ public class ImageButton extends Button {
 	 */
 	public TextureRegion getTextureRegion(AssetManager assetManager) {
 		checkInitialised();
-		return image.getTextureRegion(assetManager);
+		if(isEnabled()) {
+			switch(renderNode.getState()) {
+			case HOVER:
+				return hoverImage.getTextureRegion(assetManager);
+			case ACTION:
+				return actionImage.getTextureRegion(assetManager);
+			default:
+			case NORMAL:
+				return normalImage.getTextureRegion(assetManager);
+			}
+		}
+		return disabledImage.getTextureRegion(assetManager);
 	}
 
 	/**
-	 * Sets the current {@link TextureRegion} used by this {@link ImageButton}
+	 * Sets the {@link TextureRegion} used by this {@link ImageButton} when in its normal state
 	 * 
 	 * @param textureRegion
 	 *            The {@link TextureRegion} to use
 	 */
-	public void setTextureRegion(TextureRegion textureRegion) {
+	public void setNormalTextureRegion(TextureRegion textureRegion) {
 		checkInitialised();
-		image.setTextureRegion(textureRegion);
+		normalImage.setTextureRegion(textureRegion);
 	}
 	
 	/**
-	 * Sets the current {@link Texture} used by this {@link ImageButton}
+	 * Sets the {@link Texture} used by this {@link ImageButton} when in its normal state
 	 * 
 	 * @param texture
 	 *            The {@link Texture} to use
 	 */
-	public void setTexture(Texture texture) {
-		setTextureRegion(new TextureRegion(texture));
+	public void setNormalTexture(Texture texture) {
+		setNormalTextureRegion(new TextureRegion(texture));
 	}
 	
 	/**
-	 * Returns the current texture path
+	 * Returns the texture path when button is in normal state
 	 * 
 	 * @return Null if no path is used
 	 */
-	public String getTexturePath() {
+	public String getNormalTexturePath() {
 		checkInitialised();
-		return image.getTexturePath();
+		return normalImage.getTexturePath();
 	}
 	
 	/**
-	 * Sets the current texture path. This will set the current
+	 * Sets the texture path to use in normal state. This will set the
 	 * {@link TextureRegion} by loading it via the {@link AssetManager}
 	 * 
 	 * @param texturePath
 	 *            The path to the texture
 	 */
-	public void setTexturePath(String texturePath) {
+	public void setNormalTexturePath(String texturePath) {
 		checkInitialised();
-		image.setTexturePath(texturePath);
+		normalImage.setTexturePath(texturePath);
+	}
+
+	/**
+	 * Sets the {@link TextureRegion} used by this {@link ImageButton} when in its hover state
+	 *
+	 * @param textureRegion
+	 *            The {@link TextureRegion} to use
+	 */
+	public void setHoverTextureRegion(TextureRegion textureRegion) {
+		checkInitialised();
+		hoverImage.setTextureRegion(textureRegion);
+	}
+
+	/**
+	 * Sets the {@link Texture} used by this {@link ImageButton} when in its hover state
+	 *
+	 * @param texture
+	 *            The {@link Texture} to use
+	 */
+	public void setHoverTexture(Texture texture) {
+		setHoverTextureRegion(new TextureRegion(texture));
+	}
+
+	/**
+	 * Returns the texture path when button is in hover state
+	 *
+	 * @return Null if no path is used
+	 */
+	public String getHoverTexturePath() {
+		checkInitialised();
+		return hoverImage.getTexturePath();
+	}
+
+	/**
+	 * Sets the texture path to use in hover state. This will set the
+	 * {@link TextureRegion} by loading it via the {@link AssetManager}
+	 *
+	 * @param texturePath
+	 *            The path to the texture
+	 */
+	public void setHoverTexturePath(String texturePath) {
+		checkInitialised();
+		hoverImage.setTexturePath(texturePath);
+	}
+
+	/**
+	 * Sets the {@link TextureRegion} used by this {@link ImageButton} when in its action state
+	 *
+	 * @param textureRegion
+	 *            The {@link TextureRegion} to use
+	 */
+	public void setActionTextureRegion(TextureRegion textureRegion) {
+		checkInitialised();
+		actionImage.setTextureRegion(textureRegion);
+	}
+
+	/**
+	 * Sets the {@link Texture} used by this {@link ImageButton} when in its action state
+	 *
+	 * @param texture
+	 *            The {@link Texture} to use
+	 */
+	public void setActionTexture(Texture texture) {
+		setActionTextureRegion(new TextureRegion(texture));
+	}
+
+	/**
+	 * Returns the texture path when button is in action state
+	 *
+	 * @return Null if no path is used
+	 */
+	public String getActionTexturePath() {
+		checkInitialised();
+		return actionImage.getTexturePath();
+	}
+
+	/**
+	 * Sets the texture path to use in action state. This will set the
+	 * {@link TextureRegion} by loading it via the {@link AssetManager}
+	 *
+	 * @param texturePath
+	 *            The path to the texture
+	 */
+	public void setActionTexturePath(String texturePath) {
+		checkInitialised();
+		actionImage.setTexturePath(texturePath);
+	}
+
+	/**
+	 * Sets the {@link TextureRegion} used by this {@link ImageButton} when in its disabled state
+	 *
+	 * @param textureRegion
+	 *            The {@link TextureRegion} to use
+	 */
+	public void setDisabledTextureRegion(TextureRegion textureRegion) {
+		checkInitialised();
+		disabledImage.setTextureRegion(textureRegion);
+	}
+
+	/**
+	 * Sets the {@link Texture} used by this {@link ImageButton} when in its disabled state
+	 *
+	 * @param texture
+	 *            The {@link Texture} to use
+	 */
+	public void setDisabledTexture(Texture texture) {
+		setDisabledTextureRegion(new TextureRegion(texture));
+	}
+
+	/**
+	 * Returns the texture path when button is in disabled state
+	 *
+	 * @return Null if no path is used
+	 */
+	public String getDisabledTexturePath() {
+		checkInitialised();
+		return disabledImage.getTexturePath();
+	}
+
+	/**
+	 * Sets the texture path to use in disabled state. This will set the
+	 * {@link TextureRegion} by loading it via the {@link AssetManager}
+	 *
+	 * @param texturePath
+	 *            The path to the texture
+	 */
+	public void setDisabledTexturePath(String texturePath) {
+		checkInitialised();
+		disabledImage.setTexturePath(texturePath);
 	}
 	
 	/**
@@ -146,7 +353,7 @@ public class ImageButton extends Button {
 	 */
 	public String getAtlas() {
 		checkInitialised();
-		return image.getAtlas();
+		return normalImage.getAtlas();
 	}
 
 	/**
@@ -155,7 +362,10 @@ public class ImageButton extends Button {
 	 */
 	public void setAtlas(String atlas) {
 		checkInitialised();
-		image.setAtlas(atlas);
+		normalImage.setAtlas(atlas);
+		hoverImage.setAtlas(atlas);
+		actionImage.setAtlas(atlas);
+		disabledImage.setAtlas(atlas);
 	}
 
 	/**
@@ -164,7 +374,7 @@ public class ImageButton extends Button {
 	 */
 	public boolean isResponsive() {
 		checkInitialised();
-		return image.isResponsive();
+		return normalImage.isResponsive();
 	}
 
 	/**
@@ -173,15 +383,121 @@ public class ImageButton extends Button {
 	 */
 	public void setResponsive(boolean responsive) {
 		checkInitialised();
-		image.setResponsive(responsive);
+		normalImage.setResponsive(responsive);
+		hoverImage.setResponsive(responsive);
+		actionImage.setResponsive(responsive);
+		disabledImage.setResponsive(responsive);
 	}
 	
 	/**
-	 * Returns the backing {@link Image} for the button
+	 * Returns the backing {@link Image} for the button in its default state
 	 * @return
 	 */
-	public Image getImage() {
+	public Image getNormalImage() {
 		checkInitialised();
-		return image;
+		return normalImage;
+	}
+
+	/**
+	 * Returns the backing {@link Image} for the button in its hover state
+	 * @return
+	 */
+	public Image getHoverImage() {
+		checkInitialised();
+		return hoverImage;
+	}
+
+	/**
+	 * Returns the backing {@link Image} for the button in its action state
+	 * @return
+	 */
+	public Image getActionImage() {
+		checkInitialised();
+		return hoverImage;
+	}
+
+	/**
+	 * Returns the backing {@link Image} for the button in its disabled state
+	 * @return
+	 */
+	public Image getDisabledImage() {
+		checkInitialised();
+		return disabledImage;
+	}
+
+	@Override
+	public void onActionBegin(ActionEvent event) {
+		if(!event.getSource().getId().equals(getId())) {
+			return;
+		}
+		checkInitialised();
+		if(isEnabled()) {
+			normalImage.setVisibility(Visibility.HIDDEN);
+			hoverImage.setVisibility(Visibility.HIDDEN);
+			actionImage.setVisibility(Visibility.VISIBLE);
+			disabledImage.setVisibility(Visibility.HIDDEN);
+		} else {
+			normalImage.setVisibility(Visibility.HIDDEN);
+			hoverImage.setVisibility(Visibility.HIDDEN);
+			actionImage.setVisibility(Visibility.HIDDEN);
+			disabledImage.setVisibility(Visibility.VISIBLE);
+		}
+	}
+
+	@Override
+	public void onActionEnd(ActionEvent event) {
+		if(!event.getSource().getId().equals(getId())) {
+			return;
+		}
+		checkInitialised();
+		if(isEnabled()) {
+			normalImage.setVisibility(Visibility.VISIBLE);
+			hoverImage.setVisibility(Visibility.HIDDEN);
+			actionImage.setVisibility(Visibility.HIDDEN);
+			disabledImage.setVisibility(Visibility.HIDDEN);
+		} else {
+			normalImage.setVisibility(Visibility.HIDDEN);
+			hoverImage.setVisibility(Visibility.HIDDEN);
+			actionImage.setVisibility(Visibility.HIDDEN);
+			disabledImage.setVisibility(Visibility.VISIBLE);
+		}
+	}
+
+	@Override
+	public void onHoverBegin(Hoverable source) {
+		if(!source.getId().equals(getId())) {
+			return;
+		}
+		checkInitialised();
+		if(isEnabled()) {
+			normalImage.setVisibility(Visibility.HIDDEN);
+			hoverImage.setVisibility(Visibility.VISIBLE);
+			actionImage.setVisibility(Visibility.HIDDEN);
+			disabledImage.setVisibility(Visibility.HIDDEN);
+		} else {
+			normalImage.setVisibility(Visibility.HIDDEN);
+			hoverImage.setVisibility(Visibility.HIDDEN);
+			actionImage.setVisibility(Visibility.HIDDEN);
+			disabledImage.setVisibility(Visibility.VISIBLE);
+		}
+	}
+
+	@Override
+	public void onHoverEnd(Hoverable source) {
+		if(!source.getId().equals(getId())) {
+			return;
+		}
+		checkInitialised();
+		if(isEnabled()) {
+			normalImage.setVisibility(Visibility.VISIBLE);
+			hoverImage.setVisibility(Visibility.HIDDEN);
+			actionImage.setVisibility(Visibility.HIDDEN);
+			disabledImage.setVisibility(Visibility.HIDDEN);
+		} else {
+			normalImage.setVisibility(Visibility.HIDDEN);
+			hoverImage.setVisibility(Visibility.HIDDEN);
+			actionImage.setVisibility(Visibility.HIDDEN);
+			disabledImage.setVisibility(Visibility.VISIBLE);
+		}
 	}
 }

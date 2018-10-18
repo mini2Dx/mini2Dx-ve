@@ -156,9 +156,23 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		topLeftContainer.setFlexLayout("flex-col:xs-12c sm-6c md-4c lg-3c");
 		topLeftContainer.setStyleId("no-background");
 
-		FlexRow topLeftHeaderFlexRow = FlexRow.withElements("top-left-header", UiUtils.createHeader("UI UAT"));
+		final Label headerLabel = UiUtils.createLabel("UI UAT");
+		FlexRow topLeftHeaderFlexRow = FlexRow.withElements("top-left-header", headerLabel);
 		topLeftHeaderFlexRow.setFlexLayout("flex-center:xs-12c,xs-20px");
 		topLeftContainer.add(topLeftHeaderFlexRow);
+
+		uiContainer.deferUntilUpdate(new Runnable() {
+			@Override
+			public void run() {
+				headerLabel.setStyleId("header");
+			}
+		},5f);
+		uiContainer.deferUntilUpdate(new Runnable() {
+			@Override
+			public void run() {
+				topLeftContainer.setVisibility(Visibility.VISIBLE);
+			}
+		},10f);
 		
 		Button backRowButton = UiUtils.createButton(null, "", new ActionListener() {
 			
@@ -174,8 +188,7 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		FlexRow backFlexRow = FlexRow.withElements("behind-header", backRowButton);
 		backFlexRow.setZIndex(-1);
 		topLeftContainer.add(backFlexRow);
-		
-		topLeftContainer.setVisibility(Visibility.VISIBLE);
+
 		uiContainer.add(topLeftContainer);
 		
 		VerticalUiNavigation tab1Navigation = new VerticalUiNavigation();

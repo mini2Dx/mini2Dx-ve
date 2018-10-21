@@ -16,6 +16,12 @@
         }
       }
     },
+    "noop": {
+      "rules": {
+        "XS": {
+        }
+      }
+    },
     "success": {
       "rules": {
         "XS": {

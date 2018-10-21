@@ -166,13 +166,13 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 			public void run() {
 				headerLabel.setStyleId("header");
 			}
-		},5f);
+		},10f);
 		uiContainer.deferUntilUpdate(new Runnable() {
 			@Override
 			public void run() {
 				topLeftContainer.setVisibility(Visibility.VISIBLE);
 			}
-		},10f);
+		},5f);
 		
 		Button backRowButton = UiUtils.createButton(null, "", new ActionListener() {
 			
@@ -311,36 +311,36 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 		Tab tab2 = new Tab("tab2", "Tab 2");
 		Div xsHiddenDiv = Div.withElements("col-not-visible-xs", UiUtils.createLabel("Not visible on XS screen size"));
 		xsHiddenDiv.setFlexLayout("flex-column:xs-0c sm-12c");
-		
+
 		ProgressBar progressBar = new ProgressBar();
 		progressBar.setFlexLayout("flex-column:xs-12c");
 		progressBar.setValue(0.4f);
 		progressBar.setVisibility(Visibility.VISIBLE);
 		tab2.add(FlexRow.withElements(progressBar));
-		
+
 		tab2.add(FlexRow.withElements("row-not-visible-xs", xsHiddenDiv));
-		
+
 		Button reAddElementsButton =  UiUtils.createButton(null, "Re-add tabview", new ActionListener() {
-			
+
 			@Override
 			public void onActionEnd(ActionEvent event) {
 				centerContainer.remove(tabView);
 				centerContainer.add(tabView);
 			}
-			
+
 			@Override
 			public void onActionBegin(ActionEvent event) {}
 		});
 		tab2.add(FlexRow.withElements(reAddElementsButton));
-		
+
 		tabView.add(tab2);
-		
+
 		Tab tab3 = new Tab("tab3", "Tab 3");
 		Button hiddenButton = UiUtils.createButton(null, "Hidden", new ActionListener() {
-			
+
 			@Override
 			public void onActionEnd(ActionEvent event) {}
-			
+
 			@Override
 			public void onActionBegin(ActionEvent event) {}
 		});
@@ -364,55 +364,55 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 			}
 		}
 		tab3.add(FlexRow.withElements(scrollBox));
-		
+
 		Button scrollToTopButton = UiUtils.createButton(null, "Scroll to top (immediate)", new ActionListener() {
-			
+
 			@Override
 			public void onActionEnd(ActionEvent event) {
 				scrollBox.scrollToTop(true);
 			}
-			
+
 			@Override
 			public void onActionBegin(ActionEvent event) {}
 		});
 		tab3.add(FlexRow.withElements(scrollToTopButton));
-		
+
 		Button scrollToBottomButton = UiUtils.createButton(null, "Scroll to bottom (immediate)", new ActionListener() {
-			
+
 			@Override
 			public void onActionEnd(ActionEvent event) {
 				scrollBox.scrollToBottom(true);
 			}
-			
+
 			@Override
 			public void onActionBegin(ActionEvent event) {}
 		});
 		tab3.add(FlexRow.withElements(scrollToBottomButton));
-		
+
 		scrollToTopButton = UiUtils.createButton(null, "Scroll to top (smooth)", new ActionListener() {
-			
+
 			@Override
 			public void onActionEnd(ActionEvent event) {
 				scrollBox.scrollToTop(false);
 			}
-			
+
 			@Override
 			public void onActionBegin(ActionEvent event) {}
 		});
 		tab3.add(FlexRow.withElements(scrollToTopButton));
-		
+
 		scrollToBottomButton = UiUtils.createButton(null, "Scroll to bottom (smooth)", new ActionListener() {
-			
+
 			@Override
 			public void onActionEnd(ActionEvent event) {
 				scrollBox.scrollToBottom(false);
 			}
-			
+
 			@Override
 			public void onActionBegin(ActionEvent event) {}
 		});
 		tab3.add(FlexRow.withElements(scrollToBottomButton));
-		
+
 		tabView.add(tab3);
 		
 		tabView.setNextTabHotkey(Keys.E);

@@ -48,12 +48,12 @@ public class DummyRenderNode extends RenderNode<DummyUiElement, StyleRule> {
 
 	@Override
 	protected float determineXOffset(LayoutState layoutState) {
-		return element.getXOffset();
+		return element.getX();
 	}
 
 	@Override
 	protected float determineYOffset(LayoutState layoutState) {
-		return element.getYOffset();
+		return element.getY();
 	}
 
 }

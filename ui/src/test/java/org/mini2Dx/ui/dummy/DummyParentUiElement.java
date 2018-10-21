@@ -20,7 +20,6 @@ import org.mini2Dx.ui.style.ParentStyleRule;
  *
  */
 public class DummyParentUiElement extends ParentUiElement {
-	private float xOffset, yOffset;
 	private float preferredContentWidth, preferredContentHeight;
 	private ParentStyleRule styleRule = new ParentStyleRule();
 	
@@ -51,33 +50,7 @@ public class DummyParentUiElement extends ParentUiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
-	}
-
-	public float getXOffset() {
-		return xOffset;
-	}
-
-	public void setXOffset(float xOffset) {
-		this.xOffset = xOffset;
-		
-		if(renderNode == null) {
-			return;
-		}
-		renderNode.setDirty(true);
-	}
-
-	public float getYOffset() {
-		return yOffset;
-	}
-
-	public void setYOffset(float yOffset) {
-		this.yOffset = yOffset;
-		
-		if(renderNode == null) {
-			return;
-		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	public float getPreferredContentWidth() {
@@ -90,7 +63,7 @@ public class DummyParentUiElement extends ParentUiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 	
 	public float getPreferredContentHeight() {
@@ -103,6 +76,6 @@ public class DummyParentUiElement extends ParentUiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 }

@@ -40,6 +40,8 @@ public class PixelLayoutUtilsSnapToTest {
 
 		mockery.checking(new Expectations() {
 			{
+				allowing(parentElement).getId();
+				will(returnValue("0"));
 				allowing(parentElement).getX();
 				will(returnValue(PARENT_X));
 				allowing(parentElement).getY();
@@ -53,12 +55,16 @@ public class PixelLayoutUtilsSnapToTest {
 				allowing(parentElement).getChild(0);
 				will(returnValue(childElement));
 
+				allowing(childElement).getId();
+				will(returnValue("1"));
 				allowing(childElement).getWidth();
 				will(returnValue(CHILD_WIDTH));
 				allowing(childElement).getHeight();
 				will(returnValue(CHILD_HEIGHT));
 				allowing(childElement).getTotalChildren();
 				will(returnValue(0));
+				allowing(childElement).isFlexLayout();
+				will(returnValue(false));
 			}
 		});
 	}
@@ -86,6 +92,7 @@ public class PixelLayoutUtilsSnapToTest {
 		});
 
 		PixelLayoutUtils.snapTo(childElement, parentElement, HorizontalAlignment.LEFT, VerticalAlignment.TOP);
+		PixelLayoutUtils.update(1f);
 	}
 
 	@Test
@@ -106,6 +113,7 @@ public class PixelLayoutUtilsSnapToTest {
 		});
 
 		PixelLayoutUtils.snapTo(childElement, parentElement, HorizontalAlignment.RIGHT, VerticalAlignment.TOP);
+		PixelLayoutUtils.update(1f);
 	}
 
 	@Test
@@ -126,6 +134,7 @@ public class PixelLayoutUtilsSnapToTest {
 		});
 
 		PixelLayoutUtils.snapTo(childElement, parentElement, HorizontalAlignment.LEFT, VerticalAlignment.BOTTOM);
+		PixelLayoutUtils.update(1f);
 	}
 
 	@Test
@@ -146,45 +155,6 @@ public class PixelLayoutUtilsSnapToTest {
 		});
 
 		PixelLayoutUtils.snapTo(childElement, parentElement, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
-	}
-
-	@Test
-	public void testSnapToWithParentNotInitialised() {
-		mockery.checking(new Expectations() {
-			{
-				allowing(parentElement).isInitialised();
-				will(returnValue(false));
-				allowing(parentElement).isRenderNodeDirty();
-				will(returnValue(false));
-				allowing(childElement).isInitialised();
-				will(returnValue(true));
-				allowing(childElement).isRenderNodeDirty();
-				will(returnValue(false));
-
-				oneOf(parentElement).deferUntilUpdate(with(any(Runnable.class)));
-			}
-		});
-
-		PixelLayoutUtils.snapTo(childElement, parentElement, HorizontalAlignment.LEFT, VerticalAlignment.TOP);
-	}
-
-	@Test
-	public void testSnapToWithElementNotInitialised() {
-		mockery.checking(new Expectations() {
-			{
-				allowing(parentElement).isInitialised();
-				will(returnValue(true));
-				allowing(parentElement).isRenderNodeDirty();
-				will(returnValue(false));
-				allowing(childElement).isInitialised();
-				will(returnValue(false));
-				allowing(childElement).isRenderNodeDirty();
-				will(returnValue(false));
-
-				oneOf(childElement).deferUntilUpdate(with(any(Runnable.class)));
-			}
-		});
-
-		PixelLayoutUtils.snapTo(childElement, parentElement, HorizontalAlignment.LEFT, VerticalAlignment.TOP);
+		PixelLayoutUtils.update(1f);
 	}
 }

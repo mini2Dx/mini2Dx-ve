@@ -57,6 +57,8 @@ public enum FlexDirection {
 
 				node.setRelativeX(startX + node.getXOffset());
 				node.setRelativeY(startY + node.getYOffset());
+				LayoutRuleset.setElementSize(parentNode, node);
+
 				startX += node.getPreferredOuterWidth() + node.getXOffset();
 			}
 		}
@@ -98,6 +100,8 @@ public enum FlexDirection {
 
 				node.setRelativeX(startX - (node.getXOffset() + node.getPreferredOuterWidth()));
 				node.setRelativeY(startY + node.getYOffset());
+
+				LayoutRuleset.setElementSize(parentNode, node);
 				startX -= node.getPreferredOuterWidth() + node.getXOffset();
 			}
 		}
@@ -121,6 +125,7 @@ public enum FlexDirection {
 
 				node.setRelativeX(startX + node.getXOffset());
 				node.setRelativeY(startY + node.getYOffset());
+				LayoutRuleset.setElementSize(parentNode, node);
 				startY += node.getPreferredOuterHeight() + node.getYOffset();
 			}
 		}
@@ -145,6 +150,7 @@ public enum FlexDirection {
 
 					node.setRelativeX(startX + node.getXOffset());
 					node.setRelativeY(startY + node.getYOffset());
+					LayoutRuleset.setElementSize(parentNode, node);
 					startY += node.getPreferredOuterHeight() + node.getYOffset();
 				}
 			} else {
@@ -157,9 +163,10 @@ public enum FlexDirection {
 						continue;
 					}
 					startY -= node.getPreferredOuterHeight() + node.getYOffset();
-					
+
 					node.setRelativeX(startX + node.getXOffset());
 					node.setRelativeY(startY + node.getYOffset());
+					LayoutRuleset.setElementSize(parentNode, node);
 				}
 			}
 		}
@@ -169,7 +176,7 @@ public enum FlexDirection {
 	 */
 	CENTER {
 		@Override
-		public void layout(LayoutState layoutState, ParentRenderNode<?, ?> parentNode,
+		public void layout(LayoutState layoutState, final ParentRenderNode<?, ?> parentNode,
 						   Array<RenderNode<?, ?>> children) {
 			final float paddingLeft = parentNode.getStyle().getPaddingLeft();
 			final float paddingRight = parentNode.getStyle().getPaddingRight();
@@ -199,12 +206,13 @@ public enum FlexDirection {
 			int centerX = MathUtils.round((paddingLeft + paddingRight + parentNode.getPreferredContentWidth()) / 2f);
 			int centerY = MathUtils.round((paddingTop + paddingBottom + maxHeight) / 2);
 			for (int i = 0; i < children.size; i++) {
-				RenderNode<?, ?> node = children.get(i);
+				final RenderNode<?, ?> node = children.get(i);
 				if (!node.isIncludedInLayout()) {
 					continue;
 				}
 				node.setRelativeX(centerX - (node.getXOffset() / 2f) - (node.getPreferredOuterWidth() / 2f));
 				node.setRelativeY(centerY - (node.getYOffset() / 2f) - (node.getPreferredOuterHeight() / 2f));
+				LayoutRuleset.setElementSize(parentNode, node);
 			}
 		}
 	};

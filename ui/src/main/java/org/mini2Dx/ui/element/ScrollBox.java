@@ -17,6 +17,7 @@ import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.animation.ScrollTo;
+import org.mini2Dx.ui.layout.PixelLayoutUtils;
 import org.mini2Dx.ui.listener.ScrollListener;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.ScrollBoxRenderNode;
@@ -181,7 +182,7 @@ public class ScrollBox extends Div {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	/**
@@ -208,7 +209,7 @@ public class ScrollBox extends Div {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	/**
@@ -295,53 +296,13 @@ public class ScrollBox extends Div {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	/**
 	 * Sets the scroll view height to be equal to the max Y of the child elements
 	 */
 	public void resizeScrollContentHeightToContents() {
-		if(!isInitialised()) {
-			deferUntilUpdate(new Runnable() {
-				@Override
-				public void run() {
-					resizeScrollContentHeightToContents();
-				}
-			});
-		}
-		switch(UiContainer.getState()) {
-		case LAYOUT:
-		case UPDATE:
-			deferUntilUpdate(new Runnable() {
-				@Override
-				public void run() {
-					resizeScrollContentHeightToContents();
-				}
-			});
-			break;
-		case NOOP:
-		case INTERPOLATE:
-		case RENDER:
-			float maxY = 0f;
-			for(int i = 0; i < children.size; i++) {
-				final UiElement uiElement = children.get(i);
-				if(uiElement == null) {
-					continue;
-				}
-				if(!uiElement.isInitialised()) {
-					deferUntilUpdate(new Runnable() {
-						@Override
-						public void run() {
-							resizeScrollContentHeightToContents();
-						}
-					});
-					return;
-				}
-				maxY = Math.max(maxY, uiElement.getY() + uiElement.getHeight());
-			}
-			setScrollContentHeight(maxY);
-			break;
-		}
+		PixelLayoutUtils.resizeScrollContentHeightToContents(this);
 	}
 }

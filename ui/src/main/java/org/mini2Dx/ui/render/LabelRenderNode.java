@@ -188,6 +188,6 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 		if (GLYPH_LAYOUT.height == getPreferredContentHeight()) {
 			return;
 		}
-		setDirty(true);
+		setDirty();
 	}
 }

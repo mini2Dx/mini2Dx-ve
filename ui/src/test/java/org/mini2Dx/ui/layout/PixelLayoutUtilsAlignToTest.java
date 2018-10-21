@@ -40,6 +40,8 @@ public class PixelLayoutUtilsAlignToTest {
 
 		mockery.checking(new Expectations() {
 			{
+				allowing(parentElement).getId();
+				will(returnValue("0"));
 				allowing(parentElement).getX();
 				will(returnValue(PARENT_X));
 				allowing(parentElement).getY();
@@ -53,12 +55,16 @@ public class PixelLayoutUtilsAlignToTest {
 				allowing(parentElement).getChild(0);
 				will(returnValue(childElement));
 
+				allowing(childElement).getId();
+				will(returnValue("1"));
 				allowing(childElement).getWidth();
 				will(returnValue(CHILD_WIDTH));
 				allowing(childElement).getHeight();
 				will(returnValue(CHILD_HEIGHT));
 				allowing(childElement).getTotalChildren();
 				will(returnValue(0));
+				allowing(childElement).isFlexLayout();
+				will(returnValue(false));
 			}
 		});
 	}
@@ -86,5 +92,6 @@ public class PixelLayoutUtilsAlignToTest {
 		});
 
 		PixelLayoutUtils.alignBelow(childElement, parentElement, HorizontalAlignment.LEFT);
+		PixelLayoutUtils.update(1f);
 	}
 }

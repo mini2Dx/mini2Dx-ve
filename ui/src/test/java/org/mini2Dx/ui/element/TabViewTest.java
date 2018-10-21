@@ -11,20 +11,37 @@
  */
 package org.mini2Dx.ui.element;
 
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mini2Dx.core.Mdx;
 import org.mini2Dx.desktop.serialization.DesktopXmlSerializer;
 
 import junit.framework.Assert;
+import org.mini2Dx.ui.render.UiContainerRenderTree;
 
 /**
  * Unit and integration tests for {@link TabView}
  */
 public class TabViewTest {
+	private final Mockery mockery = new Mockery();
+
+	private UiContainerRenderTree uiContainerRenderTree;
+
 	@Before
 	public void setUp() {
+		mockery.setImposteriser(ClassImposteriser.INSTANCE);
+
+		uiContainerRenderTree = mockery.mock(UiContainerRenderTree.class);
+
 		Mdx.xml = new DesktopXmlSerializer();
+	}
+
+	@After
+	public void teardown() {
+		mockery.assertIsSatisfied();
 	}
 
 	@Test

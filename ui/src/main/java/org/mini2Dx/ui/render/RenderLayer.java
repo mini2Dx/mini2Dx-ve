@@ -116,10 +116,12 @@ public class RenderLayer implements Comparable<RenderLayer> {
 		return false;
 	}
 	
-	public void setDirty(boolean dirty) {
+	public boolean setDirty() {
+		boolean result = false;
 		for (int i = children.size - 1; i >= 0; i--) {
-			children.get(i).setDirty(dirty);
+			result |= children.get(i).setDirty();
 		}
+		return result;
 	}
 	
 	public void setState(NodeState state) {

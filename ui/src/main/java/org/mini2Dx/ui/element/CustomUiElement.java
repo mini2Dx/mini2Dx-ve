@@ -136,7 +136,7 @@ public abstract class CustomUiElement extends UiElement implements Actionable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -152,7 +152,7 @@ public abstract class CustomUiElement extends UiElement implements Actionable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -162,7 +162,7 @@ public abstract class CustomUiElement extends UiElement implements Actionable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -186,7 +186,7 @@ public abstract class CustomUiElement extends UiElement implements Actionable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -255,5 +255,37 @@ public abstract class CustomUiElement extends UiElement implements Actionable {
 			return;
 		}
 		actionListeners.removeValue(listener, false);
+	}
+
+	@Override
+	public int getRenderX() {
+		if(renderNode == null) {
+			return Integer.MIN_VALUE;
+		}
+		return renderNode.getOuterRenderX();
+	}
+
+	@Override
+	public int getRenderY() {
+		if(renderNode == null) {
+			return Integer.MIN_VALUE;
+		}
+		return renderNode.getOuterRenderY();
+	}
+
+	@Override
+	public int getRenderWidth() {
+		if(renderNode == null) {
+			return -1;
+		}
+		return renderNode.getOuterRenderWidth();
+	}
+
+	@Override
+	public int getRenderHeight() {
+		if(renderNode == null) {
+			return -1;
+		}
+		return renderNode.getOuterRenderHeight();
 	}
 }

@@ -106,6 +106,19 @@ public class Label extends UiElement {
 		if(!UiContainer.isThemeApplied()) {
 			return;
 		}
+		shrinkToTextSize();
+	}
+
+	public void shrinkToTextSize() {
+		if(renderNode == null || !UiContainer.isThemeApplied()) {
+			deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					shrinkToTextSize();
+				}
+			});
+			return;
+		}
 		if(text == null) {
 			return;
 		}
@@ -115,8 +128,8 @@ public class Label extends UiElement {
 			return;
 		}
 		GLYPH_LAYOUT.setText(font, text);
-		width = GLYPH_LAYOUT.width + styleRule.getMarginLeft() + styleRule.getMarginRight() + styleRule.getPaddingLeft() + styleRule.getPaddingRight();
-		height = GLYPH_LAYOUT.height + styleRule.getMarginTop() + styleRule.getMarginBottom() + styleRule.getPaddingTop() + styleRule.getPaddingBottom();
+		setContentWidth(GLYPH_LAYOUT.width);
+		setContentHeight(GLYPH_LAYOUT.height);
 	}
 
 	/**
@@ -183,7 +196,7 @@ public class Label extends UiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 	
 	@Override
@@ -191,14 +204,6 @@ public class Label extends UiElement {
 		while (effects.size > 0) {
 			renderNode.applyEffect(effects.removeFirst());
 		}
-
-		if(renderNode.isIncludedInLayout()) {
-			x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
-			y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
-			width = renderNode.getOuterWidth();
-			height = renderNode.getOuterHeight();
-		}
-
 		super.syncWithUpdate(rootNode);
 	}
 	
@@ -216,7 +221,7 @@ public class Label extends UiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 	
 	@Override
@@ -226,7 +231,7 @@ public class Label extends UiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	/**
@@ -253,7 +258,7 @@ public class Label extends UiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 	
 	/**
@@ -274,7 +279,7 @@ public class Label extends UiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	/**
@@ -295,7 +300,7 @@ public class Label extends UiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	/**
@@ -316,7 +321,7 @@ public class Label extends UiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -332,7 +337,7 @@ public class Label extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -349,5 +354,37 @@ public class Label extends UiElement {
 			return false;
 		}
 		return renderNode.isInitialUpdateOccurred();
+	}
+
+	@Override
+	public int getRenderX() {
+		if(renderNode == null) {
+			return Integer.MIN_VALUE;
+		}
+		return renderNode.getOuterRenderX();
+	}
+
+	@Override
+	public int getRenderY() {
+		if(renderNode == null) {
+			return Integer.MIN_VALUE;
+		}
+		return renderNode.getOuterRenderY();
+	}
+
+	@Override
+	public int getRenderWidth() {
+		if(renderNode == null) {
+			return -1;
+		}
+		return renderNode.getOuterRenderWidth();
+	}
+
+	@Override
+	public int getRenderHeight() {
+		if(renderNode == null) {
+			return -1;
+		}
+		return renderNode.getOuterRenderHeight();
 	}
 }

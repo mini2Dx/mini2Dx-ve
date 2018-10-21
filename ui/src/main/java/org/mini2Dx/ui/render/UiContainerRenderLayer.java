@@ -36,6 +36,7 @@ public class UiContainerRenderLayer extends RenderLayer {
 			
 			node.setRelativeX(node.getXOffset());
 			node.setRelativeY(node.getYOffset());
+			LayoutRuleset.setElementSize(owner, node);
 		}
 	}
 }

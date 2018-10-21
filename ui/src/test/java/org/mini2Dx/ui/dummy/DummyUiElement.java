@@ -62,7 +62,7 @@ public class DummyUiElement extends UiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class DummyUiElement extends UiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class DummyUiElement extends UiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	public StyleRule getStyleRule() {
@@ -95,33 +95,7 @@ public class DummyUiElement extends UiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
-	}
-
-	public float getXOffset() {
-		return xOffset;
-	}
-
-	public void setXOffset(float xOffset) {
-		this.xOffset = xOffset;
-		
-		if(renderNode == null) {
-			return;
-		}
-		renderNode.setDirty(true);
-	}
-
-	public float getYOffset() {
-		return yOffset;
-	}
-
-	public void setYOffset(float yOffset) {
-		this.yOffset = yOffset;
-		
-		if(renderNode == null) {
-			return;
-		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	public float getPreferredContentWidth() {
@@ -134,7 +108,7 @@ public class DummyUiElement extends UiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 	
 	public float getPreferredContentHeight() {
@@ -147,7 +121,7 @@ public class DummyUiElement extends UiElement {
 		if(renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -163,7 +137,7 @@ public class DummyUiElement extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -180,5 +154,37 @@ public class DummyUiElement extends UiElement {
 			return false;
 		}
 		return renderNode.isInitialUpdateOccurred();
+	}
+
+	@Override
+	public int getRenderX() {
+		if(renderNode == null) {
+			return Integer.MIN_VALUE;
+		}
+		return renderNode.getOuterRenderX();
+	}
+
+	@Override
+	public int getRenderY() {
+		if(renderNode == null) {
+			return Integer.MIN_VALUE;
+		}
+		return renderNode.getOuterRenderY();
+	}
+
+	@Override
+	public int getRenderWidth() {
+		if(renderNode == null) {
+			return -1;
+		}
+		return renderNode.getOuterRenderWidth();
+	}
+
+	@Override
+	public int getRenderHeight() {
+		if(renderNode == null) {
+			return -1;
+		}
+		return renderNode.getOuterRenderHeight();
 	}
 }

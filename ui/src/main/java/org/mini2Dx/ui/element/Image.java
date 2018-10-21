@@ -238,7 +238,7 @@ public class Image extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	/**
@@ -282,7 +282,7 @@ public class Image extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	/**
@@ -307,7 +307,7 @@ public class Image extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	/**
@@ -329,7 +329,7 @@ public class Image extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -345,7 +345,7 @@ public class Image extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 	
 	@Override
@@ -353,14 +353,6 @@ public class Image extends UiElement {
 		while (effects.size > 0) {
 			renderNode.applyEffect(effects.removeFirst());
 		}
-
-		if(renderNode.isIncludedInLayout()) {
-			x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
-			y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
-			width = renderNode.getOuterWidth();
-			height = renderNode.getOuterHeight();
-		}
-
 		super.syncWithUpdate(rootNode);
 	}
 
@@ -378,7 +370,7 @@ public class Image extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -388,7 +380,7 @@ public class Image extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -444,7 +436,7 @@ public class Image extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -461,5 +453,37 @@ public class Image extends UiElement {
 			return false;
 		}
 		return renderNode.isInitialUpdateOccurred();
+	}
+
+	@Override
+	public int getRenderX() {
+		if(renderNode == null) {
+			return Integer.MIN_VALUE;
+		}
+		return renderNode.getOuterRenderX();
+	}
+
+	@Override
+	public int getRenderY() {
+		if(renderNode == null) {
+			return Integer.MIN_VALUE;
+		}
+		return renderNode.getOuterRenderY();
+	}
+
+	@Override
+	public int getRenderWidth() {
+		if(renderNode == null) {
+			return -1;
+		}
+		return renderNode.getOuterRenderWidth();
+	}
+
+	@Override
+	public int getRenderHeight() {
+		if(renderNode == null) {
+			return -1;
+		}
+		return renderNode.getOuterRenderHeight();
 	}
 }

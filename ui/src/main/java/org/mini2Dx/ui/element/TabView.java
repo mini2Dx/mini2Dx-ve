@@ -403,7 +403,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -419,7 +419,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -432,7 +432,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -518,7 +518,7 @@ public class TabView extends ParentUiElement implements Navigatable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	/**

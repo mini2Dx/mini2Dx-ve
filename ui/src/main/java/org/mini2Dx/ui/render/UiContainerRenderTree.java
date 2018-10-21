@@ -65,6 +65,9 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 	@Override
 	public void layout(LayoutState layoutState) {
 		if (!isDirty() && !layoutState.isScreenSizeChanged()) {
+			if (element.isDebugEnabled()) {
+				Gdx.app.log(LOGGING_TAG, "Layout not triggered - " + isImmediateDirty() + " " + isChildDirty() + " " + layoutState.isScreenSizeChanged());
+			}
 			return;
 		}
 		if (element.isDebugEnabled()) {
@@ -90,11 +93,10 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 			layer.layout(layoutState, layoutRuleset);
 		}
 
-		setImmediateDirty(false);
-		setDirty(false);
-		childDirty = false;
+		clearDirty();
 		screenSizeChanged = false;
 		initialLayoutOccurred = true;
+		cachedDirtyUpdateRequired = true;
 		element.syncWithLayout(this);
 	}
 
@@ -105,7 +107,7 @@ public class UiContainerRenderTree extends ParentRenderNode<UiContainer, ParentS
 			layers.put(zIndex, new UiContainerRenderLayer(this, zIndex));
 		}
 		layers.get(zIndex).add(child);
-		setDirty(true);
+		setDirty();
 	}
 
 	public void transferUpdateDeferred(Array<DeferredRunnable> deferredUpdate) {

@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.ui.render;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
@@ -27,10 +28,14 @@ import org.mini2Dx.ui.style.ParentStyleRule;
  * Base class for {@link RenderNode} implementations that contains child nodes
  */
 public abstract class ParentRenderNode<T extends ParentUiElement, S extends ParentStyleRule> extends RenderNode<T, S> {
+	private static final String LOGGING_TAG = ParentRenderNode.class.getSimpleName();
+
 	protected final IntTreeMap<RenderLayer> layers = new IntTreeMap<RenderLayer>();
-	
-	protected boolean childDirty = false;
+
 	protected LayoutRuleset layoutRuleset;
+
+	private boolean cachedDirty;
+	protected boolean cachedDirtyUpdateRequired;
 
 	private Rectangle cachedClip;
 
@@ -122,7 +127,13 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 	@Override
 	public void layout(LayoutState layoutState) {
 		if (!isDirty() && !layoutState.isScreenSizeChanged()) {
+			if (element.isDebugEnabled()) {
+				Gdx.app.log(LOGGING_TAG, "Layout not triggered - " + isImmediateDirty() + " " + isChildDirty() + " " + cachedDirty);
+			}
 			return;
+		}
+		if (element.isDebugEnabled()) {
+			Gdx.app.log(LOGGING_TAG, "Layout triggered");
 		}
 		if (!layoutRuleset.equals(element.getFlexLayout())) {
 			initLayoutRuleset();
@@ -161,9 +172,8 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 		if (layoutRuleset.getCurrentHeightRule().isAutoSize()) {
 			preferredContentHeight = determinePreferredContentHeight(layoutState);
 		}
-		setImmediateDirty(false);
-		setDirty(false);
-		childDirty = false;
+		clearDirty();
+		cachedDirtyUpdateRequired = true;
 		initialLayoutOccurred = true;
 
 		element.syncWithLayout(rootNode);
@@ -285,7 +295,7 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 			layers.put(zIndex, new RenderLayer(this, zIndex));
 		}
 		layers.get(zIndex).add(child);
-		setDirty(true);
+		setDirty();
 	}
 
 	public void removeChild(RenderNode<?, ?> child) {
@@ -293,56 +303,58 @@ public abstract class ParentRenderNode<T extends ParentUiElement, S extends Pare
 			return;
 		}
 		layers.get(child.getZIndex()).remove(child);
-		setDirty(true);
+		setDirty();
 	}
 
 	public void clearChildren() {
 		layers.clear();
-		setDirty(true);
+		setDirty();
 	}
 
 	@Override
 	public boolean isDirty() {
-		return childDirty || super.isDirty();
+		if(cachedDirtyUpdateRequired) {
+			cachedDirty = isChildDirty() || super.isDirty();
+			cachedDirtyUpdateRequired = false;
+		}
+		return cachedDirty;
 	}
 
 	@Override
-	public void setDirty(final boolean dirty) {
+	public boolean setDirty() {
 		if (layers == null || layers.size == 0) {
-			super.setDirty(dirty);
+			cachedDirtyUpdateRequired |= super.setDirty();
 		} else {
 			for (RenderLayer layer : layers.values()) {
-				layer.setDirty(dirty);
+				cachedDirtyUpdateRequired |= layer.setDirty();
 			}
 		}
+		return cachedDirtyUpdateRequired;
 	}
 
 	protected boolean isImmediateDirty() {
 		return super.isDirty();
 	}
 
-	protected void setImmediateDirty(boolean dirty) {
-		super.setDirty(dirty);
-	}
-
 	boolean isChildDirty() {
-		return childDirty;
+		if (layers == null || layers.size == 0) {
+			return false;
+		} else {
+			for (RenderLayer layer : layers.values()) {
+				if(layer.isDirty()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
-	public void setChildDirty(boolean childDirty) {
-		if (!childDirty) {
+	public void setChildDirty() {
+		cachedDirtyUpdateRequired = true;
+		if(parent == null) {
 			return;
 		}
-		if (this.childDirty) {
-			// Prevent repeated bubbling
-			return;
-		}
-		this.childDirty = childDirty;
-
-		if (parent == null) {
-			return;
-		}
-		parent.setChildDirty(true);
+		parent.setChildDirty();
 	}
 
 	@Override

@@ -67,6 +67,42 @@ public class RenderNodeTest {
 	public void teardown() {
 		mockery.assertIsSatisfied();
 	}
+
+
+	@Test
+	public void testChangeRenderCoordinatesBeforeLayout() {
+		mockery.checking(new Expectations() {
+			{
+				atLeast(1).of(renderTree).transferLayoutDeferred(with(any(Array.class)));
+				atLeast(1).of(renderTree).transferUpdateDeferred(with(any(Array.class)));
+			}
+		});
+
+		configureParentWidth();
+
+		parentRenderNode.layout(layoutState);
+		parentRenderNode.update(null, 0.1f);
+		parentRenderNode.interpolate(1f);
+
+		Assert.assertEquals(false, renderNode.isDirty());
+		Assert.assertEquals(false, parentRenderNode.isDirty());
+
+		renderNode.setDirty();
+		Assert.assertEquals(true, renderNode.isDirty());
+		uiElement.setXY(50f, 75f);
+		Assert.assertEquals(true, renderNode.isDirty());
+		Assert.assertEquals(true, parentRenderNode.isDirty());
+
+		parentRenderNode.layout(layoutState);
+		parentRenderNode.update(null, 0.1f);
+		parentRenderNode.interpolate(1f);
+
+		Assert.assertEquals(false, renderNode.isDirty());
+		Assert.assertEquals(false, parentRenderNode.isDirty());
+
+		Assert.assertEquals(50, renderNode.getOuterRenderX());
+		Assert.assertEquals(75, renderNode.getOuterRenderY());
+	}
 	
 	@Test
 	public void testRenderCoordinatesWithParentMargin() {
@@ -84,8 +120,13 @@ public class RenderNodeTest {
 		parentRenderNode.getStyle().setMarginRight(7);
 		parentRenderNode.getStyle().setMarginBottom(3);
 		
-		renderNode.setDirty(true);
+		renderNode.setDirty();
+		Assert.assertEquals(true, renderNode.isDirty());
+		Assert.assertEquals(true, parentRenderNode.isDirty());
+
 		parentRenderNode.layout(layoutState);
+		Assert.assertEquals(false, parentRenderNode.isDirty());
+
 		parentRenderNode.update(null, 0.1f);
 		parentRenderNode.interpolate(1f);
 		
@@ -118,7 +159,7 @@ public class RenderNodeTest {
 		parentRenderNode.getStyle().setPaddingRight(3);
 		parentRenderNode.getStyle().setPaddingBottom(7);
 		
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 		parentRenderNode.layout(layoutState);
 		parentRenderNode.update(null, 0.1f);
 		parentRenderNode.interpolate(1f);
@@ -159,7 +200,7 @@ public class RenderNodeTest {
 		parentRenderNode.getStyle().setMarginRight(7);
 		parentRenderNode.getStyle().setMarginBottom(3);
 		
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 		parentRenderNode.layout(layoutState);
 		parentRenderNode.update(null, 0.1f);
 		parentRenderNode.interpolate(1f);
@@ -202,7 +243,7 @@ public class RenderNodeTest {
 		renderNode.getStyle().setPaddingLeft(3);
 		renderNode.getStyle().setPaddingRight(4);
 		
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 		parentRenderNode.layout(layoutState);
 		parentRenderNode.update(null, 0.1f);
 		parentRenderNode.interpolate(1f);
@@ -234,7 +275,7 @@ public class RenderNodeTest {
 		uiElement.setPreferredContentWidth(preferredWidth);
 		uiElement.setPreferredContentHeight(preferredHeight);
 		
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 		renderNode.layout(layoutState);
 		Assert.assertEquals(preferredWidth, renderNode.getPreferredContentWidth());
 		Assert.assertEquals(preferredHeight, renderNode.getPreferredContentHeight());
@@ -262,7 +303,7 @@ public class RenderNodeTest {
 		uiElement.setPreferredContentWidth(preferredWidth);
 		uiElement.setPreferredContentHeight(preferredHeight);
 		
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 		renderNode.layout(layoutState);
 		Assert.assertEquals(preferredWidth, renderNode.getPreferredContentWidth());
 		Assert.assertEquals(preferredHeight, renderNode.getPreferredContentHeight());
@@ -292,7 +333,7 @@ public class RenderNodeTest {
 		uiElement.setPreferredContentWidth(preferredWidth);
 		uiElement.setPreferredContentHeight(preferredHeight);
 		
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 		renderNode.layout(layoutState);
 		Assert.assertEquals(preferredWidth, renderNode.getPreferredContentWidth());
 		Assert.assertEquals(preferredHeight, renderNode.getPreferredContentHeight());
@@ -322,7 +363,7 @@ public class RenderNodeTest {
 		uiElement.setPreferredContentWidth(preferredWidth);
 		uiElement.setPreferredContentHeight(preferredHeight);
 		
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 		renderNode.layout(layoutState);
 		Assert.assertEquals(preferredWidth, renderNode.getPreferredContentWidth());
 		Assert.assertEquals(preferredHeight, renderNode.getPreferredContentHeight());

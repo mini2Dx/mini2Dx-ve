@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Base class for {@link UiElement}s that can contain child {@link UiElement}s
  */
-public abstract class ParentUiElement extends UiElement {
+public abstract class ParentUiElement extends UiElement implements FlexUiElement {
 	@Field(optional = true)
 	protected final Array<UiElement> children = new Array<UiElement>(true,1, UiElement.class);
 
@@ -263,7 +263,7 @@ public abstract class ParentUiElement extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -275,14 +275,6 @@ public abstract class ParentUiElement extends UiElement {
 			removeAll();
 			asyncRemoveAll.set(false);
 		}
-
-		if(renderNode != null && flexLayout != null) {
-			x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
-			y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
-			width = renderNode.getOuterWidth();
-			height = renderNode.getOuterHeight();
-		}
-
 		super.syncWithUpdate(rootNode);
 	}
 
@@ -299,7 +291,7 @@ public abstract class ParentUiElement extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -312,7 +304,7 @@ public abstract class ParentUiElement extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	/**
@@ -340,7 +332,7 @@ public abstract class ParentUiElement extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -370,7 +362,7 @@ public abstract class ParentUiElement extends UiElement {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -390,68 +382,39 @@ public abstract class ParentUiElement extends UiElement {
 	}
 
 	@Override
-	public boolean set(float x, float y, float width, float height) {
-		final boolean result = super.set(x, y, width, height);
-		if(result) {
-			if(flexLayout != null) {
-				flexLayout = FlexLayoutRuleset.set(flexLayout, x, y, width, height);
-			}
+	public int getRenderX() {
+		if(renderNode == null) {
+			return Integer.MIN_VALUE;
 		}
-		return result;
+		return renderNode.getOuterRenderX();
 	}
 
 	@Override
-	public boolean setXY(float x, float y) {
-		final boolean result = super.setXY(x, y);
-		if(result) {
-			if(flexLayout != null) {
-				flexLayout = FlexLayoutRuleset.setXY(flexLayout, x, y);
-			}
+	public int getRenderY() {
+		if(renderNode == null) {
+			return Integer.MIN_VALUE;
 		}
-		return result;
+		return renderNode.getOuterRenderY();
 	}
 
 	@Override
-	public boolean setX(float x) {
-		final boolean result = super.setX(x);
-		if(result) {
-			if(flexLayout != null) {
-				flexLayout = FlexLayoutRuleset.setX(flexLayout, x);
-			}
+	public int getRenderWidth() {
+		if(renderNode == null) {
+			return -1;
 		}
-		return result;
+		return renderNode.getOuterRenderWidth();
 	}
 
 	@Override
-	public boolean setY(float y) {
-		final boolean result = super.setY(y);
-		if(result) {
-			if(flexLayout != null) {
-				flexLayout = FlexLayoutRuleset.setY(flexLayout, y);
-			}
+	public int getRenderHeight() {
+		if(renderNode == null) {
+			return -1;
 		}
-		return result;
+		return renderNode.getOuterRenderHeight();
 	}
 
 	@Override
-	public boolean setWidth(float width) {
-		final boolean result = super.setWidth(width);
-		if(result) {
-			if(flexLayout != null) {
-				flexLayout = FlexLayoutRuleset.setWidth(flexLayout, width);
-			}
-		}
-		return result;
-	}
-
-	@Override
-	public boolean setHeight(float height) {
-		final boolean result = super.setHeight(height);
-		if(result) {
-			if(flexLayout != null) {
-				flexLayout = FlexLayoutRuleset.setHeight(flexLayout, height);
-			}
-		}
-		return result;
+	public boolean isFlexLayout() {
+		return flexLayout != null;
 	}
 }

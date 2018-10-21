@@ -19,11 +19,13 @@ import com.badlogic.gdx.graphics.Texture;
 import org.mini2Dx.ui.event.ActionEvent;
 import org.mini2Dx.ui.listener.ActionListener;
 import org.mini2Dx.ui.listener.HoverListener;
+import org.mini2Dx.ui.listener.NodeStateListener;
+import org.mini2Dx.ui.render.NodeState;
 
 /**
  * Utility implementation of {@link Button} that contains an {@link Image}
  */
-public class ImageButton extends Button implements ActionListener, HoverListener {
+public class ImageButton extends Button implements NodeStateListener {
 	protected Image normalImage, hoverImage, actionImage, disabledImage;
 	
 	/**
@@ -69,8 +71,7 @@ public class ImageButton extends Button implements ActionListener, HoverListener
 				   @ConstructorArg(clazz = Float.class, name = "width") float width,
 				   @ConstructorArg(clazz = Float.class, name = "height") float height) {
 		super(id, x, y, width, height);
-		addHoverListener(this);
-		addActionListener(this);
+		addNodeStateListener(this);
 	}
 	
 	private void checkInitialised() {
@@ -413,7 +414,7 @@ public class ImageButton extends Button implements ActionListener, HoverListener
 	 */
 	public Image getActionImage() {
 		checkInitialised();
-		return hoverImage;
+		return actionImage;
 	}
 
 	/**
@@ -426,73 +427,33 @@ public class ImageButton extends Button implements ActionListener, HoverListener
 	}
 
 	@Override
-	public void onActionBegin(ActionEvent event) {
-		if(!event.getSource().getId().equals(getId())) {
+	public void onNodeStateChanged(UiElement element, NodeState nodeState) {
+		if(!element.getId().equals(getId())) {
 			return;
 		}
 		checkInitialised();
-		if(isEnabled()) {
-			normalImage.setVisibility(Visibility.HIDDEN);
-			hoverImage.setVisibility(Visibility.HIDDEN);
-			actionImage.setVisibility(Visibility.VISIBLE);
-			disabledImage.setVisibility(Visibility.HIDDEN);
-		} else {
-			normalImage.setVisibility(Visibility.HIDDEN);
-			hoverImage.setVisibility(Visibility.HIDDEN);
-			actionImage.setVisibility(Visibility.HIDDEN);
-			disabledImage.setVisibility(Visibility.VISIBLE);
-		}
-	}
 
-	@Override
-	public void onActionEnd(ActionEvent event) {
-		if(!event.getSource().getId().equals(getId())) {
-			return;
-		}
-		checkInitialised();
 		if(isEnabled()) {
-			normalImage.setVisibility(Visibility.VISIBLE);
-			hoverImage.setVisibility(Visibility.HIDDEN);
-			actionImage.setVisibility(Visibility.HIDDEN);
-			disabledImage.setVisibility(Visibility.HIDDEN);
-		} else {
-			normalImage.setVisibility(Visibility.HIDDEN);
-			hoverImage.setVisibility(Visibility.HIDDEN);
-			actionImage.setVisibility(Visibility.HIDDEN);
-			disabledImage.setVisibility(Visibility.VISIBLE);
-		}
-	}
-
-	@Override
-	public void onHoverBegin(Hoverable source) {
-		if(!source.getId().equals(getId())) {
-			return;
-		}
-		checkInitialised();
-		if(isEnabled()) {
-			normalImage.setVisibility(Visibility.HIDDEN);
-			hoverImage.setVisibility(Visibility.VISIBLE);
-			actionImage.setVisibility(Visibility.HIDDEN);
-			disabledImage.setVisibility(Visibility.HIDDEN);
-		} else {
-			normalImage.setVisibility(Visibility.HIDDEN);
-			hoverImage.setVisibility(Visibility.HIDDEN);
-			actionImage.setVisibility(Visibility.HIDDEN);
-			disabledImage.setVisibility(Visibility.VISIBLE);
-		}
-	}
-
-	@Override
-	public void onHoverEnd(Hoverable source) {
-		if(!source.getId().equals(getId())) {
-			return;
-		}
-		checkInitialised();
-		if(isEnabled()) {
-			normalImage.setVisibility(Visibility.VISIBLE);
-			hoverImage.setVisibility(Visibility.HIDDEN);
-			actionImage.setVisibility(Visibility.HIDDEN);
-			disabledImage.setVisibility(Visibility.HIDDEN);
+			switch(nodeState) {
+			case NORMAL:
+				normalImage.setVisibility(Visibility.VISIBLE);
+				hoverImage.setVisibility(Visibility.HIDDEN);
+				actionImage.setVisibility(Visibility.HIDDEN);
+				disabledImage.setVisibility(Visibility.HIDDEN);
+				break;
+			case HOVER:
+				normalImage.setVisibility(Visibility.HIDDEN);
+				hoverImage.setVisibility(Visibility.VISIBLE);
+				actionImage.setVisibility(Visibility.HIDDEN);
+				disabledImage.setVisibility(Visibility.HIDDEN);
+				break;
+			case ACTION:
+				normalImage.setVisibility(Visibility.HIDDEN);
+				hoverImage.setVisibility(Visibility.HIDDEN);
+				actionImage.setVisibility(Visibility.VISIBLE);
+				disabledImage.setVisibility(Visibility.HIDDEN);
+				break;
+			}
 		} else {
 			normalImage.setVisibility(Visibility.HIDDEN);
 			hoverImage.setVisibility(Visibility.HIDDEN);

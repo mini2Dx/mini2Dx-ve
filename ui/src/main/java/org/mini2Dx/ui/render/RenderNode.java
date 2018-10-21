@@ -30,6 +30,8 @@ import com.badlogic.gdx.Gdx;
  * Base class for implementing rendering of {@link UiElement} implementations
  */
 public abstract class RenderNode<T extends UiElement, S extends StyleRule> implements HoverableRenderNode {
+	private static final String LOGGING_TAG = RenderNode.class.getSimpleName();
+
 	protected final Array<UiEffect> effects = new Array<UiEffect>(true, 1, UiEffect.class);
 	protected final CollisionBox outerArea = new CollisionBox();
 	protected final Rectangle innerArea = new Rectangle();
@@ -54,11 +56,14 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		this.element = element;
 		this.zIndex = element.getZIndex();
 
-		setDirty(true);
+		setDirty();
 	}
 
 	public void update(UiContainerRenderTree uiContainer, float delta) {
 		if (!initialLayoutOccurred) {
+			if (element.isDebugEnabled()) {
+				Gdx.app.log(element.getId(), "UPDATE - initial layout not occurred");
+			}
 			return;
 		}
 		if (style == null) {
@@ -114,7 +119,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 	public void render(Graphics g) {
 		if (!isIncludedInRender()) {
 			if (element.isDebugEnabled()) {
-				Gdx.app.log(element.getId(), "RENDER - Element not visible");
+				Gdx.app.log(element.getId(), "RENDER - Element not included in render");
 			}
 			return;
 		}
@@ -185,6 +190,9 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		if (!isDirty() && !layoutState.isScreenSizeChanged()) {
 			return;
 		}
+		if (element.isDebugEnabled()) {
+			Gdx.app.log(LOGGING_TAG, "Layout triggered");
+		}
 		rootNode = layoutState.getUiContainerRenderTree();
 		style = determineStyleRule(layoutState);
 
@@ -229,6 +237,11 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		if (!initialLayoutOccurred) {
 			return false;
 		}
+		if (element.isDebugEnabled()) {
+			Gdx.app.log(element.getId(), "SCHEDULED_TO_RENDER - hiddenByLayoutRule:" +
+					hiddenByLayoutRule + ", style:" + style + ", visible:" + element.getVisibility() +
+					", preferredWidth:" + getPreferredInnerWidth() + ", preferredHeight:" + getPreferredInnerHeight());
+		}
 		if (hiddenByLayoutRule) {
 			return false;
 		}
@@ -249,15 +262,21 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		return dirty;
 	}
 
-	public void setDirty(final boolean dirty1) {
-		if(dirty1 && this.dirty == dirty1) {
-			return;
+	protected void clearDirty() {
+		this.dirty = false;
+	}
+
+	public boolean setDirty() {
+		final boolean result = this.dirty != true;
+		if(this.dirty) {
+			return result;
 		}
-		this.dirty = dirty1;
-		if (parent == null) {
-			return;
+		this.dirty = true;
+
+		if(parent != null) {
+			parent.setChildDirty();
 		}
-		parent.setChildDirty(dirty1);
+		return result;
 	}
 
 	public void applyEffect(UiEffect effect) {
@@ -451,6 +470,7 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		NodeState previousState = this.state;
 		this.state = state;
 		if (previousState != state) {
+			element.notifyNodeStateListeners(state);
 			if (state == NodeState.HOVER) {
 				element.notifyHoverListenersOnBeginHover();
 			} else if (previousState == NodeState.HOVER) {

@@ -32,6 +32,7 @@ import org.mini2Dx.ui.event.params.ControllerEventTriggerParams;
 import org.mini2Dx.ui.event.params.EventTriggerParamsPool;
 import org.mini2Dx.ui.event.params.KeyboardEventTriggerParams;
 import org.mini2Dx.ui.event.params.MouseEventTriggerParams;
+import org.mini2Dx.ui.layout.PixelLayoutUtils;
 import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.listener.ScreenSizeListener;
 import org.mini2Dx.ui.listener.UiContainerListener;
@@ -75,7 +76,6 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 
 	private InputSource lastInputSource, nextInputSource;
 	private ControllerType lastControllerType = ControllerType.UNKNOWN, nextControllerType = ControllerType.UNKNOWN;
-	private float width, height;
 	private int lastMouseX, lastMouseY;
 	private float scaleX = 1f;
 	private float scaleY = 1f;
@@ -168,7 +168,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 			return;
 		}
 		if(lastThemeId == null || (lastThemeId != null && !lastThemeId.equals(UI_THEME.getId()))) {
-			renderTree.setDirty(true);
+			renderTree.setDirty();
 			initialThemeLayoutComplete = false;
 			Gdx.app.log(LOGGING_TAG, "Applied theme - " + UI_THEME.getId());
 		}
@@ -195,6 +195,8 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		notifyPostUpdate(delta);
 		STATE = UiContainerState.NOOP;
 		renderTree.processUpdateDeferred();
+
+		PixelLayoutUtils.update(delta);
 	}
 
 	/**
@@ -442,6 +444,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		if (keycode == actionKey && activeAction != null) {
 			KeyboardEventTriggerParams params = EventTriggerParamsPool.allocateKeyboardParams();
 			params.setKey(keycode);
+			activeAction.setState(NodeState.ACTION);
 			activeAction.beginAction(EventTrigger.KEYBOARD, params);
 			EventTriggerParamsPool.release(params);
 
@@ -469,6 +472,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		if (keycode == actionKey && activeAction != null) {
 			KeyboardEventTriggerParams params = EventTriggerParamsPool.allocateKeyboardParams();
 			params.setKey(keycode);
+			activeAction.setState(NodeState.NORMAL);
 			activeAction.endAction(EventTrigger.KEYBOARD, params);
 			EventTriggerParamsPool.release(params);
 
@@ -497,6 +501,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		if (hotkeyAction != null) {
 			ControllerEventTriggerParams params = EventTriggerParamsPool.allocateControllerParams();
 			params.setControllerButton(button);
+			hotkeyAction.setState(NodeState.ACTION);
 			hotkeyAction.beginAction(EventTrigger.CONTROLLER, params);
 			EventTriggerParamsPool.release(params);
 		} else if (activeAction != null) {
@@ -505,12 +510,14 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 					if (!textInputIgnoredFirstEnter) {
 						ControllerEventTriggerParams params = EventTriggerParamsPool.allocateControllerParams();
 						params.setControllerButton(button);
+						activeAction.setState(NodeState.ACTION);
 						activeAction.beginAction(EventTrigger.CONTROLLER, params);
 						EventTriggerParamsPool.release(params);
 					}
 				} else {
 					ControllerEventTriggerParams params = EventTriggerParamsPool.allocateControllerParams();
 					params.setControllerButton(button);
+					activeAction.setState(NodeState.ACTION);
 					activeAction.beginAction(EventTrigger.CONTROLLER, params);
 					EventTriggerParamsPool.release(params);
 				}
@@ -531,6 +538,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		if (hotkeyAction != null) {
 			ControllerEventTriggerParams params = EventTriggerParamsPool.allocateControllerParams();
 			params.setControllerButton(button);
+			hotkeyAction.setState(NodeState.ACTION);
 			hotkeyAction.endAction(EventTrigger.CONTROLLER, params);
 			EventTriggerParamsPool.release(params);
 		} else if (activeAction != null) {
@@ -541,6 +549,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 			if (button.equals(controllerUiInput.getActionButton())) {
 				ControllerEventTriggerParams params = EventTriggerParamsPool.allocateControllerParams();
 				params.setControllerButton(button);
+				activeAction.setState(NodeState.NORMAL);
 				activeAction.endAction(EventTrigger.CONTROLLER, params);
 				EventTriggerParamsPool.release(params);
 				textInputIgnoredFirstEnter = false;
@@ -568,6 +577,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		} else {
 			KeyboardEventTriggerParams params = EventTriggerParamsPool.allocateKeyboardParams();
 			params.setKey(keycode);
+			hotkeyAction.setState(NodeState.ACTION);
 			hotkeyAction.beginAction(EventTrigger.KEYBOARD, params);
 			EventTriggerParamsPool.release(params);
 		}
@@ -582,6 +592,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		if (hotkeyAction != null) {
 			KeyboardEventTriggerParams params = EventTriggerParamsPool.allocateKeyboardParams();
 			params.setKey(keycode);
+			hotkeyAction.setState(NodeState.NORMAL);
 			hotkeyAction.endAction(EventTrigger.KEYBOARD, params);
 			EventTriggerParamsPool.release(params);
 		}

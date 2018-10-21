@@ -33,7 +33,7 @@ import org.mini2Dx.ui.style.StyleRule;
  * A {@link UiElement} with preset options. Uses left/right buttons to change
  * the selection.
  */
-public class Select<V> extends UiElement implements Actionable {
+public class Select<V> extends UiElement implements Actionable, FlexUiElement {
 	private final Array<SelectOption<V>> options = new Array<SelectOption<V>>(true,1, SelectOption.class);
 	private Array<ActionListener> actionListeners;
 
@@ -127,7 +127,7 @@ public class Select<V> extends UiElement implements Actionable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class Select<V> extends UiElement implements Actionable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 	
 	@Override
@@ -151,14 +151,6 @@ public class Select<V> extends UiElement implements Actionable {
 		while (effects.size > 0) {
 			renderNode.applyEffect(effects.removeFirst());
 		}
-
-		if(flexLayout != null) {
-			x = renderNode.getRelativeX() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingLeft() : 0);
-			y = renderNode.getRelativeY() - (renderNode.getParent() != null ? renderNode.getParent().getStyle().getPaddingTop() : 0);
-			width = renderNode.getOuterWidth();
-			height = renderNode.getOuterHeight();
-		}
-
 		super.syncWithUpdate(rootNode);
 	}
 
@@ -374,7 +366,7 @@ public class Select<V> extends UiElement implements Actionable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -384,7 +376,7 @@ public class Select<V> extends UiElement implements Actionable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -411,7 +403,7 @@ public class Select<V> extends UiElement implements Actionable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	public Color getEnabledTextColor() {
@@ -459,7 +451,7 @@ public class Select<V> extends UiElement implements Actionable {
 		if (renderNode == null) {
 			return;
 		}
-		renderNode.setDirty(true);
+		renderNode.setDirty();
 	}
 
 	@Override
@@ -476,5 +468,42 @@ public class Select<V> extends UiElement implements Actionable {
 			return false;
 		}
 		return renderNode.isInitialUpdateOccurred();
+	}
+
+	@Override
+	public int getRenderX() {
+		if(renderNode == null) {
+			return Integer.MIN_VALUE;
+		}
+		return renderNode.getOuterRenderX();
+	}
+
+	@Override
+	public int getRenderY() {
+		if(renderNode == null) {
+			return Integer.MIN_VALUE;
+		}
+		return renderNode.getOuterRenderY();
+	}
+
+	@Override
+	public int getRenderWidth() {
+		if(renderNode == null) {
+			return -1;
+		}
+		return renderNode.getOuterRenderWidth();
+	}
+
+	@Override
+	public int getRenderHeight() {
+		if(renderNode == null) {
+			return -1;
+		}
+		return renderNode.getOuterRenderHeight();
+	}
+
+	@Override
+	public boolean isFlexLayout() {
+		return flexLayout != null;
 	}
 }

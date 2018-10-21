@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.ui.element;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Queue;
 import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.core.exception.MdxException;
@@ -128,9 +129,10 @@ public class Tab extends Div implements Navigatable {
 		final ParentRenderNode<? extends ParentUiElement, ?> parentRenderNode = renderNode.getParent();
 		final ParentUiElement parentUiElement = parentRenderNode.getElement();
 		if(parentUiElement.getFlexLayout() == null) {
-			boolean alignRequired = renderNode.getRelativeY() == 0f;
+			boolean alignRequired = !MathUtils.isEqual(getY(), tabMenuFlexRow.getHeight());
 			alignRequired |= setWidth(parentRenderNode.getContentRenderWidth());
-			alignRequired |= setHeight(parentRenderNode.getContentRenderHeight() - tabMenuFlexRow.getHeight());
+			alignRequired |= setHeight(parentRenderNode.getContentRenderHeight() - tabMenuFlexRow.getRenderHeight());
+
 			if(alignRequired && tabMenuFlexRow != null) {
 				alignBelow(tabMenuFlexRow, HorizontalAlignment.LEFT);
 			}

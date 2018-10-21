@@ -89,8 +89,8 @@ public class RenderLayerTest {
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
@@ -111,8 +111,8 @@ public class RenderLayerTest {
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
@@ -132,8 +132,8 @@ public class RenderLayerTest {
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
@@ -152,8 +152,8 @@ public class RenderLayerTest {
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
@@ -168,15 +168,15 @@ public class RenderLayerTest {
 		final float preferredHeight = 200f;
 		final float yOffset = 24f;
 		
-		uiElement1.setYOffset(yOffset);
-		uiElement2.setYOffset(yOffset);
+		uiElement1.setY(yOffset);
+		uiElement2.setY(yOffset);
 		uiElement1.setPreferredContentWidth(preferredWidth);
 		uiElement1.setPreferredContentHeight(preferredHeight);
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
@@ -191,15 +191,15 @@ public class RenderLayerTest {
 		final float preferredHeight = 200f;
 		final float yOffset = 20f;
 		
-		uiElement1.setYOffset(yOffset);
-		uiElement2.setYOffset(yOffset);
+		uiElement1.setY(yOffset);
+		uiElement2.setY(yOffset);
 		uiElement1.setPreferredContentWidth(preferredWidth);
 		uiElement1.setPreferredContentHeight(preferredHeight);
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
@@ -222,8 +222,8 @@ public class RenderLayerTest {
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
@@ -246,8 +246,8 @@ public class RenderLayerTest {
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
@@ -273,8 +273,8 @@ public class RenderLayerTest {
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
@@ -300,8 +300,8 @@ public class RenderLayerTest {
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
@@ -327,8 +327,8 @@ public class RenderLayerTest {
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		
@@ -354,8 +354,8 @@ public class RenderLayerTest {
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		final LayoutRuleset layoutRuleset = FlexLayoutRuleset.parse("flex-column:xs-12c");
 		renderLayer.layout(layoutState, layoutRuleset);
 		

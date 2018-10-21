@@ -16,6 +16,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import org.mini2Dx.core.exception.ControllerPlatformException;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.game.GameResizeListener;
@@ -38,6 +39,7 @@ import org.mini2Dx.ui.element.*;
 import org.mini2Dx.ui.event.ActionEvent;
 import org.mini2Dx.ui.layout.FlexDirection;
 import org.mini2Dx.ui.layout.HorizontalAlignment;
+import org.mini2Dx.ui.layout.PixelLayoutUtils;
 import org.mini2Dx.ui.layout.VerticalAlignment;
 import org.mini2Dx.ui.listener.ActionListener;
 import org.mini2Dx.ui.navigation.VerticalUiNavigation;
@@ -60,7 +62,7 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 	private Checkbox checkbox;
 	private RadioButton radioButton;
 	private Slider slider;
-	private Label textBoxResult, checkboxResult, radioButtonResult, sliderResult;
+	private Label header, textBoxResult, checkboxResult, radioButtonResult, sliderResult;
 	private TextButton returnButton;
 
 	private int nextScreenId = -1;
@@ -91,10 +93,20 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 
 	@Override
 	public void update(GameContainer gc, ScreenManager<? extends GameScreen> screenManager, float delta) {
+		if(Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+			centerContainer.setXY(MathUtils.random(0f, uiContainer.getWidth() * 0.5f),
+					MathUtils.random(0f, uiContainer.getHeight() * 0.5f));
+		}
+
 		uiContainer.update(delta);
 		if (nextScreenId > -1) {
 			screenManager.enterGameScreen(nextScreenId, new FadeOutTransition(), new FadeInTransition());
 			nextScreenId = -1;
+		}
+
+		if(Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+			centerContainer.setXY(MathUtils.random(0f, uiContainer.getWidth() * 0.5f),
+					MathUtils.random(0f, uiContainer.getHeight() * 0.5f));
 		}
 	}
 
@@ -107,6 +119,8 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 	public void render(GameContainer gc, Graphics g) {
 		g.setBackgroundColor(Color.WHITE);
 		g.setColor(Color.BLACK);
+		g.drawString("Layout complete: " + PixelLayoutUtils.isOperationsComplete(), 150f, 32f);
+		g.drawString("UI Container Dirty Bit: " + centerContainer.isRenderNodeDirty(), 150f, 48f);
 		uiContainer.render(g);
 	}
 
@@ -137,19 +151,20 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		topLeftContainer = new Container("top-left-frame");
 		topLeftContainer.setStyleId("no-background");
 
-		final Label header = UiUtils.createHeader("UI UAT");
-		header.set(50f, 50f, 50f, 50f);
+		header = UiUtils.createHeader("UI UAT");
+		header.set(10f, 10f, 50f, 50f);
 		header.setVisibility(Visibility.HIDDEN);
+		//header.setDebugEnabled(true);
+
+		final Div topLeftHeaderDiv = Div.withElements("top-left-header", header);
+		topLeftContainer.add(topLeftHeaderDiv);
+
 		topLeftContainer.deferUntilUpdate(new Runnable() {
 			@Override
 			public void run() {
-				System.out.println("HERE");
 				header.setVisibility(Visibility.VISIBLE);
 			}
 		}, 5f);
-
-		Div topLeftHeaderDiv = Div.withElements("top-left-header", header);
-		topLeftContainer.add(topLeftHeaderDiv);
 
 		Button backRowButton = UiUtils.createButton(null, "", new ActionListener() {
 
@@ -287,7 +302,6 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 
 		centerContainer = new Container("main-centerContainer");
 		centerContainer.set(0f, 0f, uiContainer.getWidth(), uiContainer.getHeight() * 0.6f);
-		centerContainer.snapTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
 
 		tabView = new TabView("tabView");
 		tabView.set(0f, 0f, centerContainer.getContentWidth(), centerContainer.getContentHeight());
@@ -303,7 +317,6 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 
 		textBoxResult.alignBelow(textBox, HorizontalAlignment.LEFT);
 
-		textBoxRow.snapTo(tab1);
 		selectRow.alignBelow(textBoxRow, HorizontalAlignment.LEFT);
 		checkboxRow.alignBelow(selectRow, HorizontalAlignment.LEFT);
 		radioButtonRow.alignBelow(checkboxRow, HorizontalAlignment.LEFT);
@@ -360,6 +373,20 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		final FlexRow slideInRow = FlexRow.withElements(slideInButton);
 		slideInRow.alignBelow(readdButtonRow, HorizontalAlignment.LEFT);
 		tab2.add(slideInRow);
+
+		final ImageButton imageButton = new ImageButton();
+		imageButton.setStyleId("noop");
+		imageButton.setFlexLayout("flex-column:xs-12c");
+		imageButton.setVisibility(Visibility.VISIBLE);
+		imageButton.setAtlas(UiTheme.DEFAULT_THEME_ATLAS);
+		imageButton.setNormalTexturePath("button_default_normal");
+		imageButton.setHoverTexturePath("button_default_hover");
+		imageButton.setActionTexturePath("button_default_action");
+		tab2.setHotkey(Input.Keys.W, imageButton);
+
+		final FlexRow imageButtonRow = FlexRow.withElements(imageButton);
+		imageButtonRow.alignBelow(slideInRow, HorizontalAlignment.LEFT);
+		tab2.add(imageButtonRow);
 
 		tabView.add(tab2);
 
@@ -473,15 +500,17 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		centerContainer.setVisibility(Visibility.VISIBLE);
 		centerContainer.setNavigation(tabView.getNavigation());
 		centerContainer.shrinkToContents(true);
+		centerContainer.snapTo(uiContainer, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
 		uiContainer.add(centerContainer);
+		uiContainer.setActiveNavigation(tabView);
 
 		bottomRightContainer = new Container("bottom-right-frame");
 		bottomRightContainer.set(0f, uiContainer.getHeight() - 25f, uiContainer.getWidth() * 0.33f, 50f);
 		bottomRightContainer.setVisibility(Visibility.VISIBLE);
-		FlexRow bottomFrameFlexRow = FlexRow.withElements("row-os", UiUtils.createHeader("OVERFLOW CLIPPED"));
-		bottomFrameFlexRow.setHeight(12f);
-		bottomFrameFlexRow.setOverflowClipped(true);
-		bottomRightContainer.add(bottomFrameFlexRow);
+		Div bottomFrameDiv = Div.withElements("row-os", UiUtils.createHeader("OVERFLOW CLIPPED"));
+		bottomFrameDiv.setHeight(12f);
+		bottomFrameDiv.setOverflowClipped(true);
+		bottomRightContainer.add(bottomFrameDiv);
 		uiContainer.add(bottomRightContainer);
 		bottomRightContainer.snapTo(uiContainer, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM);
 	}

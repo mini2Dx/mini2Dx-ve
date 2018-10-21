@@ -12,6 +12,7 @@
 package org.mini2Dx.ui.layout;
 
 import com.badlogic.gdx.utils.Array;
+import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.element.UiElement;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.RenderNode;
@@ -45,4 +46,27 @@ public abstract class LayoutRuleset {
 	public abstract boolean isFlexLayout();
 
 	public abstract boolean equals(String rules);
+
+	public static void setElementSize(final ParentRenderNode<?, ?> parentNode, final RenderNode<?, ?> node) {
+		if(!node.isInitialLayoutOccurred()) {
+			node.getElement().deferUntilLayout(new Runnable() {
+				@Override
+				public void run() {
+					setElementSize(parentNode, node);
+				}
+			}, true);
+			return;
+		}
+		if(parentNode.getElement().isFlexLayout()) {
+			if(node.getElement().isFlexLayout()) {
+				node.getElement().set(node.getRelativeX() - parentNode.getStyle().getPaddingLeft(), node.getRelativeY() - parentNode.getStyle().getPaddingRight(), node.getPreferredOuterWidth(), node.getPreferredOuterHeight());
+			} else {
+				node.getElement().setXY(node.getRelativeX() - parentNode.getStyle().getPaddingLeft(), node.getRelativeY() - parentNode.getStyle().getPaddingRight());
+			}
+		} else {
+			if(node.getElement().isFlexLayout()) {
+				node.getElement().set(node.getRelativeX() - parentNode.getStyle().getPaddingLeft(), node.getRelativeY() - parentNode.getStyle().getPaddingRight(), node.getPreferredOuterWidth(), node.getPreferredOuterHeight());
+			}
+		}
+	}
 }

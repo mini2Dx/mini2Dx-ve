@@ -12,9 +12,6 @@ public class ImmediateLayoutRuleset extends LayoutRuleset {
 	private final OffsetRule xRule, yRule;
 	private final SizeRule widthRule, heightRule;
 
-	private final ObjectMap<String, Float> previousOffsetX = new ObjectMap<String, Float>();
-	private final ObjectMap<String, Float> previousOffsetY = new ObjectMap<String, Float>();
-
 	public ImmediateLayoutRuleset(UiElement element) {
 		super();
 		this.element = element;
@@ -25,34 +22,21 @@ public class ImmediateLayoutRuleset extends LayoutRuleset {
 	}
 
 	@Override
-	public void layout(LayoutState layoutState, ParentRenderNode<?, ?> parentNode, Array<RenderNode<?, ?>> children) {
+	public void layout(LayoutState layoutState, final ParentRenderNode<?, ?> parentNode, Array<RenderNode<?, ?>> children) {
 		float startX = parentNode.getStyle().getPaddingLeft();
 		float startY = parentNode.getStyle().getPaddingTop();
 
 		for (int i = 0; i < children.size; i++) {
-			RenderNode<?, ?> node = children.get(i);
+			final RenderNode<?, ?> node = children.get(i);
 			node.layout(layoutState);
 			if (!node.isIncludedInLayout()) {
 				continue;
-			}
-			final float previousOffsetX, previousOffsetY;
-
-			if(this.previousOffsetX.containsKey(node.getId())) {
-				previousOffsetX = this.previousOffsetX.get(node.getId());
-			} else {
-				previousOffsetX = 0f;
-			}
-			if(this.previousOffsetY.containsKey(node.getId())) {
-				previousOffsetY = this.previousOffsetY.get(node.getId());
-			} else {
-				previousOffsetY = 0f;
 			}
 
 			node.setRelativeX(startX + node.getXOffset());
 			node.setRelativeY(startY + node.getYOffset());
 
-			this.previousOffsetX.put(node.getId(), startX);
-			this.previousOffsetY.put(node.getId(), startY);
+			setElementSize(parentNode, node);
 		}
 	}
 

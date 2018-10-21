@@ -23,7 +23,9 @@ import org.mini2Dx.ui.layout.HorizontalAlignment;
 import org.mini2Dx.ui.layout.PixelLayoutUtils;
 import org.mini2Dx.ui.layout.VerticalAlignment;
 import org.mini2Dx.ui.listener.HoverListener;
+import org.mini2Dx.ui.listener.NodeStateListener;
 import org.mini2Dx.ui.listener.UiEffectListener;
+import org.mini2Dx.ui.render.NodeState;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.RenderNode;
 import org.mini2Dx.ui.render.UiContainerRenderTree;
@@ -56,6 +58,7 @@ public abstract class UiElement implements Hoverable {
 	protected float width;
 	protected float height;
 
+	private Array<NodeStateListener> nodeStateListeners;
 	private Array<UiEffectListener> effectListeners;
 	private Array<HoverListener> hoverListeners;
 	private boolean debugEnabled = false;
@@ -309,8 +312,33 @@ public abstract class UiElement implements Hoverable {
 	 * @return A {@link DeferredRunnable} that can be cancelled
 	 */
 	public DeferredRunnable deferUntilUpdate(Runnable runnable, float duration) {
+		return deferUntilUpdate(runnable, duration, false);
+	}
+
+	/**
+	 * Defers the execution of a {@link Runnable} instance for a period of time
+	 * @param runnable The {@link Runnable} to execute
+	 * @param skipQueue True if the task should skip to the front of the deferred queue
+	 * @return A {@link DeferredRunnable} that can be cancelled
+	 */
+	public DeferredRunnable deferUntilUpdate(Runnable runnable, boolean skipQueue) {
+		return deferUntilUpdate(runnable, 0f, skipQueue);
+	}
+
+	/**
+	 * Defers the execution of a {@link Runnable} instance for a period of time
+	 * @param runnable The {@link Runnable} to execute
+	 * @param duration The time to wait (in seconds) until executing the {@link Runnable}
+	 * @param skipQueue True if the task should skip to the front of the deferred queue
+	 * @return A {@link DeferredRunnable} that can be cancelled
+	 */
+	public DeferredRunnable deferUntilUpdate(Runnable runnable, float duration, boolean skipQueue) {
 		DeferredRunnable result = DeferredRunnable.allocate(runnable, duration);
-		deferredUpdate.add(result);
+		if(skipQueue && deferredUpdate.size > 0) {
+			deferredUpdate.insert(0, result);
+		} else {
+			deferredUpdate.add(result);
+		}
 		return result;
 	}
 
@@ -320,8 +348,22 @@ public abstract class UiElement implements Hoverable {
 	 * @return A {@link DeferredRunnable} that can be cancelled
 	 */
 	public DeferredRunnable deferUntilLayout(Runnable runnable) {
+		return deferUntilLayout(runnable, false);
+	}
+
+	/**
+	 * Defers the execution of a {@link Runnable} instance until the next UI re-layout completes
+	 * @param runnable The {@link Runnable} to execute
+	 * @param skipQueue True if the task should skip to the front of the deferred queue
+	 * @return A {@link DeferredRunnable} that can be cancelled
+	 */
+	public DeferredRunnable deferUntilLayout(Runnable runnable, boolean skipQueue) {
 		DeferredRunnable result = DeferredRunnable.allocate(runnable, 0f);
-		deferredLayout.add(result);
+		if(skipQueue && deferredLayout.size > 0) {
+			deferredLayout.insert(0, result);
+		} else {
+			deferredLayout.add(result);
+		}
 		return result;
 	}
 
@@ -331,8 +373,22 @@ public abstract class UiElement implements Hoverable {
 	 * @return A {@link DeferredRunnable} that can be cancelled
 	 */
 	public DeferredRunnable deferUntilRender(Runnable runnable) {
+		return deferUntilRender(runnable, false);
+	}
+
+	/**
+	 * Defers the execution of a {@link Runnable} instance until the UI render completes
+	 * @param runnable The {@link Runnable} to execute
+	 * @param skipQueue True if the task should skip to the front of the deferred queue
+	 * @return A {@link DeferredRunnable} that can be cancelled
+	 */
+	public DeferredRunnable deferUntilRender(Runnable runnable, boolean skipQueue) {
 		DeferredRunnable result = DeferredRunnable.allocate(runnable, 0f);
-		deferredRender.add(result);
+		if(skipQueue && deferredRender.size > 0) {
+			deferredRender.insert(0, result);
+		} else {
+			deferredRender.add(result);
+		}
 		return result;
 	}
 
@@ -465,6 +521,29 @@ public abstract class UiElement implements Hoverable {
 		}
 		for (int i = effectListeners.size - 1; i >= 0; i--) {
 			effectListeners.get(i).onEffectFinished(this, effect);
+		}
+	}
+
+	public void addNodeStateListener(NodeStateListener listener) {
+		if(nodeStateListeners == null) {
+			nodeStateListeners = new Array<NodeStateListener>(true, 1, NodeStateListener.class);
+		}
+		nodeStateListeners.add(listener);
+	}
+
+	public void removeNodeStateListener(NodeStateListener listener) {
+		if(nodeStateListeners == null) {
+			return;
+		}
+		nodeStateListeners.removeValue(listener, false);
+	}
+
+	public void notifyNodeStateListeners(NodeState nodeState) {
+		if(nodeStateListeners == null) {
+			return;
+		}
+		for (int i = nodeStateListeners.size - 1; i >= 0; i--) {
+			nodeStateListeners.get(i).onNodeStateChanged(this, nodeState);
 		}
 	}
 
@@ -734,5 +813,37 @@ public abstract class UiElement implements Hoverable {
 			return 0;
 		}
 		return styleRule.getPaddingRight();
+	}
+
+	/**
+	 * Returns X coordinate of where this element is currently rendering
+	 * @return {@link Integer#MIN_VALUE} if not rendering
+	 */
+	public abstract int getRenderX();
+
+	/**
+	 * Returns Y coordinate of where this element is currently rendering
+	 * @return {@link Integer#MIN_VALUE} if not rendering
+	 */
+	public abstract int getRenderY();
+
+	/**
+	 * Returns the width this element is currently rendering at
+	 * @return -1 if not rendering
+	 */
+	public abstract int getRenderWidth();
+
+	/**
+	 * Returns the height this element is currently rendering at
+	 * @return -1 if not rendering
+	 */
+	public abstract int getRenderHeight();
+
+	/**
+	 * Returns if this {@link UiElement} is using a flex layout
+	 * @return
+	 */
+	public boolean isFlexLayout() {
+		return false;
 	}
 }

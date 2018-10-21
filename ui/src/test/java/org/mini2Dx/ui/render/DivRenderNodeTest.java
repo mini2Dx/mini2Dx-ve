@@ -97,8 +97,8 @@ public class DivRenderNodeTest {
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		divRenderNode.layout(layoutState);
 		
 		Assert.assertEquals(preferredWidth, uiElement1.getPreferredContentWidth());
@@ -121,8 +121,8 @@ public class DivRenderNodeTest {
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		divRenderNode.layout(layoutState);
 		
 		Assert.assertEquals(preferredHeight, renderNode1.getPreferredContentHeight());
@@ -145,8 +145,8 @@ public class DivRenderNodeTest {
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
 		
-		renderNode1.setDirty(true);
-		renderNode2.setDirty(true);
+		renderNode1.setDirty();
+		renderNode2.setDirty();
 		divRenderNode.layout(layoutState);
 		
 		Assert.assertEquals(preferredHeight, renderNode1.getPreferredContentHeight());

@@ -19,6 +19,7 @@ import org.mini2Dx.ui.event.ActionEvent;
 import org.mini2Dx.ui.event.ActionEventPool;
 import org.mini2Dx.ui.event.EventTrigger;
 import org.mini2Dx.ui.event.params.EventTriggerParams;
+import org.mini2Dx.ui.layout.FlexLayoutRuleset;
 import org.mini2Dx.ui.layout.LayoutRuleset;
 import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.listener.ActionListener;
@@ -505,5 +506,57 @@ public class Select<V> extends UiElement implements Actionable, FlexUiElement {
 	@Override
 	public boolean isFlexLayout() {
 		return flexLayout != null;
+	}
+
+	/**
+	 * Equivalent to {@link #set(float, float, float, float)} for usage with flex layout
+	 * @param x The x coordinate (in pixels) relative to its parent
+	 * @param y The y coordinate (in pixels) relative to its parent
+	 * @param width The width in pixels
+	 * @param height The height in pixels
+	 */
+	public void setFlex(float x, float y, float width, float height) {
+		flexLayout = FlexLayoutRuleset.set(flexLayout, x, y, width, height);
+	}
+
+	/**
+	 * Equivalent to {@link #setXY(float, float)} for usage with flex layout
+	 * @param x The x coordinate (in pixels) relative to its parent
+	 * @param y The y coordinate (in pixels) relative to its parent
+	 */
+	public void setXYFlex(float x, float y) {
+		flexLayout = FlexLayoutRuleset.setXY(flexLayout, x, y);
+	}
+
+	/**
+	 * Equivalent to {@link #setX(float)} for usage with flex layout
+	 * @param x The x coordinate (in pixels) relative to its parent
+	 */
+	public void setXFlex(float x) {
+		flexLayout = FlexLayoutRuleset.setX(flexLayout, x);
+	}
+
+	/**
+	 * Equivalent to {@link #setY(float)} for usage with flex layout
+	 * @param y The y coordinate (in pixels) relative to its parent
+	 */
+	public void setYFlex(float y) {
+		flexLayout = FlexLayoutRuleset.setY(flexLayout, y);
+	}
+
+	/**
+	 * Equivalent to {@link #setWidth(float)} for usage with flex layout
+	 * @param width The width in pixels
+	 */
+	public void setWidthFlex(float width) {
+		flexLayout = FlexLayoutRuleset.setWidth(flexLayout, width);
+	}
+
+	/**
+	 * Equivalent to {@link #setHeight(float)} for usage with flex layout
+	 * @param height The height in pixels
+	 */
+	public void setHeightFlex(float height) {
+		flexLayout = FlexLayoutRuleset.setHeight(flexLayout, height);
 	}
 }

@@ -51,10 +51,14 @@ public class DivRenderNodeTest {
 	private DivRenderNode rowRenderNode2 = new DivRenderNode(divRenderNode, flexRow2);
 	
 	private DummyUiElement uiElement1 = new DummyUiElement("uiElement1");
-	private DummyUiElement uiElement2 = new DummyUiElement("uiElement1");
+	private DummyUiElement uiElement2 = new DummyUiElement("uiElement2");
+	private DummyUiElement uiElement3 = new DummyUiElement("uiElement3");
+	private DummyUiElement uiElement4 = new DummyUiElement("uiElement4");
 	
 	private DummyRenderNode renderNode1 = new DummyRenderNode(rowRenderNode1, uiElement1);
 	private DummyRenderNode renderNode2 = new DummyRenderNode(rowRenderNode1, uiElement2);
+	private DummyRenderNode renderNode3 = new DummyRenderNode(rowRenderNode2, uiElement3);
+	private DummyRenderNode renderNode4 = new DummyRenderNode(rowRenderNode2, uiElement4);
 	
 	@Before
 	public void setUp() {
@@ -71,9 +75,9 @@ public class DivRenderNodeTest {
 		
 		rowRenderNode1.addChild(renderNode1);
 		rowRenderNode1.addChild(renderNode2);
-		rowRenderNode2.addChild(renderNode1);
-		rowRenderNode2.addChild(renderNode2);
-		
+		rowRenderNode2.addChild(renderNode3);
+		rowRenderNode2.addChild(renderNode4);
+
 		divRenderNode.addChild(rowRenderNode1);
 		divRenderNode.addChild(rowRenderNode2);
 
@@ -96,6 +100,10 @@ public class DivRenderNodeTest {
 		uiElement1.setPreferredContentHeight(preferredHeight);
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
+		uiElement3.setPreferredContentWidth(preferredWidth);
+		uiElement3.setPreferredContentHeight(preferredHeight);
+		uiElement4.setPreferredContentWidth(preferredWidth);
+		uiElement4.setPreferredContentHeight(preferredHeight);
 		
 		renderNode1.setDirty();
 		renderNode2.setDirty();
@@ -120,6 +128,10 @@ public class DivRenderNodeTest {
 		uiElement1.setPreferredContentHeight(preferredHeight);
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
+		uiElement3.setPreferredContentWidth(preferredWidth);
+		uiElement3.setPreferredContentHeight(preferredHeight);
+		uiElement4.setPreferredContentWidth(preferredWidth);
+		uiElement4.setPreferredContentHeight(preferredHeight);
 		
 		renderNode1.setDirty();
 		renderNode2.setDirty();
@@ -144,6 +156,10 @@ public class DivRenderNodeTest {
 		uiElement1.setPreferredContentHeight(preferredHeight);
 		uiElement2.setPreferredContentWidth(preferredWidth);
 		uiElement2.setPreferredContentHeight(preferredHeight);
+		uiElement3.setPreferredContentWidth(preferredWidth);
+		uiElement3.setPreferredContentHeight(preferredHeight);
+		uiElement4.setPreferredContentWidth(preferredWidth);
+		uiElement4.setPreferredContentHeight(preferredHeight);
 		
 		renderNode1.setDirty();
 		renderNode2.setDirty();

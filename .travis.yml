@@ -6,6 +6,7 @@ env:
 addons:
   apt:
     packages:
+      - oracle-java8-installer
       - libglew-dev
       - freeglut3-dev
       - libxi-dev

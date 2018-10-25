@@ -31,10 +31,24 @@ public class UiFont {
 	private String borderColor;
 	@Field(optional=true)
 	private int borderWidth;
+	@Field(optional=true)
+	private String shadowColor;
+	@Field(optional=true)
+	private int shadowOffsetX;
+	@Field(optional=true)
+	private int shadowOffsetY;
+	@Field(optional=true)
+	private int spaceX;
+	@Field(optional=true)
+	private int spaceY;
+	@Field(optional=true)
+	private boolean flip;
+	@Field(optional=true)
+	private boolean kerning = true;
 	@Field
 	private int fontSize;
 	
-	private Color fontBorderColor;
+	private Color fontBorderColor, fontShadowColor;
 	private BitmapFont bitmapFont;
 	
 	public void prepareAssets(UiTheme theme, FileHandleResolver fileHandleResolver) {
@@ -46,12 +60,25 @@ public class UiFont {
 		if(borderColor != null) {
 			fontBorderColor = ColorUtils.rgbToColor(borderColor);
 		}
+		if(shadowColor != null) {
+			fontShadowColor = ColorUtils.rgbToColor(shadowColor);
+		}
 		FreeTypeFontParameter fontParameter = new  FreeTypeFontParameter();
 		fontParameter.size = fontSize;
-		fontParameter.flip = true;
-		if(borderWidth > 0) {
+		fontParameter.flip = !flip;
+		fontParameter.kerning = kerning;
+		if(borderWidth > 0 && borderColor != null) {
 			fontParameter.borderWidth = borderWidth;
 			fontParameter.borderColor = fontBorderColor;
+		}
+		if((shadowOffsetX > 0 || shadowOffsetY > 0) && shadowColor != null) {
+			fontParameter.shadowColor = fontShadowColor;
+			fontParameter.shadowOffsetX = shadowOffsetX;
+			fontParameter.shadowOffsetY = shadowOffsetY;
+		}
+		if(spaceX > 0 || spaceY > 0) {
+			fontParameter.spaceX = spaceX;
+			fontParameter.spaceY = spaceY;
 		}
 		bitmapFont = fontGenerator.generateFont(fontParameter);
 	}
@@ -90,6 +117,70 @@ public class UiFont {
 
 	public void setFontSize(int fontSize) {
 		this.fontSize = fontSize;
+	}
+
+	public String getBorderColor() {
+		return borderColor;
+	}
+
+	public void setBorderColor(String borderColor) {
+		this.borderColor = borderColor;
+	}
+
+	public String getShadowColor() {
+		return shadowColor;
+	}
+
+	public void setShadowColor(String shadowColor) {
+		this.shadowColor = shadowColor;
+	}
+
+	public int getShadowOffsetX() {
+		return shadowOffsetX;
+	}
+
+	public void setShadowOffsetX(int shadowOffsetX) {
+		this.shadowOffsetX = shadowOffsetX;
+	}
+
+	public int getShadowOffsetY() {
+		return shadowOffsetY;
+	}
+
+	public void setShadowOffsetY(int shadowOffsetY) {
+		this.shadowOffsetY = shadowOffsetY;
+	}
+
+	public int getSpaceX() {
+		return spaceX;
+	}
+
+	public void setSpaceX(int spaceX) {
+		this.spaceX = spaceX;
+	}
+
+	public int getSpaceY() {
+		return spaceY;
+	}
+
+	public void setSpaceY(int spaceY) {
+		this.spaceY = spaceY;
+	}
+
+	public boolean isFlip() {
+		return flip;
+	}
+
+	public void setFlip(boolean flip) {
+		this.flip = flip;
+	}
+
+	public boolean isKerning() {
+		return kerning;
+	}
+
+	public void setKerning(boolean kerning) {
+		this.kerning = kerning;
 	}
 
 	private String getFontParameterKey(FreeTypeFontParameter parameter) {

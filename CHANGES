@@ -10,6 +10,7 @@
 - Added support for static, ninepatch and tiling UI element backgrounds
 - Added multiple images to ImageButton to allow for images based on button state
 - Added NodeStateListener to UiElement
+- Added shadow, spacing, kerning and flip options to UiFont
 - Improved UI theme JSON consistency
 - Improved scrolling when dragging scroll thumb in ScrollBox
 - Fixed hotkey based actions not triggering correct UI state

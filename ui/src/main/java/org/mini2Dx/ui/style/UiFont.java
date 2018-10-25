@@ -71,12 +71,12 @@ public class UiFont {
 			fontParameter.borderWidth = borderWidth;
 			fontParameter.borderColor = fontBorderColor;
 		}
-		if((shadowOffsetX > 0 || shadowOffsetY > 0) && shadowColor != null) {
+		if((shadowOffsetX != 0 || shadowOffsetY != 0) && shadowColor != null) {
 			fontParameter.shadowColor = fontShadowColor;
 			fontParameter.shadowOffsetX = shadowOffsetX;
 			fontParameter.shadowOffsetY = shadowOffsetY;
 		}
-		if(spaceX > 0 || spaceY > 0) {
+		if(spaceX != 0 || spaceY != 0) {
 			fontParameter.spaceX = spaceX;
 			fontParameter.spaceY = spaceY;
 		}

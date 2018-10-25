@@ -112,13 +112,15 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 				- style.getMarginLeft() - style.getMarginRight();
 		if (element.isResponsive()) {
 			return style.getRounding().calculateRounding(availableWidth);
-		} else {
+		} else if(parent.getElement().isFlexLayout()) {
 			GLYPH_LAYOUT.setText(bitmapFontCache.getFont(), element.getText());
 
 			if (GLYPH_LAYOUT.width > availableWidth) {
 				return style.getRounding().calculateRounding(availableWidth);
 			}
 			return style.getRounding().calculateRounding(GLYPH_LAYOUT.width);
+		} else {
+			return style.getRounding().calculateRounding(element.getWidth());
 		}
 	}
 
@@ -131,7 +133,11 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 			return style.getMinHeight() - style.getPaddingTop() - style.getPaddingBottom() - style.getMarginTop()
 					- style.getMarginBottom();
 		}
-		return GLYPH_LAYOUT.height;
+		if(parent.getElement().isFlexLayout()) {
+			return GLYPH_LAYOUT.height;
+		} else {
+			return element.getHeight();
+		}
 	}
 
 	@Override

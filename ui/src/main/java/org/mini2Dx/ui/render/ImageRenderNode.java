@@ -48,10 +48,17 @@ public class ImageRenderNode extends RenderNode<Image, StyleRule> {
 		if (textureRegion == null) {
 			return 0f;
 		}
-		if (element.isResponsive()) {
-			return layoutState.getParentWidth() - style.getPaddingLeft() - style.getPaddingRight()
-					- style.getMarginLeft() - style.getMarginRight();
+		if(parent.getElement().isFlexLayout()) {
+			if (element.isResponsive()) {
+				return layoutState.getParentWidth() - style.getPaddingLeft() - style.getPaddingRight()
+						- style.getMarginLeft() - style.getMarginRight();
+			}
+			return textureRegion.getRegionWidth();
 		} else {
+			if (element.isResponsive()) {
+				return element.getWidth() - style.getPaddingLeft() - style.getPaddingRight()
+						- style.getMarginLeft() - style.getMarginRight();
+			}
 			return textureRegion.getRegionWidth();
 		}
 	}
@@ -62,11 +69,21 @@ public class ImageRenderNode extends RenderNode<Image, StyleRule> {
 			return 0f;
 		}
 		float result = 0f;
-		if (element.isResponsive()) {
-			result = textureRegion.getRegionHeight() * (preferredContentWidth / textureRegion.getRegionWidth());
+		if(parent.getElement().isFlexLayout()) {
+			if (element.isResponsive()) {
+				result = textureRegion.getRegionHeight() * (preferredContentWidth / textureRegion.getRegionWidth());
+			} else {
+				result = textureRegion.getRegionHeight();
+			}
 		} else {
-			result = textureRegion.getRegionHeight();
+			if (element.isResponsive()) {
+				result = element.getHeight() - style.getPaddingTop() - style.getPaddingBottom() - style.getMarginTop()
+						- style.getMarginBottom();
+			} else {
+				result = textureRegion.getRegionHeight();
+			}
 		}
+
 		if (style.getMinHeight() > 0 && result + style.getPaddingTop() + style.getPaddingBottom() + style.getMarginTop()
 				+ style.getMarginBottom() < style.getMinHeight()) {
 			return style.getMinHeight() - style.getPaddingTop() - style.getPaddingBottom() - style.getMarginTop()

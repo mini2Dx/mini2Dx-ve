@@ -169,10 +169,30 @@ public class Image extends UiElement {
 			return;
 		}
 		final StyleRule styleRule = UiContainer.getTheme().getImageStyleRule(styleId, ScreenSize.XS);
-		if(textureRegion != null) {
-			width = textureRegion.getRegionWidth() + styleRule.getMarginLeft() + styleRule.getMarginRight() + styleRule.getPaddingLeft() + styleRule.getPaddingRight();
-			height = textureRegion.getRegionHeight() + styleRule.getMarginTop() + styleRule.getMarginBottom() + styleRule.getPaddingTop() + styleRule.getPaddingBottom();
+		if(textureRegion == null) {
+			return;
 		}
+		width = textureRegion.getRegionWidth() + styleRule.getMarginLeft() + styleRule.getMarginRight() + styleRule.getPaddingLeft() + styleRule.getPaddingRight();
+		height = textureRegion.getRegionHeight() + styleRule.getMarginTop() + styleRule.getMarginBottom() + styleRule.getPaddingTop() + styleRule.getPaddingBottom();
+	}
+
+	public void shrinkToImageSize(final AssetManager assetManager) {
+		if(renderNode == null || !UiContainer.isThemeApplied()) {
+			deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					shrinkToImageSize(assetManager);
+				}
+			});
+			return;
+		}
+		final TextureRegion textureRegion = getTextureRegion(assetManager);
+		if(textureRegion == null) {
+			return;
+		}
+		final StyleRule styleRule = UiContainer.getTheme().getImageStyleRule(styleId, ScreenSize.XS);
+		width = textureRegion.getRegionWidth() + styleRule.getMarginLeft() + styleRule.getMarginRight() + styleRule.getPaddingLeft() + styleRule.getPaddingRight();
+		height = textureRegion.getRegionHeight() + styleRule.getMarginTop() + styleRule.getMarginBottom() + styleRule.getPaddingTop() + styleRule.getPaddingBottom();
 	}
 
 	@Override

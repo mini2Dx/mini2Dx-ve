@@ -412,6 +412,9 @@ public class FlexLayoutRuleset extends LayoutRuleset {
 				yResult.append(yComponents[i]);
 				yResult.append(' ');
 			}
+		} else {
+			yResult.append("xs-auto");
+			yResult.append(' ');
 		}
 		yResult.append("xs-offset-");
 		yResult.append(MathUtils.round(y));

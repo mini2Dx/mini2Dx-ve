@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.controller.button.XboxOneButton;
 import org.mini2Dx.core.controller.deadzone.DeadZone;
 import org.mini2Dx.core.controller.deadzone.NoopDeadZone;
+import org.mini2Dx.core.controller.deadzone.RadialDeadZone;
 import org.mini2Dx.core.controller.xboxone.XboxOneControllerListener;
 
 /**
@@ -28,6 +29,8 @@ public abstract class XboxOneController implements MdxController<XboxOneControll
 	private final Array<XboxOneControllerListener> listeners = new Array<>();
 	
 	private DeadZone leftStickDeadZone, rightStickDeadZone;
+	private DeadZone leftTriggerDeadZone, rightTriggerDeadZone;
+	private boolean leftTrigger, rightTrigger;
 	
 	public XboxOneController(Controller controller) {
 		this(controller, new NoopDeadZone(), new NoopDeadZone());
@@ -37,6 +40,8 @@ public abstract class XboxOneController implements MdxController<XboxOneControll
 		this.controller = controller;
 		this.leftStickDeadZone = leftStickDeadZone;
 		this.rightStickDeadZone = rightStickDeadZone;
+		this.leftTriggerDeadZone = new RadialDeadZone();
+		this.rightTriggerDeadZone = new RadialDeadZone();
 		controller.addListener(this);
 	}
 	
@@ -66,6 +71,14 @@ public abstract class XboxOneController implements MdxController<XboxOneControll
 	}
 	
 	protected boolean notifyLeftTriggerMoved(float value) {
+		leftTriggerDeadZone.updateY(value);
+		if(leftTriggerDeadZone.getY() >= 0.5f && !leftTrigger) {
+			notifyButtonDown(XboxOneButton.LEFT_TRIGGER);
+			leftTrigger = true;
+		} else if(leftTriggerDeadZone.getY() < 0.5f && leftTrigger) {
+			notifyButtonUp(XboxOneButton.LEFT_TRIGGER);
+			leftTrigger = false;
+		}
 		for(XboxOneControllerListener listener : listeners) {
 			if(listener.leftTriggerMoved(this, value)) {
 				return true;
@@ -75,6 +88,14 @@ public abstract class XboxOneController implements MdxController<XboxOneControll
 	}
 	
 	protected boolean notifyRightTriggerMoved(float value) {
+		rightTriggerDeadZone.updateY(value);
+		if(rightTriggerDeadZone.getY() >= 0.5f && !rightTrigger) {
+			notifyButtonDown(XboxOneButton.RIGHT_TRIGGER);
+			rightTrigger = true;
+		} else if(rightTriggerDeadZone.getY() < 0.5f && rightTrigger) {
+			notifyButtonUp(XboxOneButton.RIGHT_TRIGGER);
+			rightTrigger = false;
+		}
 		for(XboxOneControllerListener listener : listeners) {
 			if(listener.rightTriggerMoved(this, value)) {
 				return true;
@@ -183,5 +204,27 @@ public abstract class XboxOneController implements MdxController<XboxOneControll
 			rightStickDeadZone = new NoopDeadZone();
 		}
 		this.rightStickDeadZone = rightStickDeadZone;
+	}
+
+	public DeadZone getLeftTriggerDeadZone() {
+		return leftTriggerDeadZone;
+	}
+
+	public void setLeftTriggerDeadZone(DeadZone leftTriggerDeadZone) {
+		if(leftTriggerDeadZone == null) {
+			leftTriggerDeadZone = new NoopDeadZone();
+		}
+		this.leftTriggerDeadZone = leftTriggerDeadZone;
+	}
+
+	public DeadZone getRightTriggerDeadZone() {
+		return rightTriggerDeadZone;
+	}
+
+	public void setRightTriggerDeadZone(DeadZone rightTriggerDeadZone) {
+		if(rightTriggerDeadZone == null) {
+			rightTriggerDeadZone = new NoopDeadZone();
+		}
+		this.rightTriggerDeadZone = rightTriggerDeadZone;
 	}
 }

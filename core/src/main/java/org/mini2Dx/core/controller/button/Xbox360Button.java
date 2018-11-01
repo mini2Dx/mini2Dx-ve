@@ -29,6 +29,8 @@ public enum Xbox360Button implements ControllerButton {
 	
 	LEFT_SHOULDER("xbox360-left-shoulder"),
 	RIGHT_SHOULDER("xbox360-right-shoulder"),
+	LEFT_TRIGGER("xbox360-left-trigger"),
+	RIGHT_TRIGGER("xbox360-right-trigger"),
 	
 	A("xbox360-a"),
 	B("xbox360-b"),

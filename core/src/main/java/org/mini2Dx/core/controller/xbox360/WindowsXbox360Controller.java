@@ -141,7 +141,7 @@ public class WindowsXbox360Controller extends Xbox360Controller {
 			if(value > 0f) {
 				return notifyLeftTriggerMoved(value);
 			} else {
-				return notifyRightTriggerMoved(value);
+				return notifyRightTriggerMoved(Math.abs(value));
 			}
 		}
 		return false;

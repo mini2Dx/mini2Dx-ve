@@ -11,6 +11,8 @@
 - Added multiple images to ImageButton to allow for images based on button state
 - Added NodeStateListener to UiElement
 - Added shadow, spacing, kerning and flip options to UiFont
+- Added controller trigger button down/up notifications
+- UI can now use controller triggers as hotkeys
 - Improved UI theme JSON consistency
 - Improved scrolling when dragging scroll thumb in ScrollBox
 - Fixed hotkey based actions not triggering correct UI state

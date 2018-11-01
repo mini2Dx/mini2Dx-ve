@@ -140,7 +140,11 @@ public class WindowsXboxOneController extends XboxOneController {
 		case AXIS_RIGHT_STICK_Y:
 			return notifyRightStickYMoved(value);
 		case AXIS_RIGHT_TRIGGER:
-			return notifyRightTriggerMoved(value);
+			if(value > 0f) {
+				return notifyLeftTriggerMoved(value);
+			} else {
+				return notifyRightTriggerMoved(Math.abs(value));
+			}
 		}
 		return false;
 	}

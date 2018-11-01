@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.controller.button.PS4Button;
 import org.mini2Dx.core.controller.deadzone.DeadZone;
 import org.mini2Dx.core.controller.deadzone.NoopDeadZone;
+import org.mini2Dx.core.controller.deadzone.RadialDeadZone;
 import org.mini2Dx.core.controller.ps4.PS4ControllerListener;
 
 /**
@@ -29,6 +30,8 @@ public abstract class PS4Controller implements MdxController<PS4ControllerListen
 	private final Array<PS4ControllerListener> listeners = new Array<PS4ControllerListener>(true, 2);
 	
     private DeadZone leftStickDeadZone, rightStickDeadZone;
+	private DeadZone l2DeadZone, r2DeadZone;
+	private boolean l2, r2;
     
 	public PS4Controller(Controller controller) {
 		this(controller, new NoopDeadZone(), new NoopDeadZone());
@@ -38,6 +41,8 @@ public abstract class PS4Controller implements MdxController<PS4ControllerListen
 		this.controller = controller;
 		this.leftStickDeadZone = leftStickDeadZone;
 		this.rightStickDeadZone = rightStickDeadZone;
+		this.l2DeadZone = new RadialDeadZone();
+		this.r2DeadZone = new RadialDeadZone();
 		controller.addListener(this);
 	}
     
@@ -107,6 +112,14 @@ public abstract class PS4Controller implements MdxController<PS4ControllerListen
 	}
 	
 	protected boolean notifyL2Moved(float value) {
+		l2DeadZone.updateY(value);
+		if(l2DeadZone.getY() >= 0.5f && !l2) {
+			notifyButtonDown(PS4Button.L2);
+			l2 = true;
+		} else if(l2DeadZone.getY() < 0.5f && l2) {
+			notifyButtonUp(PS4Button.L2);
+			l2 = false;
+		}
 		for(PS4ControllerListener listener : listeners) {
 			if(listener.l2Moved(this, value)) {
 				return true;
@@ -116,6 +129,14 @@ public abstract class PS4Controller implements MdxController<PS4ControllerListen
 	}
 	
 	protected boolean notifyR2Moved(float value) {
+		r2DeadZone.updateY(value);
+		if(r2DeadZone.getY() >= 0.5f && !r2) {
+			notifyButtonDown(PS4Button.R2);
+			r2 = true;
+		} else if(r2DeadZone.getY() < 0.5f && r2) {
+			notifyButtonUp(PS4Button.R2);
+			r2 = false;
+		}
 		for(PS4ControllerListener listener : listeners) {
 			if(listener.r2Moved(this, value)) {
 				return true;
@@ -184,5 +205,27 @@ public abstract class PS4Controller implements MdxController<PS4ControllerListen
 			rightStickDeadZone = new NoopDeadZone();
 		}
 		this.rightStickDeadZone = rightStickDeadZone;
+	}
+
+	public DeadZone getL2DeadZone() {
+		return l2DeadZone;
+	}
+
+	public void setL2DeadZone(DeadZone l2DeadZone) {
+		if(l2DeadZone == null) {
+			l2DeadZone = new NoopDeadZone();
+		}
+		this.l2DeadZone = l2DeadZone;
+	}
+
+	public DeadZone getR2DeadZone() {
+		return r2DeadZone;
+	}
+
+	public void setR2DeadZone(DeadZone r2DeadZone) {
+		if(r2DeadZone == null) {
+			r2DeadZone = new NoopDeadZone();
+		}
+		this.r2DeadZone = r2DeadZone;
 	}
 }

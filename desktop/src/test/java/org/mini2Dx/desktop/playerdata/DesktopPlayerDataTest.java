@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.badlogic.gdx.utils.IntArray;
+import com.badlogic.gdx.utils.IntSet;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -181,5 +183,13 @@ public class DesktopPlayerDataTest {
         
         expectedParentObject.setGdxArray(new Array<String>());
         expectedParentObject.getGdxArray().add("testGdxArrayValue");
+
+        expectedParentObject.setGdxIntArray(new IntArray());
+        expectedParentObject.getGdxIntArray().add(1);
+        expectedParentObject.getGdxIntArray().add(77);
+
+        expectedParentObject.setGdxIntSet(new IntSet());
+        expectedParentObject.getGdxIntSet().add(99);
+        expectedParentObject.getGdxIntSet().add(101);
     }
 }

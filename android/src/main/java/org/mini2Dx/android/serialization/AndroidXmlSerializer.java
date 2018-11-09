@@ -32,6 +32,8 @@ import org.mini2Dx.core.serialization.XmlSerializer;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.NonConcrete;
 import org.mini2Dx.core.serialization.annotation.PostDeserialize;
+import org.mini2Dx.core.serialization.collection.DeserializedCollection;
+import org.mini2Dx.core.serialization.collection.SerializedCollection;
 import org.mini2Dx.core.util.Ref;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -227,21 +229,17 @@ public class AndroidXmlSerializer implements XmlSerializer {
 				writeArray(fieldDefinition, object, xmlSerializer);
 				return;
 			}
-			if (Collection.class.isAssignableFrom(clazz)) {
-				Collection collection = (Collection) object;
-				writeArray(fieldDefinition, collection.toArray(), xmlSerializer);
-				return;
-			}
-			if (com.badlogic.gdx.utils.Array.class.isAssignableFrom(clazz)) {
-				writeArray(fieldDefinition, ((com.badlogic.gdx.utils.Array) object).items, xmlSerializer);
-				return;
-			}
 			if (Map.class.isAssignableFrom(clazz)) {
 				writeMap(fieldDefinition, (Map) object, xmlSerializer);
 				return;
 			}
 			if (ObjectMap.class.isAssignableFrom(clazz)) {
 				writeObjectMap(fieldDefinition, (ObjectMap) object, xmlSerializer);
+				return;
+			}
+			SerializedCollection serializedCollection = SerializedCollection.getImplementation(clazz, object);
+			if(serializedCollection != null) {
+				writeSerializedCollection(fieldDefinition, serializedCollection, xmlSerializer);
 				return;
 			}
 
@@ -337,6 +335,8 @@ public class AndroidXmlSerializer implements XmlSerializer {
 			throw new SerializationException(e.getMessage(), e);
 		} catch (IOException e) {
 			throw new SerializationException(e.getMessage(), e);
+		} catch (NoSuchFieldException e) {
+			throw new SerializationException(e.getMessage(), e);
 		}
 	}
 
@@ -378,6 +378,35 @@ public class AndroidXmlSerializer implements XmlSerializer {
 				writeObject(field, entry.value, "value", xmlSerializer);
 				xmlSerializer.endTag("", "entry");
 			}
+			if (field != null) {
+				xmlSerializer.endTag("", field.getName());
+			}
+		} catch (IllegalArgumentException e) {
+			throw new SerializationException(e.getMessage(), e);
+		} catch (IllegalStateException e) {
+			throw new SerializationException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new SerializationException(e.getMessage(), e);
+		}
+	}
+
+	private void writeSerializedCollection(Field field, SerializedCollection serializedCollection, org.xmlpull.v1.XmlSerializer xmlSerializer)
+			throws SerializationException {
+		try {
+			int arrayLength = serializedCollection.getLength();
+			if (field != null) {
+				xmlSerializer.startTag("", field.getName());
+				xmlSerializer.attribute("", "length", String.valueOf(arrayLength));
+			}
+
+			for (int i = 0; i < arrayLength; i++) {
+				Object object = serializedCollection.get(i);
+				if(object == null) {
+					continue;
+				}
+				writeObject(field, object, "value", xmlSerializer);
+			}
+
 			if (field != null) {
 				xmlSerializer.endTag("", field.getName());
 			}
@@ -597,20 +626,19 @@ public class AndroidXmlSerializer implements XmlSerializer {
 						} else if (Map.class.isAssignableFrom(fieldClass)) {
 							xmlParser.next();
 							setMapField(xmlParser, currentField, fieldClass, result);
-						} else if (Collection.class.isAssignableFrom(fieldClass)) {
-							xmlParser.next();
-							setCollectionField(xmlParser, currentField, fieldClass, result);
-						} else if (com.badlogic.gdx.utils.Array.class.isAssignableFrom(fieldClass)) {
-							xmlParser.next();
-							setGdxArrayField(xmlParser, currentField, fieldClass, result);
 						} else if (ObjectMap.class.isAssignableFrom(fieldClass)) {
 							xmlParser.next();
 							setObjectMapField(xmlParser, currentField, fieldClass, result);
 						} else {
-							if(currentField.isFinal()) {
+							DeserializedCollection deserializedCollection = DeserializedCollection.getImplementation(currentField, fieldClass, result);
+							if(deserializedCollection != null) {
+								xmlParser.next();
+								setSerializedCollectionField(xmlParser, deserializedCollection, currentField, fieldClass, result);
+							} else if(currentField.isFinal()) {
 								throw new SerializationException("Cannot use @Field on final " + fieldClass.getName() + " fields.");
+							} else {
+								currentField.set(result, deserializeObject(xmlParser, currentFieldName, fieldClass));
 							}
-							currentField.set(result, deserializeObject(xmlParser, currentFieldName, fieldClass));
 						}
 						break;
 					}
@@ -656,24 +684,16 @@ public class AndroidXmlSerializer implements XmlSerializer {
 		throw new ReflectionException("No field '" + fieldName + "' found in class " + clazz.getName());
 	}
 
-	private <T> void setCollectionField(XmlPullParser xmlParser, Field field, Class<?> fieldClass, T object)
+	private <T> void setSerializedCollectionField(XmlPullParser xmlParser, DeserializedCollection deserializedCollection, Field field, Class<?> fieldClass, T object)
 			throws SerializationException {
 		try {
-			Collection collection = null;
-			if(field.isFinal()) {
-				collection = (Collection) field.get(object);
-			} else {
-				collection = (Collection) (fieldClass.isInterface() ? new ArrayList()
-						: ClassReflection.newInstance(fieldClass));
-			}
-			
-			Class<?> valueClass = field.getElementType(0);
+			Class<?> valueClass = deserializedCollection.getValueClass();
 
 			boolean finished = false;
 			while (!finished) {
 				switch (xmlParser.getEventType()) {
 				case XmlPullParser.START_TAG:
-					collection.add(deserializeObject(xmlParser, "value", valueClass));
+					deserializedCollection.add(deserializeObject(xmlParser, "value", valueClass));
 					break;
 				case XmlPullParser.END_TAG:
 					if (!xmlParser.getName().equals("value")) {
@@ -687,56 +707,9 @@ public class AndroidXmlSerializer implements XmlSerializer {
 					break;
 				}
 			}
-			if(!field.isFinal()) {
-				field.set(object, collection);
-			}
 		} catch (XmlPullParserException e) {
 			throw new SerializationException(e.getMessage(), e);
 		} catch (IOException e) {
-			throw new SerializationException(e.getMessage(), e);
-		} catch (ReflectionException e) {
-			throw new SerializationException(e.getMessage(), e);
-		}
-	}
-	
-	private <T> void setGdxArrayField(XmlPullParser xmlParser, Field field, Class<?> fieldClass, T object)
-			throws SerializationException {
-		try {
-			com.badlogic.gdx.utils.Array collection = null;
-			if(field.isFinal()) {
-				collection = (com.badlogic.gdx.utils.Array) field.get(object);
-			} else {
-				collection = (com.badlogic.gdx.utils.Array) ClassReflection.newInstance(fieldClass);
-			}
-			
-			Class<?> valueClass = field.getElementType(0);
-
-			boolean finished = false;
-			while (!finished) {
-				switch (xmlParser.getEventType()) {
-				case XmlPullParser.START_TAG:
-					collection.add(deserializeObject(xmlParser, "value", valueClass));
-					break;
-				case XmlPullParser.END_TAG:
-					if (!xmlParser.getName().equals("value")) {
-						finished = true;
-					} else {
-						xmlParser.next();
-					}
-					break;
-				default:
-					xmlParser.next();
-					break;
-				}
-			}
-			if(!field.isFinal()) {
-				field.set(object, collection);
-			}
-		} catch (XmlPullParserException e) {
-			throw new SerializationException(e.getMessage(), e);
-		} catch (IOException e) {
-			throw new SerializationException(e.getMessage(), e);
-		} catch (ReflectionException e) {
 			throw new SerializationException(e.getMessage(), e);
 		}
 	}

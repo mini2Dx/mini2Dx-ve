@@ -11,12 +11,10 @@
  */
 package org.mini2Dx.core.serialization.dummy;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.badlogic.gdx.utils.IntArray;
+import com.badlogic.gdx.utils.IntSet;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.core.serialization.annotation.PostDeserialize;
 import org.mini2Dx.natives.Os;
@@ -80,6 +78,10 @@ public class TestParentObject extends TestSuperObject {
 	private ObjectMap<String, String> gdxObjectMap;
 	@Field
 	private Array<String> gdxArray;
+	@Field
+	private IntArray gdxIntArray;
+	@Field
+	private IntSet gdxIntSet;
     
     private int ignoredValue;
     private boolean postDeserializeCalled = false;
@@ -299,137 +301,69 @@ public class TestParentObject extends TestSuperObject {
 		this.gdxArray = gdxArray;
 	}
 
+	public IntArray getGdxIntArray() {
+		return gdxIntArray;
+	}
+
+	public void setGdxIntArray(IntArray gdxIntArray) {
+		this.gdxIntArray = gdxIntArray;
+	}
+
+	public IntSet getGdxIntSet() {
+		return gdxIntSet;
+	}
+
+	public void setGdxIntSet(IntSet gdxIntSet) {
+		this.gdxIntSet = gdxIntSet;
+	}
+
 	public boolean isPostDeserializeCalled() {
 		return postDeserializeCalled;
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((abstractObject == null) ? 0 : abstractObject.hashCode());
-		result = prime * result + ((argObject == null) ? 0 : argObject.hashCode());
-		result = prime * result + (booleanValue ? 1231 : 1237);
-		result = prime * result + byteValue;
-		result = prime * result + ((childObject == null) ? 0 : childObject.hashCode());
-		result = prime * result + ((children == null) ? 0 : children.hashCode());
-		result = prime * result + ((enumValue == null) ? 0 : enumValue.hashCode());
-		result = prime * result + Arrays.hashCode(finalStringArray);
-		result = prime * result + ((finalStringList == null) ? 0 : finalStringList.hashCode());
-		result = prime * result + ((finalStringMap == null) ? 0 : finalStringMap.hashCode());
-		result = prime * result + Float.floatToIntBits(floatValue);
-		result = prime * result + ignoredValue;
-		result = prime * result + Arrays.hashCode(intArrayValue);
-		result = prime * result + intValue;
-		result = prime * result + ((interfaceObject == null) ? 0 : interfaceObject.hashCode());
-		result = prime * result + ((interfaceObjectList == null) ? 0 : interfaceObjectList.hashCode());
-		result = prime * result + ((listValues == null) ? 0 : listValues.hashCode());
-		result = prime * result + (int) (longValue ^ (longValue >>> 32));
-		result = prime * result + ((mapObjectValues == null) ? 0 : mapObjectValues.hashCode());
-		result = prime * result + ((mapValues == null) ? 0 : mapValues.hashCode());
-		result = prime * result + ((optionalChildObject == null) ? 0 : optionalChildObject.hashCode());
-		result = prime * result + shortValue;
-		result = prime * result + Arrays.hashCode(stringArrayValue);
-		result = prime * result + ((stringValue == null) ? 0 : stringValue.hashCode());
-		return result;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		TestParentObject that = (TestParentObject) o;
+		return intValue == that.intValue &&
+				booleanValue == that.booleanValue &&
+				byteValue == that.byteValue &&
+				shortValue == that.shortValue &&
+				longValue == that.longValue &&
+				Float.compare(that.floatValue, floatValue) == 0 &&
+				Arrays.equals(intArrayValue, that.intArrayValue) &&
+				Arrays.equals(stringArrayValue, that.stringArrayValue) &&
+				Objects.equals(stringValue, that.stringValue) &&
+				Objects.equals(mapValues, that.mapValues) &&
+				Objects.equals(listValues, that.listValues) &&
+				Objects.equals(childObject, that.childObject) &&
+				Arrays.equals(childObjectArray, that.childObjectArray) &&
+				Objects.equals(optionalChildObject, that.optionalChildObject) &&
+				Objects.equals(children, that.children) &&
+				Objects.equals(mapObjectValues, that.mapObjectValues) &&
+				enumValue == that.enumValue &&
+				Objects.equals(argObject, that.argObject) &&
+				Objects.equals(interfaceObject, that.interfaceObject) &&
+				Objects.equals(interfaceObjectList, that.interfaceObjectList) &&
+				Objects.equals(finalStringList, that.finalStringList) &&
+				Objects.equals(finalStringMap, that.finalStringMap) &&
+				Arrays.equals(finalStringArray, that.finalStringArray) &&
+				Objects.equals(abstractObject, that.abstractObject) &&
+				Objects.equals(gdxObjectMap, that.gdxObjectMap) &&
+				Objects.equals(gdxArray, that.gdxArray) &&
+				Objects.equals(gdxIntArray, that.gdxIntArray) &&
+				Objects.equals(gdxIntSet, that.gdxIntSet);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TestParentObject other = (TestParentObject) obj;
-		if (abstractObject == null) {
-			if (other.abstractObject != null)
-				return false;
-		} else if (!abstractObject.equals(other.abstractObject))
-			return false;
-		if (argObject == null) {
-			if (other.argObject != null)
-				return false;
-		} else if (!argObject.equals(other.argObject))
-			return false;
-		if (booleanValue != other.booleanValue)
-			return false;
-		if (byteValue != other.byteValue)
-			return false;
-		if (childObject == null) {
-			if (other.childObject != null)
-				return false;
-		} else if (!childObject.equals(other.childObject))
-			return false;
-		if (children == null) {
-			if (other.children != null)
-				return false;
-		} else if (!children.equals(other.children))
-			return false;
-		if (enumValue != other.enumValue)
-			return false;
-		if (!Arrays.equals(finalStringArray, other.finalStringArray))
-			return false;
-		if (finalStringList == null) {
-			if (other.finalStringList != null)
-				return false;
-		} else if (!finalStringList.equals(other.finalStringList))
-			return false;
-		if (finalStringMap == null) {
-			if (other.finalStringMap != null)
-				return false;
-		} else if (!finalStringMap.equals(other.finalStringMap))
-			return false;
-		if (Float.floatToIntBits(floatValue) != Float.floatToIntBits(other.floatValue))
-			return false;
-		if (ignoredValue != other.ignoredValue)
-			return false;
-		if (!Arrays.equals(intArrayValue, other.intArrayValue))
-			return false;
-		if (intValue != other.intValue)
-			return false;
-		if (interfaceObject == null) {
-			if (other.interfaceObject != null)
-				return false;
-		} else if (!interfaceObject.equals(other.interfaceObject))
-			return false;
-		if (interfaceObjectList == null) {
-			if (other.interfaceObjectList != null)
-				return false;
-		} else if (!interfaceObjectList.equals(other.interfaceObjectList))
-			return false;
-		if (listValues == null) {
-			if (other.listValues != null)
-				return false;
-		} else if (!listValues.equals(other.listValues))
-			return false;
-		if (longValue != other.longValue)
-			return false;
-		if (mapObjectValues == null) {
-			if (other.mapObjectValues != null)
-				return false;
-		} else if (!mapObjectValues.equals(other.mapObjectValues))
-			return false;
-		if (mapValues == null) {
-			if (other.mapValues != null)
-				return false;
-		} else if (!mapValues.equals(other.mapValues))
-			return false;
-		if (optionalChildObject == null) {
-			if (other.optionalChildObject != null)
-				return false;
-		} else if (!optionalChildObject.equals(other.optionalChildObject))
-			return false;
-		if (shortValue != other.shortValue)
-			return false;
-		if (!Arrays.equals(stringArrayValue, other.stringArrayValue))
-			return false;
-		if (stringValue == null) {
-			if (other.stringValue != null)
-				return false;
-		} else if (!stringValue.equals(other.stringValue))
-			return false;
-		return true;
+	public int hashCode() {
+		int result = Objects.hash(super.hashCode(), intValue, booleanValue, byteValue, shortValue, longValue, floatValue, stringValue, mapValues, listValues, childObject, optionalChildObject, children, mapObjectValues, enumValue, argObject, interfaceObject, interfaceObjectList, finalStringList, finalStringMap, abstractObject, gdxObjectMap, gdxArray, gdxIntArray, gdxIntSet);
+		result = 31 * result + Arrays.hashCode(intArrayValue);
+		result = 31 * result + Arrays.hashCode(stringArrayValue);
+		result = 31 * result + Arrays.hashCode(childObjectArray);
+		result = 31 * result + Arrays.hashCode(finalStringArray);
+		return result;
 	}
 }

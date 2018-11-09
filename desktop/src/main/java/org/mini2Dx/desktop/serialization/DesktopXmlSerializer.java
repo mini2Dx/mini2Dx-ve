@@ -39,11 +39,12 @@ import org.mini2Dx.core.serialization.XmlSerializer;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.NonConcrete;
 import org.mini2Dx.core.serialization.annotation.PostDeserialize;
+import org.mini2Dx.core.serialization.collection.DeserializedCollection;
+import org.mini2Dx.core.serialization.collection.SerializedCollection;
 import org.mini2Dx.core.util.Ref;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectMap.Entries;
 import com.badlogic.gdx.utils.reflect.Annotation;
 import com.badlogic.gdx.utils.reflect.ArrayReflection;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
@@ -222,21 +223,18 @@ public class DesktopXmlSerializer implements XmlSerializer {
 				writePrimitive(tagName, object, xmlWriter);
 				return;
 			}
-			if (Collection.class.isAssignableFrom(clazz)) {
-				Collection collection = (Collection) object;
-				writeArray(fieldDefinition, collection.toArray(), xmlWriter);
-				return;
-			}
-			if (com.badlogic.gdx.utils.Array.class.isAssignableFrom(clazz)) {
-				writeGdxArray(fieldDefinition, (com.badlogic.gdx.utils.Array) object, xmlWriter);
-				return;
-			}
 			if (Map.class.isAssignableFrom(clazz)) {
 				writeMap(fieldDefinition, (Map) object, xmlWriter);
 				return;
 			}
 			if (ObjectMap.class.isAssignableFrom(clazz)) {
 				writeObjectMap(fieldDefinition, (ObjectMap) object, xmlWriter);
+				return;
+			}
+
+			SerializedCollection serializedCollection = SerializedCollection.getImplementation(clazz, object);
+			if(serializedCollection != null) {
+				writeSerializedCollection(fieldDefinition, serializedCollection, xmlWriter);
 				return;
 			}
 
@@ -331,6 +329,8 @@ public class DesktopXmlSerializer implements XmlSerializer {
 			throw new SerializationException(e.getMessage(), e);
 		} catch (XMLStreamException e) {
 			throw new SerializationException(e.getMessage(), e);
+		} catch (NoSuchFieldException e) {
+			throw new SerializationException(e.getMessage(), e);
 		}
 	}
 	
@@ -382,15 +382,15 @@ public class DesktopXmlSerializer implements XmlSerializer {
 		}
 	}
 	
-	private <T> void writeGdxArray(Field field, com.badlogic.gdx.utils.Array array, XMLStreamWriter xmlWriter) throws SerializationException {
+	private <T> void writeSerializedCollection(Field field, SerializedCollection serializedCollection, XMLStreamWriter xmlWriter) throws SerializationException {
 		try {
 			if (field != null) {
 				xmlWriter.writeStartElement(field.getName());
-				xmlWriter.writeAttribute("length", String.valueOf(array.size));
+				xmlWriter.writeAttribute("length", String.valueOf(serializedCollection.getLength()));
 			}
 			
-			for (int i = 0; i < array.size; i++) {
-				Object object = array.get(i);
+			for (int i = 0; i < serializedCollection.getLength(); i++) {
+				Object object = serializedCollection.get(i);
 				if(object == null) {
 					continue;
 				}
@@ -400,6 +400,8 @@ public class DesktopXmlSerializer implements XmlSerializer {
 			if (field != null) {
 				xmlWriter.writeEndElement();
 			}
+
+			serializedCollection.dispose();
 		} catch (IllegalArgumentException e) {
 			throw new SerializationException(e.getMessage(), e);
 		} catch (IllegalStateException e) {
@@ -615,20 +617,19 @@ public class DesktopXmlSerializer implements XmlSerializer {
 						} else if (Map.class.isAssignableFrom(fieldClass)) {
 							xmlReader.next();
 							setMapField(xmlReader, currentField, fieldClass, result);
-						} else if (Collection.class.isAssignableFrom(fieldClass)) {
-							xmlReader.next();
-							setCollectionField(xmlReader, currentField, fieldClass, result);
-						} else if (com.badlogic.gdx.utils.Array.class.isAssignableFrom(fieldClass)) {
-							xmlReader.next();
-							setGdxArrayField(xmlReader, currentField, fieldClass, result);
 						} else if (ObjectMap.class.isAssignableFrom(fieldClass)) {
 							xmlReader.next();
 							setObjectMapField(xmlReader, currentField, fieldClass, result);
 						} else {
-							if(currentField.isFinal()) {
+							DeserializedCollection deserializedCollection = DeserializedCollection.getImplementation(currentField, fieldClass, result);
+							if(deserializedCollection != null) {
+								xmlReader.next();
+								setSerializedCollectionField(xmlReader, deserializedCollection, currentField, fieldClass, result);
+							} else if(currentField.isFinal()) {
 								throw new SerializationException("Cannot use @Field on final " + fieldClass.getName() + " fields.");
+							} else {
+								currentField.set(result, deserializeObject(xmlReader, currentFieldName, fieldClass));
 							}
-							currentField.set(result, deserializeObject(xmlReader, currentFieldName, fieldClass));
 						}
 						break;
 					}
@@ -677,24 +678,16 @@ public class DesktopXmlSerializer implements XmlSerializer {
 		throw new ReflectionException("No field '" + fieldName + "' found in class " + clazz.getName());
 	}
 
-	private <T> void setCollectionField(XMLStreamReader xmlReader, Field field, Class<?> fieldClass, T object)
+	private <T> void setSerializedCollectionField(XMLStreamReader xmlReader, DeserializedCollection deserializedCollection, Field field, Class<?> fieldClass, T object)
 			throws SerializationException {
 		try {
-			Collection collection = null;
-			if(field.isFinal()) {
-				collection = (Collection) field.get(object);
-			} else {
-				collection = (Collection) (fieldClass.isInterface() ? new ArrayList()
-						: ClassReflection.newInstance(fieldClass));
-			}
-			
-			Class<?> valueClass = field.getElementType(0);
+			Class<?> valueClass = deserializedCollection.getValueClass();
 
 			boolean finished = false;
 			while (!finished) {
 				switch (xmlReader.getEventType()) {
 				case XMLStreamConstants.START_ELEMENT:
-					collection.add(deserializeObject(xmlReader, "value", valueClass));
+					deserializedCollection.add(deserializeObject(xmlReader, "value", valueClass));
 					break;
 				case XMLStreamConstants.END_ELEMENT:
 					if (!xmlReader.getLocalName().equals("value")) {
@@ -708,53 +701,6 @@ public class DesktopXmlSerializer implements XmlSerializer {
 					break;
 				}
 			}
-
-			if(!field.isFinal()) {
-				field.set(object, collection);
-			}
-		} catch (ReflectionException e) {
-			throw new SerializationException(e.getMessage(), e);
-		} catch (XMLStreamException e) {
-			throw new SerializationException(e.getMessage(), e);
-		}
-	}
-	
-	private <T> void setGdxArrayField(XMLStreamReader xmlReader, Field field, Class<?> fieldClass, T object)
-			throws SerializationException {
-		try {
-			com.badlogic.gdx.utils.Array array = null;
-			if(field.isFinal()) {
-				array = (com.badlogic.gdx.utils.Array) field.get(object);
-			} else {
-				array = (com.badlogic.gdx.utils.Array) ClassReflection.newInstance(fieldClass);
-			}
-			
-			Class<?> valueClass = field.getElementType(0);
-
-			boolean finished = false;
-			while (!finished) {
-				switch (xmlReader.getEventType()) {
-				case XMLStreamConstants.START_ELEMENT:
-					array.add(deserializeObject(xmlReader, "value", valueClass));
-					break;
-				case XMLStreamConstants.END_ELEMENT:
-					if (!xmlReader.getLocalName().equals("value")) {
-						finished = true;
-					} else {
-						xmlReader.next();
-					}
-					break;
-				default:
-					xmlReader.next();
-					break;
-				}
-			}
-
-			if(!field.isFinal()) {
-				field.set(object, array);
-			}
-		} catch (ReflectionException e) {
-			throw new SerializationException(e.getMessage(), e);
 		} catch (XMLStreamException e) {
 			throw new SerializationException(e.getMessage(), e);
 		}

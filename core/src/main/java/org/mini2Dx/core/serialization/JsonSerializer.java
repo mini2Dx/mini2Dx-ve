@@ -21,6 +21,8 @@ import com.badlogic.gdx.utils.reflect.*;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.NonConcrete;
 import org.mini2Dx.core.serialization.annotation.PostDeserialize;
+import org.mini2Dx.core.serialization.collection.DeserializedCollection;
+import org.mini2Dx.core.serialization.collection.SerializedCollection;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -194,18 +196,20 @@ public class JsonSerializer {
 		json.writeArrayEnd();
 	}
 	
-	private <T> void writeGdxArray(Field field, com.badlogic.gdx.utils.Array array, Json json) throws SerializationException {
+	private <T> void writeSerializedCollection(Field field, SerializedCollection collection, Json json) throws SerializationException {
 		if (field != null) {
 			json.writeArrayStart(field.getName());
 		} else {
 			json.writeArrayStart();
 		}
 		
-		int arrayLength = array.size;
+		int arrayLength = collection.getLength();
 		for (int i = 0; i < arrayLength; i++) {
-			writeObject(field, array.get(i), null, json);
+			writeObject(field, collection.get(i), null, json);
 		}
 		json.writeArrayEnd();
+
+		collection.dispose();
 	}
 	
 	private <T> void writeObjectMap(Field field, ObjectMap map, Json json) throws SerializationException {
@@ -304,11 +308,6 @@ public class JsonSerializer {
 				writeArray(fieldDefinition, object, json);
 				return;
 			}
-			if (Collection.class.isAssignableFrom(clazz)) {
-				Collection collection = (Collection) object;
-				writeArray(fieldDefinition, collection.toArray(), json);
-				return;
-			}
 			if (Map.class.isAssignableFrom(clazz)) {
 				writeMap(fieldDefinition, (Map) object, json);
 				return;
@@ -317,8 +316,10 @@ public class JsonSerializer {
 				writeObjectMap(fieldDefinition, (ObjectMap) object, json);
 				return;
 			}
-			if (com.badlogic.gdx.utils.Array.class.isAssignableFrom(clazz)) {
-				writeGdxArray(fieldDefinition, (com.badlogic.gdx.utils.Array) object, json);
+
+			SerializedCollection serializedCollection = SerializedCollection.getImplementation(clazz, object);
+			if(serializedCollection != null) {
+				writeSerializedCollection(fieldDefinition, serializedCollection, json);
 				return;
 			}
 
@@ -573,17 +574,17 @@ public class JsonSerializer {
 					field.set(targetObject, value.asString());
 				} else if (Map.class.isAssignableFrom(clazz)) {
 					setMapField(targetObject, field, clazz, value);
-				} else if (Collection.class.isAssignableFrom(clazz)) {
-					setCollectionField(targetObject, field, clazz, value);
 				} else if (ObjectMap.class.isAssignableFrom(clazz)) {
 					setObjectMapField(targetObject, field, clazz, value);
-				} else if (com.badlogic.gdx.utils.Array.class.isAssignableFrom(clazz)) {
-					setGdxArrayField(targetObject, field, clazz, value);
 				} else {
-					if(field.isFinal()) {
+					DeserializedCollection deserializedCollection = DeserializedCollection.getImplementation(field, clazz, targetObject);
+					if(deserializedCollection != null) {
+						setSerializedCollectionField(deserializedCollection, targetObject, field, clazz, value);
+					} else if(field.isFinal()) {
 						throw new SerializationException("Cannot use @Field on final " + clazz.getName() +" fields.");
+					} else {
+						field.set(targetObject, deserialize(value, clazz));
 					}
-					field.set(targetObject, deserialize(value, clazz));
 				}
 				return;
 			}
@@ -599,25 +600,13 @@ public class JsonSerializer {
 		}
 	}
 	
-	private <T> void setGdxArrayField(T targetObject, Field field, Class<?> clazz, JsonValue value)
+	private <T> void setSerializedCollectionField(DeserializedCollection deserializedCollection, T targetObject, Field field, Class<?> clazz, JsonValue value)
 		throws SerializationException {
 		try {
-			Class<?> valueClass = field.getElementType(0);
-			Class<?> implementationClass = determineImplementation(value, clazz);
-			
-			com.badlogic.gdx.utils.Array targetArray = null;
-			if(field.isFinal()) {
-				targetArray = (com.badlogic.gdx.utils.Array) field.get(targetObject);
-			} else {
-				targetArray = construct(value, implementationClass);
-			}
+			Class<?> valueClass = deserializedCollection.getValueClass();
 			
 			for(int i = 0; i < value.size; i++) {
-				targetArray.add(deserialize(value.get(i), valueClass));
-			}
-			
-			if(!field.isFinal()) {
-				field.set(targetObject, targetArray);
+				deserializedCollection.add(deserialize(value.get(i), valueClass));
 			}
 		} catch (SerializationException e) {
 			throw e;

@@ -14,6 +14,8 @@ package org.mini2Dx.core.serialization;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.badlogic.gdx.utils.IntArray;
+import com.badlogic.gdx.utils.IntSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.mini2Dx.core.serialization.dummy.TestAbstractImplObject;
@@ -100,6 +102,14 @@ public class JsonSerializerTest {
 		
 		parentObject.setGdxArray(new Array<String>());
 		parentObject.getGdxArray().add("testGdxArrayValue");
+
+		parentObject.setGdxIntArray(new IntArray());
+		parentObject.getGdxIntArray().add(1);
+		parentObject.getGdxIntArray().add(77);
+
+		parentObject.setGdxIntSet(new IntSet());
+		parentObject.getGdxIntSet().add(99);
+		parentObject.getGdxIntSet().add(101);
 	}
 	
 	@Test
@@ -197,5 +207,13 @@ public class JsonSerializerTest {
 		for(int i = 0; i < parentObject.getGdxArray().size; i++) {
 			Assert.assertEquals(parentObject.getGdxArray().get(i), result.getGdxArray().get(i));
 		}
+
+		Assert.assertEquals(parentObject.getGdxIntArray().size, result.getGdxIntArray().size);
+		for(int i = 0; i < parentObject.getGdxIntArray().size; i++) {
+			Assert.assertEquals(parentObject.getGdxIntArray().get(i), result.getGdxIntArray().get(i));
+		}
+
+		Assert.assertEquals(parentObject.getGdxIntSet().size, result.getGdxIntSet().size);
+		Assert.assertEquals(parentObject.getGdxIntSet(), result.getGdxIntSet());
 	}
 }

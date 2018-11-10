@@ -579,7 +579,6 @@ public class IOSMini2DxGraphics extends NSObject implements Graphics, GLKViewDel
 		return gl30;
 	}
 
-	@Override
 	public void setGL20 (GL20 gl20) {
 		this.gl20 = gl20;
 		if (gl30 == null) {
@@ -588,7 +587,6 @@ public class IOSMini2DxGraphics extends NSObject implements Graphics, GLKViewDel
 		}
 	}
 
-	@Override
 	public void setGL30 (GL30 gl30) {
 		this.gl30 = gl30;
 		if (gl30 != null) {

@@ -17,6 +17,9 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Utility class used during JSON/XML deserialization
+ */
 public class SetDeserializedCollection extends DeserializedCollection<Set> {
 
 	public SetDeserializedCollection(Field field, Class<?> fieldClass, Object object) throws ReflectionException {

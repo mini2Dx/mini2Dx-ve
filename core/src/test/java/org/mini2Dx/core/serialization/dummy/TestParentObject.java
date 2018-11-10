@@ -13,14 +13,10 @@ package org.mini2Dx.core.serialization.dummy;
 
 import java.util.*;
 
-import com.badlogic.gdx.utils.IntArray;
-import com.badlogic.gdx.utils.IntSet;
+import com.badlogic.gdx.utils.*;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.core.serialization.annotation.PostDeserialize;
 import org.mini2Dx.natives.Os;
-
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectMap;
 
 /**
  * Parent object class for testing serialization
@@ -82,6 +78,8 @@ public class TestParentObject extends TestSuperObject {
 	private IntArray gdxIntArray;
 	@Field
 	private IntSet gdxIntSet;
+	@Field
+	private IntIntMap gdxIntIntMap;
     
     private int ignoredValue;
     private boolean postDeserializeCalled = false;
@@ -317,6 +315,14 @@ public class TestParentObject extends TestSuperObject {
 		this.gdxIntSet = gdxIntSet;
 	}
 
+	public IntIntMap getGdxIntIntMap() {
+		return gdxIntIntMap;
+	}
+
+	public void setGdxIntIntMap(IntIntMap gdxIntIntMap) {
+		this.gdxIntIntMap = gdxIntIntMap;
+	}
+
 	public boolean isPostDeserializeCalled() {
 		return postDeserializeCalled;
 	}
@@ -354,12 +360,13 @@ public class TestParentObject extends TestSuperObject {
 				Objects.equals(gdxObjectMap, that.gdxObjectMap) &&
 				Objects.equals(gdxArray, that.gdxArray) &&
 				Objects.equals(gdxIntArray, that.gdxIntArray) &&
-				Objects.equals(gdxIntSet, that.gdxIntSet);
+				Objects.equals(gdxIntSet, that.gdxIntSet) &&
+				Objects.equals(gdxIntIntMap, that.gdxIntIntMap);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = Objects.hash(super.hashCode(), intValue, booleanValue, byteValue, shortValue, longValue, floatValue, stringValue, mapValues, listValues, childObject, optionalChildObject, children, mapObjectValues, enumValue, argObject, interfaceObject, interfaceObjectList, finalStringList, finalStringMap, abstractObject, gdxObjectMap, gdxArray, gdxIntArray, gdxIntSet);
+		int result = Objects.hash(super.hashCode(), intValue, booleanValue, byteValue, shortValue, longValue, floatValue, stringValue, mapValues, listValues, childObject, optionalChildObject, children, mapObjectValues, enumValue, argObject, interfaceObject, interfaceObjectList, finalStringList, finalStringMap, abstractObject, gdxObjectMap, gdxArray, gdxIntArray, gdxIntSet, gdxIntIntMap);
 		result = 31 * result + Arrays.hashCode(intArrayValue);
 		result = 31 * result + Arrays.hashCode(stringArrayValue);
 		result = 31 * result + Arrays.hashCode(childObjectArray);

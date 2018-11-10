@@ -11,28 +11,9 @@
  */
 package org.mini2Dx.desktop.serialization;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.reflect.*;
 import org.mini2Dx.core.serialization.RequiredFieldException;
 import org.mini2Dx.core.serialization.SerializationException;
 import org.mini2Dx.core.serialization.XmlSerializer;
@@ -41,16 +22,17 @@ import org.mini2Dx.core.serialization.annotation.NonConcrete;
 import org.mini2Dx.core.serialization.annotation.PostDeserialize;
 import org.mini2Dx.core.serialization.collection.DeserializedCollection;
 import org.mini2Dx.core.serialization.collection.SerializedCollection;
+import org.mini2Dx.core.serialization.map.deserialize.DeserializedMap;
+import org.mini2Dx.core.serialization.map.serialize.SerializedMap;
 import org.mini2Dx.core.util.Ref;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.reflect.Annotation;
-import com.badlogic.gdx.utils.reflect.ArrayReflection;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.Field;
-import com.badlogic.gdx.utils.reflect.Method;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
+import javax.xml.stream.*;
+import java.io.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 /**
  * Desktop implementation of {@link XmlSerializer}
@@ -223,12 +205,10 @@ public class DesktopXmlSerializer implements XmlSerializer {
 				writePrimitive(tagName, object, xmlWriter);
 				return;
 			}
-			if (Map.class.isAssignableFrom(clazz)) {
-				writeMap(fieldDefinition, (Map) object, xmlWriter);
-				return;
-			}
-			if (ObjectMap.class.isAssignableFrom(clazz)) {
-				writeObjectMap(fieldDefinition, (ObjectMap) object, xmlWriter);
+
+			SerializedMap serializedMap = SerializedMap.getImplementation(clazz, object);
+			if(serializedMap != null) {
+				writeSerializedMap(fieldDefinition, serializedMap, xmlWriter);
 				return;
 			}
 
@@ -334,37 +314,12 @@ public class DesktopXmlSerializer implements XmlSerializer {
 		}
 	}
 	
-	private <T> void writeObjectMap(Field field, ObjectMap map, XMLStreamWriter xmlWriter) throws SerializationException {
+	private <T> void writeSerializedMap(Field field, SerializedMap map, XMLStreamWriter xmlWriter) throws SerializationException {
 		try {
 			if (field != null) {
 				xmlWriter.writeStartElement(field.getName());
 			}
-			ObjectMap.Entries entries = map.iterator();
-			while(entries.hasNext()) {
-				ObjectMap.Entry entry = entries.next();
-				xmlWriter.writeStartElement("entry");
-				writeObject(null, entry.key, "key", xmlWriter);
-				writeObject(field, entry.value, "value", xmlWriter);
-				xmlWriter.writeEndElement();
-			}
-			if (field != null) {
-				xmlWriter.writeEndElement();
-			}
-		} catch (IllegalArgumentException e) {
-			throw new SerializationException(e.getMessage(), e);
-		} catch (IllegalStateException e) {
-			throw new SerializationException(e.getMessage(), e);
-		} catch (XMLStreamException e) {
-			throw new SerializationException(e.getMessage(), e);
-		}
-	}
-
-	private <T> void writeMap(Field field, Map map, XMLStreamWriter xmlWriter) throws SerializationException {
-		try {
-			if (field != null) {
-				xmlWriter.writeStartElement(field.getName());
-			}
-			for (Object key : map.keySet()) {
+			for (Object key : map.keys()) {
 				xmlWriter.writeStartElement("entry");
 				writeObject(null, key, "key", xmlWriter);
 				writeObject(field, map.get(key), "value", xmlWriter);
@@ -614,21 +569,21 @@ public class DesktopXmlSerializer implements XmlSerializer {
 							} else {
 								setPrimitiveField(currentField, fieldClass, result, xmlReader.getText());
 							}
-						} else if (Map.class.isAssignableFrom(fieldClass)) {
-							xmlReader.next();
-							setMapField(xmlReader, currentField, fieldClass, result);
-						} else if (ObjectMap.class.isAssignableFrom(fieldClass)) {
-							xmlReader.next();
-							setObjectMapField(xmlReader, currentField, fieldClass, result);
 						} else {
-							DeserializedCollection deserializedCollection = DeserializedCollection.getImplementation(currentField, fieldClass, result);
-							if(deserializedCollection != null) {
+							DeserializedMap deserializedMap = DeserializedMap.getImplementation(currentField, fieldClass, result);
+							if(deserializedMap != null) {
 								xmlReader.next();
-								setSerializedCollectionField(xmlReader, deserializedCollection, currentField, fieldClass, result);
-							} else if(currentField.isFinal()) {
-								throw new SerializationException("Cannot use @Field on final " + fieldClass.getName() + " fields.");
+								setSerializedMapField(xmlReader, deserializedMap, currentField, fieldClass, result);
 							} else {
-								currentField.set(result, deserializeObject(xmlReader, currentFieldName, fieldClass));
+								DeserializedCollection deserializedCollection = DeserializedCollection.getImplementation(currentField, fieldClass, result);
+								if(deserializedCollection != null) {
+									xmlReader.next();
+									setSerializedCollectionField(xmlReader, deserializedCollection, currentField, fieldClass, result);
+								} else if(currentField.isFinal()) {
+									throw new SerializationException("Cannot use @Field on final " + fieldClass.getName() + " fields.");
+								} else {
+									currentField.set(result, deserializeObject(xmlReader, currentFieldName, fieldClass));
+								}
 							}
 						}
 						break;
@@ -706,18 +661,11 @@ public class DesktopXmlSerializer implements XmlSerializer {
 		}
 	}
 
-	private <T> void setMapField(XMLStreamReader xmlReader, Field field, Class<?> fieldClass, T object)
+	private <T> void setSerializedMapField(XMLStreamReader xmlReader, DeserializedMap deserializedMap, Field field, Class<?> fieldClass, T object)
 			throws SerializationException {
 		try {
-			Map map = null;
-			if(field.isFinal()) {
-				map = (Map) field.get(object);
-			} else {
-				map = (Map) (fieldClass.isInterface() ? new HashMap() : ClassReflection.newInstance(fieldClass));
-			}
-			
-			Class<?> keyClass = field.getElementType(0);
-			Class<?> valueClass = field.getElementType(1);
+			Class<?> keyClass = deserializedMap.getKeyClass();
+			Class<?> valueClass = deserializedMap.getValueClass();
 
 			boolean finished = false;
 			Object key = null;
@@ -752,7 +700,7 @@ public class DesktopXmlSerializer implements XmlSerializer {
 						xmlReader.nextTag();
 						break;
 					case "value":
-						map.put(key, value);
+						deserializedMap.put(key, value);
 						xmlReader.nextTag();
 						break;
 					default:
@@ -767,84 +715,6 @@ public class DesktopXmlSerializer implements XmlSerializer {
 					break;
 				}
 			}
-			
-			if(!field.isFinal()) {
-				field.set(object, map);
-			}
-		} catch (ReflectionException e) {
-			throw new SerializationException(e.getMessage(), e);
-		} catch (XMLStreamException e) {
-			throw new SerializationException(e.getMessage(), e);
-		}
-	}
-	
-	private <T> void setObjectMapField(XMLStreamReader xmlReader, Field field, Class<?> fieldClass, T object)
-			throws SerializationException {
-		try {
-			ObjectMap map = null;
-			if(field.isFinal()) {
-				map = (ObjectMap) field.get(object);
-			} else {
-				map = new ObjectMap();
-			}
-			
-			Class<?> keyClass = field.getElementType(0);
-			Class<?> valueClass = field.getElementType(1);
-
-			boolean finished = false;
-			Object key = null;
-			Object value = null;
-			while (!finished) {
-				switch (xmlReader.getEventType()) {
-				case XMLStreamConstants.START_ELEMENT: {
-					String currentTag = xmlReader.getLocalName();
-					switch (currentTag) {
-					case "entry":
-						xmlReader.nextTag();
-						break;
-					case "key":
-						key = deserializeObject(xmlReader, "key", keyClass);
-						break;
-					case "value":
-						value = deserializeObject(xmlReader, "value", valueClass);
-						break;
-					default:
-						finished = true;
-						break;
-					}
-					break;
-				}
-				case XMLStreamConstants.END_ELEMENT: {
-					String currentTag = xmlReader.getLocalName();
-					switch (currentTag) {
-					case "entry":
-						xmlReader.nextTag();
-						break;
-					case "key":
-						xmlReader.nextTag();
-						break;
-					case "value":
-						map.put(key, value);
-						xmlReader.nextTag();
-						break;
-					default:
-						finished = true;
-						break;
-					}
-					break;
-				}
-				default:
-					// Handle whitespace in pretty XML
-					xmlReader.next();
-					break;
-				}
-			}
-			
-			if(!field.isFinal()) {
-				field.set(object, map);
-			}
-		} catch (ReflectionException e) {
-			throw new SerializationException(e.getMessage(), e);
 		} catch (XMLStreamException e) {
 			throw new SerializationException(e.getMessage(), e);
 		}

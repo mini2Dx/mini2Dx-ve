@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.badlogic.gdx.utils.IntArray;
-import com.badlogic.gdx.utils.IntSet;
+import com.badlogic.gdx.utils.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,8 +35,6 @@ import org.mini2Dx.natives.Os;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectMap;
 
 import junit.framework.Assert;
 
@@ -191,5 +188,9 @@ public class DesktopPlayerDataTest {
         expectedParentObject.setGdxIntSet(new IntSet());
         expectedParentObject.getGdxIntSet().add(99);
         expectedParentObject.getGdxIntSet().add(101);
+
+        expectedParentObject.setGdxIntIntMap(new IntIntMap());
+        expectedParentObject.getGdxIntIntMap().put(44, 55);
+        expectedParentObject.getGdxIntIntMap().put(66, 77);
     }
 }

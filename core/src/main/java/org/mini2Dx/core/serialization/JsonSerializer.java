@@ -23,6 +23,8 @@ import org.mini2Dx.core.serialization.annotation.NonConcrete;
 import org.mini2Dx.core.serialization.annotation.PostDeserialize;
 import org.mini2Dx.core.serialization.collection.DeserializedCollection;
 import org.mini2Dx.core.serialization.collection.SerializedCollection;
+import org.mini2Dx.core.serialization.map.deserialize.DeserializedMap;
+import org.mini2Dx.core.serialization.map.serialize.SerializedMap;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -211,30 +213,15 @@ public class JsonSerializer {
 
 		collection.dispose();
 	}
-	
-	private <T> void writeObjectMap(Field field, ObjectMap map, Json json) throws SerializationException {
-		if (field != null) {
-			json.writeObjectStart(field.getName());
-		} else {
-			json.writeObjectStart();
-		}
-		
-		ObjectMap.Entries entries = map.iterator();
-		while(entries.hasNext()) {
-			ObjectMap.Entry entry = entries.next();
-			writeObject(field, entry.value, entry.key.toString(), json);
-		}
-		json.writeObjectEnd();
-	}
 
-	private <T> void writeMap(Field field, Map map, Json json) throws SerializationException {
+	private <T> void writeSerializedMap(Field field, SerializedMap map, Json json) throws SerializationException {
 		if (field != null) {
 			json.writeObjectStart(field.getName());
 		} else {
 			json.writeObjectStart();
 		}
 		
-		for (Object key : map.keySet()) {
+		for (Object key : map.keys()) {
 			writeObject(field, map.get(key), key.toString(), json);
 		}
 		json.writeObjectEnd();
@@ -308,12 +295,9 @@ public class JsonSerializer {
 				writeArray(fieldDefinition, object, json);
 				return;
 			}
-			if (Map.class.isAssignableFrom(clazz)) {
-				writeMap(fieldDefinition, (Map) object, json);
-				return;
-			}
-			if (ObjectMap.class.isAssignableFrom(clazz)) {
-				writeObjectMap(fieldDefinition, (ObjectMap) object, json);
+			SerializedMap serializedMap = SerializedMap.getImplementation(clazz, object);
+			if(serializedMap != null) {
+				writeSerializedMap(fieldDefinition, serializedMap, json);
 				return;
 			}
 
@@ -572,18 +556,19 @@ public class JsonSerializer {
 						throw new SerializationException("Cannot use @Field on final String fields. Use the @ConstructorArg method instead.");
 					}
 					field.set(targetObject, value.asString());
-				} else if (Map.class.isAssignableFrom(clazz)) {
-					setMapField(targetObject, field, clazz, value);
-				} else if (ObjectMap.class.isAssignableFrom(clazz)) {
-					setObjectMapField(targetObject, field, clazz, value);
 				} else {
-					DeserializedCollection deserializedCollection = DeserializedCollection.getImplementation(field, clazz, targetObject);
-					if(deserializedCollection != null) {
-						setSerializedCollectionField(deserializedCollection, targetObject, field, clazz, value);
-					} else if(field.isFinal()) {
-						throw new SerializationException("Cannot use @Field on final " + clazz.getName() +" fields.");
+					DeserializedMap deserializedMap = DeserializedMap.getImplementation(field, clazz, targetObject);
+					if(deserializedMap != null) {
+						setSerializedMapField(deserializedMap, targetObject, field, clazz, value);
 					} else {
-						field.set(targetObject, deserialize(value, clazz));
+						DeserializedCollection deserializedCollection = DeserializedCollection.getImplementation(field, clazz, targetObject);
+						if(deserializedCollection != null) {
+							setSerializedCollectionField(deserializedCollection, targetObject, field, clazz, value);
+						} else if(field.isFinal()) {
+							throw new SerializationException("Cannot use @Field on final " + clazz.getName() +" fields.");
+						} else {
+							field.set(targetObject, deserialize(value, clazz));
+						}
 					}
 				}
 				return;
@@ -728,81 +713,14 @@ public class JsonSerializer {
 		}
 	}
 
-	private <T> void setCollectionField(T targetObject, Field field, Class<?> clazz, JsonValue value)
+	private <T> void setSerializedMapField(DeserializedMap deserializedMap, T targetObject, Field field, Class<?> clazz, JsonValue value)
 			throws SerializationException {
 		try {
-			Class<?> valueClass = field.getElementType(0);
-
-			Collection collection = null;
-			
-			if(field.isFinal()) {
-				collection = (Collection) field.get(targetObject);
-			} else {
-				collection = (Collection) (clazz.isInterface() ? new ArrayList()
-						: ClassReflection.newInstance(clazz));
-			}
-			for (int i = 0; i < value.size; i++) {
-				collection.add(deserialize(value.get(i), valueClass));
-			}
-			
-			if(!field.isFinal()) {
-				field.set(targetObject, collection);
-			}
-		} catch (SerializationException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new SerializationException(e);
-		}
-	}
-
-	private <T> void setMapField(T targetObject, Field field, Class<?> clazz, JsonValue value)
-			throws SerializationException {
-		try {
-			Map map = null;
-			
-			if(field.isFinal()) {
-				map = (Map) field.get(targetObject);
-			} else {
-				map = (Map) (clazz.isInterface() ? new HashMap() : ClassReflection.newInstance(clazz));
-			}
-			
-			Class<?> keyClass = field.getElementType(0);
-			Class<?> valueClass = field.getElementType(1);
+			Class<?> keyClass = deserializedMap.getKeyClass();
+			Class<?> valueClass = deserializedMap.getValueClass();
 
 			for (int i = 0; i < value.size; i++) {
-				map.put(parseMapKey(value.get(i).name, keyClass), deserialize(value.get(i), valueClass));
-			}
-			
-			if(!field.isFinal()) {
-				field.set(targetObject, map);
-			}
-		} catch (SerializationException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new SerializationException(e);
-		}
-	}
-	
-	private <T> void setObjectMapField(T targetObject, Field field, Class<?> clazz, JsonValue value)
-			throws SerializationException {
-		try {
-			ObjectMap map = null;
-			
-			if(field.isFinal()) {
-				map = (ObjectMap) field.get(targetObject);
-			} else {
-				map = new ObjectMap();
-			}
-			
-			Class<?> keyClass = field.getElementType(0);
-			Class<?> valueClass = field.getElementType(1);
-
-			for (int i = 0; i < value.size; i++) {
-				map.put(parseMapKey(value.get(i).name, keyClass), deserialize(value.get(i), valueClass));
-			}
-			
-			if(!field.isFinal()) {
-				field.set(targetObject, map);
+				deserializedMap.put(parseMapKey(value.get(i).name, keyClass), deserialize(value.get(i), valueClass));
 			}
 		} catch (SerializationException e) {
 			throw e;

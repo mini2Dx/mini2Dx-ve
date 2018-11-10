@@ -5,6 +5,7 @@
 - [BREAKING] Deferred UI tasks can now be deferred until update() or layout()
 - [BREAKING] UI elements now default to pixel coordinate UI layout
 - [BREAKING] Rename PS4Button.X to PS4Button.CROSS per PS specification
+- Added support for all GDX collection classes in XML/JSON serialization
 - Added CustomUiElement class to simplify implementing custom UI elements
 - Added support for both flex and pixel coordinate UI layouts
 - Added support for static, ninepatch and tiling UI element backgrounds

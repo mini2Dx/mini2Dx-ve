@@ -18,6 +18,9 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * Utility class used during JSON/XML deserialization
+ */
 public class GdxDeserializedCollection<T, N> extends DeserializedCollection<T> {
 	private static final String LOGGING_TAG = GdxDeserializedCollection.class.getSimpleName();
 

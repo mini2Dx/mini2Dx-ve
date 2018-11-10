@@ -20,6 +20,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Utility class used during JSON/XML deserialization
+ */
 public abstract class DeserializedCollection<T> {
 	protected final Field field;
 	protected final Class<?> fieldClass;

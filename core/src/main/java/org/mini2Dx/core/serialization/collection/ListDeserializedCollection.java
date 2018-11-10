@@ -17,6 +17,9 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class used during JSON/XML deserialization
+ */
 public class ListDeserializedCollection extends DeserializedCollection<List> {
 
 	public ListDeserializedCollection(Field field, Class<?> fieldClass, Object object) throws ReflectionException {

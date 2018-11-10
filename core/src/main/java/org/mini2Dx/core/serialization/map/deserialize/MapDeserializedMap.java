@@ -9,30 +9,40 @@
  * Neither the name of the mini2Dx nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.mini2Dx.core.serialization.collection;
+package org.mini2Dx.core.serialization.map.deserialize;
 
-import java.util.List;
+import com.badlogic.gdx.utils.reflect.Field;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Utility class used during JSON/XML serialization
+ * Utility class used during JSON/XML deserialization
  */
-public class ListSerializedCollection extends SerializedCollection<List> {
+public class MapDeserializedMap extends DeserializedMap<Map> {
 
-	public ListSerializedCollection(List collection) {
-		super(collection);
+	public MapDeserializedMap(Field field, Class<?> fieldClass, Object object) throws ReflectionException {
+		super(field, fieldClass, object);
 	}
 
 	@Override
-	public Object get(int index) {
-		return collection.get(index);
+	public Class<? extends Map> getFallbackImplementation() {
+		return HashMap.class;
 	}
 
 	@Override
-	public int getLength() {
-		return collection.size();
+	public Class<?> getKeyClass() {
+		return field.getElementType(0);
 	}
 
 	@Override
-	public void dispose() {
+	public Class<?> getValueClass() {
+		return field.getElementType(1);
+	}
+
+	@Override
+	public void put(Object key, Object value) {
+		map.put(key, value);
 	}
 }

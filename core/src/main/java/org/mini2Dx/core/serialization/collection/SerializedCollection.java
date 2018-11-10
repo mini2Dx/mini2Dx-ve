@@ -17,6 +17,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Utility class used during JSON/XML serialization
+ */
 public abstract class SerializedCollection<T> {
 	protected final T collection;
 

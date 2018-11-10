@@ -14,16 +14,11 @@ package org.mini2Dx.core.serialization;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.badlogic.gdx.utils.IntArray;
-import com.badlogic.gdx.utils.IntSet;
+import com.badlogic.gdx.utils.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.mini2Dx.core.Mdx;
 import org.mini2Dx.core.serialization.dummy.*;
 import org.mini2Dx.natives.Os;
-
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectMap;
 
 import junit.framework.Assert;
 
@@ -134,6 +129,9 @@ public abstract class XmlSerializerTest {
 
 		Assert.assertEquals(parentObject.getGdxIntSet().size, result.getGdxIntSet().size);
 		Assert.assertEquals(parentObject.getGdxIntSet(), result.getGdxIntSet());
+
+		Assert.assertEquals(parentObject.getGdxIntIntMap().size, result.getGdxIntIntMap().size);
+		Assert.assertEquals(parentObject.getGdxIntIntMap(), result.getGdxIntIntMap());
 	}
 	
 	@Test
@@ -237,6 +235,16 @@ public abstract class XmlSerializerTest {
 		xml += "        <value>99</value>\n";
 		xml += "        <value>101</value>\n";
 		xml += "    </gdxIntSet>\n";
+		xml += "    <gdxIntIntMap>\n";
+		xml += "        <entry>\n";
+		xml += "            <key>44</key>\n";
+		xml += "            <value>55</value>\n";
+		xml += "        </entry>\n";
+		xml += "        <entry>\n";
+		xml += "            <key>66</key>\n";
+		xml += "            <value>77</value>\n";
+		xml += "        </entry>\n";
+		xml += "    </gdxIntIntMap>\n";
 		xml += "</data>";
 		
 		TestParentObject result = xmlSerializer.fromXml(xml, TestParentObject.class);
@@ -303,6 +311,9 @@ public abstract class XmlSerializerTest {
 
 		Assert.assertEquals(parentObject.getGdxIntSet().size, result.getGdxIntSet().size);
 		Assert.assertEquals(parentObject.getGdxIntSet(), result.getGdxIntSet());
+
+		Assert.assertEquals(parentObject.getGdxIntIntMap().size, result.getGdxIntIntMap().size);
+		Assert.assertEquals(parentObject.getGdxIntIntMap(), result.getGdxIntIntMap());
 	}
 
 	@Test
@@ -406,6 +417,10 @@ public abstract class XmlSerializerTest {
 		parentObject.setGdxIntSet(new IntSet());
 		parentObject.getGdxIntSet().add(99);
 		parentObject.getGdxIntSet().add(101);
+
+		parentObject.setGdxIntIntMap(new IntIntMap());
+		parentObject.getGdxIntIntMap().put(44, 55);
+		parentObject.getGdxIntIntMap().put(66, 77);
 		return parentObject;
 	}
 }

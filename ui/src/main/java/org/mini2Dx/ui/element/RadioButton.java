@@ -113,6 +113,22 @@ public class RadioButton extends UiElement implements Actionable {
 		parentRenderNode.removeChild(renderNode);
 		renderNode = null;
 	}
+
+	@Override
+	public void invokeBeginHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.beginFakeHover();
+	}
+
+	@Override
+	public void invokeEndHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.endFakeHover();
+	}
 	
 	@Override
 	public void notifyActionListenersOfBeginEvent(EventTrigger eventTrigger, EventTriggerParams eventTriggerParams) {

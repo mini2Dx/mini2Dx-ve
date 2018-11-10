@@ -223,6 +223,22 @@ public class Checkbox extends UiElement implements Actionable {
 		return UiContainer.getTheme().getCheckboxStyleRule(styleId, ScreenSize.XS);
 	}
 
+	@Override
+	public void invokeBeginHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.beginFakeHover();
+	}
+
+	@Override
+	public void invokeEndHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.endFakeHover();
+	}
+
 	public boolean isChecked() {
 		return checked;
 	}

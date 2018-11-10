@@ -22,6 +22,7 @@ import org.mini2Dx.core.screen.Transition;
 import org.mini2Dx.core.screen.transition.FadeInTransition;
 import org.mini2Dx.core.screen.transition.FadeOutTransition;
 import org.mini2Dx.uats.*;
+import org.mini2Dx.ui.InputSource;
 import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.animation.TypingTextAnimation;
 import org.mini2Dx.ui.controller.ControllerUiInput;
@@ -53,8 +54,10 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 	private final AssetManager assetManager;
 
 	private UiContainer uiContainer;
+	private VerticalUiNavigation uiNavigation;
 	private ControllerUiInput<?> controllerInput;
 	private Container uatsDialog;
+	private InputSource lastInputSource = InputSource.KEYBOARD_MOUSE;
 	private int nextScreenId = -1;
 
 	public UATSelectionScreen(AssetManager assetManager) {
@@ -80,6 +83,13 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 	@Override
 	public void update(GameContainer gc, ScreenManager<? extends GameScreen> screenManager, float delta) {
 		uiContainer.update(delta);
+
+		if(!lastInputSource.equals(uiContainer.getLastInputSource())) {
+			uiNavigation.resetCursor(true);
+			lastInputSource = uiContainer.getLastInputSource();
+		}
+		System.out.println(uiContainer.getLastInputSource());
+
 		if (nextScreenId > -1) {
 			screenManager.enterGameScreen(nextScreenId, new FadeOutTransition(), new FadeInTransition());
 			nextScreenId = -1;
@@ -115,6 +125,7 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 	@Override
 	public void postTransitionIn(Transition transitionIn) {
 		uiContainer.setActiveNavigation(uatsDialog);
+		uiNavigation.resetCursor(true);
 		if(controllerInput != null) {
 			controllerInput.enable();
 		}
@@ -140,7 +151,7 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 	private void initialiseUi() {
 		uatsDialog = new Container("uats-dialog");
 		uatsDialog.setFlexLayout("flex-column:xs-12c sm-10c md-8c lg-6c sm-offset-1c md-offset-2c lg-offset-3c");
-		VerticalUiNavigation uiNavigation = new VerticalUiNavigation();
+		uiNavigation = new VerticalUiNavigation();
 		
 		uatsDialog.add(FlexRow.withElements("row-os", UiUtils.createLabel("Detected OS: " + Mdx.os)));
 		uatsDialog.add(FlexRow.withElements("row-header", UiUtils.createHeader("User Acceptance Tests", new TypingTextAnimation())));

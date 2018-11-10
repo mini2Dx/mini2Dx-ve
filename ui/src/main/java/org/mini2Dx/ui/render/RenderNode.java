@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.ui.render;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.engine.geom.CollisionBox;
 import org.mini2Dx.core.exception.MdxException;
@@ -137,6 +138,26 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		}
 
 		element.syncWithRender(rootNode);
+	}
+
+	public void beginFakeHover() {
+		mouseMoved(MathUtils.round(innerArea.getCenterX()), MathUtils.round(innerArea.getCenterY()));
+		if(rootNode == null) {
+			return;
+		}
+		if(this instanceof ActionableRenderNode) {
+			rootNode.getElement().setActiveAction((ActionableRenderNode) this);
+		}
+	}
+
+	public void endFakeHover() {
+		mouseMoved(MathUtils.round(innerArea.getX()) - 1, MathUtils.round(innerArea.getY() - 1));
+		if(rootNode == null) {
+			return;
+		}
+		if(this instanceof ActionableRenderNode) {
+			rootNode.getElement().clearActiveAction();
+		}
 	}
 
 	public boolean mouseMoved(int screenX, int screenY) {

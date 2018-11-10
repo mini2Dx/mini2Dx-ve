@@ -13,6 +13,7 @@ package org.mini2Dx.ui.element;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.utils.Align;
 import org.mini2Dx.core.graphics.GlyphLayout;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
@@ -132,6 +133,29 @@ public class Label extends UiElement {
 		setContentHeight(GLYPH_LAYOUT.height);
 	}
 
+	public void shrinkToTextSize(float maxWidth) {
+		if(renderNode == null || !UiContainer.isThemeApplied()) {
+			deferUntilUpdate(new Runnable() {
+				@Override
+				public void run() {
+					shrinkToTextSize();
+				}
+			});
+			return;
+		}
+		if(text == null) {
+			return;
+		}
+		final LabelStyleRule styleRule = UiContainer.getTheme().getLabelStyleRule(styleId, ScreenSize.XS);
+		final BitmapFont font = styleRule.getBitmapFont();
+		if(font == null) {
+			return;
+		}
+		GLYPH_LAYOUT.setText(font, text, Color.WHITE, maxWidth, Align.left, true);
+		setContentWidth(GLYPH_LAYOUT.width);
+		setContentHeight(GLYPH_LAYOUT.height);
+	}
+
 	/**
 	 * Returns the current text of the label
 	 * @return A non-null {@link String}
@@ -176,6 +200,22 @@ public class Label extends UiElement {
 		}
 		parentRenderNode.removeChild(renderNode);
 		renderNode = null;
+	}
+
+	@Override
+	public void invokeBeginHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.beginFakeHover();
+	}
+
+	@Override
+	public void invokeEndHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.endFakeHover();
 	}
 
 	@Override

@@ -44,4 +44,14 @@ public interface Hoverable {
 	 * Notifies all {@link HoverListener}s of an end hover event
 	 */
 	public void notifyHoverListenersOnEndHover();
+
+	/**
+	 * Triggers the begin hover event
+	 */
+	public void invokeBeginHover();
+
+	/**
+	 * Triggers the end hover event
+	 */
+	public void invokeEndHover();
 }

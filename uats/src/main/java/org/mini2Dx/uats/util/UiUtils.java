@@ -58,6 +58,7 @@ public class UiUtils {
 				MAPPED_CONTROLLERS.put(controller.getName(), ps4Controller);
 			}
 			PS4UiInput ps4UiInput = new PS4UiInput(uiContainer);
+			ps4UiInput.setNavigateWithDPad(true);
 			ps4Controller.addListener(ps4UiInput);
 
 			MAPPED_CONTROLLER_INPUT.put(uiContainer.getId(), ps4UiInput);
@@ -72,6 +73,7 @@ public class UiUtils {
 				MAPPED_CONTROLLERS.put(controller.getName(), xbox360Controller);
 			}
 			Xbox360UiInput xbox360UiInput = new Xbox360UiInput(uiContainer);
+			xbox360UiInput.setNavigateWithDPad(true);
 			xbox360Controller.addListener(xbox360UiInput);
 			
 			MAPPED_CONTROLLER_INPUT.put(uiContainer.getId(), xbox360UiInput);
@@ -87,6 +89,7 @@ public class UiUtils {
 			}
 			
 			XboxOneUiInput xboxOneUiInput = new XboxOneUiInput(uiContainer);
+			xboxOneUiInput.setNavigateWithDPad(true);
 			xboxOneController.addListener(xboxOneUiInput);
 			
 			MAPPED_CONTROLLER_INPUT.put(uiContainer.getId(), xboxOneUiInput);

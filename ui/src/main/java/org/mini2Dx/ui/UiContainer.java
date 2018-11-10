@@ -405,14 +405,19 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		if (keyNavigationInUse()) {
-			return false;
-		}
 		screenX = MathUtils.round(screenX / scaleX);
 		screenY = MathUtils.round(screenY / scaleY);
+
+		if(Math.abs(screenX - lastMouseX) > 2 || Math.abs(screenY - lastMouseY) > 2) {
+			setLastInputSource(InputSource.KEYBOARD_MOUSE);
+		}
+
 		lastMouseX = screenX;
 		lastMouseY = screenY;
 
+		if(keyNavigationInUse()) {
+			return false;
+		}
 		return renderTree.mouseMoved(screenX, screenY);
 	}
 
@@ -638,7 +643,10 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		return true;
 	}
 
-	private void setActiveAction(ActionableRenderNode actionable) {
+	public void setActiveAction(ActionableRenderNode actionable) {
+		if (activeAction != null && !activeAction.getId().equals(actionable.getId())) {
+			activeAction.setState(NodeState.NORMAL);
+		}
 		if (actionable instanceof TextInputableRenderNode) {
 			activeTextInput = (TextInputableRenderNode) actionable;
 			switch (Mdx.os) {
@@ -719,6 +727,11 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		actionableRenderNode.setState(NodeState.NORMAL);
 	}
 
+	public void clearActiveAction() {
+		unsetExistingNavigationHover();
+		this.activeAction = null;
+	}
+
 	/**
 	 * Clears the current {@link Navigatable} being navigated
 	 */
@@ -736,6 +749,14 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	 */
 	public Navigatable getActiveNavigation() {
 		return activeNavigation;
+	}
+
+	/**
+	 * Returns the currently hovered {@link ActionableRenderNode}
+	 * @return Null if nothing is hovered
+	 */
+	public ActionableRenderNode getActiveAction() {
+		return activeAction;
 	}
 
 	/**

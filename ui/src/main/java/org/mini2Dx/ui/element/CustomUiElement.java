@@ -124,6 +124,22 @@ public abstract class CustomUiElement extends UiElement implements Actionable {
 	}
 
 	@Override
+	public void invokeBeginHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.beginFakeHover();
+	}
+
+	@Override
+	public void invokeEndHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.endFakeHover();
+	}
+
+	@Override
 	public void setVisibility(Visibility visibility) {
 		if (visibility == null) {
 			return;

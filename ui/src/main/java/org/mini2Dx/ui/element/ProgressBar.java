@@ -103,6 +103,22 @@ public class ProgressBar extends UiElement implements FlexUiElement {
 	}
 
 	@Override
+	public void invokeBeginHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.beginFakeHover();
+	}
+
+	@Override
+	public void invokeEndHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.endFakeHover();
+	}
+
+	@Override
 	public void setVisibility(Visibility visibility) {
 		if (this.visibility == visibility) {
 			return;

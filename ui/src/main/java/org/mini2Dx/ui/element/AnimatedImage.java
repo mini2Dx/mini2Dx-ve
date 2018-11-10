@@ -200,6 +200,22 @@ public class AnimatedImage extends UiElement {
 		renderNode = null;
 	}
 
+	@Override
+	public void invokeBeginHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.beginFakeHover();
+	}
+
+	@Override
+	public void invokeEndHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.endFakeHover();
+	}
+
 	/**
 	 * Returns the current {@link TextureRegion} array for this
 	 * {@link AnimatedImage}

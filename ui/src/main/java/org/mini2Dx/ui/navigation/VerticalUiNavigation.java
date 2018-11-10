@@ -69,13 +69,25 @@ public class VerticalUiNavigation implements UiNavigation {
 
 	@Override
 	public Actionable resetCursor() {
+		return resetCursor(false);
+	}
+
+	@Override
+	public Actionable resetCursor(boolean triggerHoverEvent) {
 		cursor = 0;
 		if(navigation.size == 0) {
 			return null;
 		}
-		return navigation.get(cursor);
+		final Actionable result = navigation.get(cursor);
+		if(result == null) {
+			return null;
+		}
+		if(triggerHoverEvent) {
+			result.invokeBeginHover();
+		}
+		return result;
 	}
-	
+
 	@Override
 	public Actionable getCursor() {
 		if(navigation.size == 0) {

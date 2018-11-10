@@ -31,6 +31,13 @@ public interface UiNavigation {
 	 * @return The first {@link Actionable}
 	 */
 	public Actionable resetCursor();
+
+	/**
+	 * Resets the selection back to the first {@link Actionable}
+	 * @param triggerHoverEvent True if a hover event should be triggered. Typically used when a controller is being used for navigation.
+	 * @return The first {@link Actionable}
+	 */
+	public Actionable resetCursor(boolean triggerHoverEvent);
 	
 	/**
 	 * Returns the {@link Actionable} highlighted by the cursor

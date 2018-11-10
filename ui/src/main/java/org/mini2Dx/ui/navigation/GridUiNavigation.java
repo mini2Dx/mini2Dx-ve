@@ -162,12 +162,24 @@ public class GridUiNavigation implements UiNavigation {
 
 	@Override
 	public Actionable resetCursor() {
+		return resetCursor(false);
+	}
+
+	@Override
+	public Actionable resetCursor(boolean triggerHoverEvent) {
 		cursorX = 0;
 		cursorY = 0;
 		if(navigation.size == 0) {
 			return null;
 		}
-		return navigation.get(getIndex(cursorX, cursorY));
+		final Actionable result = navigation.get(getIndex(cursorX, cursorY));
+		if(result == null) {
+			return null;
+		}
+		if(triggerHoverEvent) {
+			result.invokeBeginHover();
+		}
+		return result;
 	}
 
 	/**

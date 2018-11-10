@@ -234,6 +234,22 @@ public abstract class ParentUiElement extends UiElement implements FlexUiElement
 		renderNode = null;
 	}
 
+	@Override
+	public void invokeBeginHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.beginFakeHover();
+	}
+
+	@Override
+	public void invokeEndHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.endFakeHover();
+	}
+
 	/**
 	 * Returns if child elements that overflow this element's bounds (e.g. using offsets
 	 * or margins) have their rendering clipped to the element's bounds

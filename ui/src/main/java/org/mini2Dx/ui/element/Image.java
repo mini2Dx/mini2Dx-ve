@@ -213,6 +213,22 @@ public class Image extends UiElement {
 		renderNode = null;
 	}
 
+	@Override
+	public void invokeBeginHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.beginFakeHover();
+	}
+
+	@Override
+	public void invokeEndHover() {
+		if(renderNode == null) {
+			return;
+		}
+		renderNode.endFakeHover();
+	}
+
 	/**
 	 * Returns the current {@link TextureRegion} for this {@link Image}
 	 * 

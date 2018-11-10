@@ -13,7 +13,8 @@
 - Added NodeStateListener to UiElement
 - Added shadow, spacing, kerning and flip options to UiFont
 - Added controller trigger button down/up notifications
-- UI can now use controller triggers as hotkeys
+- Added option to set hover state when resetting a UiNavigation cursor
+- UI can now use controller triggers as hotkeys and D-PAD for UI navigation
 - Improved UI theme JSON consistency
 - Improved scrolling when dragging scroll thumb in ScrollBox
 - Fixed hotkey based actions not triggering correct UI state

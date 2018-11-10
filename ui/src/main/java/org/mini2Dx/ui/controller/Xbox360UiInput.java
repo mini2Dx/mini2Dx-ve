@@ -47,6 +47,7 @@ public class Xbox360UiInput extends Xbox360ControllerAdapter implements Controll
 	private float upTimer = stickRepeatTimer;
 	private float downTimer = stickRepeatTimer;
 	private boolean left, right, up, down;
+	private boolean navigateWithDPad;
 
 	public Xbox360UiInput(UiContainer uiContainer) {
 		super();
@@ -176,9 +177,23 @@ public class Xbox360UiInput extends Xbox360ControllerAdapter implements Controll
 		if(!enabled) {
 			return false;
 		}
-		boolean result = uiContainer.buttonDown(this, button);
 		uiContainer.setLastInputSource(InputSource.CONTROLLER);
 		uiContainer.setLastControllerType(ControllerType.XBOX_360);
+
+		if(navigateWithDPad) {
+			switch(button) {
+			case UP:
+				return uiContainer.keyDown(Keys.UP);
+			case DOWN:
+				return uiContainer.keyDown(Keys.DOWN);
+			case LEFT:
+				return uiContainer.keyDown(Keys.LEFT);
+			case RIGHT:
+				return uiContainer.keyDown(Keys.RIGHT);
+			}
+		}
+
+		boolean result = uiContainer.buttonDown(this, button);
 		debugLog(button.name() + " " + result);
 		return result;
 	}
@@ -188,9 +203,23 @@ public class Xbox360UiInput extends Xbox360ControllerAdapter implements Controll
 		if(!enabled) {
 			return false;
 		}
-		boolean result = uiContainer.buttonUp(this, button);
 		uiContainer.setLastInputSource(InputSource.CONTROLLER);
 		uiContainer.setLastControllerType(ControllerType.XBOX_360);
+
+		if(navigateWithDPad) {
+			switch(button) {
+			case UP:
+				return uiContainer.keyUp(Keys.UP);
+			case DOWN:
+				return uiContainer.keyUp(Keys.DOWN);
+			case LEFT:
+				return uiContainer.keyUp(Keys.LEFT);
+			case RIGHT:
+				return uiContainer.keyUp(Keys.RIGHT);
+			}
+		}
+
+		boolean result = uiContainer.buttonUp(this, button);
 		debugLog(button.name() + " " + result);
 		return result;
 	}
@@ -224,6 +253,22 @@ public class Xbox360UiInput extends Xbox360ControllerAdapter implements Controll
 	 */
 	public void setStickThreshold(float stickThreshold) {
 		this.stickThreshold = Math.abs(stickThreshold);
+	}
+
+	/**
+	 * Returns if {@link org.mini2Dx.ui.navigation.UiNavigation} events should be triggered by the D-PAD
+	 * @return False by default
+	 */
+	public boolean isNavigateWithDPad() {
+		return navigateWithDPad;
+	}
+
+	/**
+	 * Sets if {@link org.mini2Dx.ui.navigation.UiNavigation} events should be triggered by the D-PAD
+	 * @param navigateWithDPad True if events should be triggered
+	 */
+	public void setNavigateWithDPad(boolean navigateWithDPad) {
+		this.navigateWithDPad = navigateWithDPad;
 	}
 
 	public void setDebug(boolean debug) {

@@ -47,6 +47,11 @@ public class TabViewUiNavigation implements UiNavigation {
 
 	@Override
 	public Actionable resetCursor() {
+		return resetCursor(false);
+	}
+
+	@Override
+	public Actionable resetCursor(boolean triggerHoverEvent) {
 		if(tabs.size == 0) {
 			return null;
 		}
@@ -54,7 +59,14 @@ public class TabViewUiNavigation implements UiNavigation {
 		if(navigation == null) {
 			return null;
 		}
-		return navigation.resetCursor();
+		final Actionable result = navigation.resetCursor();
+		if(result == null) {
+			return null;
+		}
+		if(triggerHoverEvent) {
+			result.invokeBeginHover();
+		}
+		return result;
 	}
 
 	@Override

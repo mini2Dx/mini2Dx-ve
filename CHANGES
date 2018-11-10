@@ -1,4 +1,4 @@
-[1.8.0-SNAPSHOT]
+[1.8.0]
 - Update to RoboVM 2.3.3
 - [BREAKING] Replace usages of Java collections with GDX collections to improve performance
 - [BREAKING] UI Modal and Containers are now unified into a single Container class

@@ -14,6 +14,10 @@ A high-level 2D game development API
 What's New
 ---------------------
 
+__10th October 2018__
+
+1.8.0 has been released as an in-between version of the 1.x API and 2.0 API. It is recommended upgrading to 1.8.0 to ease the transition to 2.0 later on. As previous stated, 1.8.x will only receive bug fixes and optimisations going forward. Once 2.0 is released, 1.8.x will be 100% community-driven.
+
 __10th June 2018__
 
 mini2Dx Vintage Edition is the maintained version of the 1.x release series. It was started with 1.7.0 to provide support to developers using 1.x while 2.0 is developed in the [main mini2Dx repository](https://github.com/mini2Dx/mini2Dx). 1.x will only receive bug fixes and optimisations going forward. Once 2.0 is released, 1.x will be 100% community-driven.

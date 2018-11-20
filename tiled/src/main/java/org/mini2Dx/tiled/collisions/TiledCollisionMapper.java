@@ -53,7 +53,7 @@ public class TiledCollisionMapper<T extends Positionable> {
 	 *            if two tiles can be merged into a single collision
 	 */
 	public TiledCollisionMapper(TiledCollisionFactory<T> collisionFactory, TiledCollisionMerger collisionMerger) {
-		this(collisionFactory, collisionMerger, TileMergeMode.AREA);
+		this(collisionFactory, collisionMerger, TileMergeMode.SQUARE);
 	}
 
 	/**

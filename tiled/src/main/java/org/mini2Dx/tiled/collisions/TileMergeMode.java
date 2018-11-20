@@ -23,11 +23,11 @@ public enum TileMergeMode {
 	/**
 	 * Finds max number of mergable tiles on Y axis then expands across X axis
 	 */
-	ROWS_COLUMNS {
+	Y_THEN_X {
 		@Override
 		public <T extends Positionable> T merge(TiledCollisionFactory<T> collisionFactory,
-				TiledCollisionMerger collisionMerger, int startX, int startY, int maxColumns, int maxRows,
-				byte[][] collisions, TileLayer layer, TiledMap tiledMap) {
+												TiledCollisionMerger collisionMerger, int startX, int startY, int maxColumns, int maxRows,
+												byte[][] collisions, TileLayer layer, TiledMap tiledMap) {
 			Tile startTile = tiledMap.getTile(layer.getTileId(startX, startY));
 
 			int maxXTiles = 0;
@@ -89,11 +89,11 @@ public enum TileMergeMode {
 	/**
 	 * Finds max number of mergable tiles on X axis then expands across Y axis
 	 */
-	COLUMNS_ROWS {
+	X_THEN_Y {
 		@Override
 		public <T extends Positionable> T merge(TiledCollisionFactory<T> collisionFactory,
-				TiledCollisionMerger collisionMerger, int startX, int startY, int maxColumns, int maxRows,
-				byte[][] collisions, TileLayer layer, TiledMap tiledMap) {
+												TiledCollisionMerger collisionMerger, int startX, int startY, int maxColumns, int maxRows,
+												byte[][] collisions, TileLayer layer, TiledMap tiledMap) {
 			Tile startTile = tiledMap.getTile(layer.getTileId(startX, startY));
 
 			int maxXTiles = 0;
@@ -153,13 +153,129 @@ public enum TileMergeMode {
 		}
 	},
 	/**
-	 * Finds max mergable tiles by expanding a rectangular area
+	 * Expands on X axis by 1 tile, then Y axis by 1 tile and repeats until the maximum area is found
 	 */
-	AREA {
+	X_THEN_Y_ALTERNATING {
 		@Override
 		public <T extends Positionable> T merge(TiledCollisionFactory<T> collisionFactory,
-				TiledCollisionMerger collisionMerger, int startX, int startY, int maxColumns, int maxRows,
-				byte[][] collisions, TileLayer layer, TiledMap tiledMap) {
+												TiledCollisionMerger collisionMerger, int startX, int startY, int maxColumns, int maxRows,
+												byte[][] collisions, TileLayer layer, TiledMap tiledMap) {
+			Tile startTile = tiledMap.getTile(layer.getTileId(startX, startY));
+
+			int maxXTiles = 0;
+			int maxYTiles = 0;
+
+			if (maxColumns > 1 && maxRows > 1) {
+				int x = 1;
+				int y = 0;
+
+				boolean limitFound = false;
+				while(!limitFound) {
+					if (collisions[startX + x][startY + y] == 0) {
+						limitFound = true;
+						continue;
+					}
+					if (!collisionMerger.isMergable(tiledMap, layer, startTile, startX, startY, startX + x, startY + y)) {
+						break;
+					}
+
+					if(x > y) {
+						y++;
+					} else {
+						x++;
+					}
+
+					maxXTiles = x;
+					maxYTiles = y;
+					if (maxXTiles >= maxColumns - 1) {
+						limitFound = true;
+						continue;
+					}
+					if (maxYTiles >= maxRows - 1) {
+						limitFound = true;
+						continue;
+					}
+				}
+			}
+
+			// Clear the collision data for merged tiles
+			for (int x = 0; x <= maxXTiles; x++) {
+				for (int y = 0; y <= maxYTiles; y++) {
+					collisions[startX + x][startY + y] = 0;
+				}
+			}
+
+			return collisionFactory.createCollision(tiledMap, startTile, startX * tiledMap.getTileWidth(),
+					startY * tiledMap.getTileHeight(), tiledMap.getTileWidth() + (maxXTiles * tiledMap.getTileWidth()),
+					tiledMap.getTileHeight() + (maxYTiles * tiledMap.getTileHeight()));
+		}
+	},
+	/**
+	 * Expands on Y axis by 1 tile, then X axis by 1 tile and repeats until the maximum area is found
+	 */
+	Y_THEN_X_ALTERNATING {
+		@Override
+		public <T extends Positionable> T merge(TiledCollisionFactory<T> collisionFactory,
+												TiledCollisionMerger collisionMerger, int startX, int startY, int maxColumns, int maxRows,
+												byte[][] collisions, TileLayer layer, TiledMap tiledMap) {
+			Tile startTile = tiledMap.getTile(layer.getTileId(startX, startY));
+
+			int maxXTiles = 0;
+			int maxYTiles = 0;
+
+			if (maxColumns > 1 && maxRows > 1) {
+				int x = 0;
+				int y = 1;
+
+				boolean limitFound = false;
+				while(!limitFound) {
+					if (collisions[startX + x][startY + y] == 0) {
+						limitFound = true;
+						continue;
+					}
+					if (!collisionMerger.isMergable(tiledMap, layer, startTile, startX, startY, startX + x, startY + y)) {
+						break;
+					}
+
+					if(y > x) {
+						x++;
+					} else {
+						y++;
+					}
+
+					maxXTiles = x;
+					maxYTiles = y;
+					if (maxXTiles >= maxColumns - 1) {
+						limitFound = true;
+						continue;
+					}
+					if (maxYTiles >= maxRows - 1) {
+						limitFound = true;
+						continue;
+					}
+				}
+			}
+
+			// Clear the collision data for merged tiles
+			for (int x = 0; x <= maxXTiles; x++) {
+				for (int y = 0; y <= maxYTiles; y++) {
+					collisions[startX + x][startY + y] = 0;
+				}
+			}
+
+			return collisionFactory.createCollision(tiledMap, startTile, startX * tiledMap.getTileWidth(),
+					startY * tiledMap.getTileHeight(), tiledMap.getTileWidth() + (maxXTiles * tiledMap.getTileWidth()),
+					tiledMap.getTileHeight() + (maxYTiles * tiledMap.getTileHeight()));
+		}
+	},
+	/**
+	 * Finds max mergable tiles by expanding a square area
+	 */
+	SQUARE {
+		@Override
+		public <T extends Positionable> T merge(TiledCollisionFactory<T> collisionFactory,
+												TiledCollisionMerger collisionMerger, int startX, int startY, int maxColumns, int maxRows,
+												byte[][] collisions, TileLayer layer, TiledMap tiledMap) {
 			Tile startTile = tiledMap.getTile(layer.getTileId(startX, startY));
 
 			int maxXTiles = 0;
@@ -168,7 +284,7 @@ public enum TileMergeMode {
 			if (maxColumns > 1 && maxRows > 1) {
 				for (int xy = 1; xy < layer.getWidth() - startX && xy < layer.getHeight() - startY; xy++) {
 					boolean mergable = true;
-					
+
 					for(int x = 0; x <= xy; x++) {
 						if (collisions[startX + x][startY + xy] == 0) {
 							mergable = false;
@@ -191,14 +307,14 @@ public enum TileMergeMode {
 							}
 						}
 					}
-					
+
 					if(!mergable) {
 						break;
 					}
-					
+
 					maxXTiles = xy;
 					maxYTiles = xy;
-					
+
 					if (maxXTiles >= maxColumns - 1) {
 						break;
 					}
@@ -207,7 +323,7 @@ public enum TileMergeMode {
 					}
 				}
 			}
-			
+
 			// Clear the collision data for merged tiles
 			for (int x = 0; x <= maxXTiles; x++) {
 				for (int y = 0; y <= maxYTiles; y++) {
@@ -222,6 +338,6 @@ public enum TileMergeMode {
 	};
 
 	public abstract <T extends Positionable> T merge(TiledCollisionFactory<T> collisionFactory,
-			TiledCollisionMerger collisionMerger, final int startX, final int startY, final int maxColumns,
-			final int maxRows, byte[][] collisions, TileLayer layer, TiledMap tiledMap);
+													 TiledCollisionMerger collisionMerger, final int startX, final int startY, final int maxColumns,
+													 final int maxRows, byte[][] collisions, TileLayer layer, TiledMap tiledMap);
 }

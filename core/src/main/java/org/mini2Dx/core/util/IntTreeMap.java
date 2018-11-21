@@ -57,7 +57,7 @@ public class IntTreeMap<V> extends IntMap<V> {
 	}
 
 	@Override
-	public void putAll(IntMap<? extends V> map) {
+	public void putAll(IntMap<V> map) {
 		super.putAll(map);
 
 		Keys keys = map.keys();

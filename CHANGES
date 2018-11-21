@@ -1,7 +1,7 @@
-[1.9.0-SNAPSHOT]
-- Updated to libGDX 1.9.9
+[1.8.1-SNAPSHOT]
 - [BREAKING] TileMergeMode modes renamed to Y_THEN_X, X_THEN_X and SQUARE
 - Added new TileMergeMode modes; Y_THEN_X_ALTERNATING and X_THEN_Y_ALTERNATING
+- Added support for polyline per Tiled 1.2 specification
 
 [1.8.0]
 - Update to RoboVM 2.3.3

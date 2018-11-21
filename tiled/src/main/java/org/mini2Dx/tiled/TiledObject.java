@@ -12,6 +12,7 @@
 package org.mini2Dx.tiled;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.geom.Circle;
@@ -30,13 +31,12 @@ public class TiledObject {
 	private TiledObjectShape objectShape = TiledObjectShape.RECTANGLE;
 	private String name;
 	private String type;
-	private String polyline;
 	private boolean visible;
 	private int gid;
 	private boolean gidFlipHorizontally, gidFlipVertically, gidFlipDiagonally;
 	private ObjectMap<String, String> properties;
 
-	private float [] points;
+	private float [] vertices;
 	private String text;
 	private boolean wrapText;
 	
@@ -232,12 +232,12 @@ public class TiledObject {
 		objectShape = TiledObjectShape.POLYGON;
 		final String [] pointEntries = points.split(" ");
 
-		this.points = new float[pointEntries.length * 2];
+		this.vertices = new float[pointEntries.length * 2];
 		for(int i = 0; i < pointEntries.length; i++) {
 			final String [] xy = pointEntries[i].split(",");
 
-			this.points[(i * 2)] = x + Float.parseFloat(xy[0]);
-			this.points[(i * 2) + 1] = y + Float.parseFloat(xy[1]);
+			this.vertices[(i * 2)] = x + Float.parseFloat(xy[0]);
+			this.vertices[(i * 2) + 1] = y + Float.parseFloat(xy[1]);
 		}
 	}
 
@@ -252,12 +252,21 @@ public class TiledObject {
 		this.wrapText = wrapText;
 	}
 
-	public String getPolyline() {
-		return polyline;
-	}
+	/**
+	 * Marks this object as a {@link TiledObjectShape#POLYLINE}
+	 * @param points The points in the format <em>x1,y1 x2,y2</em> per the Tiled specification
+	 */
+	public void setAsPolyline(String points) {
+		objectShape = TiledObjectShape.POLYLINE;
+		final String [] pointEntries = points.split(" ");
 
-	public void setPolyline(String polyline) {
-		this.polyline = polyline;
+		this.vertices = new float[pointEntries.length * 2];
+		for(int i = 0; i < pointEntries.length; i++) {
+			final String [] xy = pointEntries[i].split(",");
+
+			this.vertices[(i * 2)] = x + Float.parseFloat(xy[0]);
+			this.vertices[(i * 2) + 1] = y + Float.parseFloat(xy[1]);
+		}
 	}
 
 	public boolean isVisible() {
@@ -316,7 +325,23 @@ public class TiledObject {
 		if(!objectShape.equals(TiledObjectShape.POLYGON)) {
 			throw new MdxException("TiledObject " + id + " is not a polygon");
 		}
-		return new Polygon(points);
+		return new Polygon(vertices);
+	}
+
+	/**
+	 * Creates a new {@link Array} of {@link Point}s from this object.
+	 * Warning: If this object's shape is not {@link TiledObjectShape#POLYLINE}, an exception will be thrown.
+	 * @return A new {@link Array} of {@link Point}s in the line
+	 */
+	public Array<Point> toPolyline() {
+		if(!objectShape.equals(TiledObjectShape.POLYLINE)) {
+			throw new MdxException("TiledObject " + id + " is not a polyline");
+		}
+		final Array<Point> result = new Array<Point>();
+		for(int i = 0; i < vertices.length; i += 2) {
+			result.add(new Point(vertices[i], vertices[i + 1]));
+		}
+		return result;
 	}
 
 	public String getText() {

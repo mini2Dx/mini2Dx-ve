@@ -12,5 +12,5 @@
 package org.mini2Dx.tiled;
 
 public enum TiledObjectShape {
-	RECTANGLE, POINT, ELLIPSE, POLYGON, TEXT
+	RECTANGLE, POINT, ELLIPSE, POLYGON, POLYLINE, TEXT
 }

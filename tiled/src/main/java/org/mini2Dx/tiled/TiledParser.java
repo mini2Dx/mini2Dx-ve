@@ -489,6 +489,10 @@ public class TiledParser implements TiledParserNotifier {
 			if(polygon != null) {
 				object.setAsPolygon(polygon.getAttribute("points", ""));
 			}
+			Element polyline = element.getChildByName("polyline");
+			if(polyline != null) {
+				object.setAsPolyline(polyline.getAttribute("points", ""));
+			}
 			Element text = element.getChildByName("text");
 			if(text != null) {
 				object.setAsText(text.getText(), text.getIntAttribute("wrap", 1) == 1);

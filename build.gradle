@@ -16,7 +16,7 @@ buildscript {
 		classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.3'
 		classpath 'gradle.plugin.me.champeau.gradle:jmh-gradle-plugin:0.3.0'
 		classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.9.0'
-		classpath 'com.badlogicgames.gdx:gdx-tools:1.9.9'
+		classpath 'com.badlogicgames.gdx:gdx-tools:1.9.6'
     }
 }
 
@@ -35,7 +35,7 @@ ext {
 	androidVersion="4.4"
 	artemisVersion="2.1.0"
 	beanutilsVersion="1.8.3"
-	gdxVersion="1.9.9"
+	gdxVersion="1.9.6"
 	langVersion="3.1"
 	multiDexVersion="1.0.1"
 	nativesLoaderVersion="1.0.0"
@@ -68,7 +68,7 @@ def docProjects() {
 	subprojects.findAll { !it.name.contains('uat') }
 }
 
-def projectVersion = '1.9.0-SNAPSHOT';
+def projectVersion = '1.8.1-SNAPSHOT';
 
 configure(docProjects()) {
 	apply plugin: "signing"

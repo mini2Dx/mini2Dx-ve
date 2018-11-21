@@ -177,7 +177,7 @@ public enum TileMergeMode {
 						break;
 					}
 					boolean mismatch = false;
-					for(int tx = 1; tx <= x; tx++) {
+					for(int tx = 0; tx <= x; tx++) {
 						for(int ty = 0; ty <= y; ty++) {
 							if (collisions[startX + tx][startY + ty] == 0) {
 								mismatch = true;
@@ -252,7 +252,7 @@ public enum TileMergeMode {
 					}
 					boolean mismatch = false;
 					for(int tx = 0; tx <= x; tx++) {
-						for(int ty = 1; ty <= y; ty++) {
+						for(int ty = 0; ty <= y; ty++) {
 							if (collisions[startX + tx][startY + ty] == 0) {
 								mismatch = true;
 								break;

@@ -169,15 +169,35 @@ public enum TileMergeMode {
 				int x = 1;
 				int y = 0;
 
-				boolean limitFound = false;
-				while(!limitFound) {
-					if (collisions[startX + x][startY + y] == 0) {
-						limitFound = true;
-						continue;
-					}
-					if (!collisionMerger.isMergable(tiledMap, layer, startTile, startX, startY, startX + x, startY + y)) {
+				while(true) {
+					if (x >= layer.getWidth() - startX) {
 						break;
 					}
+					if (y >= layer.getHeight() - startY) {
+						break;
+					}
+					boolean mismatch = false;
+					for(int tx = 1; tx <= x; tx++) {
+						for(int ty = 0; ty <= y; ty++) {
+							if (collisions[startX + tx][startY + ty] == 0) {
+								mismatch = true;
+								break;
+							}
+							if (!collisionMerger.isMergable(tiledMap, layer, startTile, startX, startY, startX + tx, startY + ty)) {
+								mismatch = true;
+								break;
+							}
+						}
+						if(mismatch) {
+							break;
+						}
+					}
+					if(mismatch) {
+						break;
+					}
+
+					maxXTiles = x;
+					maxYTiles = y;
 
 					if(x > y) {
 						y++;
@@ -185,15 +205,11 @@ public enum TileMergeMode {
 						x++;
 					}
 
-					maxXTiles = x;
-					maxYTiles = y;
 					if (maxXTiles >= maxColumns - 1) {
-						limitFound = true;
-						continue;
+						break;
 					}
 					if (maxYTiles >= maxRows - 1) {
-						limitFound = true;
-						continue;
+						break;
 					}
 				}
 			}
@@ -227,15 +243,35 @@ public enum TileMergeMode {
 				int x = 0;
 				int y = 1;
 
-				boolean limitFound = false;
-				while(!limitFound) {
-					if (collisions[startX + x][startY + y] == 0) {
-						limitFound = true;
-						continue;
-					}
-					if (!collisionMerger.isMergable(tiledMap, layer, startTile, startX, startY, startX + x, startY + y)) {
+				while(true) {
+					if (x >= layer.getWidth() - startX) {
 						break;
 					}
+					if (y >= layer.getHeight() - startY) {
+						break;
+					}
+					boolean mismatch = false;
+					for(int tx = 0; tx <= x; tx++) {
+						for(int ty = 1; ty <= y; ty++) {
+							if (collisions[startX + tx][startY + ty] == 0) {
+								mismatch = true;
+								break;
+							}
+							if (!collisionMerger.isMergable(tiledMap, layer, startTile, startX, startY, startX + tx, startY + ty)) {
+								mismatch = true;
+								break;
+							}
+						}
+						if(mismatch) {
+							break;
+						}
+					}
+					if(mismatch) {
+						break;
+					}
+
+					maxXTiles = x;
+					maxYTiles = y;
 
 					if(y > x) {
 						x++;
@@ -243,15 +279,11 @@ public enum TileMergeMode {
 						y++;
 					}
 
-					maxXTiles = x;
-					maxYTiles = y;
 					if (maxXTiles >= maxColumns - 1) {
-						limitFound = true;
-						continue;
+						break;
 					}
 					if (maxYTiles >= maxRows - 1) {
-						limitFound = true;
-						continue;
+						break;
 					}
 				}
 			}

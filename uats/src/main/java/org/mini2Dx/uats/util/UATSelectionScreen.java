@@ -88,7 +88,6 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 			uiNavigation.resetCursor(true);
 			lastInputSource = uiContainer.getLastInputSource();
 		}
-		System.out.println(uiContainer.getLastInputSource());
 
 		if (nextScreenId > -1) {
 			screenManager.enterGameScreen(nextScreenId, new FadeOutTransition(), new FadeInTransition());

@@ -125,4 +125,9 @@ public class CustomUiElementRenderNode extends RenderNode<CustomUiElement, Style
 		}
 		return super.mouseMoved(screenX, screenY);
 	}
+
+	@Override
+	public boolean isEnabled() {
+		return element.isEnabled();
+	}
 }

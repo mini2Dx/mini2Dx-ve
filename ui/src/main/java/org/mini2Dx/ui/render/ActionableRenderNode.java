@@ -29,4 +29,6 @@ public interface ActionableRenderNode extends HoverableRenderNode {
 	public NodeState getState();
 	
 	public void setState(NodeState state);
+
+	public boolean isEnabled();
 }

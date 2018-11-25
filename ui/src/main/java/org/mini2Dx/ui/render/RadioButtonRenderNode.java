@@ -418,4 +418,9 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 			return element.getY();
 		}
 	}
+
+	@Override
+	public boolean isEnabled() {
+		return element.isEnabled();
+	}
 }

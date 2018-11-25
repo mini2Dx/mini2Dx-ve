@@ -504,6 +504,9 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		receivedButtonDowns.add(button.getAbsoluteValue());
 		ActionableRenderNode hotkeyAction = activeNavigation.hotkey(button);
 		if (hotkeyAction != null) {
+			if(!hotkeyAction.isEnabled()) {
+				return true;
+			}
 			ControllerEventTriggerParams params = EventTriggerParamsPool.allocateControllerParams();
 			params.setControllerButton(button);
 			hotkeyAction.setState(NodeState.ACTION);
@@ -541,6 +544,9 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		}
 		ActionableRenderNode hotkeyAction = activeNavigation.hotkey(button);
 		if (hotkeyAction != null) {
+			if(!hotkeyAction.isEnabled()) {
+				return true;
+			}
 			ControllerEventTriggerParams params = EventTriggerParamsPool.allocateControllerParams();
 			params.setControllerButton(button);
 			hotkeyAction.setState(NodeState.ACTION);
@@ -580,6 +586,9 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 				}
 			}
 		} else {
+			if(!hotkeyAction.isEnabled()) {
+				return true;
+			}
 			KeyboardEventTriggerParams params = EventTriggerParamsPool.allocateKeyboardParams();
 			params.setKey(keycode);
 			hotkeyAction.setState(NodeState.ACTION);
@@ -595,6 +604,9 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		}
 		ActionableRenderNode hotkeyAction = activeNavigation.hotkey(keycode);
 		if (hotkeyAction != null) {
+			if(!hotkeyAction.isEnabled()) {
+				return true;
+			}
 			KeyboardEventTriggerParams params = EventTriggerParamsPool.allocateKeyboardParams();
 			params.setKey(keycode);
 			hotkeyAction.setState(NodeState.NORMAL);

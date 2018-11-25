@@ -1,4 +1,5 @@
 [1.8.2-SNAPSHOT]
+- Fixed UI hotkeys triggering actions while elements are disabled
 
 [1.8.1]
 - [BREAKING] TileMergeMode modes renamed to Y_THEN_X, X_THEN_X and SQUARE

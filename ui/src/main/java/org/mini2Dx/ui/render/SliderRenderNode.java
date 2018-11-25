@@ -308,4 +308,9 @@ public class SliderRenderNode extends RenderNode<Slider, SliderStyleRule> implem
 			return element.getY();
 		}
 	}
+
+	@Override
+	public boolean isEnabled() {
+		return element.isEnabled();
+	}
 }

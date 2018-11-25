@@ -424,4 +424,9 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 		}
 		return selectStyleRule;
 	}
+
+	@Override
+	public boolean isEnabled() {
+		return element.isEnabled();
+	}
 }

@@ -509,4 +509,9 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 	public float getScrollContentHeight() {
 		return contentHeight;
 	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 }

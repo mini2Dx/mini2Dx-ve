@@ -474,4 +474,9 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 	public LayoutRuleset getLayoutRuleset() {
 		return layoutRuleset;
 	}
+
+	@Override
+	public boolean isEnabled() {
+		return element.isEnabled();
+	}
 }

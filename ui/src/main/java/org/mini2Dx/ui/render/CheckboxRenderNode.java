@@ -201,4 +201,9 @@ public class CheckboxRenderNode extends RenderNode<Checkbox, CheckboxStyleRule> 
 		}
 	}
 
+	@Override
+	public boolean isEnabled() {
+		return element.isEnabled();
+	}
+
 }

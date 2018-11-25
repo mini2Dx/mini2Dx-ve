@@ -115,4 +115,9 @@ public class ButtonRenderNode extends ParentRenderNode<Button, ButtonStyleRule> 
 	public void endAction(EventTrigger eventTrigger, EventTriggerParams eventTriggerParams) {
 		element.notifyActionListenersOfEndEvent(eventTrigger, eventTriggerParams);
 	}
+
+	@Override
+	public boolean isEnabled() {
+		return element.isEnabled();
+	}
 }

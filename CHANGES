@@ -1,4 +1,4 @@
-[1.8.2-SNAPSHOT]
+[1.8.2]
 - Fixed UI hotkeys triggering actions while elements are disabled
 
 [1.8.1]

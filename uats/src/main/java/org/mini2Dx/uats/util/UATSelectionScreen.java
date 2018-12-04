@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.uats.util;
 
+import com.badlogic.gdx.Input;
 import org.mini2Dx.core.Mdx;
 import org.mini2Dx.core.exception.ControllerPlatformException;
 import org.mini2Dx.core.game.GameContainer;
@@ -69,6 +70,7 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 		uiContainer = new UiContainer(gc, assetManager);
 		uiContainer.addScreenSizeListener(this);
 		uiContainer.setNavigationMode(UATApplication.NAVIGATION_MODE);
+		uiContainer.addActionKey(Input.Keys.E);
 		initialiseUi();
 		
 		if(Controllers.getControllers().size > 0) {

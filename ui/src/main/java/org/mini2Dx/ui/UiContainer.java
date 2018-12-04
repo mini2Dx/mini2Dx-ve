@@ -13,7 +13,9 @@ package org.mini2Dx.ui;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.IntSet;
 import com.badlogic.gdx.utils.ObjectSet;
 import org.mini2Dx.core.Mdx;
@@ -82,7 +84,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	private String lastThemeId;
 	private boolean themeWarningIssued, initialThemeLayoutComplete;
 
-	private int actionKey = Keys.ENTER;
+	private final IntArray actionKeys = new IntArray();
 	private Navigatable activeNavigation;
 	private ActionableRenderNode activeAction;
 	private TextInputableRenderNode activeTextInput;
@@ -107,6 +109,8 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		super(IdAllocator.getNextId("ui-container-root"));
 		this.width = width;
 		this.height = height;
+
+		actionKeys.add(Keys.ENTER);
 
 		switch (Mdx.os) {
 		case ANDROID:
@@ -453,7 +457,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		if (activeTextInput != null && activeTextInput.isReceivingInput()) {
 			return true;
 		}
-		if (keycode == actionKey && activeAction != null) {
+		if (actionKeys.contains(keycode) && activeAction != null) {
 			KeyboardEventTriggerParams params = EventTriggerParamsPool.allocateKeyboardParams();
 			params.setKey(keycode);
 			activeAction.setState(NodeState.ACTION);
@@ -481,7 +485,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		if (handleTextInputKeyUp(keycode)) {
 			return true;
 		}
-		if (keycode == actionKey && activeAction != null) {
+		if (actionKeys.contains(keycode) && activeAction != null) {
 			KeyboardEventTriggerParams params = EventTriggerParamsPool.allocateKeyboardParams();
 			params.setKey(keycode);
 			activeAction.setState(NodeState.NORMAL);
@@ -957,13 +961,30 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	}
 
 	/**
-	 * Sets the key used for triggering actions (i.e. selecting a menu option)
+	 * Add the key used for triggering actions (i.e. selecting a menu option)
 	 * 
-	 * @param actionKey
+	 * @param keycode
 	 *            The {@link Keys} value
 	 */
-	public void setActionKey(int actionKey) {
-		this.actionKey = actionKey;
+	public void addActionKey(int keycode) {
+		actionKeys.add(keycode);
+	}
+
+	/**
+	 * Removes a key used for triggering actions (i.e. selecting a menu option)
+	 *
+	 * @param keycode
+	 *            The {@link Keys} value
+	 */
+	public void removeActionKey(int keycode) {
+		actionKeys.removeValue(keycode);
+	}
+
+	/**
+	 * Clears the keys used for triggering actions (i.e. selecting a menu option)
+	 */
+	public void clearActionKeys() {
+		actionKeys.clear();
 	}
 
 	/**

@@ -1,5 +1,6 @@
-[1.8.3-SNAPSHOT]
+[1.9.0-SNAPSHOT]
 - [BREAKING] UiContainer can now select a NavigationMode instead of only enabling/disabling keyboard
+- UiContainer can now have multiple navigation action keys
 - Fixed UI navigation cursor not updating when switching between controller and mouse
 
 [1.8.2]

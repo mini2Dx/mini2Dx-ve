@@ -13,11 +13,12 @@ package org.mini2Dx.ui.navigation;
 
 import org.mini2Dx.ui.element.Actionable;
 import org.mini2Dx.ui.layout.ScreenSize;
+import org.mini2Dx.ui.listener.HoverListener;
 
 /**
  * Common interface for user interface navigation
  */
-public interface UiNavigation {
+public interface UiNavigation extends HoverListener {
 	/**
 	 * Re-orders elements based on screen size if necessary
 	 * 

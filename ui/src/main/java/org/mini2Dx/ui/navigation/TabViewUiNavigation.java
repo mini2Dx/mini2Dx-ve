@@ -6,6 +6,7 @@ package org.mini2Dx.ui.navigation;
 import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.ui.element.Actionable;
+import org.mini2Dx.ui.element.Hoverable;
 import org.mini2Dx.ui.element.Tab;
 import org.mini2Dx.ui.element.TabView;
 import org.mini2Dx.ui.layout.ScreenSize;
@@ -99,5 +100,13 @@ public class TabViewUiNavigation implements UiNavigation {
 			return null;
 		}
 		return navigation.navigate(keycode);
+	}
+
+	@Override
+	public void onHoverBegin(Hoverable source) {
+	}
+
+	@Override
+	public void onHoverEnd(Hoverable source) {
 	}
 }

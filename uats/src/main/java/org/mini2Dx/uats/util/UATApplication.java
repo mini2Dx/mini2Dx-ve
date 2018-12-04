@@ -16,6 +16,7 @@ import org.mini2Dx.core.game.ScreenBasedGame;
 import org.mini2Dx.tiled.TiledMap;
 import org.mini2Dx.tiled.TiledMapLoader;
 import org.mini2Dx.uats.*;
+import org.mini2Dx.ui.NavigationMode;
 import org.mini2Dx.ui.UiThemeLoader;
 import org.mini2Dx.ui.style.UiTheme;
 
@@ -30,7 +31,7 @@ import com.badlogic.gdx.utils.Logger;
  * @author Thomas Cashman
  */
 public class UATApplication extends ScreenBasedGame {
-	public static final boolean USE_KEYBOARD_NAVIGATION = false;
+	public static final NavigationMode NAVIGATION_MODE = NavigationMode.BUTTON_OR_POINTER;
 
 	private AssetManager assetManager;
 

@@ -75,7 +75,7 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 	@Override
 	public void initialise(GameContainer gc) {
 		uiContainer = new UiContainer(gc, assetManager);
-		uiContainer.setKeyboardNavigationEnabled(UATApplication.USE_KEYBOARD_NAVIGATION);
+		uiContainer.setNavigationMode(UATApplication.NAVIGATION_MODE);
 		gc.addResizeListener(this);
 
 		if(Controllers.getControllers().size > 0) {

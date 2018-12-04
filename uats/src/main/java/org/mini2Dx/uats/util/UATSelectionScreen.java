@@ -68,7 +68,7 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 	public void initialise(GameContainer gc) {
 		uiContainer = new UiContainer(gc, assetManager);
 		uiContainer.addScreenSizeListener(this);
-		uiContainer.setKeyboardNavigationEnabled(UATApplication.USE_KEYBOARD_NAVIGATION);
+		uiContainer.setNavigationMode(UATApplication.NAVIGATION_MODE);
 		initialiseUi();
 		
 		if(Controllers.getControllers().size > 0) {
@@ -85,7 +85,6 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 		uiContainer.update(delta);
 
 		if(!lastInputSource.equals(uiContainer.getLastInputSource())) {
-			uiNavigation.resetCursor(true);
 			lastInputSource = uiContainer.getLastInputSource();
 		}
 

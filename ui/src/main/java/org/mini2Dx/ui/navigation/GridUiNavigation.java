@@ -14,6 +14,7 @@ package org.mini2Dx.ui.navigation;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.ui.element.Actionable;
+import org.mini2Dx.ui.element.Hoverable;
 import org.mini2Dx.ui.element.UiElement;
 import org.mini2Dx.ui.layout.ScreenSize;
 
@@ -55,6 +56,14 @@ public class GridUiNavigation implements UiNavigation {
 		return (y * columns) + x;
 	}
 
+	private int getX(int index) {
+		return index % columns;
+	}
+
+	private int getY(int index) {
+		return (index - (index % columns)) / columns;
+	}
+
 	@Override
 	public void layout(ScreenSize screenSize) {
 		Iterator<ScreenSize> screenSizes = ScreenSize.largestToSmallest();
@@ -78,22 +87,28 @@ public class GridUiNavigation implements UiNavigation {
 
 	@Override
 	public void add(Actionable actionable) {
+		actionable.addHoverListener(this);
 		navigation.add(actionable);
 	}
 
 	@Override
 	public void remove(Actionable actionable) {
+		actionable.removeHoverListener(this);
 		navigation.removeValue(actionable, true);
 	}
 	
 	@Override
 	public void removeAll() {
+		for(int i = 0; i < navigation.size; i++) {
+			navigation.get(i).removeHoverListener(this);
+		}
 		navigation.clear();
 		resetCursor();
 	}
 	
 	@Override
 	public void set(int index, Actionable actionable) {
+		actionable.addHoverListener(this);
 		while(navigation.size <= index) {
 			navigation.add(null);
 		}
@@ -123,35 +138,57 @@ public class GridUiNavigation implements UiNavigation {
 		case Keys.W:
 		case Keys.UP:
 			if (cursorY > 0) {
+				navigation.get(getIndex(cursorX, cursorY)).invokeEndHover();
 				cursorY--;
 			}
 			break;
 		case Keys.S:
 		case Keys.DOWN:
 			if (cursorY < getTotalRows() - 1) {
+				navigation.get(getIndex(cursorX, cursorY)).invokeEndHover();
 				cursorY++;
 			} else {
+				navigation.get(getIndex(cursorX, cursorY)).invokeEndHover();
 				cursorY = getTotalRows() - 1;
 			}
 			break;
 		case Keys.A:
 		case Keys.LEFT:
 			if (cursorX > 0) {
+				navigation.get(getIndex(cursorX, cursorY)).invokeEndHover();
 				cursorX--;
 			}
 			break;
 		case Keys.D:
 		case Keys.RIGHT:
 			if (cursorX < columns - 1) {
+				navigation.get(getIndex(cursorX, cursorY)).invokeEndHover();
 				cursorX++;
 			} else {
+				navigation.get(getIndex(cursorX, cursorY)).invokeEndHover();
 				cursorX = columns - 1;
 			}
 			break;
 		}
 		return navigation.get(getIndex(cursorX, cursorY));
 	}
-	
+
+	private Actionable updateCursor(String hoverElementId) {
+		for(int i = 0; i < navigation.size; i++) {
+			if(navigation.get(i).getId().equals(hoverElementId)) {
+				final int previousIndex = getIndex(cursorX, cursorY);
+				if(i != previousIndex) {
+					navigation.get(previousIndex).invokeEndHover();
+				}
+
+				cursorX = getX(i);
+				cursorY = getY(i);
+				return navigation.get(i);
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public Actionable getCursor() {
 		if(navigation.size == 0) {
@@ -167,6 +204,10 @@ public class GridUiNavigation implements UiNavigation {
 
 	@Override
 	public Actionable resetCursor(boolean triggerHoverEvent) {
+		if(navigation.size > 0) {
+			navigation.get(getIndex(cursorX, cursorY)).invokeEndHover();
+		}
+
 		cursorX = 0;
 		cursorY = 0;
 		if(navigation.size == 0) {
@@ -217,5 +258,14 @@ public class GridUiNavigation implements UiNavigation {
 	@Override
 	public String toString() {
 		return "GridUiNavigation [navigation=" + navigation + "]";
+	}
+
+	@Override
+	public void onHoverBegin(Hoverable source) {
+		updateCursor(source.getId());
+	}
+
+	@Override
+	public void onHoverEnd(Hoverable source) {
 	}
 }

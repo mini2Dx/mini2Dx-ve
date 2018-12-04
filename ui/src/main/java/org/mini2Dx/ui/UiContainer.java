@@ -87,7 +87,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	private ActionableRenderNode activeAction;
 	private TextInputableRenderNode activeTextInput;
 
-	private boolean keyboardNavigationEnabled = false;
+	private NavigationMode navigationMode = NavigationMode.BUTTON_OR_POINTER;
 	private boolean textInputIgnoredFirstEnter = false;
 	private ScreenSizeScaleMode screenSizeScaleMode = ScreenSizeScaleMode.NO_SCALING;
 
@@ -335,11 +335,14 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		if (keyNavigationInUse()) {
+		if (!pointerNavigationAllowed()) {
 			return false;
 		}
 		screenX = MathUtils.round(screenX / scaleX);
 		screenY = MathUtils.round(screenY / scaleY);
+
+		updateLastInputSource(screenX, screenY);
+
 		lastMouseX = screenX;
 		lastMouseY = screenY;
 
@@ -374,11 +377,14 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (keyNavigationInUse()) {
+		if (!pointerNavigationAllowed()) {
 			return false;
 		}
 		screenX = MathUtils.round(screenX / scaleX);
 		screenY = MathUtils.round(screenY / scaleY);
+
+		updateLastInputSource(screenX, screenY);
+
 		lastMouseX = screenX;
 		lastMouseY = screenY;
 
@@ -392,11 +398,14 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		if (keyNavigationInUse()) {
+		if (!pointerNavigationAllowed()) {
 			return false;
 		}
 		screenX = MathUtils.round(screenX / scaleX);
 		screenY = MathUtils.round(screenY / scaleY);
+
+		updateLastInputSource(screenX, screenY);
+
 		lastMouseX = screenX;
 		lastMouseY = screenY;
 
@@ -408,14 +417,12 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		screenX = MathUtils.round(screenX / scaleX);
 		screenY = MathUtils.round(screenY / scaleY);
 
-		if(Math.abs(screenX - lastMouseX) > 2 || Math.abs(screenY - lastMouseY) > 2) {
-			setLastInputSource(InputSource.KEYBOARD_MOUSE);
-		}
+		updateLastInputSource(screenX, screenY);
 
 		lastMouseX = screenX;
 		lastMouseY = screenY;
 
-		if(keyNavigationInUse()) {
+		if (!pointerNavigationAllowed()) {
 			return false;
 		}
 		return renderTree.mouseMoved(screenX, screenY);
@@ -423,7 +430,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 
 	@Override
 	public boolean scrolled(int amount) {
-		if (keyNavigationInUse()) {
+		if (!pointerNavigationAllowed()) {
 			return false;
 		}
 		return renderTree.mouseScrolled(lastMouseX, lastMouseY, amount);
@@ -575,7 +582,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		}
 		ActionableRenderNode hotkeyAction = activeNavigation.hotkey(keycode);
 		if (hotkeyAction == null) {
-			if (keyNavigationInUse()) {
+			if (keyNavigationAllowed()) {
 				if (activeAction != null) {
 					activeAction.setState(NodeState.NORMAL);
 				}
@@ -691,7 +698,7 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		if (renderTree == null) {
 			return;
 		}
-		if (!keyNavigationInUse()) {
+		if (!keyNavigationAllowed()) {
 			return;
 		}
 		if (activeAction != null) {
@@ -853,6 +860,24 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		return lastInputSource;
 	}
 
+	private void updateLastInputSource(int screenX, int screenY) {
+		if(Math.abs(screenX - lastMouseX) > 2 || Math.abs(screenY - lastMouseY) > 2) {
+			switch(Mdx.os) {
+			case WINDOWS:
+			case MAC:
+			case UNIX:
+			case UNKNOWN:
+			default:
+				setLastInputSource(InputSource.KEYBOARD_MOUSE);
+				break;
+			case ANDROID:
+			case IOS:
+				setLastInputSource(InputSource.TOUCHSCREEN);
+				break;
+			}
+		}
+	}
+
 	private void updateLastInputSource() {
 		if (nextInputSource == null) {
 			return;
@@ -941,7 +966,11 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		this.actionKey = actionKey;
 	}
 
-	private boolean keyNavigationInUse() {
+	/**
+	 * Returns if this {@link UiContainer} can be navigated by keyboard/controller
+	 * @return True by default
+	 */
+	public boolean keyNavigationAllowed() {
 		switch (Mdx.os) {
 		case ANDROID:
 		case IOS:
@@ -951,20 +980,51 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		case UNKNOWN:
 		case WINDOWS:
 		default:
-			return keyboardNavigationEnabled || lastInputSource == InputSource.CONTROLLER;
+			switch(navigationMode) {
+			case BUTTON_ONLY:
+			case BUTTON_OR_POINTER:
+				return true;
+			default:
+			case POINTER_ONLY:
+				return false;
+			}
 		}
 	}
 
 	/**
-	 * Sets if desktop-based games uses keyboard navigation instead of mouse
-	 * navigation. Note: This does not effect hotkeys
-	 * 
-	 * @param keyboardNavigationEnabled
-	 *            True if the desktop-based game should only navigate by
-	 *            keyboard
+	 * Returns if this {@link UiContainer} can be navigated by touch/mouse
+	 * @return True by default
 	 */
-	public void setKeyboardNavigationEnabled(boolean keyboardNavigationEnabled) {
-		this.keyboardNavigationEnabled = keyboardNavigationEnabled;
+	public boolean pointerNavigationAllowed() {
+		switch (Mdx.os) {
+		case ANDROID:
+		case IOS:
+			return true;
+		case MAC:
+		case UNIX:
+		case UNKNOWN:
+		case WINDOWS:
+		default:
+			switch(navigationMode) {
+			default:
+			case BUTTON_ONLY:
+				return false;
+			case BUTTON_OR_POINTER:
+			case POINTER_ONLY:
+				return true;
+			}
+		}
+	}
+
+	/**
+	 * Sets the {@link NavigationMode} on this {@link UiContainer}
+	 * @param navigationMode The {@link NavigationMode}
+	 */
+	public void setNavigationMode(NavigationMode navigationMode) {
+		if(navigationMode == null) {
+			return;
+		}
+		this.navigationMode = navigationMode;
 	}
 
 	/**

@@ -13,6 +13,7 @@ package org.mini2Dx.ui.navigation;
 
 import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.ui.element.Actionable;
+import org.mini2Dx.ui.element.Hoverable;
 import org.mini2Dx.ui.element.UiElement;
 import org.mini2Dx.ui.layout.ScreenSize;
 
@@ -28,22 +29,28 @@ public class VerticalUiNavigation implements UiNavigation {
 	
 	@Override
 	public void add(Actionable actionable) {
+		actionable.addHoverListener(this);
 		navigation.add(actionable);
 	}
 
 	@Override
 	public void remove(Actionable actionable) {
+		actionable.removeHoverListener(this);
 		navigation.removeValue(actionable, false);
 	}
 	
 	@Override
 	public void removeAll() {
+		for(int i = 0; i < navigation.size; i++) {
+			navigation.get(i).removeHoverListener(this);
+		}
 		navigation.clear();
 		resetCursor();
 	}
 
 	@Override
 	public void set(int index, Actionable actionable) {
+		actionable.addHoverListener(this);
 		if (navigation.size > index) {
 			navigation.set(index, actionable);
 		} else {
@@ -57,14 +64,31 @@ public class VerticalUiNavigation implements UiNavigation {
 			return null;
 		}
 		switch (keycode) {
+		case Keys.W:
 		case Keys.UP:
+			navigation.get(cursor).invokeEndHover();
 			cursor = cursor > 0 ? cursor - 1 : navigation.size - 1;
 			break;
+		case Keys.S:
 		case Keys.DOWN:
+			navigation.get(cursor).invokeEndHover();
 			cursor = cursor < navigation.size - 1 ? cursor + 1 : 0;
 			break;
 		}
 		return navigation.get(cursor);
+	}
+
+	private Actionable updateCursor(String hoverElementId) {
+		for(int i = 0; i < navigation.size; i++) {
+			if (navigation.get(i).getId().equals(hoverElementId)) {
+				if(i != cursor) {
+					navigation.get(cursor).invokeEndHover();
+				}
+				cursor = i;
+				return navigation.get(i);
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -74,6 +98,9 @@ public class VerticalUiNavigation implements UiNavigation {
 
 	@Override
 	public Actionable resetCursor(boolean triggerHoverEvent) {
+		if(navigation.size > 0) {
+			navigation.get(cursor).invokeEndHover();
+		}
 		cursor = 0;
 		if(navigation.size == 0) {
 			return null;
@@ -98,5 +125,14 @@ public class VerticalUiNavigation implements UiNavigation {
 
 	@Override
 	public void layout(ScreenSize screenSize) {
+	}
+
+	@Override
+	public void onHoverBegin(Hoverable source) {
+		updateCursor(source.getId());
+	}
+
+	@Override
+	public void onHoverEnd(Hoverable source) {
 	}
 }

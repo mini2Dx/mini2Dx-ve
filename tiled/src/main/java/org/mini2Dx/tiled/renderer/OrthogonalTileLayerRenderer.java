@@ -89,6 +89,7 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 		tmpClip.set(startTileX, startTileY, widthInTiles, heightInTiles);
 		if (!mapClip.equals(tmpClip)) {
 			layerCache.clear();
+			layerCacheIds.clear();
 			mapClip.set(startTileX, startTileY, widthInTiles, heightInTiles);
 		}
 		if (!layerCacheIds.containsKey(layer.getIndex())) {

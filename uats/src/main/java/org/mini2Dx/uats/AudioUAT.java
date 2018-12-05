@@ -20,12 +20,15 @@ import org.mini2Dx.core.screen.BasicGameScreen;
 import org.mini2Dx.core.screen.GameScreen;
 import org.mini2Dx.core.screen.ScreenManager;
 import org.mini2Dx.core.screen.Transition;
+import org.mini2Dx.core.screen.transition.FadeInTransition;
+import org.mini2Dx.core.screen.transition.FadeOutTransition;
 import org.mini2Dx.uats.util.ScreenIds;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import org.mini2Dx.uats.util.UATSelectionScreen;
 
 /**
  * UAT for {@link Mini2DxAudio} API
@@ -55,6 +58,11 @@ public class AudioUAT extends BasicGameScreen implements SoundCompletionListener
 		if(timer < 0f) {
 			expectedSoundId = sound.play(1f, 0.8f, 0f);
 			timer = 5f;
+		}
+
+		if (Gdx.input.justTouched()) {
+			screenManager.enterGameScreen(UATSelectionScreen.SCREEN_ID, new FadeOutTransition(),
+					new FadeInTransition());
 		}
 	}
 

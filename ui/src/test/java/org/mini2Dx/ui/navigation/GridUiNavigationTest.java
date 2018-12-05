@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.ui.navigation;
 
+import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
@@ -40,8 +41,18 @@ public class GridUiNavigationTest {
 		for(int x = 0; x < COLUMNS; x++) {
 			for(int y = 0; y < ROWS; y++) {
 				elements[x][y] = mockery.mock(Actionable.class, "actionable-" + x + "," + y);
+
+				final Actionable actionable = elements[x][y];
+				mockery.checking(new Expectations() {
+					{
+						atLeast(1).of(actionable).addHoverListener(navigation);
+						allowing(actionable).invokeEndHover();
+					}
+				});
 			}
 		}
+
+
 	}
 	
 	@Test

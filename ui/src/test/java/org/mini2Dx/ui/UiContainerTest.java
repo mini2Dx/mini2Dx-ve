@@ -66,6 +66,7 @@ public class UiContainerTest implements UiContainerListener {
 		
 		uiContainer = new UiContainer(gameContainer, assetManager);
 		uiContainer.addListener(this);
+		uiContainer.setNavigationMode(NavigationMode.POINTER_ONLY);
 	}
 	
 	@After

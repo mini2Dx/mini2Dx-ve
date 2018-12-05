@@ -43,7 +43,8 @@ public class LibGdxGraphics implements Graphics {
 	private final PolygonSpriteBatch polygonSpriteBatch;
 	private final EarClippingTriangulator triangulator = new EarClippingTriangulator();
 	
-	private Color color, backgroundColor, tint, defaultTint;
+	private Color color, backgroundColor;
+	private Color tint, defaultTint;
 	private OrthographicCamera camera;
 	private BitmapFont font;
 	private ShaderProgram defaultShader;
@@ -99,6 +100,9 @@ public class LibGdxGraphics implements Graphics {
 	public void preRender(int gameWidth, int gameHeight) {
 		this.windowWidth = gameWidth;
 		this.windowHeight = gameHeight;
+
+		tint = defaultTint;
+		spriteBatch.setColor(tint);
 
 		Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_STENCIL_BUFFER_BIT);

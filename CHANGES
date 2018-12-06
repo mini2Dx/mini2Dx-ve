@@ -1,5 +1,5 @@
 [1.9.0-SNAPSHOT]
-- Update to LibGDX 1.9.9
+- Update to LibGDX 1.9.8
 - [BREAKING] UiContainer can now select a NavigationMode instead of only enabling/disabling keyboard
 - UiContainer can now have multiple navigation action keys
 - Fixed Graphics#tint not being reset each frame

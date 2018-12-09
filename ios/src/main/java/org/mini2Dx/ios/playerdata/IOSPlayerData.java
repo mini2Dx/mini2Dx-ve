@@ -11,10 +11,10 @@
  */
 package org.mini2Dx.ios.playerdata;
 
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.*;
 
 import org.mini2Dx.core.Mdx;
+import org.mini2Dx.core.serialization.GameDataSerializable;
 import org.mini2Dx.core.playerdata.PlayerData;
 import org.mini2Dx.core.playerdata.PlayerDataException;
 import org.mini2Dx.core.serialization.SerializationException;
@@ -34,8 +34,13 @@ public class IOSPlayerData implements PlayerData {
 			throw new PlayerDataException("No file path specified");
 		}
 		try {
-			return Mdx.xml.fromXml(new InputStreamReader(resolve(filepath).read()), clazz);
+			final InputStream inputStream = resolve(filepath).read();
+			final T result = Mdx.xml.fromXml(new InputStreamReader(inputStream), clazz);
+			inputStream.close();
+			return result;
 		} catch (SerializationException e) {
+			throw new PlayerDataException(e);
+		} catch (IOException e) {
 			throw new PlayerDataException(e);
 		}
 	}
@@ -52,7 +57,10 @@ public class IOSPlayerData implements PlayerData {
 			Mdx.xml.toXml(object, writer);
 			resolve(filepath).writeString(writer.toString(), false);
 			writer.flush();
+			writer.close();
 		} catch (SerializationException e) {
+			throw new PlayerDataException(e);
+		} catch (IOException e) {
 			throw new PlayerDataException(e);
 		}
 	}
@@ -105,6 +113,39 @@ public class IOSPlayerData implements PlayerData {
 		try {
 			FileHandle file = resolve(filepath);
 			file.writeString(content, false);
+		} catch (Exception e) {
+			throw new PlayerDataException(e);
+		}
+	}
+	
+	@Override
+	public <T extends GameDataSerializable> void readBytes(T result, String... filepath)
+			throws PlayerDataException {
+		if (filepath.length == 0) {
+			throw new PlayerDataException("No file path specified");
+		}
+		try {
+			FileHandle file = resolve(filepath);
+			final InputStream inputStream = file.read();
+			result.readData(new DataInputStream(inputStream));
+			inputStream.close();
+		} catch (Exception e) {
+			throw new PlayerDataException(e);
+		}
+	}
+
+	@Override
+	public <T extends GameDataSerializable> void writeBytes(T obj, String... filepath)
+			throws PlayerDataException {
+		if (filepath.length == 0) {
+			throw new PlayerDataException("No file path specified");
+		}
+		try {
+			FileHandle file = resolve(filepath);
+			final OutputStream outputStream = file.write(false);
+			obj.writeData(new DataOutputStream(outputStream));
+			outputStream.flush();
+			outputStream.close();
 		} catch (Exception e) {
 			throw new PlayerDataException(e);
 		}

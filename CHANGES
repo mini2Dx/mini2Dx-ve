@@ -1,6 +1,7 @@
 [1.9.0-SNAPSHOT]
 - Update to LibGDX 1.9.8
 - [BREAKING] UiContainer can now select a NavigationMode instead of only enabling/disabling keyboard
+- Added GameDataSerializable interface for reading/writing binary data
 - UiContainer can now have multiple navigation action keys
 - Fixed Graphics#tint not being reset each frame
 - Fixed UI navigation cursor not updating when switching between controller and mouse

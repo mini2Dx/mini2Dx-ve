@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.core.playerdata;
 
+import org.mini2Dx.core.serialization.GameDataSerializable;
 import org.mini2Dx.core.serialization.annotation.Field;
 
 /**
@@ -51,6 +52,25 @@ public interface PlayerData {
      *             data cannot be written to the file.
      */
     public void writeString(String content, String... filepath) throws PlayerDataException;
+
+    /**
+     * Reads a file from the player data location as a {@link GameDataSerializable} instance
+     * @param result The instance to read to
+     * @param filepath The path to the file. This will be resolved as a path within the game data location.
+     * @param <T> The type of the object
+     * @throws PlayerDataException Thrown if the game data location cannot be accessed or the
+     *      *             data cannot be written to the file.
+     */
+    public <T extends GameDataSerializable> void readBytes(T result, String... filepath) throws PlayerDataException;
+
+    /**
+     * Writes a {@link GameDataSerializable} object to a file in the player data location
+     * @param obj The object to write to the file
+     * @param filepath The path to the file. This will be resolved as a path within the game data location.
+     * @param <T> The type of the object
+     * @throws PlayerDataException Thrown if the game data location cannot be accessed or the data cannot be written to the file.
+     */
+    public <T extends GameDataSerializable> void writeBytes(T obj, String... filepath) throws PlayerDataException;
 	
     /**
      * Converts XML from a file into an object. Note the object must use the

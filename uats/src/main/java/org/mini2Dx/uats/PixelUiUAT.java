@@ -13,6 +13,7 @@ package org.mini2Dx.uats;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
@@ -144,7 +145,11 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 			initialiseUi();
 		}
 		centerContainer.applyEffect(new SlideIn(SlideDirection.UP, 0.5f));
-		Gdx.input.setInputProcessor(uiContainer);
+
+		final InputMultiplexer inputMultiplexer = new InputMultiplexer();
+		inputMultiplexer.addProcessor(UiUtils.getCustomCursor());
+		inputMultiplexer.addProcessor(uiContainer);
+		Gdx.input.setInputProcessor(inputMultiplexer);
 	}
 
 	private void initialiseUi() {

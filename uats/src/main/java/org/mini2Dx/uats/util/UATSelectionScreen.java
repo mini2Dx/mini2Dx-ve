@@ -12,6 +12,7 @@
 package org.mini2Dx.uats.util;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import org.mini2Dx.core.Mdx;
 import org.mini2Dx.core.exception.ControllerPlatformException;
 import org.mini2Dx.core.game.GameContainer;
@@ -118,7 +119,12 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 		if (!UiContainer.isThemeApplied()) {
 			UiContainer.setTheme(assetManager.get(UiTheme.DEFAULT_THEME_FILENAME, UiTheme.class));
 		}
-		Gdx.input.setInputProcessor(uiContainer);
+
+		final InputMultiplexer inputMultiplexer = new InputMultiplexer();
+		inputMultiplexer.addProcessor(UiUtils.getCustomCursor());
+		inputMultiplexer.addProcessor(uiContainer);
+		Gdx.input.setInputProcessor(inputMultiplexer);
+
 		uatsDialog.applyEffect(new SlideIn());
 	}
 

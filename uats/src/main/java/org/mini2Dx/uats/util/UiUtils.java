@@ -14,9 +14,11 @@ package org.mini2Dx.uats.util;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.badlogic.gdx.graphics.Pixmap;
 import org.mini2Dx.core.controller.*;
 import org.mini2Dx.core.controller.deadzone.RadialDeadZone;
 import org.mini2Dx.core.exception.ControllerPlatformException;
+import org.mini2Dx.core.graphics.CustomCursor;
 import org.mini2Dx.ui.UiContainer;
 import org.mini2Dx.ui.animation.TextAnimation;
 import org.mini2Dx.ui.controller.ControllerUiInput;
@@ -43,6 +45,15 @@ import com.badlogic.gdx.graphics.Color;
 public class UiUtils {
 	private static Map<String, MdxController<?>> MAPPED_CONTROLLERS = new ConcurrentHashMap<String, MdxController<?>>();
 	private static Map<String, ControllerUiInput<?>> MAPPED_CONTROLLER_INPUT = new ConcurrentHashMap<String, ControllerUiInput<?>>();
+	private static CustomCursor customCursor;
+
+	public static CustomCursor getCustomCursor() {
+		if(customCursor == null) {
+			customCursor = new CustomCursor(new Pixmap(Gdx.files.classpath("default-mdx-cursor-up.png")),
+					new Pixmap(Gdx.files.classpath("default-mdx-cursor-down.png")), 0, 0);
+		}
+		return customCursor;
+	}
 	
 	public static ControllerUiInput<?> setUpControllerInput(Controller controller, UiContainer uiContainer) throws ControllerPlatformException {
 		if(MAPPED_CONTROLLER_INPUT.containsKey(uiContainer.getId())) {

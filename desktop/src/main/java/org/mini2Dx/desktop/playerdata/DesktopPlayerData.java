@@ -124,7 +124,7 @@ public class DesktopPlayerData implements PlayerData {
 			throw new PlayerDataException(e);
 		}
 	}
-	
+
 	@Override
 	public String readString(String... filepath) throws PlayerDataException {
 		if (filepath.length == 0) {
@@ -264,6 +264,11 @@ public class DesktopPlayerData implements PlayerData {
 			return;
 		}
 		parent.mkdirs();
+	}
+
+	@Override
+	public FileHandle getFileHandle(String... filepath) {
+		return resolve(filepath);
 	}
 
 	private FileHandle resolve(String[] filepath) {

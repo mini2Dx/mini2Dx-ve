@@ -13,6 +13,7 @@ package org.mini2Dx.core.serialization;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
  * Interface for implementing serializable classes which read/write in binary formats
@@ -22,12 +23,14 @@ public interface GameDataSerializable {
 	/**
 	 * Serializes this object to a {@link DataOutputStream}
 	 * @param outputStream The {@link DataOutputStream} to write to
+	 * @throws IOException Thrown if an error occurs during I/O
 	 */
-	public void writeData(DataOutputStream outputStream);
+	public void writeData(DataOutputStream outputStream) throws IOException;
 
 	/**
 	 * Deserializes this object from a {@link DataInputStream}
 	 * @param inputStream The {@link DataInputStream} to read from
+	 * @throws IOException Thrown if an error occurs during I/O
 	 */
-	public void readData(DataInputStream inputStream);
+	public void readData(DataInputStream inputStream) throws IOException;
 }

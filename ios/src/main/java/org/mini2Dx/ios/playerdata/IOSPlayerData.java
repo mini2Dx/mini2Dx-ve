@@ -207,6 +207,11 @@ public class IOSPlayerData implements PlayerData {
 		}
 		directory.emptyDirectory();
 	}
+	
+	@Override
+	public FileHandle getFileHandle(String... filepath) {
+		return resolve(filepath);
+	}
 
 	private void ensureDirectoryExistsForFile(String... filepath) {
 		FileHandle file = resolve(filepath);

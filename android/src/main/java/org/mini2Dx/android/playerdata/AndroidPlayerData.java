@@ -216,6 +216,11 @@ public class AndroidPlayerData implements PlayerData {
         parent.mkdirs();
     }
 
+	@Override
+	public FileHandle getFileHandle(String... filepath) {
+		return resolve(filepath);
+	}
+
     private FileHandle resolve(String[] filepath) {
     	String path = "";
     	for(int i = 0; i < filepath.length; i++) {

@@ -3,6 +3,7 @@
 - [BREAKING] UiContainer can now select a NavigationMode instead of only enabling/disabling keyboard
 - Added GameDataSerializable interface for reading/writing binary data
 - Added method to get file handles within the player data directory
+- Added CustomCursor class for implementing custom cursors with up/down state
 - UiContainer can now have multiple navigation action keys
 - Fixed Graphics#tint not being reset each frame
 - Fixed UI navigation cursor not updating when switching between controller and mouse

@@ -55,9 +55,14 @@ public class IOSPlayerData implements PlayerData {
 			ensureDirectoryExistsForFile(filepath);
 			StringWriter writer = new StringWriter();
 			Mdx.xml.toXml(object, writer);
-			resolve(filepath).writeString(writer.toString(), false);
+
+			FileHandle file = resolve(filepath);
+			FileHandle tmpFile = resolveTmp(filepath);
+			tmpFile.writeString(writer.toString(), false);
 			writer.flush();
 			writer.close();
+
+			tmpFile.file().renameTo(file.file());
 		} catch (SerializationException e) {
 			throw new PlayerDataException(e);
 		} catch (IOException e) {
@@ -85,7 +90,10 @@ public class IOSPlayerData implements PlayerData {
 			throw new PlayerDataException("No file path specified");
 		}
 		try {
-			resolve(filepath).writeString(Mdx.json.toJson(object), false);
+			FileHandle file = resolve(filepath);
+			FileHandle tmpFile = resolveTmp(filepath);
+			tmpFile.writeString(Mdx.json.toJson(object), false);
+			tmpFile.file().renameTo(file.file());
 		} catch (SerializationException e) {
 			throw new PlayerDataException(e);
 		}
@@ -112,7 +120,9 @@ public class IOSPlayerData implements PlayerData {
 		}
 		try {
 			FileHandle file = resolve(filepath);
-			file.writeString(content, false);
+			FileHandle tmpFile = resolveTmp(filepath);
+			tmpFile.writeString(content, false);
+			tmpFile.file().renameTo(file.file());
 		} catch (Exception e) {
 			throw new PlayerDataException(e);
 		}
@@ -142,10 +152,12 @@ public class IOSPlayerData implements PlayerData {
 		}
 		try {
 			FileHandle file = resolve(filepath);
-			final OutputStream outputStream = file.write(false);
+			FileHandle tmpFile = resolveTmp(filepath);
+			final OutputStream outputStream = tmpFile.write(false);
 			obj.writeData(new DataOutputStream(outputStream));
 			outputStream.flush();
 			outputStream.close();
+			tmpFile.file().renameTo(file.file());
 		} catch (Exception e) {
 			throw new PlayerDataException(e);
 		}
@@ -234,5 +246,11 @@ public class IOSPlayerData implements PlayerData {
 			}
 		}
 		return Gdx.files.local(path);
+	}
+
+	private FileHandle resolveTmp(String[] filepath) {
+		final String [] tmpFilepath = Arrays.copyOf(filepath, filepath.length);
+		tmpFilepath[tmpFilepath.length - 1] = tmpFilepath[tmpFilepath.length - 1] + ".tmp";
+		return resolve(tmpFilepath);
 	}
 }

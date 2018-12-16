@@ -12,6 +12,7 @@
 package org.mini2Dx.android.playerdata;
 
 import java.io.*;
+import java.util.Arrays;
 
 import org.mini2Dx.core.Mdx;
 import org.mini2Dx.core.serialization.GameDataSerializable;

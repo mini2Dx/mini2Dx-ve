@@ -125,6 +125,7 @@ public class DesktopPlayerData implements PlayerData {
 			throw new PlayerDataException("No file path specified");
 		}
 		try {
+			ensureDirectoryExistsForFile(filepath);
 			FileHandle file = resolve(filepath);
 			FileHandle tmpFile = resolveTmp(filepath);
 			tmpFile.writeString(Mdx.json.toJson(object), false);
@@ -154,6 +155,7 @@ public class DesktopPlayerData implements PlayerData {
 			throw new PlayerDataException("No file path specified");
 		}
 		try {
+			ensureDirectoryExistsForFile(filepath);
 			FileHandle file = resolve(filepath);
 			FileHandle tmpFile = resolveTmp(filepath);
 			tmpFile.writeString(content, false);
@@ -186,6 +188,7 @@ public class DesktopPlayerData implements PlayerData {
 			throw new PlayerDataException("No file path specified");
 		}
 		try {
+			ensureDirectoryExistsForFile(filepath);
 			FileHandle file = resolve(filepath);
 			FileHandle tmpFile = resolveTmp(filepath);
 			final OutputStream outputStream = tmpFile.write(false);

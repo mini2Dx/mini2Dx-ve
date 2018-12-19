@@ -8,6 +8,7 @@
 - Mdx.playerData now uses temp files to write before moving files to target filename
 - Fixed Graphics#tint not being reset each frame
 - Fixed UI navigation cursor not updating when switching between controller and mouse
+- Fixed DesktopPlayerData not ensuring data directory exists when writing JSON or binary files
 
 [1.8.2]
 - Fixed UI hotkeys triggering actions while elements are disabled

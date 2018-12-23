@@ -19,11 +19,13 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.Sprite;
+import org.mini2Dx.core.graphics.TextureRegion;
 import org.mini2Dx.tiled.Tile;
 
 /**
@@ -39,8 +41,9 @@ public class ImageTilesetSource extends TilesetSource {
 	private String name, tilesetImagePath, transparentColorValue;
 	private ObjectMap<String, String> properties;
 	private int widthInTiles, heightInTiles;
-	
-	private Texture texture;
+
+	private Texture backingTexture;
+	private TextureRegion textureRegion;
 
 	public ImageTilesetSource(int width, int height, int tileWidth, int tileHeight, int spacing, int margin) {
 		super();
@@ -80,7 +83,7 @@ public class ImageTilesetSource extends TilesetSource {
 			}
 		}
 		
-		Texture result = new Texture(updatedPixmap);
+		final Texture result = new Texture(updatedPixmap);
 		updatedPixmap.dispose();
 		pixmap.dispose();
 		return result;
@@ -95,7 +98,7 @@ public class ImageTilesetSource extends TilesetSource {
 
 	@Override
 	public void loadTexture(FileHandle tmxPath) {
-		if(texture != null) {
+		if(textureRegion != null) {
 			return;
 		}
 		loadTileImages(new Pixmap(tmxPath.sibling(tilesetImagePath)));
@@ -103,23 +106,48 @@ public class ImageTilesetSource extends TilesetSource {
 	
 	@Override
 	public void loadTexture(AssetManager assetManager, FileHandle tmxPath) {
+		if(textureRegion != null) {
+			return;
+		}
 		loadTileImages(assetManager.get(tmxPath.sibling(tilesetImagePath).path(), Pixmap.class));
 	}
-	
+
+	@Override
+	public void loadTexture(TextureAtlas textureAtlas) {
+		if(textureRegion != null) {
+			return;
+		}
+		loadTileImages(new TextureRegion(textureAtlas.findRegion(tilesetImagePath)));
+	}
+
+	private void loadTileImages(TextureRegion textureRegion) {
+		if(transparentColorValue != null) {
+			backingTexture = modifyPixmapWithTransparentColor(textureRegion.toPixmap());
+			this.textureRegion = new TextureRegion(backingTexture);
+		} else {
+			this.textureRegion = textureRegion;
+		}
+		cutTiles();
+	}
+
 	private void loadTileImages(Pixmap pixmap) {
 		if(transparentColorValue != null) {
-			texture = modifyPixmapWithTransparentColor(pixmap);
+			backingTexture = modifyPixmapWithTransparentColor(pixmap);
+			textureRegion = new TextureRegion(backingTexture);
 		} else {
-			texture = new Texture(pixmap);
+			backingTexture = new Texture(pixmap);
+			textureRegion = new TextureRegion(backingTexture);
 			pixmap.dispose();
 		}
-		texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		cutTiles();
+	}
 
+	private void cutTiles() {
 		for (int x = 0; x < getWidthInTiles(); x++) {
 			for (int y = 0; y < getHeightInTiles(); y++) {
 				int tileX = margin + (x * spacing) + (x * tileWidth);
 				int tileY = margin + (y * spacing) + (y * tileHeight);
-				Sprite tileImage = new Sprite(texture, tileX, tileY,
+				Sprite tileImage = new Sprite(textureRegion, tileX, tileY,
 						tileWidth, tileHeight);
 				tileImages.put(tiles[x][y].getTileId(0), tileImage);
 			}
@@ -128,7 +156,7 @@ public class ImageTilesetSource extends TilesetSource {
 
 	@Override
 	public boolean isTextureLoaded() {
-		return texture != null;
+		return textureRegion != null;
 	}
 	
 	@Override
@@ -278,7 +306,12 @@ public class ImageTilesetSource extends TilesetSource {
 				}
 			}
 		}
-		texture.dispose();
-		texture = null;
+		textureRegion = null;
+
+		if(backingTexture == null) {
+			return;
+		}
+		backingTexture.dispose();
+		backingTexture = null;
 	}
 }

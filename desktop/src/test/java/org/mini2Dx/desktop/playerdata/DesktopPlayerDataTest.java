@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.desktop.playerdata;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +46,8 @@ public class DesktopPlayerDataTest {
     private static final String TEST_IDENTIFIER = "org.mini2Dx.testgame";
     private static final String XML_FILENAME = "test.xml";
     private static final String JSON_FILENAME = "test.json";
-    
+    private static final Random RANDOM = new Random(1209561832);
+
     private static final String MAP_KEY = "test";
     
     private DesktopPlayerData desktopData;
@@ -67,10 +69,24 @@ public class DesktopPlayerDataTest {
     public void teardown() throws Exception {
         desktopData.wipe();
     }
+
+    @Test
+    public void testMultipleWrites() throws Exception {
+        desktopData.writeXml(expectedParentObject, XML_FILENAME);
+        Assert.assertEquals(true, new File(desktopData.getSaveDirectoryForGame(TEST_IDENTIFIER), XML_FILENAME).exists());
+
+        expectedParentObject.setIntValue(RANDOM.nextInt());
+        desktopData.writeXml(expectedParentObject, XML_FILENAME);
+        Assert.assertEquals(true, new File(desktopData.getSaveDirectoryForGame(TEST_IDENTIFIER), XML_FILENAME).exists());
+
+        TestParentObject result = desktopData.readXml(TestParentObject.class, XML_FILENAME);
+        assertObjectIsAsExpected(result);
+    }
     
     @Test
     public void testXml() throws Exception {
         desktopData.writeXml(expectedParentObject, XML_FILENAME);
+        Assert.assertEquals(true, new File(desktopData.getSaveDirectoryForGame(TEST_IDENTIFIER), XML_FILENAME).exists());
         
         TestParentObject result = desktopData.readXml(TestParentObject.class, XML_FILENAME);
         assertObjectIsAsExpected(result);
@@ -119,29 +135,27 @@ public class DesktopPlayerDataTest {
     }
     
     private void createTestObjects() {
-        Random random = new Random();
-        
         expectedParentObject = new TestParentObject();
         expectedParentObject.setSuperField("super duper");
         expectedParentObject.setBooleanValue(true);
-        expectedParentObject.setIgnoredValue(random.nextInt() + 1);
-        expectedParentObject.setIntValue(random.nextInt() + 1);
-        expectedParentObject.setLongValue(random.nextLong() + 1);
+        expectedParentObject.setIgnoredValue(RANDOM.nextInt() + 1);
+        expectedParentObject.setIntValue(RANDOM.nextInt() + 1);
+        expectedParentObject.setLongValue(RANDOM.nextLong() + 1);
         expectedParentObject.setShortValue((short) 77);
-        expectedParentObject.setStringValue(String.valueOf(random.nextInt()));
-        expectedParentObject.setFloatValue(random.nextFloat());
+        expectedParentObject.setStringValue(String.valueOf(RANDOM.nextInt()));
+        expectedParentObject.setFloatValue(RANDOM.nextFloat());
         expectedParentObject.setEnumValue(Os.UNKNOWN);
         
         List<String> list = new ArrayList<String>();
-        list.add(String.valueOf(random.nextInt()));
+        list.add(String.valueOf(RANDOM.nextInt()));
         expectedParentObject.setListValues(list);
         
         Map<String, Integer> map = new HashMap<String, Integer>();
-        map.put(MAP_KEY, random.nextInt());
+        map.put(MAP_KEY, RANDOM.nextInt());
         expectedParentObject.setMapValues(map);
         
         expectedChildObject = new TestChildObject();
-        expectedChildObject.setIntValue(random.nextInt() + 1);
+        expectedChildObject.setIntValue(RANDOM.nextInt() + 1);
         
         expectedParentObject.setChildObject(expectedChildObject);
         expectedParentObject.setChildObjectArray(new TestChildObject[3]);

@@ -61,6 +61,9 @@ public class AndroidPlayerData implements PlayerData {
 			writer.flush();
 			writer.close();
 
+	        if(file.file().exists()) {
+		        file.file().delete();
+	        }
 			tmpFile.file().renameTo(file.file());
         } catch (SerializationException e) {
         	throw new PlayerDataException(e);
@@ -90,6 +93,10 @@ public class AndroidPlayerData implements PlayerData {
 			FileHandle file = resolve(filepath);
 			FileHandle tmpFile = resolveTmp(filepath);
 			tmpFile.writeString(Mdx.json.toJson(object), false);
+
+	        if(file.file().exists()) {
+		        file.file().delete();
+	        }
 			tmpFile.file().renameTo(file.file());
         } catch (SerializationException e) {
         	throw new PlayerDataException(e);
@@ -119,6 +126,10 @@ public class AndroidPlayerData implements PlayerData {
 			FileHandle file = resolve(filepath);
 			FileHandle tmpFile = resolveTmp(filepath);
 			tmpFile.writeString(content, false);
+
+			if(file.file().exists()) {
+				file.file().delete();
+			}
 			tmpFile.file().renameTo(file.file());
 		} catch (Exception e) {
 			throw new PlayerDataException(e);
@@ -154,6 +165,10 @@ public class AndroidPlayerData implements PlayerData {
 			obj.writeData(new DataOutputStream(outputStream));
 			outputStream.flush();
 			outputStream.close();
+
+			if(file.file().exists()) {
+				file.file().delete();
+			}
 			tmpFile.file().renameTo(file.file());
 		} catch (Exception e) {
 			throw new PlayerDataException(e);

@@ -35,7 +35,7 @@ public class DesktopPlayerData implements PlayerData {
 		saveDirectory = getSaveDirectoryForGame(gameIdentifier);
 	}
 
-	private String getSaveDirectoryForGame(String gameIdentifier) {
+	public String getSaveDirectoryForGame(String gameIdentifier) {
 		switch (OsInformation.getOs()) {
 		case WINDOWS:
 			return Paths
@@ -96,6 +96,9 @@ public class DesktopPlayerData implements PlayerData {
 			writer.flush();
 			writer.close();
 
+			if(file.file().exists()) {
+				file.file().delete();
+			}
 			tmpFile.file().renameTo(file.file());
 		} catch (SerializationException e) {
 			throw new PlayerDataException(e);
@@ -128,6 +131,9 @@ public class DesktopPlayerData implements PlayerData {
 			FileHandle file = resolve(filepath);
 			FileHandle tmpFile = resolveTmp(filepath);
 			tmpFile.writeString(Mdx.json.toJson(object), false);
+			if(file.file().exists()) {
+				file.file().delete();
+			}
 			tmpFile.file().renameTo(file.file());
 		} catch (SerializationException e) {
 			throw new PlayerDataException(e);
@@ -157,6 +163,9 @@ public class DesktopPlayerData implements PlayerData {
 			FileHandle file = resolve(filepath);
 			FileHandle tmpFile = resolveTmp(filepath);
 			tmpFile.writeString(content, false);
+			if(file.file().exists()) {
+				file.file().delete();
+			}
 			tmpFile.file().renameTo(file.file());
 		} catch (Exception e) {
 			throw new PlayerDataException(e);
@@ -192,6 +201,9 @@ public class DesktopPlayerData implements PlayerData {
 			obj.writeData(new DataOutputStream(outputStream));
 			outputStream.flush();
 			outputStream.close();
+			if(file.file().exists()) {
+				file.file().delete();
+			}
 			tmpFile.file().renameTo(file.file());
 		} catch (Exception e) {
 			throw new PlayerDataException(e);

@@ -14,6 +14,7 @@ package org.mini2Dx.tiled.tileset;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -110,6 +111,12 @@ public abstract class TilesetSource implements Disposable {
 	 *            The path of the TMX file
 	 */
 	public abstract void loadTexture(AssetManager assetManager, FileHandle tmxPath);
+
+	/**
+	 * Loads the texture from a {@link TextureAtlas}
+	 * @param textureAtlas The {@link TextureAtlas} to use
+	 */
+	public abstract void loadTexture(TextureAtlas textureAtlas);
 
 	/**
 	 * Returns if the tileset texture image is loaded

@@ -4,10 +4,12 @@
 - Added GameDataSerializable interface for reading/writing binary data
 - Added method to get file handles within the player data directory
 - Added CustomCursor class for implementing custom cursors with up/down state
+- Tilesets can now be loaded from TextureAtlas instances
 - UiContainer can now have multiple navigation action keys
 - Mdx.playerData now uses temp files to write before moving files to target filename
 - Fixed Graphics#tint not being reset each frame
 - Fixed UI navigation cursor not updating when switching between controller and mouse
+- Fixed DesktopPlayerData not ensuring data directory exists when writing JSON or binary files
 
 [1.8.2]
 - Fixed UI hotkeys triggering actions while elements are disabled

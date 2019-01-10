@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.core.graphics;
 
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
@@ -112,5 +113,20 @@ public class TextureRegion extends com.badlogic.gdx.graphics.g2d.TextureRegion {
 			return;
 		}
 		flip(false, true);
+	}
+
+	/**
+	 * Converts this {@link TextureRegion} to a {@link Pixmap}
+	 * @return A new {@link Pixmap} instance containing the pixel data
+	 */
+	public Pixmap toPixmap() {
+		final Texture texture = getTexture();
+		if (!texture.getTextureData().isPrepared()) {
+			texture.getTextureData().prepare();
+		}
+		final Pixmap texturePixmap = texture.getTextureData().consumePixmap();
+		final Pixmap result = new Pixmap(getRegionWidth(), getRegionHeight(), Pixmap.Format.RGBA8888);
+		result.drawPixmap(texturePixmap, 0, 0, getRegionX(), getRegionY(), getRegionWidth(), getRegionHeight());
+		return result;
 	}
 }

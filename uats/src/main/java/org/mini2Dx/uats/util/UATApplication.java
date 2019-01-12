@@ -56,6 +56,7 @@ public class UATApplication extends ScreenBasedGame {
 		addScreen(new GraphicsUAT(assetManager));
 		addScreen(new TextureRegionUAT());
 		addScreen(new SpriteUAT());
+		addScreen(new ViewportUAT());
 		addScreen(new AudioUAT());
 		addScreen(new OrthogonalTiledMapNoCachingUAT(assetManager));
 		addScreen(new OrthogonalTiledMapWithCachingUAT(assetManager));

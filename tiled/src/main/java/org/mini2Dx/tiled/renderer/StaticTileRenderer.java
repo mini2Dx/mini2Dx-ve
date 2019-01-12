@@ -41,10 +41,23 @@ public class StaticTileRenderer implements TileRenderer {
 	@Override
 	public void draw(Graphics g, int renderX, int renderY, boolean flipH, boolean flipV, boolean flipD) {
 		Sprite tileImage = getCurrentTileImage();
-		
+		StaticTileRenderer.drawTileImage(g, tileImage, renderX, renderY, flipH, flipV, flipD);
+	}
+
+	@Override
+	public Sprite getCurrentTileImage() {
+		return tilesetSource.getTileImage(tile.getTileId(0));
+	}
+
+	@Override
+	public void dispose() {
+	}
+
+	public static void drawTileImage(Graphics g, Sprite tileImage, int renderX, int renderY,
+	                                 boolean flipH, boolean flipV, boolean flipD) {
 		boolean previousFlipX = tileImage.isFlipX();
 		boolean previousFlipY = tileImage.isFlipY();
-		
+
 		if(flipD) {
 			if (flipH && flipV) {
 				tileImage.setRotation(90f);
@@ -55,23 +68,14 @@ public class StaticTileRenderer implements TileRenderer {
 				tileImage.setRotation(270f);
 			} else {
 				tileImage.setRotation(90f);
-				tileImage.setFlip(previousFlipX, false);
+				tileImage.setFlip(previousFlipX, true);
 			}
 		} else {
-			tileImage.setFlip(flipH, !flipV);
+			tileImage.setFlip(flipH, flipV);
 		}
-		
+
 		g.drawSprite(tileImage, renderX, renderY);
 		tileImage.setRotation(0f);
 		tileImage.setFlip(previousFlipX, previousFlipY);
-	}
-
-	@Override
-	public Sprite getCurrentTileImage() {
-		return tilesetSource.getTileImage(tile.getTileId(0));
-	}
-
-	@Override
-	public void dispose() {
 	}
 }

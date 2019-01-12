@@ -56,29 +56,7 @@ public class AnimatedTileRenderer implements TileRenderer {
 	@Override
 	public void draw(Graphics g, int renderX, int renderY, boolean flipH, boolean flipV, boolean flipD) {
 		Sprite tileImage = getCurrentTileImage();
-
-		boolean previousFlipX = tileImage.isFlipX();
-		boolean previousFlipY = tileImage.isFlipY();
-
-		if (flipD) {
-			if (flipH && flipV) {
-				tileImage.setRotation(90f);
-				tileImage.setFlip(true, previousFlipY);
-			} else if (flipH) {
-				tileImage.setRotation(90f);
-			} else if (flipV) {
-				tileImage.setRotation(270f);
-			} else {
-				tileImage.setRotation(90f);
-				tileImage.setFlip(previousFlipX, true);
-			}
-		} else {
-			tileImage.setFlip(flipH, !flipV);
-		}
-
-		g.drawSprite(tileImage, renderX, renderY);
-		tileImage.setRotation(0f);
-		tileImage.setFlip(previousFlipX, previousFlipY);
+		StaticTileRenderer.drawTileImage(g, tileImage, renderX, renderY, flipH, flipV, flipD);
 	}
 
 	@Override

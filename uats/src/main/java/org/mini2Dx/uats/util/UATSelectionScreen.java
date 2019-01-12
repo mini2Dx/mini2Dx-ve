@@ -211,6 +211,16 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 				nextScreenId = ScreenIds.getScreenId(TextureRegionUAT.class);
 			}
 		})));
+		uatsDialog.add(FlexRow.withElements("row-sprite", UiUtils.createButton(uiNavigation, "Sprites", new ActionListener() {
+			@Override
+			public void onActionBegin(ActionEvent event) {
+			}
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				nextScreenId = ScreenIds.getScreenId(SpriteUAT.class);
+			}
+		})));
 		uatsDialog.add(FlexRow.withElements("row-audio", UiUtils.createButton(uiNavigation, "Audio", new ActionListener() {
 			@Override
 			public void onActionBegin(ActionEvent event) {

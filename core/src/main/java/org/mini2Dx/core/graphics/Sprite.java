@@ -66,7 +66,7 @@ public class Sprite extends com.badlogic.gdx.graphics.g2d.Sprite {
 	public Sprite(Texture texture, int srcX, int srcY, int srcWidth,
 			int srcHeight) {
 		super(texture, srcX, srcY, srcWidth, srcHeight);
-		setFlip(false, true);
+		flip(false, true);
 	}
 
 	/**
@@ -76,6 +76,7 @@ public class Sprite extends com.badlogic.gdx.graphics.g2d.Sprite {
 	 */
 	public Sprite(TextureRegion region) {
 		super(region);
+		setFlip(region.isFlipX(), region.isFlipY());
 	}
 
 	/**
@@ -94,6 +95,7 @@ public class Sprite extends com.badlogic.gdx.graphics.g2d.Sprite {
 	public Sprite(TextureRegion region, int srcX, int srcY, int srcWidth,
 			int srcHeight) {
 		super(region, srcX, srcY, srcWidth, srcHeight);
+		setFlip(region.isFlipX(), region.isFlipY());
 	}
 
 	/** Creates a sprite that is a copy in every way of the specified sprite. */
@@ -107,5 +109,53 @@ public class Sprite extends com.badlogic.gdx.graphics.g2d.Sprite {
 	 */
 	public float getAlpha() {
 		return getColor().a;
+	}
+
+	@Override
+	public boolean isFlipY() {
+		return !super.isFlipY();
+	}
+
+	@Override
+	public int getRegionY() {
+		setFlipY(!isFlipY());
+		int result = super.getRegionY();
+		setFlipY(!isFlipY());
+		return result;
+	}
+
+	@Override
+	public void setFlip (boolean x, boolean y) {
+		boolean performX = false;
+		boolean performY = false;
+		if (isFlipX() != x) {
+			performX = true;
+		}
+		if (isFlipY() != y) {
+			performY = true;
+		}
+		flip(performX, performY);
+	}
+
+	/**
+	 * Sets if the {@link Sprite} is flipped horizontally
+	 * @param flipX True if the region is flipped horizontally
+	 */
+	public void setFlipX(boolean flipX) {
+		if(flipX == isFlipX()) {
+			return;
+		}
+		flip(true, false);
+	}
+
+	/**
+	 * Sets if the {@link Sprite} is flipped vertically
+	 * @param flipY True if the region is flipped vertically
+	 */
+	public void setFlipY(boolean flipY) {
+		if(flipY == isFlipY()) {
+			return;
+		}
+		flip(false, true);
 	}
 }

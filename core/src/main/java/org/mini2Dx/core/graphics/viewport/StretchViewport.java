@@ -15,7 +15,7 @@ import org.mini2Dx.core.util.Scaling;
 
 public class StretchViewport extends ScalingViewport {
 
-	public StretchViewport(float viewportWidth, float viewportHeight) {
-		super(Scaling.STRETCH, false, viewportWidth, viewportHeight);
+	public StretchViewport(float worldWidth, float worldHeight) {
+		super(Scaling.STRETCH,false ,worldWidth, worldHeight);
 	}
 }

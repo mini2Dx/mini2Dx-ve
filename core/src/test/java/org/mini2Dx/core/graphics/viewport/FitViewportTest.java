@@ -25,50 +25,50 @@ public class FitViewportTest {
 	@Test
 	public void testOnResize() {
 		viewport.onResize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
-		Assert.assertEquals(0, viewport.getBoundX());
-		Assert.assertEquals(0, viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getBoundHeight());
+		Assert.assertEquals(0, viewport.getX());
+		Assert.assertEquals(0, viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getHeight());
 		Assert.assertEquals(1f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(1f, viewport.getScaleY(), 0.01f);
 
 		viewport.onResize(MathUtils.round(VIEWPORT_WIDTH * 1.5f), MathUtils.round(VIEWPORT_HEIGHT * 1.5f));
-		Assert.assertEquals(0, viewport.getBoundX());
-		Assert.assertEquals(0, viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getBoundHeight());
+		Assert.assertEquals(0, viewport.getX());
+		Assert.assertEquals(0, viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getHeight());
 		Assert.assertEquals(1.5f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(1.5f, viewport.getScaleY(), 0.01f);
 
 		viewport.onResize(VIEWPORT_WIDTH * 2, VIEWPORT_HEIGHT * 2);
-		Assert.assertEquals(0, viewport.getBoundX());
-		Assert.assertEquals(0, viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getBoundHeight());
+		Assert.assertEquals(0, viewport.getX());
+		Assert.assertEquals(0, viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getHeight());
 		Assert.assertEquals(2f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(2f, viewport.getScaleY(), 0.01f);
 
 		viewport.onResize(VIEWPORT_WIDTH * 2, VIEWPORT_HEIGHT);
-		Assert.assertEquals(MathUtils.round(VIEWPORT_WIDTH * 0.5f), viewport.getBoundX());
-		Assert.assertEquals(0, viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getBoundHeight());
+		Assert.assertEquals(MathUtils.round(VIEWPORT_WIDTH * 0.5f), viewport.getX());
+		Assert.assertEquals(0, viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getHeight());
 		Assert.assertEquals(1f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(1f, viewport.getScaleY(), 0.01f);
 
 		viewport.onResize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT * 2);
-		Assert.assertEquals(0, viewport.getBoundX());
-		Assert.assertEquals(MathUtils.round(VIEWPORT_HEIGHT * 0.5f), viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getBoundHeight());
+		Assert.assertEquals(0, viewport.getX());
+		Assert.assertEquals(MathUtils.round(VIEWPORT_HEIGHT * 0.5f), viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getHeight());
 		Assert.assertEquals(1f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(1f, viewport.getScaleY(), 0.01f);
 
 		viewport.onResize(VIEWPORT_WIDTH * 3, MathUtils.round(VIEWPORT_HEIGHT * 2.5f));
-		Assert.assertEquals(32, viewport.getBoundX());
-		Assert.assertEquals(0, viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getBoundHeight());
+		Assert.assertEquals(32, viewport.getX());
+		Assert.assertEquals(0, viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getHeight());
 		Assert.assertEquals(2.5f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(2.5f, viewport.getScaleY(), 0.01f);
 	}
@@ -78,50 +78,50 @@ public class FitViewportTest {
 		viewport.setPowerOfTwo(true);
 		viewport.onResize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
-		Assert.assertEquals(0, viewport.getBoundX());
-		Assert.assertEquals(0, viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getBoundHeight());
+		Assert.assertEquals(0, viewport.getX());
+		Assert.assertEquals(0, viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getHeight());
 		Assert.assertEquals(1f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(1f, viewport.getScaleY(), 0.01f);
 
 		viewport.onResize(MathUtils.round(VIEWPORT_WIDTH * 1.5f), MathUtils.round(VIEWPORT_HEIGHT * 1.5f));
-		Assert.assertEquals(MathUtils.round(VIEWPORT_WIDTH * 0.25f), viewport.getBoundX());
-		Assert.assertEquals(MathUtils.round(VIEWPORT_HEIGHT * 0.25f), viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getBoundHeight());
+		Assert.assertEquals(MathUtils.round(VIEWPORT_WIDTH * 0.25f), viewport.getX());
+		Assert.assertEquals(MathUtils.round(VIEWPORT_HEIGHT * 0.25f), viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getHeight());
 		Assert.assertEquals(1f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(1f, viewport.getScaleY(), 0.01f);
 
 		viewport.onResize(VIEWPORT_WIDTH * 2, VIEWPORT_HEIGHT * 2);
-		Assert.assertEquals(0, viewport.getBoundX());
-		Assert.assertEquals(0, viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getBoundHeight());
+		Assert.assertEquals(0, viewport.getX());
+		Assert.assertEquals(0, viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getHeight());
 		Assert.assertEquals(2f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(2f, viewport.getScaleY(), 0.01f);
 
 		viewport.onResize(VIEWPORT_WIDTH * 2, VIEWPORT_HEIGHT);
-		Assert.assertEquals(MathUtils.round(VIEWPORT_WIDTH * 0.5f), viewport.getBoundX());
-		Assert.assertEquals(0, viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getBoundHeight());
+		Assert.assertEquals(MathUtils.round(VIEWPORT_WIDTH * 0.5f), viewport.getX());
+		Assert.assertEquals(0, viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getHeight());
 		Assert.assertEquals(1f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(1f, viewport.getScaleY(), 0.01f);
 
 		viewport.onResize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT * 2);
-		Assert.assertEquals(0, viewport.getBoundX());
-		Assert.assertEquals(MathUtils.round(VIEWPORT_HEIGHT * 0.5f), viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getBoundHeight());
+		Assert.assertEquals(0, viewport.getX());
+		Assert.assertEquals(MathUtils.round(VIEWPORT_HEIGHT * 0.5f), viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getHeight());
 		Assert.assertEquals(1f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(1f, viewport.getScaleY(), 0.01f);
 
 		viewport.onResize(VIEWPORT_WIDTH * 6, VIEWPORT_HEIGHT * 4);
-		Assert.assertEquals(MathUtils.round(VIEWPORT_WIDTH * 0.25f), viewport.getBoundX());
-		Assert.assertEquals(0, viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getBoundHeight());
+		Assert.assertEquals(MathUtils.round(VIEWPORT_WIDTH * 0.25f), viewport.getX());
+		Assert.assertEquals(0, viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getHeight());
 		Assert.assertEquals(4f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(4f, viewport.getScaleY(), 0.01f);
 	}
@@ -168,6 +168,7 @@ public class FitViewportTest {
 
 	@Test
 	public void testToScreenCoordinatesPowerOfTwo() {
+		viewport.setPowerOfTwo(true);
 		viewport.onResize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
 		final Vector2 coordinates = new Vector2();
@@ -238,6 +239,7 @@ public class FitViewportTest {
 
 	@Test
 	public void testToWorldCoordinatesPowerOfTwo() {
+		viewport.setPowerOfTwo(true);
 		viewport.onResize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
 		final Vector2 coordinates = new Vector2();

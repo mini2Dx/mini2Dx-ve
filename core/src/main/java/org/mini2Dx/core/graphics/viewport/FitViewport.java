@@ -15,11 +15,11 @@ import org.mini2Dx.core.util.Scaling;
 
 public class FitViewport extends ScalingViewport {
 
-	public FitViewport(float viewportWidth, float viewportHeight) {
-		this(false ,viewportWidth, viewportHeight);
+	public FitViewport(float worldWidth, float worldHeight) {
+		this(false ,worldWidth, worldHeight);
 	}
 
-	public FitViewport(boolean powerOfTwo, float viewportWidth, float viewportHeight) {
-		super(Scaling.FIT, powerOfTwo,viewportWidth, viewportHeight);
+	public FitViewport(boolean powerOfTwo, float worldWidth, float worldHeight) {
+		super(Scaling.FIT, powerOfTwo,worldWidth, worldHeight);
 	}
 }

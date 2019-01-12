@@ -12,24 +12,25 @@
 package org.mini2Dx.core.graphics.viewport;
 
 import com.badlogic.gdx.math.Vector2;
-import org.mini2Dx.core.game.GameResizeListener;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
 
-public abstract class Viewport implements GameResizeListener {
-	private int boundX, boundY, boundWidth, boundHeight;
+public abstract class Viewport {
+	private int x, y, width, height;
 	private float scaleX, invScaleX;
 	private float scaleY, invScaleY;
 
-	private boolean initialised = false;
-
+	private int previousWindowWidth, previousWindowHeight;
 	private float previousScaleX, previousScaleY, previousTranslateX, previousTranslateY;
 	private final Rectangle previousClip = new Rectangle();
 
+	protected abstract void onResize(int windowWidth, int windowHeight);
+
 	public void apply(Graphics g) {
-		if(!initialised) {
+		if(previousWindowWidth != g.getWindowWidth() || previousWindowHeight != g.getWindowHeight()) {
 			onResize(g.getWindowWidth(), g.getWindowHeight());
-			initialised = true;
+			previousWindowWidth = g.getWindowWidth();
+			previousWindowHeight = g.getWindowHeight();
 		}
 
 		previousScaleX = g.getScaleX();
@@ -39,8 +40,8 @@ public abstract class Viewport implements GameResizeListener {
 		g.peekClip(previousClip);
 
 		g.setScale(scaleX, scaleY);
-		g.setTranslation(-boundX, -boundY);
-		g.setClip(0, 0, boundWidth, boundHeight);
+		g.setTranslation(-x, -y);
+		g.setClip(0, 0, width, height);
 	}
 
 	public void unapply(Graphics g) {
@@ -50,13 +51,13 @@ public abstract class Viewport implements GameResizeListener {
 	}
 
 	public void toScreenCoordinates(Vector2 result, float worldX, float worldY) {
-		result.x = (worldX * scaleX) + boundX;
-		result.y = (worldY * scaleY) + boundY;
+		result.x = (worldX * scaleX) + x;
+		result.y = (worldY * scaleY) + y;
 	}
 
 	public void toWorldCoordinates(Vector2 result, float screenX, float screenY) {
-		result.x = (screenX - boundX) * invScaleX;
-		result.y = (screenY - boundY) * invScaleY;
+		result.x = (screenX - x) * invScaleX;
+		result.y = (screenY - y) * invScaleY;
 	}
 
 	public void toScreenCoordinates(Vector2 worldCoordinates) {
@@ -67,31 +68,31 @@ public abstract class Viewport implements GameResizeListener {
 		toWorldCoordinates(screenCoordinates, screenCoordinates.x, screenCoordinates.y);
 	}
 
-	protected void setBounds(int boundX, int boundY, int boundWidth, int boundHeight, float scaleX, float scaleY) {
-		this.boundX = boundX;
-		this.boundY = boundY;
-		this.boundWidth = boundWidth;
-		this.boundHeight = boundHeight;
+	protected void setBounds(int x, int y, int width, int height, float scaleX, float scaleY) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
 		this.scaleX = scaleX;
 		this.invScaleX = 1f / scaleX;
 		this.scaleY = scaleY;
 		this.invScaleY = 1f / scaleY;
 	}
 
-	public int getBoundX() {
-		return boundX;
+	public int getX() {
+		return x;
 	}
 
-	public int getBoundY() {
-		return boundY;
+	public int getY() {
+		return y;
 	}
 
-	public int getBoundWidth() {
-		return boundWidth;
+	public int getWidth() {
+		return width;
 	}
 
-	public int getBoundHeight() {
-		return boundHeight;
+	public int getHeight() {
+		return height;
 	}
 
 	public float getScaleX() {

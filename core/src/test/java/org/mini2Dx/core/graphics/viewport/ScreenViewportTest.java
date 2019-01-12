@@ -25,26 +25,26 @@ public class ScreenViewportTest {
 	@Test
 	public void testOnResize() {
 		viewport.onResize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
-		Assert.assertEquals(0, viewport.getBoundX());
-		Assert.assertEquals(0, viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getBoundHeight());
+		Assert.assertEquals(0, viewport.getX());
+		Assert.assertEquals(0, viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT, viewport.getHeight());
 		Assert.assertEquals(1f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(1f, viewport.getScaleY(), 0.01f);
 
 		viewport.onResize(MathUtils.round(VIEWPORT_WIDTH * 1.5f), MathUtils.round(VIEWPORT_HEIGHT * 1.5f));
-		Assert.assertEquals(0, viewport.getBoundX());
-		Assert.assertEquals(0, viewport.getBoundY());
-		Assert.assertEquals(MathUtils.round(VIEWPORT_WIDTH * 1.5f), viewport.getBoundWidth());
-		Assert.assertEquals(MathUtils.round(VIEWPORT_HEIGHT * 1.5f), viewport.getBoundHeight());
+		Assert.assertEquals(0, viewport.getX());
+		Assert.assertEquals(0, viewport.getY());
+		Assert.assertEquals(MathUtils.round(VIEWPORT_WIDTH * 1.5f), viewport.getWidth());
+		Assert.assertEquals(MathUtils.round(VIEWPORT_HEIGHT * 1.5f), viewport.getHeight());
 		Assert.assertEquals(1f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(1f, viewport.getScaleY(), 0.01f);
 
 		viewport.onResize(VIEWPORT_WIDTH * 2, VIEWPORT_HEIGHT * 2);
-		Assert.assertEquals(0, viewport.getBoundX());
-		Assert.assertEquals(0, viewport.getBoundY());
-		Assert.assertEquals(VIEWPORT_WIDTH * 2, viewport.getBoundWidth());
-		Assert.assertEquals(VIEWPORT_HEIGHT * 2, viewport.getBoundHeight());
+		Assert.assertEquals(0, viewport.getX());
+		Assert.assertEquals(0, viewport.getY());
+		Assert.assertEquals(VIEWPORT_WIDTH * 2, viewport.getWidth());
+		Assert.assertEquals(VIEWPORT_HEIGHT * 2, viewport.getHeight());
 		Assert.assertEquals(1f, viewport.getScaleX(), 0.01f);
 		Assert.assertEquals(1f, viewport.getScaleY(), 0.01f);
 	}

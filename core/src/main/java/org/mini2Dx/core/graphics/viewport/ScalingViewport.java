@@ -13,34 +13,33 @@ package org.mini2Dx.core.graphics.viewport;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import org.mini2Dx.core.util.Scaling;
 
 public class ScalingViewport extends Viewport {
 	private final Scaling scaling;
-	private final float viewportWidth, viewportHeight;
+	private final float worldWidth, worldHeight;
 	private final Vector2 size = new Vector2();
 	private final Vector2 scale = new Vector2();
 
 	private boolean powerOfTwo;
 
-	public ScalingViewport(Scaling scaling, boolean powerOfTwo, float viewportWidth, float viewportHeight) {
+	public ScalingViewport(Scaling scaling, boolean powerOfTwo, float worldWidth, float worldHeight) {
 		super();
 		this.scaling = scaling;
 		this.powerOfTwo = powerOfTwo;
-		this.viewportWidth = viewportWidth;
-		this.viewportHeight = viewportHeight;
+		this.worldWidth = worldWidth;
+		this.worldHeight = worldHeight;
 	}
 
 	@Override
 	public void onResize(int width, int height) {
-		scaling.apply(size, scale, powerOfTwo, viewportWidth, viewportHeight, width, height);
+		scaling.apply(size, scale, powerOfTwo, worldWidth, worldHeight, width, height);
 
 		final int viewWidth = MathUtils.round(size.x);
 		final int viewHeight = MathUtils.round(size.y);
 
 		setBounds((width - viewWidth) / MathUtils.round(2 * scale.x), (height - viewHeight) / MathUtils.round(2 * scale.y),
-				MathUtils.round(viewportWidth), MathUtils.round(viewportHeight), scale.x, scale.y);
+				MathUtils.round(worldWidth), MathUtils.round(worldHeight), scale.x, scale.y);
 	}
 
 	public boolean isPowerOfTwo() {

@@ -46,12 +46,8 @@ public class ViewportUAT extends BasicGameScreen {
 		viewports[0] = new FillViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 		viewports[1] = new FitViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 		viewports[2] = new StretchViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
-		viewports[3] = new ExtendViewport();
+		viewports[3] = new ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 		viewports[4] = new ScreenViewport();
-
-		for(int i = 0; i < viewports.length; i++) {
-			gc.addResizeListener(viewports[i]);
-		}
 	}
 
 	@Override
@@ -87,38 +83,38 @@ public class ViewportUAT extends BasicGameScreen {
 		g.drawTexture(texture, 0f, 8f);
 
 		g.setColor(Color.RED);
-		g.drawRect(0f, 0f, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+		g.drawRect(0f, 0f, viewport.getWidth(), viewport.getHeight());
 
 		switch(viewportIndex) {
 		case 1:
 			g.drawString("Fit Viewport (" +
-					viewport.getBoundX() + "," + viewport.getBoundY() + "," +
-					viewport.getBoundWidth() + "," + viewport.getBoundHeight() + ") vs Window (" +
+					viewport.getX() + "," + viewport.getY() + "," +
+					viewport.getWidth() + "," + viewport.getHeight() + ") vs Window (" +
 					g.getWindowWidth() + "," + g.getWindowHeight() + ")", 4f, 4f);
 			break;
 		case 2:
 			g.drawString("Stretch Viewport (" +
-					viewport.getBoundX() + "," + viewport.getBoundY() + "," +
-					viewport.getBoundWidth() + "," + viewport.getBoundHeight() + ") vs Window (" +
+					viewport.getX() + "," + viewport.getY() + "," +
+					viewport.getWidth() + "," + viewport.getHeight() + ") vs Window (" +
 					g.getWindowWidth() + "," + g.getWindowHeight() + ")", 4f, 4f);
 			break;
 		case 3:
 			g.drawString("Extend Viewport (" +
-					viewport.getBoundX() + "," + viewport.getBoundY() + "," +
-					viewport.getBoundWidth() + "," + viewport.getBoundHeight() + ") vs Window (" +
+					viewport.getX() + "," + viewport.getY() + "," +
+					viewport.getWidth() + "," + viewport.getHeight() + ") vs Window (" +
 					g.getWindowWidth() + "," + g.getWindowHeight() + ")", 4f, 4f);
 			break;
 		case 4:
 			g.drawString("Screen Viewport (" +
-					viewport.getBoundX() + "," + viewport.getBoundY() + "," +
-					viewport.getBoundWidth() + "," + viewport.getBoundHeight() + ") vs Window (" +
+					viewport.getX() + "," + viewport.getY() + "," +
+					viewport.getWidth() + "," + viewport.getHeight() + ") vs Window (" +
 					g.getWindowWidth() + "," + g.getWindowHeight() + ")", 4f, 4f);
 			break;
 		default:
 		case 0:
 			g.drawString("Fill Viewport (" +
-					viewport.getBoundX() + "," + viewport.getBoundY() + "," +
-					viewport.getBoundWidth() + "," + viewport.getBoundHeight() + ") vs Window (" +
+					viewport.getX() + "," + viewport.getY() + "," +
+					viewport.getWidth() + "," + viewport.getHeight() + ") vs Window (" +
 					g.getWindowWidth() + "," + g.getWindowHeight() + ")", 4f, 4f);
 			break;
 		}

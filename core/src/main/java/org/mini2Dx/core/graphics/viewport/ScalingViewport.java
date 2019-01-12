@@ -15,6 +15,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import org.mini2Dx.core.util.Scaling;
 
+/**
+ * Base class for implementing {@link Viewport} instances that use {@link Scaling}
+ */
 public class ScalingViewport extends Viewport {
 	private final Scaling scaling;
 	private final float worldWidth, worldHeight;

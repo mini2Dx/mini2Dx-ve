@@ -13,12 +13,27 @@ package org.mini2Dx.core.graphics.viewport;
 
 import org.mini2Dx.core.util.Scaling;
 
+/**
+ * A {@link Viewport} with a fixed virtual screen size. The virtual size will be scaled to fill in the game window.
+ * This means that parts of the game may be rendered outside of the window/off-screen. The aspect ratio will always be maintained.
+ */
 public class FillViewport extends ScalingViewport {
 
+	/**
+	 * Constructor
+	 * @param worldWidth The virtual screen width
+	 * @param worldHeight The virtual screen height
+	 */
 	public FillViewport(float worldWidth, float worldHeight) {
 		this(false ,worldWidth, worldHeight);
 	}
 
+	/**
+	 * Constructor
+	 * @param powerOfTwo True if scaling should only be applied in powers of two
+	 * @param worldWidth The virtual screen width
+	 * @param worldHeight The virtual screen height
+	 */
 	public FillViewport(boolean powerOfTwo, float worldWidth, float worldHeight) {
 		super(Scaling.FILL, powerOfTwo,worldWidth, worldHeight);
 	}

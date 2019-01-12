@@ -15,6 +15,11 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import org.mini2Dx.core.util.Scaling;
 
+/**
+ * Similar to {@link FitViewport} except the viewport will expand its size after scaling to
+ * fill the remaining space of the window to avoid black bars. A maxiumum virtual screen size c
+ * an be set if black bars are desired after a certain amount of viewport expansion.
+ */
 public class ExtendViewport extends Viewport {
 	private float minWorldWidth, minWorldHeight;
 	private float maxWorldWidth, maxWorldHeight;
@@ -23,18 +28,44 @@ public class ExtendViewport extends Viewport {
 	private final Vector2 size = new Vector2();
 	private final Vector2 scale = new Vector2();
 
+	/**
+	 * Constructor with no maxiumum virtual screen size
+	 * @param minWorldWidth Minimum virtual screen width
+	 * @param minWorldHeight Minimum virtual screen height
+	 */
 	public ExtendViewport(float minWorldWidth, float minWorldHeight) {
 		this(minWorldWidth, minWorldHeight, 0f, 0f);
 	}
 
+	/**
+	 * Constructor
+	 * @param minWorldWidth Minimum virtual screen width
+	 * @param minWorldHeight Minimum virtual screen height
+	 * @param maxWorldWidth Maximum virtual screen width
+	 * @param maxWorldHeight Maximum virtual screen height
+	 */
 	public ExtendViewport(float minWorldWidth, float minWorldHeight, float maxWorldWidth, float maxWorldHeight) {
 		this(false, minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight);
 	}
 
+	/**
+	 * Constructor with no maxiumum virtual screen size
+	 * @param powerOfTwo True if scaling should only be applied in powers of two
+	 * @param minWorldWidth Minimum virtual screen width
+	 * @param minWorldHeight Minimum virtual screen height
+	 */
 	public ExtendViewport(boolean powerOfTwo, float minWorldWidth, float minWorldHeight) {
 		this(powerOfTwo, minWorldWidth, minWorldHeight, 0f, 0f);
 	}
 
+	/**
+	 * Constructor
+	 * @param powerOfTwo True if scaling should only be applied in powers of two
+	 * @param minWorldWidth Minimum virtual screen width
+	 * @param minWorldHeight Minimum virtual screen height
+	 * @param maxWorldWidth Maximum virtual screen width
+	 * @param maxWorldHeight Maximum virtual screen height
+	 */
 	public ExtendViewport(boolean powerOfTwo, float minWorldWidth, float minWorldHeight, float maxWorldWidth, float maxWorldHeight) {
 		super();
 		this.powerOfTwo = powerOfTwo;

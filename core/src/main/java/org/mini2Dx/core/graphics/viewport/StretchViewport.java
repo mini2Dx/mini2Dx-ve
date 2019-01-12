@@ -13,8 +13,16 @@ package org.mini2Dx.core.graphics.viewport;
 
 import org.mini2Dx.core.util.Scaling;
 
+/**
+ * A {@link Viewport} with a fixed size that is stretched to fill the game window. The aspect ratio is not maintained.
+ */
 public class StretchViewport extends ScalingViewport {
 
+	/**
+	 * Constructor
+	 * @param worldWidth The fixed width
+	 * @param worldHeight THe fixed height
+	 */
 	public StretchViewport(float worldWidth, float worldHeight) {
 		super(Scaling.STRETCH,false ,worldWidth, worldHeight);
 	}

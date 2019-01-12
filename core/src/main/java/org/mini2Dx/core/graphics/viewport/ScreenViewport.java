@@ -11,6 +11,9 @@
  */
 package org.mini2Dx.core.graphics.viewport;
 
+/**
+ * A {@link Viewport} that always matches the game window size.
+ */
 public class ScreenViewport extends Viewport {
 
 	@Override

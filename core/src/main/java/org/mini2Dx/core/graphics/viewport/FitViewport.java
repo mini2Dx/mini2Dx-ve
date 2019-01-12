@@ -13,12 +13,27 @@ package org.mini2Dx.core.graphics.viewport;
 
 import org.mini2Dx.core.util.Scaling;
 
+/**
+ * A {@link Viewport} with a fixed virtual screen size. The virtual size will be scaled to fit in the game window.
+ * However, black bars may appear around the viewport depending on the window size. The aspect ratio will always be maintained.
+ */
 public class FitViewport extends ScalingViewport {
 
+	/**
+	 * Constructor
+	 * @param worldWidth The virtual screen width
+	 * @param worldHeight The virtual screen height
+	 */
 	public FitViewport(float worldWidth, float worldHeight) {
 		this(false ,worldWidth, worldHeight);
 	}
 
+	/**
+	 * Constructor
+	 * @param powerOfTwo True if scaling should only be applied in powers of two
+	 * @param worldWidth The virtual screen width
+	 * @param worldHeight The virtual screen height
+	 */
 	public FitViewport(boolean powerOfTwo, float worldWidth, float worldHeight) {
 		super(Scaling.FIT, powerOfTwo,worldWidth, worldHeight);
 	}

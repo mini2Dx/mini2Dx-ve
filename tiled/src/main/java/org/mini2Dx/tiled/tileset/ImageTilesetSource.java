@@ -117,7 +117,13 @@ public class ImageTilesetSource extends TilesetSource {
 		if(textureRegion != null) {
 			return;
 		}
-		loadTileImages(new TextureRegion(textureAtlas.findRegion(tilesetImagePath)));
+		final TextureAtlas.AtlasRegion atlasRegion = textureAtlas.findRegion(tilesetImagePath);
+		if(atlasRegion == null && tilesetImagePath.indexOf('.') > -1) {
+			loadTileImages(new TextureRegion(textureAtlas.findRegion(
+					tilesetImagePath.substring(0, tilesetImagePath.lastIndexOf('.')))));
+		} else {
+			loadTileImages(new TextureRegion(atlasRegion));
+		}
 	}
 
 	private void loadTileImages(TextureRegion textureRegion) {

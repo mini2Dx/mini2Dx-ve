@@ -15,6 +15,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.tiled.exception.TiledException;
@@ -47,14 +48,14 @@ public class TiledMap {
 	 * 
 	 * @param fileHandle
 	 *            A {@link FileHandle} to a .tmx file
-	 * @param loadTilesets
-	 *            True if the tileset images should be loaded and the map
-	 *            pre-rendered
+	 * @param loadTilesetTextures
+	 *            True if the tileset images should be loaded
+	 * @param cacheLayers True if the tile layers should be cached during rendering
 	 * @throws TiledException
 	 *             Thrown if there were issues with the loaded map
 	 */
-	public TiledMap(FileHandle fileHandle, boolean loadTilesets, boolean cacheLayers) {
-		this(new TiledParser(), fileHandle, loadTilesets, cacheLayers);
+	public TiledMap(FileHandle fileHandle, boolean loadTilesetTextures, boolean cacheLayers) {
+		this(new TiledParser(), fileHandle, loadTilesetTextures, cacheLayers);
 	}
 
 	/**
@@ -130,6 +131,14 @@ public class TiledMap {
 	 */
 	public void loadTilesetTextures(AssetManager assetManager) {
 		tiledMapData.loadTilesetTextures(assetManager);
+	}
+
+	/**
+	 * Loads all {@link Tileset} textures for this map if they are not already loaded
+	 * @param textureAtlas The {@link TextureAtlas} to load textures from
+	 */
+	public void loadTilesetTextures(TextureAtlas textureAtlas) {
+		tiledMapData.loadTilesetTextures(textureAtlas);
 	}
 
 	/**

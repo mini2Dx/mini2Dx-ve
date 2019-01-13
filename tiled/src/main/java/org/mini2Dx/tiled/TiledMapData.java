@@ -15,6 +15,7 @@ import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -90,6 +91,14 @@ public class TiledMapData implements TiledParserListener {
 		for (int i = 0; i < tilesets.size; i++) {
 			if (!tilesets.get(i).isTextureLoaded()) {
 				tilesets.get(i).loadTexture(assetManager, fileHandle);
+			}
+		}
+	}
+
+	public void loadTilesetTextures(TextureAtlas textureAtlas) {
+		for (int i = 0; i < tilesets.size; i++) {
+			if (!tilesets.get(i).isTextureLoaded()) {
+				tilesets.get(i).loadTexture(textureAtlas);
 			}
 		}
 	}

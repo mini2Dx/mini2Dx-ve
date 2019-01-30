@@ -13,6 +13,7 @@ package org.mini2Dx.core.util;
 
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.utils.Align;
+import org.mini2Dx.core.font.FontGlyphLayout;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
 
@@ -26,7 +27,6 @@ import org.mini2Dx.core.graphics.Graphics;
  * </ul>
  */
 public class PerformanceTracker {
-	private static final GlyphLayout GLYPH_LAYOUT = new GlyphLayout();
 	private static final String DURATION_PREFIX = "Avg update duration:: ";
 	private static final String UPDATE_PREFIX = "Updates / second:: ";
 	private static final String FRAMES_PREFIX = "Frames / second:: ";
@@ -46,6 +46,8 @@ public class PerformanceTracker {
 	private long frameSecondStart;
 	private int frames;
 	private int framesPerSecond;
+
+	private FontGlyphLayout glyphLayout;
 
 	public PerformanceTracker() {
 		super();
@@ -236,22 +238,30 @@ public class PerformanceTracker {
 	}
 
 	private float getLineWidth(Graphics g) {
+		if(glyphLayout == null) {
+			glyphLayout = g.getFont().newGlyphLayout();
+		}
+
 		float lineWidth = 0f;
 		for (int i = 0; i < messages.length; i++) {
-			GLYPH_LAYOUT.setText(g.getFont(), messages[i]);
-			if (GLYPH_LAYOUT.width > lineWidth) {
-				lineWidth = GLYPH_LAYOUT.width;
+			glyphLayout.setText(messages[i]);
+			if (glyphLayout.getWidth() > lineWidth) {
+				lineWidth = glyphLayout.getWidth();
 			}
 		}
 		return lineWidth;
 	}
 
 	private float getLineHeight(Graphics g) {
+		if(glyphLayout == null) {
+			glyphLayout = g.getFont().newGlyphLayout();
+		}
+
 		float lineHeight = 0f;
 		for (int i = 0; i < messages.length; i++) {
-			GLYPH_LAYOUT.setText(g.getFont(), messages[i]);
-			if (GLYPH_LAYOUT.height > lineHeight) {
-				lineHeight = GLYPH_LAYOUT.height;
+			glyphLayout.setText(messages[i]);
+			if (glyphLayout.getHeight() > lineHeight) {
+				lineHeight = glyphLayout.getHeight();
 			}
 		}
 		return lineHeight;

@@ -23,6 +23,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import org.mini2Dx.core.font.GameFont;
+import org.mini2Dx.core.font.GameFontCache;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.geom.Shape;
 
@@ -475,12 +477,12 @@ public interface Graphics {
 	public void drawTiledDrawable(TiledDrawable tiledDrawable, float x, float y, float width, float height);
 
 	/**
-	 * Draws a {@link BitmapFontCache} to the screen
+	 * Draws a {@link GameFontCache} to the screen
 	 * 
-	 * @param bitmapFontCache
-	 *            The {@link BitmapFontCache} to render
+	 * @param fontCache
+	 *            The {@link GameFontCache} to render
 	 */
-	public void drawBitmapFontCache(BitmapFontCache bitmapFontCache);
+	public void drawFontCache(GameFontCache fontCache);
 
 	/**
 	 * Rotates the canvas by the provided degrees around the provided point
@@ -602,12 +604,12 @@ public interface Graphics {
 	public void setTint(Color tint);
 
 	/**
-	 * Sets the {@link BitmapFont} to draw {@link String}s with
+	 * Sets the {@link GameFont} to draw {@link String}s with
 	 * 
 	 * @param font
-	 *            A non-null instance of {@link BitmapFont}
+	 *            A non-null instance of {@link GameFont}
 	 */
-	public void setFont(BitmapFont font);
+	public void setFont(GameFont font);
 
 	/**
 	 * Removes the tinting {@link Color}
@@ -711,11 +713,11 @@ public interface Graphics {
 	public void setBackgroundColor(Color backgroundColor);
 
 	/**
-	 * Returns the {@link BitmapFont} to draw {@link String}s with
+	 * Returns the {@link GameFont} to draw {@link String}s with
 	 * 
-	 * @return 15pt Arial font by default unless setFont() is called
+	 * @return 15pt Arial {@link BitmapFont} by default unless setFont() is called
 	 */
-	public BitmapFont getFont();
+	public GameFont getFont();
 
 	/**
 	 * Returns the {@link Color} tint being applied to all draw operations

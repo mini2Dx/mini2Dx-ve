@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 See AUTHORS file
+ * Copyright (c) 2019 See AUTHORS file
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -9,44 +9,60 @@
  * Neither the name of the mini2Dx nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.mini2Dx.ui.animation;
+package org.mini2Dx.core.font;
 
-import org.mini2Dx.core.font.GameFontCache;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.graphics.Graphics;
-
-import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
+import org.mini2Dx.core.graphics.LibGdxGraphics;
 
 /**
- * A {@link TextAnimation} that just renders the text directly
+ * BMFont implementation of {@link GameFont}. See <a href="http://www.angelcode.com/products/bmfont/">here</a>
  */
-public class NullTextAnimation extends BaseTextAnimation {
-	
-	@Override
-	public void skip() {}
+public class BitmapFont extends com.badlogic.gdx.graphics.g2d.BitmapFont implements GameFont {
 
-	@Override
-	public void onResize(GameFontCache cache, String text, float renderWidth, int hAlign) {
-		cache.clear();
-		finished = false;
+	public BitmapFont() {
+		super(true);
+	}
+
+	public BitmapFont (BitmapFontData data, TextureRegion region, boolean integer) {
+		this(data, region != null ? Array.with(region) : null, integer);
+	}
+
+	public BitmapFont (BitmapFontData data, Array<TextureRegion> pageRegions, boolean integer) {
+		super(data, pageRegions, integer);
 	}
 
 	@Override
-	public void update(GameFontCache cache, String text, float renderWidth, int hAlign, float delta) {
-		if(!isFinished()) {
-			cache.addText(text, 0f, 0f, renderWidth, hAlign, true);
-		}
-		setFinished(true);
+	public void draw(Graphics g, String str, float x, float y) {
+		draw(((LibGdxGraphics) g).getSpriteBatch(), str, x, y);
 	}
 
 	@Override
-	public void interpolate(GameFontCache cache, String text, float alpha) {}
-
-	@Override
-	public void render(GameFontCache cache, Graphics g, int renderX, int renderY) {
-		cache.setPosition(renderX, renderY);
-		g.drawFontCache(cache);
+	public void draw(Graphics g, String str, float x, float y, float targetWidth) {
+		draw(g, str, x, y, targetWidth, Align.left);
 	}
 
 	@Override
-	protected void resetState() {}
+	public void draw(Graphics g, String str, float x, float y, float targetWidth, int horizontalAlignment) {
+		draw(((LibGdxGraphics) g).getSpriteBatch(), str, x, y, targetWidth, horizontalAlignment, true);
+	}
+
+	@Override
+	public FontGlyphLayout newGlyphLayout() {
+		return new BitmapFontGlyphLayout(this);
+	}
+
+	@Override
+	public GameFontCache newCache() {
+		return new BitmapFontCache(this, useIntegerPositions());
+	}
+
+	@Override
+	public boolean useIntegerPositions() {
+		return super.usesIntegerPositions();
+	}
 }

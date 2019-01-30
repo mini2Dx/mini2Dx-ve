@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.ui.style;
 
+import org.mini2Dx.core.font.GameFont;
 import org.mini2Dx.core.graphics.NinePatch;
 import org.mini2Dx.core.graphics.TextureRegion;
 import org.mini2Dx.core.serialization.annotation.Field;
@@ -83,8 +84,8 @@ public class TextBoxStyleRule extends StyleRule {
 		return disabledBackgroundRenderer;
 	}
 
-	public BitmapFont getBitmapFont() {
-		return uiFont.getBitmapFont();
+	public GameFont getGameFont() {
+		return uiFont.getGameFont();
 	}
 
 	public int getFontSize() {

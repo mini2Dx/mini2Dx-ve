@@ -14,6 +14,9 @@ package org.mini2Dx.ui.render;
 import java.util.Iterator;
 
 import com.badlogic.gdx.utils.Array;
+import org.mini2Dx.core.font.BitmapFont;
+import org.mini2Dx.core.font.FontGlyphLayout;
+import org.mini2Dx.core.font.GameFontCache;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.TextureRegion;
@@ -27,9 +30,6 @@ import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.style.RadioButtonStyleRule;
 
 import com.badlogic.gdx.Input.Buttons;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.MathUtils;
 
 /**
@@ -37,12 +37,12 @@ import com.badlogic.gdx.math.MathUtils;
  */
 public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonStyleRule>
 		implements ActionableRenderNode {
-	protected static final GlyphLayout GLYPH_LAYOUT = new GlyphLayout();
-	protected static final BitmapFont DEFAULT_FONT = new BitmapFont(true);
+	protected static final BitmapFont DEFAULT_FONT = new BitmapFont();
 
 	protected final Array<Rectangle> buttonRenderPositions = new Array<Rectangle>(true, 1, Rectangle.class);
 
-	protected BitmapFontCache bitmapFontCache = DEFAULT_FONT.newFontCache();
+	protected FontGlyphLayout glyphLayout = DEFAULT_FONT.newGlyphLayout();
+	protected GameFontCache fontCache = DEFAULT_FONT.newCache();
 	protected String previousFont;
 	protected int lineHeight;
 	protected float calculatedHeight;
@@ -131,14 +131,14 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 		}
 		renderBackground(g);
 
-		bitmapFontCache.setPosition(getContentRenderX(), getContentRenderY());
+		fontCache.setPosition(getContentRenderX(), getContentRenderY());
 
 		for (int i = 0; i < element.getTotalOptions(); i++) {
 			Rectangle buttonRenderPosition = buttonRenderPositions.get(i);
 			renderButton(g, i, buttonRenderPosition.getX() + getContentRenderX(),
 					buttonRenderPosition.getY() + getContentRenderY(), i == hoveredIndex);
 		}
-		g.drawBitmapFontCache(bitmapFontCache);
+		g.drawFontCache(fontCache);
 	}
 
 	private void renderButton(Graphics g, int index, float renderX, float renderY, boolean hovered) {
@@ -240,7 +240,7 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 				pushButtonRenderPosition(i, buttonX, buttonY, MathUtils.round(
 						style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent() + GLYPH_LAYOUT.width),
 						lineHeight);
-				bitmapFontCache.addText(nextOption, textX, textY, availableWidth,
+				fontCache.addText(nextOption, textX, textY, availableWidth,
 						HorizontalAlignment.LEFT.getAlignValue(), true);
 				buttonX += style.getLabelIndent() + GLYPH_LAYOUT.width + style.getActiveTextureRegion().getRegionWidth()
 						+ style.getOptionsSpacing();
@@ -271,7 +271,7 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 							MathUtils.round(style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent()
 									+ GLYPH_LAYOUT.width),
 							lineHeight);
-					bitmapFontCache.addText(nextOption, textX, textY, availableWidth,
+					fontCache.addText(nextOption, textX, textY, availableWidth,
 							HorizontalAlignment.LEFT.getAlignValue(), true);
 					textX = buttonX - style.getOptionsSpacing();
 					i++;
@@ -296,7 +296,7 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 							MathUtils.round(style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent()
 									+ GLYPH_LAYOUT.width),
 							lineHeight);
-					bitmapFontCache.addText(nextOption, textX, textY, availableWidth,
+					fontCache.addText(nextOption, textX, textY, availableWidth,
 							HorizontalAlignment.LEFT.getAlignValue(), true);
 					buttonX += style.getLabelIndent() + GLYPH_LAYOUT.width
 							+ style.getActiveTextureRegion().getRegionWidth() + style.getOptionsSpacing();
@@ -326,7 +326,7 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 							+ GLYPH_LAYOUT.width;
 				}
 				pushButtonRenderPosition(i, buttonX, maxY, MathUtils.round(availableWidth), lineHeight);
-				bitmapFontCache.addText(nextOption, textX, maxY + buttonTextYDiff, availableWidth,
+				fontCache.addText(nextOption, textX, maxY + buttonTextYDiff, availableWidth,
 						HorizontalAlignment.LEFT.getAlignValue(), true);
 				maxY -= lineHeight + style.getOptionsSpacing();
 				buttonY += lineHeight + style.getOptionsSpacing();
@@ -347,7 +347,7 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 							+ GLYPH_LAYOUT.width;
 				}
 				pushButtonRenderPosition(i, buttonX, buttonY, MathUtils.round(availableWidth), lineHeight);
-				bitmapFontCache.addText(nextOption, textX, textY, availableWidth,
+				fontCache.addText(nextOption, textX, textY, availableWidth,
 						HorizontalAlignment.LEFT.getAlignValue(), true);
 				textY += lineHeight + style.getOptionsSpacing();
 				buttonY += lineHeight + style.getOptionsSpacing();
@@ -389,15 +389,15 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 	protected RadioButtonStyleRule determineStyleRule(LayoutState layoutState) {
 		RadioButtonStyleRule result = layoutState.getTheme().getStyleRule(element, layoutState.getScreenSize());
 
-		if (bitmapFontCache != null) {
-			bitmapFontCache.clear();
+		if (fontCache != null) {
+			fontCache.clear();
 		}
 		if (previousFont == null || !previousFont.equals(result.getFont())) {
-			bitmapFontCache = null;
-			bitmapFontCache = result.getBitmapFont().newFontCache();
+			fontCache = null;
+			fontCache = result.getGameFont().newCache();
 			previousFont = result.getFont();
 		}
-		bitmapFontCache.setColor(result.getColor());
+		fontCache.setColor(result.getColor());
 		return result;
 	}
 

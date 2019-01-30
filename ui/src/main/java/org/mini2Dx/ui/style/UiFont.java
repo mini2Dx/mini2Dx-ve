@@ -11,14 +11,13 @@
  */
 package org.mini2Dx.ui.style;
 
-import org.mini2Dx.core.serialization.annotation.Field;
-import org.mini2Dx.core.util.ColorUtils;
-
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import org.mini2Dx.core.font.GameFont;
+import org.mini2Dx.core.serialization.annotation.Field;
+import org.mini2Dx.core.util.ColorUtils;
 
 /**
  * A font for user interfaces
@@ -49,7 +48,7 @@ public class UiFont {
 	private int fontSize;
 	
 	private Color fontBorderColor, fontShadowColor;
-	private BitmapFont bitmapFont;
+	private GameFont gameFont;
 	
 	public void prepareAssets(UiTheme theme, FileHandleResolver fileHandleResolver) {
 		if(theme.isHeadless()) {
@@ -84,11 +83,11 @@ public class UiFont {
 	}
 	
 	public void dispose() {
-		bitmapFont.dispose();
+		gameFont.dispose();
 	}
 
-	public BitmapFont getBitmapFont() {
-		return bitmapFont;
+	public GameFont getGameFont() {
+		return gameFont;
 	}
 
 	public String getPath() {

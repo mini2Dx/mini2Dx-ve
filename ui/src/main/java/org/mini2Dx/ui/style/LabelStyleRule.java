@@ -12,6 +12,7 @@
 package org.mini2Dx.ui.style;
 
 import org.mini2Dx.core.exception.MdxException;
+import org.mini2Dx.core.font.GameFont;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.core.util.ColorUtils;
 import org.mini2Dx.ui.element.Label;
@@ -61,8 +62,8 @@ public class LabelStyleRule extends ParentStyleRule {
 		return color;
 	}
 
-	public BitmapFont getBitmapFont() {
-		return uiFont.getBitmapFont();
+	public GameFont getGameFont() {
+		return uiFont.getGameFont();
 	}
 
 	public int getFontSize() {

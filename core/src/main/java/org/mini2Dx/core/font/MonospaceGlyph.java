@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 See AUTHORS file
+ * Copyright (c) 2019 See AUTHORS file
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -9,44 +9,35 @@
  * Neither the name of the mini2Dx nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.mini2Dx.ui.animation;
+package org.mini2Dx.core.font;
 
-import org.mini2Dx.core.font.GameFontCache;
-import org.mini2Dx.core.graphics.Graphics;
+import com.badlogic.gdx.utils.Queue;
+import org.mini2Dx.core.graphics.TextureRegion;
 
-import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
+public class MonospaceGlyph {
+	private static final Queue<MonospaceGlyph> POOL = new Queue<MonospaceGlyph>();
 
-/**
- * A {@link TextAnimation} that just renders the text directly
- */
-public class NullTextAnimation extends BaseTextAnimation {
-	
-	@Override
-	public void skip() {}
+	public float x;
+	public float y;
+	public TextureRegion textureRegion;
+	public float color;
 
-	@Override
-	public void onResize(GameFontCache cache, String text, float renderWidth, int hAlign) {
-		cache.clear();
-		finished = false;
+	private MonospaceGlyph() {
+		super();
 	}
 
-	@Override
-	public void update(GameFontCache cache, String text, float renderWidth, int hAlign, float delta) {
-		if(!isFinished()) {
-			cache.addText(text, 0f, 0f, renderWidth, hAlign, true);
+	public void release() {
+		POOL.addLast(this);
+	}
+
+	public static MonospaceGlyph allocate() {
+		if(POOL.size == 0) {
+			return new MonospaceGlyph();
 		}
-		setFinished(true);
+		final MonospaceGlyph result = POOL.removeFirst();
+		result.x = 0f;
+		result.y = 0f;
+		result.textureRegion = null;
+		return result;
 	}
-
-	@Override
-	public void interpolate(GameFontCache cache, String text, float alpha) {}
-
-	@Override
-	public void render(GameFontCache cache, Graphics g, int renderX, int renderY) {
-		cache.setPosition(renderX, renderY);
-		g.drawFontCache(cache);
-	}
-
-	@Override
-	protected void resetState() {}
 }

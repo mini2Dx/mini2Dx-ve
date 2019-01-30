@@ -14,8 +14,6 @@ package org.mini2Dx.core.graphics;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
@@ -23,6 +21,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import org.mini2Dx.core.font.GameFont;
+import org.mini2Dx.core.font.GameFontCache;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.geom.Shape;
 
@@ -208,7 +208,7 @@ public class HeadlessGraphics implements Graphics {
 	}
 	
 	@Override
-	public void drawBitmapFontCache(BitmapFontCache bitmapFontCache) {
+	public void drawFontCache(GameFontCache fontCache) {
 	}
 
 	@Override
@@ -296,7 +296,7 @@ public class HeadlessGraphics implements Graphics {
 	}
 
 	@Override
-	public void setFont(BitmapFont font) {
+	public void setFont(GameFont font) {
 	}
 
 	@Override
@@ -385,7 +385,7 @@ public class HeadlessGraphics implements Graphics {
 	}
 
 	@Override
-	public BitmapFont getFont() {
+	public GameFont getFont() {
 		return null;
 	}
 

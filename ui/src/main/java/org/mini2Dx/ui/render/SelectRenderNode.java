@@ -13,6 +13,9 @@ package org.mini2Dx.ui.render;
 
 import org.mini2Dx.core.engine.geom.CollisionBox;
 import org.mini2Dx.core.exception.MdxException;
+import org.mini2Dx.core.font.BitmapFont;
+import org.mini2Dx.core.font.FontGlyphLayout;
+import org.mini2Dx.core.font.GameFont;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.ui.element.Select;
 import org.mini2Dx.ui.element.SelectOption;
@@ -27,8 +30,6 @@ import org.mini2Dx.ui.style.SelectStyleRule;
 import org.mini2Dx.ui.style.UiTheme;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Align;
 
@@ -36,8 +37,6 @@ import com.badlogic.gdx.utils.Align;
  * {@link RenderNode} implementation for {@link Select}
  */
 public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> implements ActionableRenderNode {
-	private static final GlyphLayout glyphLayout = new GlyphLayout();
-
 	protected LayoutRuleset layoutRuleset;
 	private final CollisionBox leftButton = new CollisionBox();
 	private final CollisionBox rightButton = new CollisionBox();
@@ -47,7 +46,8 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 
 	private ButtonStyleRule leftButtonStyleRule, rightButtonStyleRule;
 	private LabelStyleRule enabledStyleRule, disabledStyleRule, leftButtonLabelStyleRule, rightButtonLabelStyleRule;
-	private BitmapFont font = new BitmapFont(true);
+	private BitmapFont fallbackFont = new BitmapFont();
+	private FontGlyphLayout glyphLayout = fallbackFont.newGlyphLayout();
 	private float labelHeight = 0f;
 
 	public SelectRenderNode(ParentRenderNode<?, ?> parent, Select<?> element) {
@@ -100,7 +100,7 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 		}
 
 		Color tmpColor = g.getColor();
-		BitmapFont tmpFont = g.getFont();
+		GameFont tmpFont = g.getFont();
 
 		if (element.isEnabled()) {
 			if (element.getEnabledTextColor() != null) {
@@ -112,10 +112,10 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 						+ ". Please use Select#setEnabledTextColor or apply a Color to the enabled label style.");
 			}
 
-			if (enabledStyleRule.getBitmapFont() != null) {
-				g.setFont(enabledStyleRule.getBitmapFont());
+			if (enabledStyleRule.getGameFont() != null) {
+				g.setFont(enabledStyleRule.getGameFont());
 			} else {
-				g.setFont(font);
+				g.setFont(fallbackFont);
 			}
 
 			g.drawString(element.getSelectedLabel(), leftButton.getRenderX() + leftButton.getRenderWidth(),
@@ -164,10 +164,10 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 						+ ". Please use Select#setDisabledTextColor or apply a Color to the disabled label style.");
 			}
 
-			if (disabledStyleRule.getBitmapFont() != null) {
-				g.setFont(disabledStyleRule.getBitmapFont());
+			if (disabledStyleRule.getGameFont() != null) {
+				g.setFont(disabledStyleRule.getGameFont());
 			} else {
-				g.setFont(font);
+				g.setFont(fallbackFont);
 			}
 
 			g.drawString(element.getSelectedLabel(), leftButton.getRenderX() + leftButton.getRenderWidth(),
@@ -183,25 +183,25 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 
 		if (element.getLeftButtonText() != null) {
 			g.setColor(leftButtonLabelStyleRule.getColor());
-			g.setFont(leftButtonLabelStyleRule.getBitmapFont());
-			glyphLayout.setText(leftButtonLabelStyleRule.getBitmapFont(), element.getLeftButtonText());
+			g.setFont(leftButtonLabelStyleRule.getGameFont());
+			glyphLayout.setText(element.getLeftButtonText());
 
 			int textRenderX = MathUtils
-					.round(leftButton.getRenderX() + (leftButton.getRenderWidth() / 2) - (glyphLayout.width / 2f));
+					.round(leftButton.getRenderX() + (leftButton.getRenderWidth() / 2) - (glyphLayout.getWidth() / 2f));
 			int textRenderY = MathUtils
-					.round(leftButton.getRenderY() + (leftButton.getRenderHeight() / 2) - (glyphLayout.height / 2f));
-			g.drawString(element.getLeftButtonText(), textRenderX, textRenderY, glyphLayout.width, Align.center);
+					.round(leftButton.getRenderY() + (leftButton.getRenderHeight() / 2) - (glyphLayout.getHeight() / 2f));
+			g.drawString(element.getLeftButtonText(), textRenderX, textRenderY, glyphLayout.getWidth(), Align.center);
 		}
 		if (element.getRightButtonText() != null) {
 			g.setColor(rightButtonLabelStyleRule.getColor());
-			g.setFont(rightButtonLabelStyleRule.getBitmapFont());
-			glyphLayout.setText(rightButtonLabelStyleRule.getBitmapFont(), element.getRightButtonText());
+			g.setFont(rightButtonLabelStyleRule.getGameFont());
+			glyphLayout.setText(element.getRightButtonText());
 
 			int textRenderX = MathUtils
-					.round(rightButton.getRenderX() + (rightButton.getRenderWidth() / 2) - (glyphLayout.width / 2f));
+					.round(rightButton.getRenderX() + (rightButton.getRenderWidth() / 2) - (glyphLayout.getWidth() / 2f));
 			int textRenderY = MathUtils
-					.round(rightButton.getRenderY() + (rightButton.getRenderHeight() / 2) - (glyphLayout.height / 2f));
-			g.drawString(element.getRightButtonText(), textRenderX, textRenderY, glyphLayout.width, Align.center);
+					.round(rightButton.getRenderY() + (rightButton.getRenderHeight() / 2) - (glyphLayout.getHeight() / 2f));
+			g.drawString(element.getRightButtonText(), textRenderX, textRenderY, glyphLayout.getWidth(), Align.center);
 		}
 
 		g.setColor(tmpColor);
@@ -336,20 +336,24 @@ public class SelectRenderNode extends RenderNode<Select<?>, SelectStyleRule> imp
 
 	@Override
 	protected float determinePreferredContentHeight(LayoutState layoutState) {
-		BitmapFont labelStyleFont = null;
+		GameFont labelStyleFont = null;
 		if (element.isEnabled()) {
-			labelStyleFont = enabledStyleRule.getBitmapFont();
+			labelStyleFont = enabledStyleRule.getGameFont();
 		} else {
-			labelStyleFont = disabledStyleRule.getBitmapFont();
+			labelStyleFont = disabledStyleRule.getGameFont();
 		}
+
 		if (labelStyleFont == null) {
-			glyphLayout.setText(font, element.getSelectedLabel(), Color.WHITE, preferredContentWidth,
+			glyphLayout.setText(element.getSelectedLabel(), Color.WHITE, preferredContentWidth,
 					HorizontalAlignment.CENTER.getAlignValue(), true);
 		} else {
-			glyphLayout.setText(labelStyleFont, element.getSelectedLabel(), Color.WHITE, preferredContentWidth,
+			if(!labelStyleFont.equals(glyphLayout.getFont())) {
+				glyphLayout = labelStyleFont.newGlyphLayout();
+			}
+			glyphLayout.setText(element.getSelectedLabel(), Color.WHITE, preferredContentWidth,
 					HorizontalAlignment.CENTER.getAlignValue(), true);
 		}
-		labelHeight = glyphLayout.height;
+		labelHeight = glyphLayout.getHeight();
 
 		float result = labelHeight;
 		if (style.getMinHeight() > 0 && result + style.getPaddingTop() + style.getPaddingBottom() + style.getMarginTop()

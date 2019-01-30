@@ -13,7 +13,9 @@ package org.mini2Dx.core.graphics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -26,6 +28,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import org.mini2Dx.core.font.BitmapFont;
+import org.mini2Dx.core.font.GameFont;
+import org.mini2Dx.core.font.GameFontCache;
 import org.mini2Dx.core.game.GameWrapper;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.geom.Shape;
@@ -46,7 +51,7 @@ public class LibGdxGraphics implements Graphics {
 	private Color color, backgroundColor;
 	private Color tint, defaultTint;
 	private OrthographicCamera camera;
-	private BitmapFont font;
+	private GameFont font;
 	private ShaderProgram defaultShader;
 
 	private float translationX, translationY;
@@ -75,7 +80,7 @@ public class LibGdxGraphics implements Graphics {
 
 		defaultTint = spriteBatch.getColor();
 		if (defaultTint != null) {
-			font = new BitmapFont(true);
+			font = new BitmapFont();
 		}
 		tint = defaultTint;
 
@@ -289,7 +294,7 @@ public class LibGdxGraphics implements Graphics {
 		}
 		beginRendering();
 		font.setColor(color);
-		font.draw(spriteBatch, text, x, y);
+		font.draw(this, text, x, y);
 	}
 
 	@Override
@@ -304,7 +309,7 @@ public class LibGdxGraphics implements Graphics {
 		}
 		beginRendering();
 		font.setColor(color);
-		font.draw(spriteBatch, text, x, y, targetWidth, horizontalAlign, true);
+		font.draw(this, text, x, y, targetWidth, horizontalAlign);
 	}
 
 	@Override
@@ -442,9 +447,9 @@ public class LibGdxGraphics implements Graphics {
 	}
 	
 	@Override
-	public void drawBitmapFontCache(BitmapFontCache bitmapFontCache) {
+	public void drawFontCache(GameFontCache fontCache) {
 		beginRendering();
-		bitmapFontCache.draw(spriteBatch);
+		fontCache.draw(this);
 	}
 
 	@Override
@@ -581,14 +586,15 @@ public class LibGdxGraphics implements Graphics {
 	}
 
 	@Override
-	public void setFont(BitmapFont font) {
-		if (font != null) {
-			if (rendering) {
-				endRendering();
-			}
-
-			this.font = font;
+	public void setFont(GameFont font) {
+		if (font == null) {
+			return;
 		}
+		if (rendering) {
+			endRendering();
+		}
+
+		this.font = font;
 	}
 
 	@Override
@@ -786,7 +792,7 @@ public class LibGdxGraphics implements Graphics {
 	}
 
 	@Override
-	public BitmapFont getFont() {
+	public GameFont getFont() {
 		return font;
 	}
 
@@ -858,6 +864,10 @@ public class LibGdxGraphics implements Graphics {
 	@Override
 	public float getViewportHeight() {
 		return camera.viewportHeight;
+	}
+
+	public SpriteBatch getSpriteBatch() {
+		return spriteBatch;
 	}
 
 	@Override

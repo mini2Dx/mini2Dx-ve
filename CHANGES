@@ -1,6 +1,7 @@
 [1.9.0-SNAPSHOT]
 - Update to LibGDX 1.9.8
 - [BREAKING] UiContainer can now select a NavigationMode instead of only enabling/disabling keyboard
+- Added SpriteSheet class
 - Added GameDataSerializable interface for reading/writing binary data
 - Added method to get file handles within the player data directory
 - Added CustomCursor class for implementing custom cursors with up/down state

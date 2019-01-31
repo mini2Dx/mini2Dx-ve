@@ -12,6 +12,10 @@
 package org.mini2Dx.ui.render;
 
 import org.mini2Dx.core.exception.MdxException;
+import org.mini2Dx.core.font.BitmapFont;
+import org.mini2Dx.core.font.FontGlyphLayout;
+import org.mini2Dx.core.font.GameFont;
+import org.mini2Dx.core.font.GameFontCache;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.ui.animation.NullTextAnimation;
 import org.mini2Dx.ui.element.Label;
@@ -19,19 +23,17 @@ import org.mini2Dx.ui.layout.LayoutState;
 import org.mini2Dx.ui.style.LabelStyleRule;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 /**
  * {@link RenderNode} implementation for {@link Label}
  */
 public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
-	protected static final GlyphLayout GLYPH_LAYOUT = new GlyphLayout();
-	protected static final BitmapFont DEFAULT_FONT = new BitmapFont(true);
+	protected static final BitmapFont DEFAULT_FONT = new BitmapFont();
 
 	protected final NullTextAnimation nullAnimation = new NullTextAnimation();
-	protected BitmapFontCache bitmapFontCache = DEFAULT_FONT.newFontCache();
+
+	protected GameFont font = DEFAULT_FONT;
+	protected GameFontCache fontCache = DEFAULT_FONT.newCache();
 
 	protected boolean bitmapCacheReset = false;
 
@@ -44,20 +46,20 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 		super.update(uiContainer, delta);
 
 		if(bitmapCacheReset) {
-			nullAnimation.onResize(bitmapFontCache, element.getText(), preferredContentWidth,
+			nullAnimation.onResize(fontCache, element.getText(), preferredContentWidth,
 					element.getHorizontalAlignment().getAlignValue());
 			if (element.getTextAnimation() != null) {
-				element.getTextAnimation().onResize(bitmapFontCache, element.getText(), preferredContentWidth,
+				element.getTextAnimation().onResize(fontCache, element.getText(), preferredContentWidth,
 						element.getHorizontalAlignment().getAlignValue());
 			}
 			bitmapCacheReset = false;
 		}
 
 		if (element.getTextAnimation() == null) {
-			nullAnimation.update(bitmapFontCache, element.getText(), preferredContentWidth,
+			nullAnimation.update(fontCache, element.getText(), preferredContentWidth,
 					element.getHorizontalAlignment().getAlignValue(), delta);
 		} else {
-			element.getTextAnimation().update(bitmapFontCache, element.getText(), preferredContentWidth,
+			element.getTextAnimation().update(fontCache, element.getText(), preferredContentWidth,
 					element.getHorizontalAlignment().getAlignValue(), delta);
 		}
 	}
@@ -66,9 +68,9 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 	public void interpolate(float alpha) {
 		super.interpolate(alpha);
 		if (element.getTextAnimation() == null) {
-			nullAnimation.interpolate(bitmapFontCache, element.getText(), alpha);
+			nullAnimation.interpolate(fontCache, element.getText(), alpha);
 		} else {
-			element.getTextAnimation().interpolate(bitmapFontCache, element.getText(), alpha);
+			element.getTextAnimation().interpolate(fontCache, element.getText(), alpha);
 		}
 	}
 
@@ -100,9 +102,9 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 		renderBackground(g);
 
 		if (element.getTextAnimation() == null) {
-			nullAnimation.render(bitmapFontCache, g, getContentRenderX(), getContentRenderY());
+			nullAnimation.render(fontCache, g, getContentRenderX(), getContentRenderY());
 		} else {
-			element.getTextAnimation().render(bitmapFontCache, g, getContentRenderX(), getContentRenderY());
+			element.getTextAnimation().render(fontCache, g, getContentRenderX(), getContentRenderY());
 		}
 	}
 
@@ -113,12 +115,12 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 		if (element.isResponsive()) {
 			return style.getRounding().calculateRounding(availableWidth);
 		} else if(parent.getElement().isFlexLayout()) {
-			GLYPH_LAYOUT.setText(bitmapFontCache.getFont(), element.getText());
+			font.getSharedGlyphLayout().setText(element.getText());
 
-			if (GLYPH_LAYOUT.width > availableWidth) {
+			if (font.getSharedGlyphLayout().getWidth() > availableWidth) {
 				return style.getRounding().calculateRounding(availableWidth);
 			}
-			return style.getRounding().calculateRounding(GLYPH_LAYOUT.width);
+			return style.getRounding().calculateRounding(font.getSharedGlyphLayout().getWidth());
 		} else {
 			return style.getRounding().calculateRounding(element.getWidth());
 		}
@@ -126,15 +128,15 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 
 	@Override
 	protected float determinePreferredContentHeight(LayoutState layoutState) {
-		GLYPH_LAYOUT.setText(bitmapFontCache.getFont(), element.getText(), Color.WHITE, preferredContentWidth,
+		font.getSharedGlyphLayout().setText(element.getText(), Color.WHITE, preferredContentWidth,
 				element.getHorizontalAlignment().getAlignValue(), true);
-		if (style.getMinHeight() > 0 && GLYPH_LAYOUT.height + style.getPaddingTop() + style.getPaddingBottom()
+		if (style.getMinHeight() > 0 && font.getSharedGlyphLayout().getHeight() + style.getPaddingTop() + style.getPaddingBottom()
 				+ style.getMarginTop() + style.getMarginBottom() < style.getMinHeight()) {
 			return style.getMinHeight() - style.getPaddingTop() - style.getPaddingBottom() - style.getMarginTop()
 					- style.getMarginBottom();
 		}
 		if(parent.getElement().isFlexLayout()) {
-			return GLYPH_LAYOUT.height;
+			return font.getSharedGlyphLayout().getHeight();
 		} else {
 			return element.getHeight();
 		}
@@ -160,22 +162,24 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 
 	@Override
 	protected LabelStyleRule determineStyleRule(LayoutState layoutState) {
-		if (bitmapFontCache != null) {
-			bitmapFontCache = null;
+		if (fontCache != null) {
+			fontCache = null;
 		}
 		bitmapCacheReset = true;
 
 		LabelStyleRule result = layoutState.getTheme().getStyleRule(element, layoutState.getScreenSize());
-		if (result.getBitmapFont() == null) {
-			bitmapFontCache = DEFAULT_FONT.newFontCache();
+		if (result.getGameFont() == null) {
+			font = DEFAULT_FONT;
+			fontCache = DEFAULT_FONT.newCache();
 		} else {
-			bitmapFontCache = result.getBitmapFont().newFontCache();
+			font = result.getGameFont();
+			fontCache = result.getGameFont().newCache();
 		}
 
 		if (element.getColor() != null) {
-			bitmapFontCache.setColor(element.getColor());
+			fontCache.setColor(element.getColor());
 		} else if (result.getColor() != null) {
-			bitmapFontCache.setColor(result.getColor());
+			fontCache.setColor(result.getColor());
 		} else {
 			throw new MdxException("Could not determine color for Label " + element.getId()
 					+ ". Please use Label#setColor or set a Color on the label style rule");
@@ -189,9 +193,9 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 		}
 		bitmapCacheReset = true;
 
-		GLYPH_LAYOUT.setText(bitmapFontCache.getFont(), element.getText(), Color.WHITE, preferredContentWidth,
+		font.getSharedGlyphLayout().setText(element.getText(), Color.WHITE, preferredContentWidth,
 				element.getHorizontalAlignment().getAlignValue(), true);
-		if (GLYPH_LAYOUT.height == getPreferredContentHeight()) {
+		if (font.getSharedGlyphLayout().getHeight() == getPreferredContentHeight()) {
 			return;
 		}
 		setDirty();

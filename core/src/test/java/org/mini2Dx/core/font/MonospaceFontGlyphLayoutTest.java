@@ -1,6 +1,7 @@
 package org.mini2Dx.core.font;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Align;
 import org.jmock.Mockery;
 import org.junit.After;
@@ -127,7 +128,49 @@ public class MonospaceFontGlyphLayoutTest {
 	}
 
 	@Test
-	public void testLayoutCenterAlign() {
-		final String str = "abc\ndef";
+	public void testLayoutCenterAlignLineBreak() {
+		final String str = "abc\nde";
+		final float lineWidth = (FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f);
+
+		glyphLayout.setText(str, Color.BLUE, -1f, Align.center, true);
+
+		float expectedX = 0f;
+		float expectedY = 0f;
+
+		for(int i = 0; i < str.length(); i++) {
+			if(str.charAt(i) == '\n') {
+				expectedX = MathUtils.round((lineWidth * 0.5f) - (((FONT_CHARACTER_WIDTH * 2f) + FONT_SPACING) * 0.5f));
+				expectedY += FONT_LINE_HEIGHT;
+				continue;
+			}
+
+			Assert.assertEquals(expectedX, glyphLayout.getGlyphs().get(i).x, 0.01f);
+			Assert.assertEquals(expectedY, glyphLayout.getGlyphs().get(i).y, 0.01f);
+
+			expectedX += FONT_CHARACTER_WIDTH + FONT_SPACING;
+		}
+	}
+
+	@Test
+	public void testLayoutCenterAlignWrap() {
+		final String str = "abcde";
+		final float lineWidth = (FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f);
+
+		glyphLayout.setText(str, Color.BLUE, lineWidth, Align.center, true);
+
+		float expectedX = 0f;
+		float expectedY = 0f;
+
+		for(int i = 0; i < str.length(); i++) {
+			Assert.assertEquals(expectedX, glyphLayout.getGlyphs().get(i).x, 0.01f);
+			Assert.assertEquals(expectedY, glyphLayout.getGlyphs().get(i).y, 0.01f);
+
+			expectedX += FONT_CHARACTER_WIDTH + FONT_SPACING;
+
+			if(i == 2) {
+				expectedX = MathUtils.round((lineWidth * 0.5f) - (((FONT_CHARACTER_WIDTH * 2f) + FONT_SPACING) * 0.5f));
+				expectedY += FONT_LINE_HEIGHT;
+			}
+		}
 	}
 }

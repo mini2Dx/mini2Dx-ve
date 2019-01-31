@@ -231,6 +231,16 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 				nextScreenId = ScreenIds.getScreenId(ViewportUAT.class);
 			}
 		})));
+		uatsDialog.add(FlexRow.withElements("row-monospace", UiUtils.createButton(uiNavigation, "Monospace Font", new ActionListener() {
+			@Override
+			public void onActionBegin(ActionEvent event) {
+			}
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				nextScreenId = ScreenIds.getScreenId(MonospaceFontUAT.class);
+			}
+		})));
 		uatsDialog.add(FlexRow.withElements("row-audio", UiUtils.createButton(uiNavigation, "Audio", new ActionListener() {
 			@Override
 			public void onActionBegin(ActionEvent event) {

@@ -41,16 +41,23 @@ public interface GameFont {
 	 * @param str The text to render
 	 * @param x The x coordinate to draw at
 	 * @param y The y coordinate to draw at
-	 * @param targetWidth The target width to render with (Note: text will wrap if exceeding this width)
+	 * @param targetWidth The target width to render with
 	 * @param horizontalAlignment The horizontal alignment within the targetWidth. See {@link com.badlogic.gdx.utils.Align}
+	 * @param wrap True if text should wrap if exceeding targetWidth, false if it should clip
 	 */
-	public void draw(Graphics g, String str, float x, float y, float targetWidth, int horizontalAlignment);
+	public void draw(Graphics g, String str, float x, float y, float targetWidth, int horizontalAlignment, boolean wrap);
 
 	/**
 	 * Creates a {@link FontGlyphLayout} for this font
 	 * @return A new {@link FontGlyphLayout} instance
 	 */
 	public FontGlyphLayout newGlyphLayout();
+
+	/**
+	 * Returns a {@link FontGlyphLayout} instance associated with this {@link GameFont} instance
+	 * @return A {@link FontGlyphLayout} instance attached to this font
+	 */
+	public FontGlyphLayout getSharedGlyphLayout();
 
 	/**
 	 * Creates a {@link GameFontCache} for this font
@@ -69,6 +76,18 @@ public interface GameFont {
 	 * @param color
 	 */
 	public void setColor(Color color);
+
+	/**
+	 * Returns the line height of the font
+	 * @return
+	 */
+	public float getLineHeight();
+
+	/**
+	 * Returns the height of a capital letter above the baseline
+	 * @return
+	 */
+	public float getCapHeight();
 
 	/**
 	 * Returns if characters use integer positions

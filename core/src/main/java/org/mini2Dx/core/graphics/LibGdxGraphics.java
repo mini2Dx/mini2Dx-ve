@@ -27,6 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.NumberUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.mini2Dx.core.font.BitmapFont;
 import org.mini2Dx.core.font.GameFont;
@@ -309,7 +310,7 @@ public class LibGdxGraphics implements Graphics {
 		}
 		beginRendering();
 		font.setColor(color);
-		font.draw(this, text, x, y, targetWidth, horizontalAlign);
+		font.draw(this, text, x, y, targetWidth, horizontalAlign, true);
 	}
 
 	@Override
@@ -582,6 +583,16 @@ public class LibGdxGraphics implements Graphics {
 		}
 
 		this.tint = tint;
+		spriteBatch.setColor(tint);
+	}
+
+	@Override
+	public void setTint(float tint) {
+		if (rendering) {
+			endRendering();
+		}
+
+		this.tint = new Color(NumberUtils.floatToIntColor(tint));
 		spriteBatch.setColor(tint);
 	}
 

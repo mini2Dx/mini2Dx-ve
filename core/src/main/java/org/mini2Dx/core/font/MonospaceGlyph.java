@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.core.font;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Queue;
 import org.mini2Dx.core.graphics.TextureRegion;
 
@@ -20,7 +21,7 @@ public class MonospaceGlyph {
 	public float x;
 	public float y;
 	public TextureRegion textureRegion;
-	public float color;
+	public final Color color = new Color();
 
 	private MonospaceGlyph() {
 		super();

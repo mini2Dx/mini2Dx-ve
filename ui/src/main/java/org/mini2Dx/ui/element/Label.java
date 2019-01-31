@@ -14,6 +14,7 @@ package org.mini2Dx.ui.element;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Align;
+import org.mini2Dx.core.font.GameFont;
 import org.mini2Dx.core.graphics.GlyphLayout;
 import org.mini2Dx.core.serialization.annotation.ConstructorArg;
 import org.mini2Dx.core.serialization.annotation.Field;
@@ -32,8 +33,6 @@ import org.mini2Dx.ui.style.UiTheme;
  * A text label {@link UiElement}
  */
 public class Label extends UiElement {
-	private static final GlyphLayout GLYPH_LAYOUT = new GlyphLayout();
-
 	/**
 	 * A blending-safe white {@link Color} value
 	 */
@@ -124,13 +123,13 @@ public class Label extends UiElement {
 			return;
 		}
 		final LabelStyleRule styleRule = UiContainer.getTheme().getLabelStyleRule(styleId, ScreenSize.XS);
-		final BitmapFont font = styleRule.getBitmapFont();
+		final GameFont font = styleRule.getGameFont();
 		if(font == null) {
 			return;
 		}
-		GLYPH_LAYOUT.setText(font, text);
-		setContentWidth(GLYPH_LAYOUT.width);
-		setContentHeight(GLYPH_LAYOUT.height);
+		font.getSharedGlyphLayout().setText(text);
+		setContentWidth(font.getSharedGlyphLayout().getWidth());
+		setContentHeight(font.getSharedGlyphLayout().getHeight());
 	}
 
 	public void shrinkToTextSize(float maxWidth) {
@@ -147,13 +146,13 @@ public class Label extends UiElement {
 			return;
 		}
 		final LabelStyleRule styleRule = UiContainer.getTheme().getLabelStyleRule(styleId, ScreenSize.XS);
-		final BitmapFont font = styleRule.getBitmapFont();
+		final GameFont font = styleRule.getGameFont();
 		if(font == null) {
 			return;
 		}
-		GLYPH_LAYOUT.setText(font, text, Color.WHITE, maxWidth, Align.left, true);
-		setContentWidth(GLYPH_LAYOUT.width);
-		setContentHeight(GLYPH_LAYOUT.height);
+		font.getSharedGlyphLayout().setText(text, Color.WHITE, maxWidth, Align.left, true);
+		setContentWidth(font.getSharedGlyphLayout().getWidth());
+		setContentHeight(font.getSharedGlyphLayout().getHeight());
 	}
 
 	/**

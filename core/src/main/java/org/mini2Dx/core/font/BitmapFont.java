@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import org.mini2Dx.core.graphics.GlyphLayout;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.LibGdxGraphics;
 
@@ -23,9 +24,16 @@ import org.mini2Dx.core.graphics.LibGdxGraphics;
  * BMFont implementation of {@link GameFont}. See <a href="http://www.angelcode.com/products/bmfont/">here</a>
  */
 public class BitmapFont extends com.badlogic.gdx.graphics.g2d.BitmapFont implements GameFont {
+	private final BitmapFontGlyphLayout sharedGlyphLayout;
 
 	public BitmapFont() {
 		super(true);
+		sharedGlyphLayout = (BitmapFontGlyphLayout) newGlyphLayout();
+	}
+
+	public BitmapFont(FileHandle fileHandle) {
+		super(fileHandle, true);
+		sharedGlyphLayout = (BitmapFontGlyphLayout) newGlyphLayout();
 	}
 
 	public BitmapFont (BitmapFontData data, TextureRegion region, boolean integer) {
@@ -34,6 +42,7 @@ public class BitmapFont extends com.badlogic.gdx.graphics.g2d.BitmapFont impleme
 
 	public BitmapFont (BitmapFontData data, Array<TextureRegion> pageRegions, boolean integer) {
 		super(data, pageRegions, integer);
+		sharedGlyphLayout = (BitmapFontGlyphLayout) newGlyphLayout();
 	}
 
 	@Override
@@ -43,17 +52,22 @@ public class BitmapFont extends com.badlogic.gdx.graphics.g2d.BitmapFont impleme
 
 	@Override
 	public void draw(Graphics g, String str, float x, float y, float targetWidth) {
-		draw(g, str, x, y, targetWidth, Align.left);
+		draw(g, str, x, y, targetWidth, Align.left, true);
 	}
 
 	@Override
-	public void draw(Graphics g, String str, float x, float y, float targetWidth, int horizontalAlignment) {
-		draw(((LibGdxGraphics) g).getSpriteBatch(), str, x, y, targetWidth, horizontalAlignment, true);
+	public void draw(Graphics g, String str, float x, float y, float targetWidth, int horizontalAlignment, boolean wrap) {
+		draw(((LibGdxGraphics) g).getSpriteBatch(), str, x, y, targetWidth, horizontalAlignment, wrap);
 	}
 
 	@Override
 	public FontGlyphLayout newGlyphLayout() {
 		return new BitmapFontGlyphLayout(this);
+	}
+
+	@Override
+	public FontGlyphLayout getSharedGlyphLayout() {
+		return sharedGlyphLayout;
 	}
 
 	@Override

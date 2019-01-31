@@ -16,6 +16,7 @@ import java.util.Iterator;
 import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.font.BitmapFont;
 import org.mini2Dx.core.font.FontGlyphLayout;
+import org.mini2Dx.core.font.GameFont;
 import org.mini2Dx.core.font.GameFontCache;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
@@ -41,7 +42,7 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 
 	protected final Array<Rectangle> buttonRenderPositions = new Array<Rectangle>(true, 1, Rectangle.class);
 
-	protected FontGlyphLayout glyphLayout = DEFAULT_FONT.newGlyphLayout();
+	protected GameFont font;
 	protected GameFontCache fontCache = DEFAULT_FONT.newCache();
 	protected String previousFont;
 	protected int lineHeight;
@@ -210,12 +211,12 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 
 		Iterator<String> options = element.getOptions();
 		lineHeight = MathUtils.round(
-				Math.max(style.getBitmapFont().getLineHeight(), style.getActiveTextureRegion().getRegionHeight()));
+				Math.max(style.getGameFont().getLineHeight(), style.getActiveTextureRegion().getRegionHeight()));
 
 		int buttonX = 0;
 		int buttonY = MathUtils.round((lineHeight / 2f) - (style.getActiveTextureRegion().getRegionHeight() / 2));
 		int textX = style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent();
-		int textY = MathUtils.round((lineHeight / 2f) - (style.getBitmapFont().getCapHeight() / 2f));
+		int textY = MathUtils.round((lineHeight / 2f) - (style.getGameFont().getCapHeight() / 2f));
 		float minX = availableWidth;
 		float maxX = 0;
 
@@ -224,25 +225,25 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 			int i = 0;
 			while (options.hasNext()) {
 				String nextOption = options.next();
-				GLYPH_LAYOUT.setText(style.getBitmapFont(), nextOption);
-				if (textX + GLYPH_LAYOUT.width >= availableWidth) {
+				font.getSharedGlyphLayout().setText(nextOption);
+				if (textX + font.getSharedGlyphLayout().getWidth() >= availableWidth) {
 					textX = style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent();
 					buttonX = 0;
 					textY += lineHeight + style.getOptionsSpacing();
 					buttonY += lineHeight + style.getOptionsSpacing();
 				}
 				if (buttonX + style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent()
-						+ GLYPH_LAYOUT.width > maxX) {
+						+ font.getSharedGlyphLayout().getWidth() > maxX) {
 					maxX = buttonX + style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent()
-							+ GLYPH_LAYOUT.width;
+							+ font.getSharedGlyphLayout().getWidth();
 				}
 
 				pushButtonRenderPosition(i, buttonX, buttonY, MathUtils.round(
-						style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent() + GLYPH_LAYOUT.width),
+						style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent() + font.getSharedGlyphLayout().getWidth()),
 						lineHeight);
 				fontCache.addText(nextOption, textX, textY, availableWidth,
 						HorizontalAlignment.LEFT.getAlignValue(), true);
-				buttonX += style.getLabelIndent() + GLYPH_LAYOUT.width + style.getActiveTextureRegion().getRegionWidth()
+				buttonX += style.getLabelIndent() + font.getSharedGlyphLayout().getWidth() + style.getActiveTextureRegion().getRegionWidth()
 						+ style.getOptionsSpacing();
 				textX = buttonX + style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent();
 				i++;
@@ -255,8 +256,8 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 				int i = 0;
 				while (options.hasNext()) {
 					String nextOption = options.next();
-					GLYPH_LAYOUT.setText(style.getBitmapFont(), nextOption);
-					textX -= GLYPH_LAYOUT.width;
+					font.getSharedGlyphLayout().setText(nextOption);
+					textX -= font.getSharedGlyphLayout().getWidth();
 					buttonX = textX - style.getLabelIndent() - style.getActiveTextureRegion().getRegionWidth();
 					if (buttonX <= 0) {
 						textX = MathUtils.round(availableWidth);
@@ -269,7 +270,7 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 					}
 					pushButtonRenderPosition(i, buttonX, buttonY,
 							MathUtils.round(style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent()
-									+ GLYPH_LAYOUT.width),
+									+ font.getSharedGlyphLayout().getWidth()),
 							lineHeight);
 					fontCache.addText(nextOption, textX, textY, availableWidth,
 							HorizontalAlignment.LEFT.getAlignValue(), true);
@@ -279,26 +280,26 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 			} else {
 				for (int i = element.getTotalOptions() - 1; i >= 0; i--) {
 					String nextOption = element.getOption(i);
-					GLYPH_LAYOUT.setText(style.getBitmapFont(), nextOption);
-					if (textX + GLYPH_LAYOUT.width >= availableWidth) {
+					font.getSharedGlyphLayout().setText(nextOption);
+					if (textX + font.getSharedGlyphLayout().getWidth() >= availableWidth) {
 						textX = style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent();
 						buttonX = 0;
 						textY += lineHeight + style.getOptionsSpacing();
 						buttonY += lineHeight + style.getOptionsSpacing();
 					}
 					if (buttonX + style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent()
-							+ GLYPH_LAYOUT.width > maxX) {
+							+ font.getSharedGlyphLayout().getWidth() > maxX) {
 						maxX = buttonX + style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent()
-								+ GLYPH_LAYOUT.width;
+								+ font.getSharedGlyphLayout().getWidth();
 					}
 
 					pushButtonRenderPosition(i, buttonX, buttonY,
 							MathUtils.round(style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent()
-									+ GLYPH_LAYOUT.width),
+									+ font.getSharedGlyphLayout().getWidth()),
 							lineHeight);
 					fontCache.addText(nextOption, textX, textY, availableWidth,
 							HorizontalAlignment.LEFT.getAlignValue(), true);
-					buttonX += style.getLabelIndent() + GLYPH_LAYOUT.width
+					buttonX += style.getLabelIndent() + font.getSharedGlyphLayout().getWidth()
 							+ style.getActiveTextureRegion().getRegionWidth() + style.getOptionsSpacing();
 					textX = buttonX + style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent();
 				}
@@ -319,11 +320,11 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 			int i = 0;
 			while (options.hasNext()) {
 				String nextOption = options.next();
-				GLYPH_LAYOUT.setText(style.getBitmapFont(), nextOption);
+				font.getSharedGlyphLayout().setText(nextOption);
 				if (buttonX + style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent()
-						+ GLYPH_LAYOUT.width > maxX) {
+						+ font.getSharedGlyphLayout().getWidth() > maxX) {
 					maxX = buttonX + style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent()
-							+ GLYPH_LAYOUT.width;
+							+ font.getSharedGlyphLayout().getWidth();
 				}
 				pushButtonRenderPosition(i, buttonX, maxY, MathUtils.round(availableWidth), lineHeight);
 				fontCache.addText(nextOption, textX, maxY + buttonTextYDiff, availableWidth,
@@ -340,11 +341,11 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 			int i = 0;
 			while (options.hasNext()) {
 				String nextOption = options.next();
-				GLYPH_LAYOUT.setText(style.getBitmapFont(), nextOption);
+				font.getSharedGlyphLayout().setText(nextOption);
 				if (buttonX + style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent()
-						+ GLYPH_LAYOUT.width > maxX) {
+						+ font.getSharedGlyphLayout().getWidth() > maxX) {
 					maxX = buttonX + style.getActiveTextureRegion().getRegionWidth() + style.getLabelIndent()
-							+ GLYPH_LAYOUT.width;
+							+ font.getSharedGlyphLayout().getWidth();
 				}
 				pushButtonRenderPosition(i, buttonX, buttonY, MathUtils.round(availableWidth), lineHeight);
 				fontCache.addText(nextOption, textX, textY, availableWidth,
@@ -394,6 +395,7 @@ public class RadioButtonRenderNode extends RenderNode<RadioButton, RadioButtonSt
 		}
 		if (previousFont == null || !previousFont.equals(result.getFont())) {
 			fontCache = null;
+			font = result.getGameFont();
 			fontCache = result.getGameFont().newCache();
 			previousFont = result.getFont();
 		}

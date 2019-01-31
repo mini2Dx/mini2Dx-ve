@@ -20,6 +20,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
+import com.badlogic.gdx.utils.NumberUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.mini2Dx.core.font.GameFont;
 import org.mini2Dx.core.font.GameFontCache;
@@ -293,6 +294,11 @@ public class HeadlessGraphics implements Graphics {
 	@Override
 	public void setTint(Color tint) {
 		this.tint = tint;
+	}
+
+	@Override
+	public void setTint(float tint) {
+		this.tint.set(NumberUtils.floatToIntColor(tint));
 	}
 
 	@Override

@@ -257,7 +257,7 @@ public class UiTheme {
 		}
 		
 		for (UiFont font : fonts.values()) {
-			font.prepareAssets(this, fileHandleResolver);
+			font.prepareAssets(this, fileHandleResolver, assetManager);
 		}
 		for (StyleRuleset<ButtonStyleRule> buttonRuleset : buttons.values()) {
 			buttonRuleset.prepareAssets(this, fileHandleResolver, assetManager);

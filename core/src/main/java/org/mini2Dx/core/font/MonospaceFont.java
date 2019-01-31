@@ -13,6 +13,7 @@ package org.mini2Dx.core.font;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Align;
@@ -21,14 +22,17 @@ import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.TextureRegion;
+import org.mini2Dx.core.serialization.annotation.Field;
 
 /**
  * Similar to {@link BitmapFont} except every character is a fixed-width which simplifies rendering calculations
  */
 public class MonospaceFont implements GameFont {
+	private final MonospaceFontGlyphLayout sharedGlyphLayout;
 	private final FontParameters fontParameters;
 	private TextureRegion [][] characterTextures;
 	private int charactersPerRow, charactersPerColumn;
+	private Color color = Color.BLACK;
 
 	public MonospaceFont(FontParameters fontParameters) {
 		super();
@@ -40,25 +44,46 @@ public class MonospaceFont implements GameFont {
 		if(fontParameters.lineHeight < 0) {
 			fontParameters.lineHeight = fontParameters.frameHeight;
 		}
+
+		sharedGlyphLayout = (MonospaceFontGlyphLayout) newGlyphLayout();
 	}
 
 	public boolean load(AssetManager assetManager) {
 		if(characterTextures != null) {
 			return true;
 		}
-		final TextureAtlas textureAtlas = assetManager.get(fontParameters.textureAtlasPath, TextureAtlas.class);
-		if(textureAtlas == null) {
-			throw new MdxException("No such texture atlas '" + fontParameters.textureAtlasPath + "'");
+		final TextureRegion textureRegion;
+
+		if(fontParameters.textureAtlasPath != null) {
+			if(!assetManager.isLoaded(fontParameters.textureAtlasPath)) {
+				assetManager.load(fontParameters.textureAtlasPath, TextureAtlas.class);
+				assetManager.finishLoading();
+			}
+			final TextureAtlas textureAtlas = assetManager.get(fontParameters.textureAtlasPath, TextureAtlas.class);
+			if(textureAtlas == null) {
+				throw new MdxException("No such texture atlas '" + fontParameters.textureAtlasPath + "'");
+			}
+			textureRegion = new TextureRegion(textureAtlas.findRegion(fontParameters.texturePath));
+		} else {
+			if(!assetManager.isLoaded(fontParameters.texturePath)) {
+				assetManager.load(fontParameters.texturePath, Texture.class);
+				assetManager.finishLoading();
+			}
+			textureRegion = new TextureRegion(assetManager.get(fontParameters.texturePath, Texture.class));
 		}
-		final TextureRegion textureRegion = new TextureRegion(textureAtlas.findRegion(fontParameters.texturePath));
+
 		charactersPerRow = textureRegion.getRegionWidth() / fontParameters.frameWidth;
 		charactersPerColumn = textureRegion.getRegionHeight() / fontParameters.frameHeight;
 
 		characterTextures = new TextureRegion[charactersPerRow][charactersPerColumn];
 		for(int x = 0; x < charactersPerRow; x++) {
 			for(int y = 0; y < charactersPerColumn; y++) {
-				characterTextures[x][y] = new TextureRegion(textureRegion, x * fontParameters.frameWidth, y *
-						fontParameters.frameHeight, fontParameters.frameWidth, fontParameters.frameHeight);
+				final int textureX = (x * fontParameters.frameWidth) + fontParameters.framePaddingLeft;
+				final int textureY = (y * fontParameters.frameHeight) + fontParameters.framePaddingTop;
+				final int textureWidth = fontParameters.frameWidth - fontParameters.framePaddingLeft - fontParameters.framePaddingRight;
+				final int textureHeight = fontParameters.frameHeight - fontParameters.framePaddingTop - fontParameters.framePaddingBottom;
+
+				characterTextures[x][y] = new TextureRegion(textureRegion, textureX, textureY, textureWidth, textureHeight);
 			}
 		}
 		return true;
@@ -71,17 +96,54 @@ public class MonospaceFont implements GameFont {
 
 	@Override
 	public void draw(Graphics g, String str, float x, float y, float renderWidth) {
-		draw(g, str, x, y, renderWidth, Align.left);
+		draw(g, str, x, y, renderWidth, Align.left, true);
 	}
 
 	@Override
-	public void draw(Graphics g, String str, float x, float y, float renderWidth, int horizontalAlignment) {
-		draw(g, str, x, y, renderWidth, horizontalAlignment, null);
+	public void draw(Graphics g, String str, float x, float y, float renderWidth, int horizontalAlignment, boolean wrap) {
+		draw(g, str, x, y, renderWidth, horizontalAlignment, wrap, null);
+	}
+
+	public void draw(Graphics g, String str, float x, float y, float renderWidth, FontRenderListener listener) {
+		draw(g, str, x, y, renderWidth, Align.left, true, listener);
+	}
+
+	public void draw(Graphics g, String str, float x, float y, float renderWidth, int horizontalAlignment, boolean wrap, FontRenderListener listener) {
+		sharedGlyphLayout.setText(str, color, renderWidth, horizontalAlignment, wrap);
+
+		final float charRenderWidth = fontParameters.characterWidth;
+		final float charRenderHeight = fontParameters.lineHeight;
+
+		for(int i = 0; i < sharedGlyphLayout.getGlyphs().size; i++) {
+			final MonospaceGlyph glyph = sharedGlyphLayout.getGlyphs().get(i);
+			if(glyph.textureRegion == null) {
+				continue;
+			}
+
+			final float renderX = x + glyph.x;
+			final float renderY = y + glyph.y;
+
+			g.setTint(glyph.color);
+			if(listener == null) {
+				g.drawTextureRegion(glyph.textureRegion, renderX, renderY);
+			} else {
+				if(listener.preRenderChar(g, str.charAt(i), renderX, renderY, charRenderWidth, charRenderHeight)) {
+					g.drawTextureRegion(glyph.textureRegion, renderX, renderY);
+				}
+				listener.postRenderChar(g, str.charAt(i), renderX, renderY, charRenderWidth, charRenderHeight);
+			}
+
+		}
 	}
 
 	@Override
 	public FontGlyphLayout newGlyphLayout() {
 		return new MonospaceFontGlyphLayout(this);
+	}
+
+	@Override
+	public FontGlyphLayout getSharedGlyphLayout() {
+		return sharedGlyphLayout;
 	}
 
 	@Override
@@ -91,79 +153,25 @@ public class MonospaceFont implements GameFont {
 
 	@Override
 	public Color getColor() {
-		return null;
+		return color;
 	}
 
 	@Override
 	public void setColor(Color color) {
-
-	}
-
-	public void draw(Graphics g, String str, float x, float y, float renderWidth, FontRenderListener listener) {
-		draw(g, str, x, y, renderWidth, Align.left, listener);
-	}
-
-	public void draw(Graphics g, String str, float x, float y, float renderWidth, int horizontalAlignment, FontRenderListener listener) {
-		final float strFullRenderLength = (str.length() * fontParameters.characterWidth) + (str.length() * fontParameters.spacing);
-		final float lineWidth;
-
-		if(renderWidth < 0f) {
-			horizontalAlignment = Align.left;
-			lineWidth = 1000f;
-		} else {
-			lineWidth = renderWidth;
+		if(color == null) {
+			return;
 		}
-
-		switch(horizontalAlignment) {
-		case Align.left:
-			renderStringLeftAligned(g, str, x, y, lineWidth, listener);
-			break;
-			case Align.right:
-
-				break;
-				case Align.center:
-					break;
-		}
+		this.color = color;
 	}
 
-	private void renderStringRightAligned(Graphics g, String str, float x, float y, float lineWidth, FontRenderListener listener) {
-
+	@Override
+	public float getLineHeight() {
+		return fontParameters.lineHeight;
 	}
 
-	private void renderStringLeftAligned(Graphics g, String str, float x, float y, float lineWidth, FontRenderListener listener) {
-		float yOffset = 0f;
-		float xOffset = 0f;
-
-		for(int i = 0; i < str.length(); i++) {
-			final char c = str.charAt(i);
-
-			if(c == '\n' || c == '\r') {
-				xOffset = 0f;
-				yOffset += fontParameters.lineHeight;
-				continue;
-			}
-
-			if(listener == null) {
-				renderChar(g, c, x + xOffset, y + yOffset);
-			} else if(listener.preRenderChar(g, c, x + xOffset, y + yOffset, fontParameters.frameWidth, fontParameters.frameHeight)) {
-				renderChar(g, c, x + xOffset, y + yOffset);
-			}
-			if(listener != null) {
-				listener.postRenderChar(g, c, x + xOffset, y + yOffset, fontParameters.frameWidth, fontParameters.frameHeight);
-			}
-
-			xOffset += fontParameters.characterWidth + fontParameters.spacing;
-
-			if(xOffset >= lineWidth) {
-				xOffset = 0f;
-				yOffset += fontParameters.lineHeight;
-			}
-		}
-	}
-
-	private void renderChar(Graphics g, char c, float renderX, float renderY) {
-
-
+	@Override
+	public float getCapHeight() {
+		return fontParameters.lineHeight;
 	}
 
 	private int getXIndex(int index, int charactersPerRow) {
@@ -200,18 +208,41 @@ public class MonospaceFont implements GameFont {
 		return true;
 	}
 
+	@Override
+	public void dispose() {
+		if(sharedGlyphLayout != null) {
+			sharedGlyphLayout.dispose();
+		}
+	}
+
 	public FontParameters getFontParameters() {
 		return fontParameters;
 	}
 
 	public static class FontParameters {
+		@Field(optional = true)
 		public String textureAtlasPath;
+		@Field(optional = true)
 		public String texturePath;
+		@Field
 		public int frameWidth;
+		@Field
 		public int frameHeight;
+		@Field
+		public int framePaddingLeft;
+		@Field
+		public int framePaddingRight;
+		@Field
+		public int framePaddingTop;
+		@Field
+		public int framePaddingBottom;
+		@Field(optional = true)
 		public int characterWidth = -1;
+		@Field(optional = true)
 		public int lineHeight = -1;
+		@Field(optional = true)
 		public int spacing = 1;
+		@Field(optional = true)
 		public IntIntMap overrideCharacterIndices;
 	}
 

@@ -44,13 +44,13 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 		switch(halign) {
 		default:
 		case Align.left:
-			setTextLeftAlign(str, color.toFloatBits(), targetWidth, wrap);
+			setTextLeftAlign(str, color, targetWidth, wrap);
 			break;
 		case Align.right:
-			setTextRightAlign(str, color.toFloatBits(), targetWidth, wrap);
+			setTextRightAlign(str, color, targetWidth, wrap);
 			break;
 		case Align.center:
-			setTextCenterAlign(str, color.toFloatBits(), targetWidth, wrap);
+			setTextCenterAlign(str, color, targetWidth, wrap);
 			break;
 		}
 
@@ -62,7 +62,7 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 		}
 	}
 
-	private void setTextLeftAlign(CharSequence str, float color, float targetWidth, boolean wrap) {
+	private void setTextLeftAlign(CharSequence str, Color color, float targetWidth, boolean wrap) {
 		if(targetWidth < 0f) {
 			targetWidth = Float.MAX_VALUE;
 		}
@@ -73,7 +73,7 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 		for(int i = 0; i < str.length(); i++) {
 			final char c = str.charAt(i);
 			final MonospaceGlyph glyph = getGlyph(i);
-			glyph.color = color;
+			glyph.color.set(color);
 
 			if(c == '\n' || c == '\r') {
 				glyph.x = xOffset;
@@ -109,7 +109,7 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 		}
 	}
 
-	private void setTextRightAlign(CharSequence str, float color, float targetWidth, boolean wrap) {
+	private void setTextRightAlign(CharSequence str, Color color, float targetWidth, boolean wrap) {
 		final int charactersPerLine;
 		final boolean ignoreLineBreaks = targetWidth < 0f;
 
@@ -166,7 +166,7 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 				final MonospaceGlyph glyph = getGlyph(j);
 				glyph.x = xOffset;
 				glyph.y = yOffset;
-				glyph.color = color;
+				glyph.color.set(color);
 
 				if(c == '\n' || c == '\r') {
 					glyph.textureRegion = null;
@@ -180,7 +180,6 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 				glyph.y = yOffset;
 				glyph.textureRegion = monospaceFont.getTextureRegion(c);
 
-				System.out.println(c + " " + glyph.x + "," + glyph.y);
 				xOffset -= fontParameters.characterWidth + fontParameters.spacing;
 
 				if(xOffset < 0f) {
@@ -195,8 +194,79 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 		}
 	}
 
-	private void setTextCenterAlign(CharSequence str, float color, float targetWidth, boolean wrap) {
+	private void setTextCenterAlign(CharSequence str, Color color, float targetWidth, boolean wrap) {
+		final int charactersPerLine;
 
+		if(targetWidth < 0f) {
+			int maxCharsPerLine = 0;
+			int charCount = 0;
+
+			for(int i = 0; i < str.length(); i++) {
+				final char c = str.charAt(i);
+				if(c == '\r' || c == '\n') {
+					maxCharsPerLine = Math.max(charCount, maxCharsPerLine);
+					charCount = 0;
+					continue;
+				}
+				charCount++;
+			}
+
+			if(maxCharsPerLine == 0) {
+				return;
+			} else {
+				charactersPerLine = maxCharsPerLine;
+			}
+
+			targetWidth = (charactersPerLine * fontParameters.characterWidth) + (charactersPerLine * fontParameters.spacing) - fontParameters.spacing;
+		} else {
+			charactersPerLine = MathUtils.round(targetWidth / (fontParameters.characterWidth + fontParameters.spacing));
+		}
+
+		float yOffset = 0f;
+
+		for(int i = 0; i < str.length();) {
+			if(str.charAt(i) == '\n') {
+				final MonospaceGlyph glyph = getGlyph(i);
+				glyph.x = -1f;
+				glyph.y = yOffset;
+				glyph.color.set(color);
+				glyph.textureRegion = null;
+
+				i += 1;
+				continue;
+			}
+
+			int totalChars = Math.min(str.length() - i, charactersPerLine);
+
+			for(int j = i + 1; j <= i + charactersPerLine && j < str.length(); j++) {
+				final char c = str.charAt(j);
+				if(c == '\n' || c == '\r') {
+					totalChars = j - i;
+					break;
+				}
+			}
+
+			final float lineWidth = (totalChars * fontParameters.characterWidth) + (totalChars * fontParameters.spacing) - fontParameters.spacing;
+
+			float xOffset = MathUtils.round((targetWidth * 0.5f) - (lineWidth * 0.5f));
+
+			for(int j = i; j < i + totalChars; j++) {
+				final char c = str.charAt(j);
+				final MonospaceGlyph glyph = getGlyph(j);
+				glyph.x = xOffset;
+				glyph.y = yOffset;
+				glyph.color.set(color);
+				glyph.textureRegion = monospaceFont.getTextureRegion(c);
+
+				xOffset += fontParameters.characterWidth + fontParameters.spacing;
+			}
+
+			if(!wrap) {
+				return;
+			}
+			yOffset += fontParameters.lineHeight;
+			i += totalChars;
+		}
 	}
 
 	@Override

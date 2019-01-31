@@ -11,11 +11,19 @@
  */
 package org.mini2Dx.ui.style;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.graphics.g2d.freetype.Mini2DxFreeTypeFontGenerator;
+import com.badlogic.gdx.utils.Array;
+import org.mini2Dx.core.Mdx;
+import org.mini2Dx.core.font.BitmapFont;
 import org.mini2Dx.core.font.GameFont;
+import org.mini2Dx.core.font.MonospaceFont;
+import org.mini2Dx.core.serialization.SerializationException;
 import org.mini2Dx.core.serialization.annotation.Field;
 import org.mini2Dx.core.util.ColorUtils;
 
@@ -50,36 +58,49 @@ public class UiFont {
 	private Color fontBorderColor, fontShadowColor;
 	private GameFont gameFont;
 	
-	public void prepareAssets(UiTheme theme, FileHandleResolver fileHandleResolver) {
+	public void prepareAssets(UiTheme theme, FileHandleResolver fileHandleResolver, AssetManager assetManager) {
 		if(theme.isHeadless()) {
 			return;
 		}
-		
-		final FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(fileHandleResolver.resolve(path));
-		if(borderColor != null) {
-			fontBorderColor = ColorUtils.rgbToColor(borderColor);
+
+		if(path.endsWith(".ttf")) {
+			final Mini2DxFreeTypeFontGenerator fontGenerator = new Mini2DxFreeTypeFontGenerator(fileHandleResolver.resolve(path));
+			if(borderColor != null) {
+				fontBorderColor = ColorUtils.rgbToColor(borderColor);
+			}
+			if(shadowColor != null) {
+				fontShadowColor = ColorUtils.rgbToColor(shadowColor);
+			}
+			FreeTypeFontParameter fontParameter = new  FreeTypeFontParameter();
+			fontParameter.size = fontSize;
+			fontParameter.flip = !flip;
+			fontParameter.kerning = kerning;
+			if(borderWidth > 0 && borderColor != null) {
+				fontParameter.borderWidth = borderWidth;
+				fontParameter.borderColor = fontBorderColor;
+			}
+			if((shadowOffsetX != 0 || shadowOffsetY != 0) && shadowColor != null) {
+				fontParameter.shadowColor = fontShadowColor;
+				fontParameter.shadowOffsetX = shadowOffsetX;
+				fontParameter.shadowOffsetY = shadowOffsetY;
+			}
+			if(spaceX != 0 || spaceY != 0) {
+				fontParameter.spaceX = spaceX;
+				fontParameter.spaceY = spaceY;
+			}
+			final Mini2DxFreeTypeFontGenerator.Mini2DxFreeTypeBitmapFontData freeTypeBitmapFontData = fontGenerator.generateFontData(fontParameter);
+			gameFont = new BitmapFont(freeTypeBitmapFontData, freeTypeBitmapFontData.getRegions(), true);
+		} else if(path.endsWith(".fnt")) {
+			gameFont = new BitmapFont(fileHandleResolver.resolve(path));
+		} else if(path.endsWith(".xml")) {
+			try {
+				final MonospaceFont.FontParameters fontParameters = Mdx.xml.fromXml(fileHandleResolver.resolve(path).reader(), MonospaceFont.FontParameters.class);
+				gameFont = new MonospaceFont(fontParameters);
+				((MonospaceFont) gameFont).load(assetManager);
+			} catch (SerializationException e) {
+				e.printStackTrace();
+			}
 		}
-		if(shadowColor != null) {
-			fontShadowColor = ColorUtils.rgbToColor(shadowColor);
-		}
-		FreeTypeFontParameter fontParameter = new  FreeTypeFontParameter();
-		fontParameter.size = fontSize;
-		fontParameter.flip = !flip;
-		fontParameter.kerning = kerning;
-		if(borderWidth > 0 && borderColor != null) {
-			fontParameter.borderWidth = borderWidth;
-			fontParameter.borderColor = fontBorderColor;
-		}
-		if((shadowOffsetX != 0 || shadowOffsetY != 0) && shadowColor != null) {
-			fontParameter.shadowColor = fontShadowColor;
-			fontParameter.shadowOffsetX = shadowOffsetX;
-			fontParameter.shadowOffsetY = shadowOffsetY;
-		}
-		if(spaceX != 0 || spaceY != 0) {
-			fontParameter.spaceX = spaceX;
-			fontParameter.spaceY = spaceY;
-		}
-		bitmapFont = fontGenerator.generateFont(fontParameter);
 	}
 	
 	public void dispose() {

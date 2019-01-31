@@ -604,6 +604,12 @@ public interface Graphics {
 	public void setTint(Color tint);
 
 	/**
+	 * Sets the {@link Color} to apply to draw operations
+	 * @param tint The {@link Color} to tint with
+	 */
+	public void setTint(float tint);
+
+	/**
 	 * Sets the {@link GameFont} to draw {@link String}s with
 	 * 
 	 * @param font

@@ -65,6 +65,11 @@ public class BitmapFontCache implements GameFontCache {
 	}
 
 	@Override
+	public void setAllAlphas(float alpha) {
+		bitmapFontCache.setAlphas(alpha);
+	}
+
+	@Override
 	public void setText(CharSequence str, float x, float y) {
 		bitmapFontCache.setText(str, x, y);
 	}

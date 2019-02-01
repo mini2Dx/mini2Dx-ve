@@ -73,6 +73,13 @@ public class MonospaceFontCache implements GameFontCache {
 	}
 
 	@Override
+	public void setAllAlphas(float alpha) {
+		for(int i = 0; i < glyphs.size; i++) {
+			glyphs.get(i).color.a = alpha;
+		}
+	}
+
+	@Override
 	public void setText(CharSequence str, float x, float y) {
 		clear();
 		glyphLayout.setText(str, color, -1f, Align.left, true);

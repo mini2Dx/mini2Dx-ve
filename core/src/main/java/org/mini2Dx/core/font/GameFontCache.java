@@ -67,6 +67,12 @@ public interface GameFontCache {
 	public void setAllColors(Color color);
 
 	/**
+	 * Sets the {@link Color} alpha for previous text operations
+	 * @param alpha The alpha to draw with
+	 */
+	public void setAllAlphas(float alpha);
+
+	/**
 	 * Clears all text from the cache and adds a new text sequence
 	 * @param str The text to be added
 	 * @param x The x coordinate to add the text to

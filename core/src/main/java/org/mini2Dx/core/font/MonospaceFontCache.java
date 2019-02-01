@@ -12,69 +12,90 @@
 package org.mini2Dx.core.font;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import org.mini2Dx.core.graphics.Graphics;
 
 public class MonospaceFontCache implements GameFontCache {
+	private final Array<MonospaceGlyph> glyphs = new Array<MonospaceGlyph>();
 	private final MonospaceFont monospaceFont;
+	private final MonospaceFontGlyphLayout glyphLayout;
+
+	private final Color color = new Color(Color.BLACK);
+	private float x, y;
 
 	public MonospaceFontCache(MonospaceFont monospaceFont) {
 		super();
 		this.monospaceFont = monospaceFont;
+		glyphLayout = new MonospaceFontGlyphLayout(monospaceFont);
 	}
 
 	@Override
 	public void addText(CharSequence str, float x, float y) {
-
+		glyphLayout.setText(str, color, -1f, Align.left, true);
+		glyphLayout.transferGlyphsTo(glyphs);
 	}
 
 	@Override
 	public void addText(CharSequence str, float x, float y, float targetWidth, int halign, boolean wrap) {
-
+		glyphLayout.setText(str, color, targetWidth, halign, wrap);
+		glyphLayout.transferGlyphsTo(glyphs);
 	}
 
 	@Override
 	public void clear() {
-
+		while(glyphs.size > 0) {
+			final MonospaceGlyph glyph = glyphs.removeIndex(0);
+			glyph.release();
+		}
 	}
 
 	@Override
 	public void draw(Graphics g) {
-
+		monospaceFont.draw(g, glyphs, x, y, null);
 	}
 
 	@Override
 	public Color getColor() {
-		return null;
+		return color;
 	}
 
 	@Override
 	public void setColor(Color color) {
-
+		this.color.set(color);
 	}
 
 	@Override
 	public void setAllColors(Color color) {
-
+		for(int i = 0; i < glyphs.size; i++) {
+			glyphs.get(i).color.set(color);
+		}
 	}
 
 	@Override
 	public void setText(CharSequence str, float x, float y) {
-
+		clear();
+		glyphLayout.setText(str, color, -1f, Align.left, true);
+		glyphLayout.transferGlyphsTo(glyphs);
 	}
 
 	@Override
 	public void setText(CharSequence str, float x, float y, float targetWidth, int halign, boolean wrap) {
-
+		clear();
+		glyphLayout.setText(str, color, targetWidth, halign, wrap);
+		glyphLayout.transferGlyphsTo(glyphs);
 	}
 
 	@Override
 	public void translate(float x, float y) {
-
+		this.x += x;
+		this.y += y;
 	}
 
 	@Override
 	public void setPosition(float x, float y) {
-
+		this.x = x;
+		this.y = y;
 	}
 
 	@Override

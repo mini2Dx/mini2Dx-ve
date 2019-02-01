@@ -74,6 +74,7 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 			final char c = str.charAt(i);
 			final MonospaceGlyph glyph = getGlyph(i);
 			glyph.color.set(color);
+			glyph.glyphChar = c;
 
 			if(c == '\n' || c == '\r') {
 				glyph.x = xOffset;
@@ -166,6 +167,7 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 				final MonospaceGlyph glyph = getGlyph(j);
 				glyph.x = xOffset;
 				glyph.y = yOffset;
+				glyph.glyphChar = c;
 				glyph.color.set(color);
 
 				if(c == '\n' || c == '\r') {
@@ -229,6 +231,7 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 				final MonospaceGlyph glyph = getGlyph(i);
 				glyph.x = -1f;
 				glyph.y = yOffset;
+				glyph.glyphChar = str.charAt(i);
 				glyph.color.set(color);
 				glyph.textureRegion = null;
 
@@ -255,6 +258,7 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 				final MonospaceGlyph glyph = getGlyph(j);
 				glyph.x = xOffset;
 				glyph.y = yOffset;
+				glyph.glyphChar = c;
 				glyph.color.set(color);
 				glyph.textureRegion = monospaceFont.getTextureRegion(c);
 
@@ -298,6 +302,12 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 	@Override
 	public GameFont getFont() {
 		return monospaceFont;
+	}
+
+	public void transferGlyphsTo(Array<MonospaceGlyph> result) {
+		while(glyphs.size > 0) {
+			result.add(glyphs.removeIndex(0));
+		}
 	}
 
 	public Array<MonospaceGlyph> getGlyphs() {

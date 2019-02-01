@@ -49,6 +49,7 @@ public class MonospaceFontGlyphLayoutTest {
 		for(int i = 0; i < str.length(); i++) {
 			Assert.assertEquals(expectedX, glyphLayout.getGlyphs().get(i).x, 0.01f);
 			Assert.assertEquals(expectedY, glyphLayout.getGlyphs().get(i).y, 0.01f);
+			Assert.assertEquals(str.charAt(i), glyphLayout.getGlyphs().get(i).glyphChar);
 
 			expectedX += FONT_CHARACTER_WIDTH + FONT_SPACING;
 			if(str.charAt(i) == '\n') {
@@ -69,6 +70,7 @@ public class MonospaceFontGlyphLayoutTest {
 		for(int i = 0; i < str.length(); i++) {
 			Assert.assertEquals(expectedX, glyphLayout.getGlyphs().get(i).x, 0.01f);
 			Assert.assertEquals(expectedY, glyphLayout.getGlyphs().get(i).y, 0.01f);
+			Assert.assertEquals(str.charAt(i), glyphLayout.getGlyphs().get(i).glyphChar);
 
 			expectedX += FONT_CHARACTER_WIDTH + FONT_SPACING;
 			if(i == 2) {
@@ -96,6 +98,7 @@ public class MonospaceFontGlyphLayoutTest {
 
 			Assert.assertEquals(expectedX, glyphLayout.getGlyphs().get(i).x, 0.01f);
 			Assert.assertEquals(expectedY, glyphLayout.getGlyphs().get(i).y, 0.01f);
+			Assert.assertEquals(str.charAt(i), glyphLayout.getGlyphs().get(i).glyphChar);
 
 			expectedX += FONT_CHARACTER_WIDTH + FONT_SPACING;
 			if(str.charAt(i) == '\n') {
@@ -118,6 +121,7 @@ public class MonospaceFontGlyphLayoutTest {
 		for(int i = 0; i < str.length(); i++) {
 			Assert.assertEquals(expectedX, glyphLayout.getGlyphs().get(i).x, 0.01f);
 			Assert.assertEquals(expectedY, glyphLayout.getGlyphs().get(i).y, 0.01f);
+			Assert.assertEquals(str.charAt(i), glyphLayout.getGlyphs().get(i).glyphChar);
 
 			expectedX += FONT_CHARACTER_WIDTH + FONT_SPACING;
 			if(i == 2) {
@@ -146,6 +150,7 @@ public class MonospaceFontGlyphLayoutTest {
 
 			Assert.assertEquals(expectedX, glyphLayout.getGlyphs().get(i).x, 0.01f);
 			Assert.assertEquals(expectedY, glyphLayout.getGlyphs().get(i).y, 0.01f);
+			Assert.assertEquals(str.charAt(i), glyphLayout.getGlyphs().get(i).glyphChar);
 
 			expectedX += FONT_CHARACTER_WIDTH + FONT_SPACING;
 		}
@@ -164,6 +169,7 @@ public class MonospaceFontGlyphLayoutTest {
 		for(int i = 0; i < str.length(); i++) {
 			Assert.assertEquals(expectedX, glyphLayout.getGlyphs().get(i).x, 0.01f);
 			Assert.assertEquals(expectedY, glyphLayout.getGlyphs().get(i).y, 0.01f);
+			Assert.assertEquals(str.charAt(i), glyphLayout.getGlyphs().get(i).glyphChar);
 
 			expectedX += FONT_CHARACTER_WIDTH + FONT_SPACING;
 

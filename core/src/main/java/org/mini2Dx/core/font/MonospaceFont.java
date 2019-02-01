@@ -15,10 +15,9 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntIntMap;
-import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.TextureRegion;
@@ -110,12 +109,15 @@ public class MonospaceFont implements GameFont {
 
 	public void draw(Graphics g, String str, float x, float y, float renderWidth, int horizontalAlignment, boolean wrap, FontRenderListener listener) {
 		sharedGlyphLayout.setText(str, color, renderWidth, horizontalAlignment, wrap);
+		draw(g, sharedGlyphLayout.getGlyphs(), x, y, listener);
+	}
 
+	public void draw(Graphics g, Array<MonospaceGlyph> glyphs, float x, float y, FontRenderListener listener) {
 		final float charRenderWidth = fontParameters.characterWidth;
 		final float charRenderHeight = fontParameters.lineHeight;
 
-		for(int i = 0; i < sharedGlyphLayout.getGlyphs().size; i++) {
-			final MonospaceGlyph glyph = sharedGlyphLayout.getGlyphs().get(i);
+		for(int i = 0; i < glyphs.size; i++) {
+			final MonospaceGlyph glyph = glyphs.get(i);
 			if(glyph.textureRegion == null) {
 				continue;
 			}
@@ -127,10 +129,10 @@ public class MonospaceFont implements GameFont {
 			if(listener == null) {
 				g.drawTextureRegion(glyph.textureRegion, renderX, renderY);
 			} else {
-				if(listener.preRenderChar(g, str.charAt(i), renderX, renderY, charRenderWidth, charRenderHeight)) {
+				if(listener.preRenderChar(g, glyph.glyphChar, renderX, renderY, charRenderWidth, charRenderHeight)) {
 					g.drawTextureRegion(glyph.textureRegion, renderX, renderY);
 				}
-				listener.postRenderChar(g, str.charAt(i), renderX, renderY, charRenderWidth, charRenderHeight);
+				listener.postRenderChar(g, glyph.glyphChar, renderX, renderY, charRenderWidth, charRenderHeight);
 			}
 
 		}

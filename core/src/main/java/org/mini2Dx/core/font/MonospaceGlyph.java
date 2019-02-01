@@ -20,6 +20,7 @@ public class MonospaceGlyph {
 
 	public float x;
 	public float y;
+	public char glyphChar;
 	public TextureRegion textureRegion;
 	public final Color color = new Color();
 

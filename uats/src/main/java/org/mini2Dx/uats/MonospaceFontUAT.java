@@ -4,7 +4,9 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.IntIntMap;
+import org.mini2Dx.core.font.GameFontCache;
 import org.mini2Dx.core.font.MonospaceFont;
+import org.mini2Dx.core.font.MonospaceFontCache;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.screen.BasicGameScreen;
@@ -18,6 +20,9 @@ public class MonospaceFontUAT extends BasicGameScreen implements MonospaceFont.F
 
 	private final AssetManager assetManager;
 	private final MonospaceFont font;
+	private final GameFontCache fontCache;
+
+	private boolean cacheSetUp = false;
 
 	public MonospaceFontUAT(AssetManager assetManager) {
 		super();
@@ -34,17 +39,21 @@ public class MonospaceFontUAT extends BasicGameScreen implements MonospaceFont.F
 		initCharacterIndices(parameters);
 
 		font = new MonospaceFont(parameters);
+		fontCache = font.newCache();
 	}
 
 	@Override
 	public void initialise(GameContainer gc) {
-
 	}
 
 	@Override
 	public void update(GameContainer gc, ScreenManager<? extends GameScreen> screenManager, float delta) {
 		if(!font.load(assetManager)) {
 			return;
+		}
+		if(!cacheSetUp) {
+			fontCache.addText("Font cache example", 0f, 0f);
+			cacheSetUp = true;
 		}
 	}
 
@@ -83,6 +92,9 @@ public class MonospaceFontUAT extends BasicGameScreen implements MonospaceFont.F
 
 		font.draw(g, "Center align\nline break", 4f, renderY, -1f, Align.center, true);
 		renderY += font.getLineHeight() * 4f;
+
+		fontCache.setPosition(128f, 4f);
+		fontCache.draw(g);
 	}
 
 	@Override

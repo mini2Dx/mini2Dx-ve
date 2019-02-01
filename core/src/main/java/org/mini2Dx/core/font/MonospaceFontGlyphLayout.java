@@ -60,6 +60,15 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 				glyph.release();
 			}
 		}
+
+		for(int i = 0; i < glyphs.size; i++) {
+			final MonospaceGlyph glyph = getGlyph(i);
+			if(glyph.glyphChar == '\n' || glyph.glyphChar == '\r') {
+				continue;
+			}
+			maxX = Math.max(maxX, glyph.x + fontParameters.characterWidth);
+			maxY = Math.max(maxY, glyph.y + fontParameters.lineHeight);
+		}
 	}
 
 	private void setTextLeftAlign(CharSequence str, Color color, float targetWidth, boolean wrap) {

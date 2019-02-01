@@ -57,6 +57,9 @@ public class MonospaceFontGlyphLayoutTest {
 				expectedY += FONT_LINE_HEIGHT;
 			}
 		}
+
+		Assert.assertEquals((FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f), glyphLayout.getWidth(), 0.01f);
+		Assert.assertEquals(FONT_LINE_HEIGHT * 2f, glyphLayout.getHeight(), 0.01f);
 	}
 
 	@Test
@@ -78,6 +81,9 @@ public class MonospaceFontGlyphLayoutTest {
 				expectedY += FONT_LINE_HEIGHT;
 			}
 		}
+
+		Assert.assertEquals((FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f), glyphLayout.getWidth(), 0.01f);
+		Assert.assertEquals(FONT_LINE_HEIGHT * 2f, glyphLayout.getHeight(), 0.01f);
 	}
 
 	@Test
@@ -106,6 +112,9 @@ public class MonospaceFontGlyphLayoutTest {
 				expectedY += FONT_LINE_HEIGHT;
 			}
 		}
+
+		Assert.assertEquals((FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f), glyphLayout.getWidth(), 0.01f);
+		Assert.assertEquals(FONT_LINE_HEIGHT * 2f, glyphLayout.getHeight(), 0.01f);
 	}
 
 	@Test
@@ -129,6 +138,9 @@ public class MonospaceFontGlyphLayoutTest {
 				expectedY += FONT_LINE_HEIGHT;
 			}
 		}
+
+		Assert.assertEquals(offset + (FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f), glyphLayout.getWidth(), 0.01f);
+		Assert.assertEquals(FONT_LINE_HEIGHT * 2f, glyphLayout.getHeight(), 0.01f);
 	}
 
 	@Test
@@ -154,6 +166,9 @@ public class MonospaceFontGlyphLayoutTest {
 
 			expectedX += FONT_CHARACTER_WIDTH + FONT_SPACING;
 		}
+
+		Assert.assertEquals((FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f), glyphLayout.getWidth(), 0.01f);
+		Assert.assertEquals(FONT_LINE_HEIGHT * 2f, glyphLayout.getHeight(), 0.01f);
 	}
 
 	@Test
@@ -178,5 +193,8 @@ public class MonospaceFontGlyphLayoutTest {
 				expectedY += FONT_LINE_HEIGHT;
 			}
 		}
+
+		Assert.assertEquals((FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f), glyphLayout.getWidth(), 0.01f);
+		Assert.assertEquals(FONT_LINE_HEIGHT * 2f, glyphLayout.getHeight(), 0.01f);
 	}
 }

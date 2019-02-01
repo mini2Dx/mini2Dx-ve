@@ -7,6 +7,7 @@
 - Added CustomCursor class for implementing custom cursors with up/down state
 - Added Viewport implementations (Extend, Fill, Fit, Screen and Stretch)
 - Added MonospaceFont, MonospaceFontCache and FontGlyphLayout for simplified font rendering
+- Reduced spritebatch flushes when calling Graphics#setTint
 - Tilesets can now be loaded from TextureAtlas instances
 - UiContainer can now have multiple navigation action keys
 - Mdx.playerData now uses temp files to write before moving files to target filename

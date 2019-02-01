@@ -1,5 +1,6 @@
 package org.mini2Dx.uats;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Align;
@@ -12,7 +13,10 @@ import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.screen.BasicGameScreen;
 import org.mini2Dx.core.screen.GameScreen;
 import org.mini2Dx.core.screen.ScreenManager;
+import org.mini2Dx.core.screen.transition.FadeInTransition;
+import org.mini2Dx.core.screen.transition.FadeOutTransition;
 import org.mini2Dx.uats.util.ScreenIds;
+import org.mini2Dx.uats.util.UATSelectionScreen;
 
 public class MonospaceFontUAT extends BasicGameScreen implements MonospaceFont.FontRenderListener {
 	private final int CHARACTER_WIDTH = 5;
@@ -48,6 +52,10 @@ public class MonospaceFontUAT extends BasicGameScreen implements MonospaceFont.F
 
 	@Override
 	public void update(GameContainer gc, ScreenManager<? extends GameScreen> screenManager, float delta) {
+		if (Gdx.input.justTouched()) {
+			screenManager.enterGameScreen(UATSelectionScreen.SCREEN_ID, new FadeOutTransition(),
+					new FadeInTransition());
+		}
 		if(!font.load(assetManager)) {
 			return;
 		}

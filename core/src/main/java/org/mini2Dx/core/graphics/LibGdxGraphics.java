@@ -578,20 +578,12 @@ public class LibGdxGraphics implements Graphics {
 
 	@Override
 	public void setTint(Color tint) {
-		if (rendering) {
-			endRendering();
-		}
-
 		this.tint = tint;
 		spriteBatch.setColor(tint);
 	}
 
 	@Override
 	public void setTint(float tint) {
-		if (rendering) {
-			endRendering();
-		}
-
 		this.tint = new Color(NumberUtils.floatToIntColor(tint));
 		spriteBatch.setColor(tint);
 	}

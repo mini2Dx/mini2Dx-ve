@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.uats;
 
+import com.badlogic.gdx.graphics.Color;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.NinePatch;
@@ -135,11 +136,13 @@ public class TextureRegionUAT extends BasicGameScreen {
 		
 		xPosition *= 0.6;
 		g.setScale(1.5f, 1.5f);
+		g.setTint(Color.RED);
 		g.drawTextureRegion(regionFromTexture, xPosition, yPosition);
 		yPosition += regionFromTexture.getRegionHeight() * g.getScaleY();
 		
 		g.drawString("(10) Scaled render of TextureAtlas region", xPosition, yPosition);
 		yPosition += g.getFont().getLineHeight() + MARGIN;
+		g.setTint(Color.WHITE);
 		g.drawTextureRegion(regionFromTextureAtlas, xPosition, yPosition);
 		yPosition += regionFromTextureAtlas.getRegionHeight() * g.getScaleY();
 	}

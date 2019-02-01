@@ -82,7 +82,7 @@ public class UiThemeLoader extends AsynchronousAssetLoader<UiTheme, UiThemeParam
 		} catch (SerializationException e) {
 			throw new MdxException(e.getMessage(), e);
 		}
-		theme.loadDependencies(dependencies, headless);
+		theme.loadDependencies(dependencies, fileHandleResolver, headless);
 		return dependencies;
 	}
 	

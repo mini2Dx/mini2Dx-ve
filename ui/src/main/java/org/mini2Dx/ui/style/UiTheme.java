@@ -177,13 +177,16 @@ public class UiTheme {
 		}
 	}
 
-	public void loadDependencies(Array<AssetDescriptor> dependencies, boolean headless) {
+	public void loadDependencies(Array<AssetDescriptor> dependencies, FileHandleResolver resolver, boolean headless) {
 		this.headless = headless;
 		if(!headless) {
 			dependencies.add(new AssetDescriptor<TextureAtlas>(atlas, TextureAtlas.class));
 		}
 		
 		Gdx.app.log(LOGGING_TAG, "[Theme: " + this.id + ", Atlas: " + atlas + "]");
+		for (UiFont font : fonts.values()) {
+			font.loadDependencies(this, resolver, dependencies);
+		}
 		for (String id : buttons.keys()) {
 			StyleRuleset<ButtonStyleRule> buttonRuleset = buttons.get(id);
 			buttonRuleset.loadDependencies(this, dependencies);

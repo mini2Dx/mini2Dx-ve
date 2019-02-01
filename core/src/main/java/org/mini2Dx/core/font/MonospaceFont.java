@@ -17,11 +17,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.CharArray;
 import com.badlogic.gdx.utils.IntIntMap;
 import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.TextureRegion;
 import org.mini2Dx.core.serialization.annotation.Field;
+import org.mini2Dx.core.serialization.annotation.PostDeserialize;
 
 /**
  * Similar to {@link BitmapFont} except every character is a fixed-width which simplifies rendering calculations
@@ -56,7 +58,7 @@ public class MonospaceFont implements GameFont {
 		if(fontParameters.textureAtlasPath != null) {
 			if(!assetManager.isLoaded(fontParameters.textureAtlasPath)) {
 				assetManager.load(fontParameters.textureAtlasPath, TextureAtlas.class);
-				assetManager.finishLoading();
+				return false;
 			}
 			final TextureAtlas textureAtlas = assetManager.get(fontParameters.textureAtlasPath, TextureAtlas.class);
 			if(textureAtlas == null) {
@@ -66,7 +68,7 @@ public class MonospaceFont implements GameFont {
 		} else {
 			if(!assetManager.isLoaded(fontParameters.texturePath)) {
 				assetManager.load(fontParameters.texturePath, Texture.class);
-				assetManager.finishLoading();
+				return false;
 			}
 			textureRegion = new TextureRegion(assetManager.get(fontParameters.texturePath, Texture.class));
 		}
@@ -116,6 +118,7 @@ public class MonospaceFont implements GameFont {
 		final float charRenderWidth = fontParameters.characterWidth;
 		final float charRenderHeight = fontParameters.lineHeight;
 
+		final Color previousTint = g.getTint();
 		for(int i = 0; i < glyphs.size; i++) {
 			final MonospaceGlyph glyph = glyphs.get(i);
 			if(glyph.textureRegion == null) {
@@ -134,8 +137,8 @@ public class MonospaceFont implements GameFont {
 				}
 				listener.postRenderChar(g, glyph.glyphChar, renderX, renderY, charRenderWidth, charRenderHeight);
 			}
-
 		}
+		g.setTint(previousTint);
 	}
 
 	@Override
@@ -246,6 +249,19 @@ public class MonospaceFont implements GameFont {
 		public int spacing = 1;
 		@Field(optional = true)
 		public IntIntMap overrideCharacterIndices;
+		@Field(optional = true)
+		public CharArray overrideCharacterIndicesList;
+
+		@PostDeserialize
+		public void postDeserialize() {
+			if(overrideCharacterIndicesList != null) {
+				overrideCharacterIndices = new IntIntMap();
+				for(int i = 0; i < overrideCharacterIndicesList.size; i++) {
+					overrideCharacterIndices.put(overrideCharacterIndicesList.get(i), i);
+				}
+				overrideCharacterIndicesList.clear();
+			}
+		}
 	}
 
 	public static interface FontRenderListener {

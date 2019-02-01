@@ -57,6 +57,7 @@ public class MonospaceFontUAT extends BasicGameScreen implements MonospaceFont.F
 			screenManager.enterGameScreen(UATSelectionScreen.SCREEN_ID, new FadeOutTransition(),
 					new FadeInTransition());
 		}
+		assetManager.update();
 		if(!font.load(assetManager)) {
 			return;
 		}

@@ -11,9 +11,13 @@
  */
 package org.mini2Dx.ui.style;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -31,6 +35,7 @@ import org.mini2Dx.core.util.ColorUtils;
  * A font for user interfaces
  */
 public class UiFont {
+	private static final String LOGGING_TAG = UiFont.class.getSimpleName();
 
 	@Field
 	private String path;
@@ -102,7 +107,25 @@ public class UiFont {
 			}
 		}
 	}
-	
+
+	public void loadDependencies(UiTheme theme, FileHandleResolver fileHandleResolver, Array<AssetDescriptor> dependencies) {
+		if(theme.isHeadless()) {
+			return;
+		}
+		if(path.endsWith(".xml")) {
+			try {
+				final MonospaceFont.FontParameters fontParameters = Mdx.xml.fromXml(fileHandleResolver.resolve(path).reader(), MonospaceFont.FontParameters.class);
+				if(fontParameters.textureAtlasPath != null) {
+					dependencies.add(new AssetDescriptor(fontParameters.textureAtlasPath, TextureAtlas.class));
+				} else if(fontParameters.texturePath != null) {
+					dependencies.add(new AssetDescriptor(fontParameters.texturePath, Texture.class));
+				}
+			} catch (SerializationException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public void dispose() {
 		gameFont.dispose();
 	}

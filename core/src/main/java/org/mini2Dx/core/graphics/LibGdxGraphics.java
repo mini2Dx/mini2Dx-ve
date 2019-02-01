@@ -593,10 +593,6 @@ public class LibGdxGraphics implements Graphics {
 		if (font == null) {
 			return;
 		}
-		if (rendering) {
-			endRendering();
-		}
-
 		this.font = font;
 	}
 

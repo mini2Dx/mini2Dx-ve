@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.IntIntMap;
+import org.mini2Dx.core.font.GameFont;
 import org.mini2Dx.core.font.GameFontCache;
 import org.mini2Dx.core.font.MonospaceFont;
 import org.mini2Dx.core.font.MonospaceFontCache;
@@ -76,11 +77,14 @@ public class MonospaceFontUAT extends BasicGameScreen implements MonospaceFont.F
 			return;
 		}
 
+		final GameFont defaultFont = g.getFont();
+
+		g.setFont(font);
 		font.setColor(Color.RED);
 
 		float renderY = 4f;
 
-		font.draw(g, "Left align\nno params", 4f, renderY);
+		g.drawString("Left align\nno params", 4f, renderY);
 		renderY += font.getLineHeight() * 4f;
 
 		font.draw(g, "Left align\nwrap with line break", 4f, renderY, (CHARACTER_WIDTH * 10) + 9, Align.left, true);
@@ -103,6 +107,9 @@ public class MonospaceFontUAT extends BasicGameScreen implements MonospaceFont.F
 
 		fontCache.setPosition(128f, 4f);
 		fontCache.draw(g);
+
+		g.setFont(defaultFont);
+		g.drawString("Change to previous font", 4f, renderY);
 	}
 
 	@Override

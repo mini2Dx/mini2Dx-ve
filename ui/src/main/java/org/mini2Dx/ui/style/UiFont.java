@@ -57,8 +57,8 @@ public class UiFont {
 	private boolean flip;
 	@Field(optional=true)
 	private boolean kerning = true;
-	@Field
-	private int fontSize;
+	@Field(optional=true)
+	private int fontSize = 12;
 	
 	private Color fontBorderColor, fontShadowColor;
 	private GameFont gameFont;

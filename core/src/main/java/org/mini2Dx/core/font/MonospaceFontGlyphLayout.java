@@ -95,7 +95,7 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 				continue;
 			}
 
-			if(xOffset + fontParameters.characterWidth >= targetWidth) {
+			if(xOffset + fontParameters.characterWidth > targetWidth) {
 				if(!wrap) {
 					return;
 				}

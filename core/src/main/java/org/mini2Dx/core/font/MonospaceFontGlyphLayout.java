@@ -69,72 +69,75 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 			maxX = Math.max(maxX, glyph.x + fontParameters.characterWidth);
 			maxY = Math.max(maxY, glyph.y + fontParameters.lineHeight);
 		}
+
+		if(halign == Align.center && targetWidth >= 0f) {
+			maxX = targetWidth;
+		}
 	}
 
 	private void setTextLeftAlign(CharSequence str, Color color, float targetWidth, boolean wrap) {
+		final int estimateMaxCharsPerLine;
 		if(targetWidth < 0f) {
 			targetWidth = Float.MAX_VALUE;
+			estimateMaxCharsPerLine = Integer.MAX_VALUE;
+		} else {
+			estimateMaxCharsPerLine = MathUtils.round(targetWidth / (fontParameters.characterWidth + fontParameters.spacing));
 		}
 
 		float yOffset = 0f;
 		float xOffset = 0f;
 
-		for(int i = 0; i < str.length(); i++) {
-			final char c = str.charAt(i);
-			final MonospaceGlyph glyph = getGlyph(i);
-			glyph.color.set(color);
-			glyph.glyphChar = c;
-
-			if(c == '\n' || c == '\r') {
-				glyph.x = xOffset;
-				glyph.y = yOffset;
+		for(int i = 0; i < str.length();) {
+			final char startChar = str.charAt(i);
+			if(startChar == '\n' || startChar == '\r' || Character.isWhitespace(startChar)) {
+				final MonospaceGlyph glyph = getGlyph(i);
+				glyph.color.set(color);
+				glyph.glyphChar = startChar;
+				glyph.x = -1f;
+				glyph.y = -1f;
 				glyph.textureRegion = null;
-
-				xOffset = 0f;
-				yOffset += fontParameters.lineHeight;
+				i++;
 				continue;
 			}
 
-			if(xOffset + fontParameters.characterWidth > targetWidth) {
-				if(!wrap) {
-					return;
-				}
-				xOffset = 0f;
-				yOffset += fontParameters.lineHeight;
+			final int totalChars = calculateMaxCharactersBeforeWrap(str, i, estimateMaxCharsPerLine, targetWidth);
+
+			for(int j = i; j < i + totalChars && j < str.length(); j++) {
+				final char c = str.charAt(j);
+
+				final MonospaceGlyph glyph = getGlyph(j);
+				glyph.color.set(color);
+				glyph.glyphChar = c;
+				glyph.x = xOffset;
+				glyph.y = yOffset;
+				glyph.textureRegion = monospaceFont.getTextureRegion(c);
+
+				xOffset += fontParameters.characterWidth + fontParameters.spacing;
 			}
 
-			glyph.x = xOffset;
-			glyph.y = yOffset;
-			glyph.textureRegion = monospaceFont.getTextureRegion(c);
-
-			xOffset += fontParameters.characterWidth + fontParameters.spacing;
-
-			if(xOffset >= targetWidth) {
-				if(!wrap) {
-					return;
-				}
-				xOffset = 0f;
-				yOffset += fontParameters.lineHeight;
+			if(!wrap) {
+				return;
 			}
+			xOffset = 0f;
+			yOffset += fontParameters.lineHeight;
+			i += totalChars;
 		}
 	}
 
 	private void setTextRightAlign(CharSequence str, Color color, float targetWidth, boolean wrap) {
 		final int charactersPerLine;
-		final boolean ignoreLineBreaks = targetWidth < 0f;
 
 		if(targetWidth < 0f) {
 			int maxCharsPerLine = 0;
-			int charCount = 0;
 
-			for(int i = 0; i < str.length(); i++) {
-				final char c = str.charAt(i);
-				if(c == '\r' || c == '\n') {
-					maxCharsPerLine = Math.max(charCount, maxCharsPerLine);
-					charCount = 0;
+			for(int i = 0; i < str.length();) {
+				if(str.charAt(i) == '\n' || str.charAt(i) == '\r' || Character.isWhitespace(str.charAt(i))) {
+					i++;
 					continue;
 				}
-				charCount++;
+				final int totalChars = calculateMaxCharactersBeforeWrap(str, i, Integer.MAX_VALUE, Float.MAX_VALUE);
+				maxCharsPerLine = Math.max(totalChars, maxCharsPerLine);
+				i += totalChars;
 			}
 
 			if(maxCharsPerLine == 0) {
@@ -152,55 +155,36 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 		float xOffset = targetWidth - fontParameters.characterWidth;
 
 		for(int i = 0; i < str.length();) {
-			if(ignoreLineBreaks && str.charAt(i) == '\n') {
-				i += 1;
+			final char startChar = str.charAt(i);
+			if(startChar == '\n' || startChar == '\r' || Character.isWhitespace(startChar)) {
+				final MonospaceGlyph glyph = getGlyph(i);
+				glyph.color.set(color);
+				glyph.glyphChar = startChar;
+				glyph.x = -1f;
+				glyph.y = -1f;
+				glyph.textureRegion = null;
+				i++;
 				continue;
 			}
 
-			int totalChars = 0;
-			int start = Math.min(str.length() - 1, i + charactersPerLine - 1);
+			final int totalChars = calculateMaxCharactersBeforeWrap(str, i, charactersPerLine, targetWidth);
 
-			for(int j = i; j <= start && j < str.length(); j++) {
-				final char c = str.charAt(j);
-				if(c == '\n' || c == '\r') {
-					start = j - 1;
-					totalChars += 1;
-					break;
-				}
-			}
-
-			for(int j = start; j >= i; j--) {
-				totalChars++;
-
+			for(int j = i + totalChars - 1; j >= i; j--) {
 				final char c = str.charAt(j);
 				final MonospaceGlyph glyph = getGlyph(j);
 				glyph.x = xOffset;
 				glyph.y = yOffset;
 				glyph.glyphChar = c;
 				glyph.color.set(color);
-
-				if(c == '\n' || c == '\r') {
-					glyph.textureRegion = null;
-
-					xOffset = targetWidth - fontParameters.characterWidth;
-					yOffset += fontParameters.lineHeight;
-					break;
-				}
-
-				glyph.x = xOffset;
-				glyph.y = yOffset;
 				glyph.textureRegion = monospaceFont.getTextureRegion(c);
 
 				xOffset -= fontParameters.characterWidth + fontParameters.spacing;
-
-				if(xOffset < 0f) {
-					if(!wrap) {
-						return;
-					}
-					xOffset = targetWidth - fontParameters.characterWidth;
-					yOffset += fontParameters.lineHeight;
-				}
 			}
+			if(!wrap) {
+				return;
+			}
+			xOffset = targetWidth - fontParameters.characterWidth;
+			yOffset += fontParameters.lineHeight;
 			i += totalChars;
 		}
 	}
@@ -210,16 +194,15 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 
 		if(targetWidth < 0f) {
 			int maxCharsPerLine = 0;
-			int charCount = 0;
 
-			for(int i = 0; i < str.length(); i++) {
-				final char c = str.charAt(i);
-				if(c == '\r' || c == '\n') {
-					maxCharsPerLine = Math.max(charCount, maxCharsPerLine);
-					charCount = 0;
+			for(int i = 0; i < str.length();) {
+				if(str.charAt(i) == '\n' || str.charAt(i) == '\r' || Character.isWhitespace(str.charAt(i))) {
+					i++;
 					continue;
 				}
-				charCount++;
+				final int totalChars = calculateMaxCharactersBeforeWrap(str, i, Integer.MAX_VALUE, Float.MAX_VALUE);
+				maxCharsPerLine = Math.max(totalChars, maxCharsPerLine);
+				i += totalChars;
 			}
 
 			if(maxCharsPerLine == 0) {
@@ -236,28 +219,19 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 		float yOffset = 0f;
 
 		for(int i = 0; i < str.length();) {
-			if(str.charAt(i) == '\n') {
+			final char startChar = str.charAt(i);
+			if(startChar == '\n' || startChar == '\r' || Character.isWhitespace(startChar)) {
 				final MonospaceGlyph glyph = getGlyph(i);
-				glyph.x = -1f;
-				glyph.y = yOffset;
-				glyph.glyphChar = str.charAt(i);
 				glyph.color.set(color);
+				glyph.glyphChar = startChar;
+				glyph.x = -1f;
+				glyph.y = -1f;
 				glyph.textureRegion = null;
-
-				i += 1;
+				i++;
 				continue;
 			}
 
-			int totalChars = Math.min(str.length() - i, charactersPerLine);
-
-			for(int j = i + 1; j <= i + charactersPerLine && j < str.length(); j++) {
-				final char c = str.charAt(j);
-				if(c == '\n' || c == '\r') {
-					totalChars = j - i;
-					break;
-				}
-			}
-
+			final int totalChars = calculateMaxCharactersBeforeWrap(str, i, charactersPerLine, targetWidth);
 			final float lineWidth = (totalChars * fontParameters.characterWidth) + (totalChars * fontParameters.spacing) - fontParameters.spacing;
 
 			float xOffset = MathUtils.round((targetWidth * 0.5f) - (lineWidth * 0.5f));
@@ -280,6 +254,46 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 			yOffset += fontParameters.lineHeight;
 			i += totalChars;
 		}
+	}
+
+	/**
+	 *
+	 * @param str
+	 * @param from
+	 * @return The amount of characters to render before the wrap
+	 */
+	public int calculateMaxCharactersBeforeWrap(CharSequence str, int from, int estimate, float targetWidth) {
+		float x = 0f;
+
+		for(int i = from; i < str.length(); i++) {
+			final char c = str.charAt(i);
+			switch(c) {
+			case '\r':
+			case '\n':
+				return i - from;
+			}
+
+			if(x + fontParameters.characterWidth > targetWidth) {
+				if(Character.isWhitespace(c)) {
+					return i - from;
+				}
+				if(c == '\n' || c == '\r') {
+					return i - from;
+				}
+
+				//Scan backwards for first space
+				for(int j = i - 1; j >= from; j--) {
+					final char previousChar = str.charAt(j);
+					if(Character.isWhitespace(previousChar)) {
+						return j - from;
+					}
+				}
+				return i - from;
+			}
+
+			x += fontParameters.characterWidth + fontParameters.spacing;
+		}
+		return Math.min(estimate, str.length() - from);
 	}
 
 	@Override

@@ -39,6 +39,20 @@ public class MonospaceFontGlyphLayoutTest {
 	}
 
 	@Test
+	public void testCalculateMaxCharactersBeforeWrap() {
+		final int estimate = 5;
+		final float targetWidth = (5 * FONT_CHARACTER_WIDTH) + (4 * FONT_SPACING);
+
+		Assert.assertEquals(3, glyphLayout.calculateMaxCharactersBeforeWrap("abc\ndef", 0, estimate, targetWidth));
+		Assert.assertEquals(3, glyphLayout.calculateMaxCharactersBeforeWrap("abc def", 0, estimate, targetWidth));
+		Assert.assertEquals(3, glyphLayout.calculateMaxCharactersBeforeWrap("abc def ghi", 4, estimate, targetWidth));
+		Assert.assertEquals(5, glyphLayout.calculateMaxCharactersBeforeWrap("abcdef", 0, estimate, targetWidth));
+		Assert.assertEquals(2, glyphLayout.calculateMaxCharactersBeforeWrap("ab\ncdef", 0, estimate, targetWidth));
+		Assert.assertEquals(2, glyphLayout.calculateMaxCharactersBeforeWrap("abc def", 5, estimate, targetWidth));
+		Assert.assertEquals(0, glyphLayout.calculateMaxCharactersBeforeWrap("\n", 0, estimate, targetWidth));
+	}
+
+	@Test
 	public void testLayoutLeftAlignLineBreak() {
 		final String str = "abc\ndef";
 
@@ -47,15 +61,16 @@ public class MonospaceFontGlyphLayoutTest {
 		float expectedX = 0f;
 		float expectedY = 0f;
 		for(int i = 0; i < str.length(); i++) {
+			if(str.charAt(i) == '\n') {
+				expectedX = 0f;
+				expectedY += FONT_LINE_HEIGHT;
+				continue;
+			}
 			Assert.assertEquals(expectedX, glyphLayout.getGlyphs().get(i).x, 0.01f);
 			Assert.assertEquals(expectedY, glyphLayout.getGlyphs().get(i).y, 0.01f);
 			Assert.assertEquals(str.charAt(i), glyphLayout.getGlyphs().get(i).glyphChar);
 
 			expectedX += FONT_CHARACTER_WIDTH + FONT_SPACING;
-			if(str.charAt(i) == '\n') {
-				expectedX = 0f;
-				expectedY += FONT_LINE_HEIGHT;
-			}
 		}
 
 		Assert.assertEquals((FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f), glyphLayout.getWidth(), 0.01f);
@@ -64,22 +79,23 @@ public class MonospaceFontGlyphLayoutTest {
 
 	@Test
 	public void testLayoutLeftAlignWrap() {
-		final String str = "abcdef";
+		final String str = "abc def";
 
-		glyphLayout.setText(str, Color.BLUE, (FONT_CHARACTER_WIDTH + FONT_SPACING) * 3f, Align.left, true);
+		glyphLayout.setText(str, Color.BLUE, (FONT_CHARACTER_WIDTH + FONT_SPACING) * 5f, Align.left, true);
 
 		float expectedX = 0f;
 		float expectedY = 0f;
 		for(int i = 0; i < str.length(); i++) {
+			if(i == 3) {
+				expectedX = 0f;
+				expectedY += FONT_LINE_HEIGHT;
+				continue;
+			}
 			Assert.assertEquals(expectedX, glyphLayout.getGlyphs().get(i).x, 0.01f);
 			Assert.assertEquals(expectedY, glyphLayout.getGlyphs().get(i).y, 0.01f);
 			Assert.assertEquals(str.charAt(i), glyphLayout.getGlyphs().get(i).glyphChar);
 
 			expectedX += FONT_CHARACTER_WIDTH + FONT_SPACING;
-			if(i == 2) {
-				expectedX = 0f;
-				expectedY += FONT_LINE_HEIGHT;
-			}
 		}
 
 		Assert.assertEquals((FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f), glyphLayout.getWidth(), 0.01f);
@@ -119,27 +135,28 @@ public class MonospaceFontGlyphLayoutTest {
 
 	@Test
 	public void testLayoutRightAlignWrap() {
-		final String str = "abcdef";
-		final float offset = 4f;
-		final float targetWidth = (FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f) + offset;
+		final String str = "abc def";
+		final float offset = 2f;
+		final float targetWidth = (FONT_CHARACTER_WIDTH * 5f) + (FONT_SPACING * 4f) + offset;
 
 		glyphLayout.setText(str, Color.BLUE, targetWidth, Align.right, true);
 
-		float expectedX = offset;
+		float expectedX = targetWidth - (FONT_CHARACTER_WIDTH * 3f) - (FONT_SPACING * 2f);
 		float expectedY = 0f;
 		for(int i = 0; i < str.length(); i++) {
+			if(i == 3) {
+				expectedX = targetWidth - (FONT_CHARACTER_WIDTH * 3f) - (FONT_SPACING * 2f);
+				expectedY += FONT_LINE_HEIGHT;
+				continue;
+			}
 			Assert.assertEquals(expectedX, glyphLayout.getGlyphs().get(i).x, 0.01f);
 			Assert.assertEquals(expectedY, glyphLayout.getGlyphs().get(i).y, 0.01f);
 			Assert.assertEquals(str.charAt(i), glyphLayout.getGlyphs().get(i).glyphChar);
 
 			expectedX += FONT_CHARACTER_WIDTH + FONT_SPACING;
-			if(i == 2) {
-				expectedX = offset;
-				expectedY += FONT_LINE_HEIGHT;
-			}
 		}
 
-		Assert.assertEquals(offset + (FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f), glyphLayout.getWidth(), 0.01f);
+		Assert.assertEquals(targetWidth, glyphLayout.getWidth(), 0.01f);
 		Assert.assertEquals(FONT_LINE_HEIGHT * 2f, glyphLayout.getHeight(), 0.01f);
 	}
 
@@ -173,28 +190,28 @@ public class MonospaceFontGlyphLayoutTest {
 
 	@Test
 	public void testLayoutCenterAlignWrap() {
-		final String str = "abcde";
-		final float lineWidth = (FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f);
+		final String str = "abc de";
+		final float lineWidth = (FONT_CHARACTER_WIDTH * 5f) + (FONT_SPACING * 4f);
 
 		glyphLayout.setText(str, Color.BLUE, lineWidth, Align.center, true);
 
-		float expectedX = 0f;
+		float expectedX = MathUtils.round((lineWidth * 0.5f) - (((FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f)) * 0.5f));
 		float expectedY = 0f;
 
 		for(int i = 0; i < str.length(); i++) {
+			if(i == 3) {
+				expectedX = MathUtils.round((lineWidth * 0.5f) - (((FONT_CHARACTER_WIDTH * 2f) + FONT_SPACING) * 0.5f));
+				expectedY += FONT_LINE_HEIGHT;
+				continue;
+			}
 			Assert.assertEquals(expectedX, glyphLayout.getGlyphs().get(i).x, 0.01f);
 			Assert.assertEquals(expectedY, glyphLayout.getGlyphs().get(i).y, 0.01f);
 			Assert.assertEquals(str.charAt(i), glyphLayout.getGlyphs().get(i).glyphChar);
 
 			expectedX += FONT_CHARACTER_WIDTH + FONT_SPACING;
-
-			if(i == 2) {
-				expectedX = MathUtils.round((lineWidth * 0.5f) - (((FONT_CHARACTER_WIDTH * 2f) + FONT_SPACING) * 0.5f));
-				expectedY += FONT_LINE_HEIGHT;
-			}
 		}
 
-		Assert.assertEquals((FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f), glyphLayout.getWidth(), 0.01f);
+		Assert.assertEquals(lineWidth, glyphLayout.getWidth(), 0.01f);
 		Assert.assertEquals(FONT_LINE_HEIGHT * 2f, glyphLayout.getHeight(), 0.01f);
 	}
 }

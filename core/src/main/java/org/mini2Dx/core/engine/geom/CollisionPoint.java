@@ -43,7 +43,7 @@ public class CollisionPoint extends Point implements Positionable {
 	private Point previousPosition;
 	private Point renderPosition;
 	private int renderX, renderY;
-	private boolean interpolate = false;
+	private boolean interpolateRequired = false;
 	
 	public CollisionPoint() {
 		this(0f, 0f);
@@ -100,7 +100,7 @@ public class CollisionPoint extends Point implements Positionable {
 
 	@Override
 	public void interpolate(GameContainer gc, float alpha) {
-		if(!interpolate) {
+		if(!interpolateRequired) {
 			return;
 		}
 		renderPosition.set(previousPosition.lerp(this, alpha));
@@ -111,7 +111,7 @@ public class CollisionPoint extends Point implements Positionable {
 		if(renderY != MathUtils.round(y)) {
 			return;
 		}
-		interpolate = false;
+		interpolateRequired = false;
 	}
 
 	@Override
@@ -205,7 +205,7 @@ public class CollisionPoint extends Point implements Positionable {
 			return;
 		}
 		super.set(x, getY());
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -215,7 +215,7 @@ public class CollisionPoint extends Point implements Positionable {
 			return;
 		}
 		super.set(getX(), y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 	
@@ -225,7 +225,7 @@ public class CollisionPoint extends Point implements Positionable {
 			return this;
 		}
 		super.set(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 		return this;
 	}
@@ -236,7 +236,7 @@ public class CollisionPoint extends Point implements Positionable {
 			return this;
 		}
 		super.add(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 		return this;
 	}
@@ -247,7 +247,7 @@ public class CollisionPoint extends Point implements Positionable {
 			return this;
 		}
 		super.sub(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 		return this;
 	}
@@ -262,6 +262,10 @@ public class CollisionPoint extends Point implements Positionable {
 
 	public int getId() {
 		return id;
+	}
+
+	public boolean isInterpolateRequired() {
+		return interpolateRequired;
 	}
 
 	@Override

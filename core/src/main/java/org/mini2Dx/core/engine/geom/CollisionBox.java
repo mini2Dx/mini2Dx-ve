@@ -50,7 +50,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 	private Array<SizeChangeListener> sizeChangeListeners;
 
 	private int renderX, renderY, renderWidth, renderHeight;
-	private boolean interpolate = false;
+	private boolean interpolateRequired = false;
 
 	public CollisionBox() {
 		this(0f, 0f, 1f, 1f);
@@ -93,7 +93,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 
 	@Override
 	public void interpolate(GameContainer gc, float alpha) {
-		if(!interpolate) {
+		if(!interpolateRequired) {
 			return;
 		}
 		renderRectangle.set(previousRectangle.lerp(this, alpha));
@@ -110,7 +110,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 		if(renderHeight != MathUtils.round(this.getHeight())) {
 			return;
 		}
-		interpolate = false;
+		interpolateRequired = false;
 	}
 	
 	@Override
@@ -291,7 +291,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 		previousRectangle.set(x, y, width, height);
 		renderRectangle.set(previousRectangle);
 		storeRenderCoordinates();
-		interpolate = false;
+		interpolateRequired = false;
 		
 		if(notifyPositionListeners) {
 			notifyPositionChangeListeners();
@@ -356,14 +356,14 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 	@Override
 	public void add(float x, float y) {
 		super.add(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 	
 	@Override
 	public void subtract(float x, float y) {
 		super.subtract(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -374,7 +374,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 		
 		if(notifyPositionListeners || notifySizeListeners) {
 			super.set(x, y, width, height);
-			interpolate = true;
+			interpolateRequired = true;
 		}
 		
 		if(notifyPositionListeners) {
@@ -392,7 +392,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 		
 		if(notifyPositionListeners || notifySizeListeners) {
 			super.set(rectangle);
-			interpolate = true;
+			interpolateRequired = true;
 		}
 		if(notifyPositionListeners) {
 			notifyPositionChangeListeners();
@@ -408,7 +408,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 			return;
 		}
 		super.set(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -418,7 +418,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 			return;
 		}
 		super.set(position);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -428,7 +428,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 			return;
 		}
 		super.setX(x);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -438,7 +438,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 			return;
 		}
 		super.setY(y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -448,7 +448,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 			return this;
 		}
 		super.setWidth(width);
-		interpolate = true;
+		interpolateRequired = true;
 		notifySizeChangeListeners();
 		return this;
 	}
@@ -459,7 +459,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 			return;
 		}
 		super.setCenter(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -469,7 +469,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 			return;
 		}
 		super.setCenterX(x);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -479,7 +479,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 			return;
 		}
 		super.setCenterY(y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -489,7 +489,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 			return this;
 		}
 		super.setHeight(height);
-		interpolate = true;
+		interpolateRequired = true;
 		notifySizeChangeListeners();
 		return this;
 	}
@@ -500,7 +500,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 			return this;
 		}
 		super.setSize(width, height);
-		interpolate = true;
+		interpolateRequired = true;
 		notifySizeChangeListeners();
 		return this;
 	}
@@ -511,7 +511,7 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 			return this;
 		}
 		super.setSize(sizeXY);
-		interpolate = true;
+		interpolateRequired = true;
 		notifySizeChangeListeners();
 		return this;
 	}
@@ -519,14 +519,14 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 	@Override
 	public void setRadius(float radius) {
 		super.setRadius(radius);
-		interpolate = true;
+		interpolateRequired = true;
 		notifySizeChangeListeners();
 	}
 	
 	@Override
 	public void scale(float scale) {
 		super.scale(scale);
-		interpolate = true;
+		interpolateRequired = true;
 		notifySizeChangeListeners();
 	}
 
@@ -553,7 +553,11 @@ public class CollisionBox extends Rectangle implements CollisionShape {
 	public int getId() {
 		return id;
 	}
-	
+
+	public boolean isInterpolateRequired() {
+		return interpolateRequired;
+	}
+
 	@Override
 	public Shape getShape() {
 		return this;

@@ -43,7 +43,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 	private Polygon previousPolygon;
 	private Polygon renderPolygon;
 	private int renderX, renderY;
-	private boolean interpolate = false;
+	private boolean interpolateRequired = false;
 	
 	public CollisionPolygon(float [] vertices) {
 		this(CollisionIdSequence.nextId(), vertices);
@@ -84,7 +84,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 
 	@Override
 	public void interpolate(GameContainer gc, float alpha) {
-		if(!interpolate) {
+		if(!interpolateRequired) {
 			return;
 		}
 		renderPolygon.set(previousPolygon.lerp(this, alpha));
@@ -95,7 +95,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		if(renderY != MathUtils.round(this.getY())) {
 			return;
 		}
-		interpolate = false;
+		interpolateRequired = false;
 	}
 	
 	@Override
@@ -209,7 +209,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		super.addPoint(x, y);
 		notifyPositionChangeListeners();
 		notifySizeChangeListeners();
-		interpolate = true;
+		interpolateRequired = true;
 	}
 	
 	@Override
@@ -217,7 +217,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		super.removePoint(x, y);
 		notifyPositionChangeListeners();
 		notifySizeChangeListeners();
-		interpolate = true;
+		interpolateRequired = true;
 	}
 	
 	@Override
@@ -241,14 +241,14 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 	@Override
 	public void add(float x, float y) {
 		super.add(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 	
 	@Override
 	public void subtract(float x, float y) {
 		super.subtract(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 	
@@ -259,7 +259,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		}
 		super.setX(x);
 		notifyPositionChangeListeners();
-		interpolate = true;
+		interpolateRequired = true;
 	}
 	
 	@Override
@@ -269,7 +269,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		}
 		super.setY(y);
 		notifyPositionChangeListeners();
-		interpolate = true;
+		interpolateRequired = true;
 	}
 	
 	@Override
@@ -279,7 +279,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		}
 		super.set(x, y);
 		notifyPositionChangeListeners();
-		interpolate = true;
+		interpolateRequired = true;
 	}
 	
 	@Override
@@ -288,7 +288,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 			return;
 		}
 		super.setCenter(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -298,7 +298,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 			return;
 		}
 		super.setCenterX(x);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -308,7 +308,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 			return;
 		}
 		super.setCenterY(y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 	
@@ -331,7 +331,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		}
 		super.setRotation(degrees);
 		notifyPositionChangeListeners();
-		interpolate = true;
+		interpolateRequired = true;
 	}
 	
 	@Override
@@ -341,7 +341,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		}
 		super.rotate(degrees);
 		notifyPositionChangeListeners();
-		interpolate = true;
+		interpolateRequired = true;
 	}
 	
 	@Override
@@ -351,7 +351,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		}
 		super.setRotationAround(centerX, centerY, degrees);
 		notifyPositionChangeListeners();
-		interpolate = true;
+		interpolateRequired = true;
 	}
 	
 	@Override
@@ -361,7 +361,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		}
 		super.rotateAround(centerX, centerY, degrees);
 		notifyPositionChangeListeners();
-		interpolate = true;
+		interpolateRequired = true;
 	}
 	
 	@Override
@@ -369,7 +369,7 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		super.setVertices(vertices);
 		notifyPositionChangeListeners();
 		notifySizeChangeListeners();
-		interpolate = true;
+		interpolateRequired = true;
 	}
 	
 	@Override
@@ -377,20 +377,20 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 		super.setVertices(vertices);
 		notifyPositionChangeListeners();
 		notifySizeChangeListeners();
-		interpolate = true;
+		interpolateRequired = true;
 	}
 	
 	@Override
 	public void setRadius(float radius) {
 		super.setRadius(radius);
-		interpolate = true;
+		interpolateRequired = true;
 		notifySizeChangeListeners();
 	}
 	
 	@Override
 	public void scale(float scale) {
 		super.scale(scale);
-		interpolate = true;
+		interpolateRequired = true;
 		notifySizeChangeListeners();
 	}
 	
@@ -402,6 +402,10 @@ public class CollisionPolygon extends Polygon implements CollisionShape {
 	@Override
 	public int getRenderY() {
 		return renderY;
+	}
+
+	public boolean isInterpolateRequired() {
+		return interpolateRequired;
 	}
 
 	@Override

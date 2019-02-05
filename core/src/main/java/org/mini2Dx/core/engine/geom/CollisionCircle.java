@@ -48,7 +48,7 @@ public class CollisionCircle extends Circle implements CollisionShape {
 	private Circle previousCircle;
 	private Circle renderCircle;
 	private int renderX, renderY;
-	private boolean interpolate = false;
+	private boolean interpolateRequired = false;
 	
 	public CollisionCircle(float radius) {
 		this(CollisionIdSequence.nextId(), radius);
@@ -89,7 +89,7 @@ public class CollisionCircle extends Circle implements CollisionShape {
 
 	@Override
 	public void interpolate(GameContainer gc, float alpha) {
-		if(!interpolate) {
+		if(!interpolateRequired) {
 			return;
 		}
 		renderCircle.set(previousCircle.lerp(this, alpha));
@@ -100,7 +100,7 @@ public class CollisionCircle extends Circle implements CollisionShape {
 		if(renderY != MathUtils.round(getY())) {
 			return;
 		}
-		interpolate = false;
+		interpolateRequired = false;
 	}
 	
 	@Override
@@ -240,14 +240,14 @@ public class CollisionCircle extends Circle implements CollisionShape {
 	@Override
 	public void add(float x, float y) {
 		super.add(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 	
 	@Override
 	public void subtract(float x, float y) {
 		super.subtract(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -256,7 +256,7 @@ public class CollisionCircle extends Circle implements CollisionShape {
 			return;
 		}
 		super.setX(x);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 	
@@ -265,7 +265,7 @@ public class CollisionCircle extends Circle implements CollisionShape {
 			return;
 		}
 		super.setY(y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 	
@@ -274,7 +274,7 @@ public class CollisionCircle extends Circle implements CollisionShape {
 			return;
 		}
 		super.set(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 	
@@ -284,7 +284,7 @@ public class CollisionCircle extends Circle implements CollisionShape {
 			return;
 		}
 		super.setRadius(radius);
-		interpolate = true;
+		interpolateRequired = true;
 		notifySizeChangeListeners();
 	}
 	
@@ -294,7 +294,7 @@ public class CollisionCircle extends Circle implements CollisionShape {
 			return;
 		}
 		super.setCenter(x, y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -304,7 +304,7 @@ public class CollisionCircle extends Circle implements CollisionShape {
 			return;
 		}
 		super.setCenterX(x);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 
@@ -314,14 +314,14 @@ public class CollisionCircle extends Circle implements CollisionShape {
 			return;
 		}
 		super.setCenterY(y);
-		interpolate = true;
+		interpolateRequired = true;
 		notifyPositionChangeListeners();
 	}
 	
 	@Override
 	public void scale(float scale) {
 		super.scale(scale);
-		interpolate = true;
+		interpolateRequired = true;
 		notifySizeChangeListeners();
 	}
 	
@@ -351,6 +351,10 @@ public class CollisionCircle extends Circle implements CollisionShape {
 
 	public int getId() {
 		return id;
+	}
+
+	public boolean isInterpolateRequired() {
+		return interpolateRequired;
 	}
 
 	@Override

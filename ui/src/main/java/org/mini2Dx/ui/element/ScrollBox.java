@@ -37,6 +37,8 @@ public class ScrollBox extends Div {
 	private float minHeight = Float.MIN_VALUE;
 	@Field(optional = true)
 	private float maxHeight = Float.MAX_VALUE;
+	@Field(optional = true)
+	private Visibility scrollTrackVisibility = Visibility.VISIBLE;
 
 	private final Queue<ScrollTo> scrollTos = new Queue<ScrollTo>();
 	private Array<ScrollListener> scrollListeners;
@@ -297,6 +299,17 @@ public class ScrollBox extends Div {
 			return;
 		}
 		renderNode.setDirty();
+	}
+
+	public Visibility getScrollTrackVisibility() {
+		return scrollTrackVisibility;
+	}
+
+	public void setScrollTrackVisibility(Visibility scrollTrackVisibility) {
+		if(scrollTrackVisibility == null) {
+			return;
+		}
+		this.scrollTrackVisibility = scrollTrackVisibility;
 	}
 
 	/**

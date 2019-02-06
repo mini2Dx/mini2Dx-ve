@@ -8,6 +8,7 @@
 - Added CustomCursor class for implementing custom cursors with up/down state
 - Added Viewport implementations (Extend, Fill, Fit, Screen and Stretch)
 - Added MonospaceFont, MonospaceFontCache and FontGlyphLayout for simplified font rendering
+- Added method to show/hide ScrollBox scroll track
 - Improved Graphics performance by reducing spritebatch flushes
 - Tilesets can now be loaded from TextureAtlas instances
 - UiContainer can now have multiple navigation action keys

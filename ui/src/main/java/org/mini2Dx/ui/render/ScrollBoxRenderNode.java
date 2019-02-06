@@ -17,6 +17,7 @@ import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.ui.animation.ScrollTo;
 import org.mini2Dx.ui.element.ScrollBox;
+import org.mini2Dx.ui.element.Visibility;
 import org.mini2Dx.ui.event.EventTrigger;
 import org.mini2Dx.ui.event.params.EventTriggerParams;
 import org.mini2Dx.ui.event.params.EventTriggerParamsPool;
@@ -147,6 +148,10 @@ public class ScrollBoxRenderNode extends ParentRenderNode<ScrollBox, ScrollBoxSt
 			g.removeClip();
 		}
 		g.translate(0f, -scrollTranslationY);
+
+		if(!element.getScrollTrackVisibility().equals(Visibility.VISIBLE)) {
+			return;
+		}
 
 		style.getScrollTrackRenderer().render(g, scrollTrack.getRenderX(), scrollTrack.getRenderY(),
 				scrollTrack.getRenderWidth(), scrollTrack.getRenderHeight());

@@ -12,6 +12,7 @@
 - Tilesets can now be loaded from TextureAtlas instances
 - UiContainer can now have multiple navigation action keys
 - Mdx.playerData now uses temp files to write before moving files to target filename
+- Fixed ScrollBox not using disabled button state when thumb cannot scroll
 - Fixed Graphics#tint not being reset each frame
 - Fixed UI navigation cursor not updating when switching between controller and mouse
 - Fixed DesktopPlayerData not ensuring data directory exists when writing JSON or binary files

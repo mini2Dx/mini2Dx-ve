@@ -50,6 +50,8 @@ public class MonospaceFontGlyphLayoutTest {
 		Assert.assertEquals(2, glyphLayout.calculateMaxCharactersBeforeWrap("ab\ncdef", 0, estimate, targetWidth));
 		Assert.assertEquals(2, glyphLayout.calculateMaxCharactersBeforeWrap("abc def", 5, estimate, targetWidth));
 		Assert.assertEquals(0, glyphLayout.calculateMaxCharactersBeforeWrap("\n", 0, estimate, targetWidth));
+		Assert.assertEquals(0, glyphLayout.calculateMaxCharactersBeforeWrap("", 0, estimate, targetWidth));
+		Assert.assertEquals(0, glyphLayout.calculateMaxCharactersBeforeWrap("a", 0, estimate, FONT_CHARACTER_WIDTH - 1f));
 	}
 
 	@Test
@@ -99,6 +101,16 @@ public class MonospaceFontGlyphLayoutTest {
 		}
 
 		Assert.assertEquals((FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f), glyphLayout.getWidth(), 0.01f);
+		Assert.assertEquals(FONT_LINE_HEIGHT * 2f, glyphLayout.getHeight(), 0.01f);
+	}
+
+	@Test
+	public void testLayoutLeftAlignTooSmall() {
+		final String str = "ab";
+
+		glyphLayout.setText(str, Color.BLUE, FONT_CHARACTER_WIDTH - 1f, Align.left, true);
+
+		Assert.assertEquals(FONT_CHARACTER_WIDTH, glyphLayout.getWidth(), 0.01f);
 		Assert.assertEquals(FONT_LINE_HEIGHT * 2f, glyphLayout.getHeight(), 0.01f);
 	}
 
@@ -161,6 +173,16 @@ public class MonospaceFontGlyphLayoutTest {
 	}
 
 	@Test
+	public void testLayoutRightAlignTooSmall() {
+		final String str = "ab";
+
+		glyphLayout.setText(str, Color.BLUE, FONT_CHARACTER_WIDTH - 1f, Align.right, true);
+
+		Assert.assertEquals(FONT_CHARACTER_WIDTH - 1f, glyphLayout.getWidth(), 0.01f);
+		Assert.assertEquals(FONT_LINE_HEIGHT * 2f, glyphLayout.getHeight(), 0.01f);
+	}
+
+	@Test
 	public void testLayoutCenterAlignLineBreak() {
 		final String str = "abc\nde";
 		final float lineWidth = (FONT_CHARACTER_WIDTH * 3f) + (FONT_SPACING * 2f);
@@ -212,6 +234,16 @@ public class MonospaceFontGlyphLayoutTest {
 		}
 
 		Assert.assertEquals(lineWidth, glyphLayout.getWidth(), 0.01f);
+		Assert.assertEquals(FONT_LINE_HEIGHT * 2f, glyphLayout.getHeight(), 0.01f);
+	}
+
+	@Test
+	public void testLayoutCenterAlignTooSmall() {
+		final String str = "ab";
+
+		glyphLayout.setText(str, Color.BLUE, FONT_CHARACTER_WIDTH - 1f, Align.center, true);
+
+		Assert.assertEquals(FONT_CHARACTER_WIDTH - 1f, glyphLayout.getWidth(), 0.01f);
 		Assert.assertEquals(FONT_LINE_HEIGHT * 2f, glyphLayout.getHeight(), 0.01f);
 	}
 }

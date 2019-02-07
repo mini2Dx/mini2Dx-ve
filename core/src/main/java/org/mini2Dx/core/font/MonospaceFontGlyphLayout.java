@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
+import org.mini2Dx.core.exception.MdxException;
 import org.mini2Dx.core.graphics.TextureRegion;
 
 public class MonospaceFontGlyphLayout implements FontGlyphLayout {
@@ -100,7 +101,7 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 				continue;
 			}
 
-			final int totalChars = calculateMaxCharactersBeforeWrap(str, i, estimateMaxCharsPerLine, targetWidth);
+			final int totalChars = Math.max(1, calculateMaxCharactersBeforeWrap(str, i, estimateMaxCharsPerLine, targetWidth));
 
 			for(int j = i; j < i + totalChars && j < str.length(); j++) {
 				final char c = str.charAt(j);
@@ -167,7 +168,7 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 				continue;
 			}
 
-			final int totalChars = calculateMaxCharactersBeforeWrap(str, i, charactersPerLine, targetWidth);
+			final int totalChars = Math.max(1, calculateMaxCharactersBeforeWrap(str, i, charactersPerLine, targetWidth));
 
 			for(int j = i + totalChars - 1; j >= i; j--) {
 				final char c = str.charAt(j);
@@ -231,7 +232,7 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 				continue;
 			}
 
-			final int totalChars = calculateMaxCharactersBeforeWrap(str, i, charactersPerLine, targetWidth);
+			final int totalChars = Math.max(1, calculateMaxCharactersBeforeWrap(str, i, charactersPerLine, targetWidth));
 			final float lineWidth = (totalChars * fontParameters.characterWidth) + (totalChars * fontParameters.spacing) - fontParameters.spacing;
 
 			float xOffset = MathUtils.round((targetWidth * 0.5f) - (lineWidth * 0.5f));

@@ -39,6 +39,12 @@ public class MonospaceFont implements GameFont {
 		super();
 		this.fontParameters = fontParameters;
 
+		if(fontParameters.frameWidth <= 0) {
+			throw new MdxException("fontParameters.frameWidth must be greater than 0");
+		} else if(fontParameters.frameHeight <= 0) {
+			throw new MdxException("fontParameters.frameHeight must be greater than 0");
+		}
+
 		if(fontParameters.characterWidth < 0) {
 			fontParameters.characterWidth = fontParameters.frameWidth;
 		}

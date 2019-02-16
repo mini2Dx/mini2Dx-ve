@@ -467,6 +467,24 @@ public class ConcurrentPointQuadTree<T extends Positionable> extends Rectangle i
 		}
 	}
 
+	@Override
+	public void clear() {
+		lock.writeLock().lock();
+		if (topLeft != null) {
+			topLeft.clear();
+			topRight.clear();
+			bottomLeft.clear();
+			bottomRight.clear();
+
+			topLeft = null;
+			topRight = null;
+			bottomLeft = null;
+			bottomRight = null;
+		}
+		elements.clear();
+		lock.writeLock().unlock();
+	}
+
 	public boolean remove(T element) {
 		if (element == null)
 			return false;

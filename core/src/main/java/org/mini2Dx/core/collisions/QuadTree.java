@@ -25,14 +25,37 @@ import org.mini2Dx.core.graphics.Graphics;
  */
 public interface QuadTree<T extends Positionable> extends PositionChangeListener<T>, Parallelogram {
 	public void debugRender(Graphics g);
-	
+
+	/**
+	 * Adds an element to this {@link QuadTree}
+	 * @param element The element to add
+	 * @return False if the element exists outside of this QuadTree's bounds and was not added
+	 */
 	public boolean add(T element);
-	
+
+	/**
+	 * Removes an element from this {@link QuadTree}
+	 * @param element The element to remove
+	 * @return True if the element was found and removed
+	 */
 	public boolean remove(T element);
-	
+
+	/**
+	 * Adds all element to this {@link QuadTree}. Note that if an element exists outside of this QuadTree's bounds, it will not be added
+	 * @param elements The elements to add
+	 */
 	public void addAll(Array<T> elements);
-	
+
+	/**
+	 * Removes all elements in this {@link QuadTree} and stores them in an {@link Array}
+	 * @param elements After executing, this {@link Array} will contain all the removed elements
+	 */
 	public void removeAll(Array<T> elements);
+
+	/**
+	 * Same a {@link #removeAll(Array)} except the results are not stored
+	 */
+	public void clear();
 	
 	public Array<T> getElementsWithinArea(Shape area);
 	

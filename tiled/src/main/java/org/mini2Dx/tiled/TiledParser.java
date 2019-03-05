@@ -13,10 +13,7 @@ package org.mini2Dx.tiled;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Base64Coder;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.XmlReader;
+import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import org.mini2Dx.tiled.renderer.AnimatedTileRenderer;
 import org.mini2Dx.tiled.renderer.StaticTileRenderer;
@@ -44,11 +41,19 @@ public class TiledParser implements TiledParserNotifier {
 
 	private XmlReader xmlReader;
 	private Array<TiledParserListener> listeners;
+	private final ObjectMap<String, TiledObjectTemplate> objectTemplates;
 
 	/**
 	 * Constructor
 	 */
 	public TiledParser() {
+		this(new ObjectMap<String, TiledObjectTemplate>());
+	}
+
+	public TiledParser(ObjectMap<String, TiledObjectTemplate> objectTemplates) {
+		super();
+		this.objectTemplates = objectTemplates;
+
 		xmlReader = new XmlReader();
 		listeners = new Array<TiledParserListener>();
 	}
@@ -95,7 +100,7 @@ public class TiledParser implements TiledParserNotifier {
 			if (name.equals("layer")) {
 				loadTileLayer(element);
 			} else if (name.equals("objectgroup")) {
-				loadObjectGroup(element);
+				loadObjectGroup(element, tmxFileHandle);
 			}
 		}
 	}
@@ -156,9 +161,10 @@ public class TiledParser implements TiledParserNotifier {
 		}
 	}
 
-	private void loadTileSet(Element element, FileHandle tmxFile) {
+	private Tileset loadTileSet(Element element, FileHandle tmxFile) {
+		Tileset tileset = null;
+
 		if (element.getName().equals("tileset")) {
-			Tileset tileset = null;
 			String source = element.getAttribute("source", null);
 			int firstGid = element.getIntAttribute("firstgid", 1);
 
@@ -225,6 +231,7 @@ public class TiledParser implements TiledParserNotifier {
 
 			notifyTilesetParsed(tileset);
 		}
+		return tileset;
 	}
 
 	private void loadTileProperties(TilesetSource tilesetSource, Array<Element> tileElements) {
@@ -403,7 +410,7 @@ public class TiledParser implements TiledParserNotifier {
 		}
 	}
 
-	protected void loadObjectGroup(Element element) {
+	protected void loadObjectGroup(Element element, FileHandle tmxFile) {
 		if (element.getName().equals("objectgroup")) {
 			String name = element.getAttribute("name", null);
 			TiledObjectGroup tiledObjectGroup = new TiledObjectGroup();
@@ -421,7 +428,7 @@ public class TiledParser implements TiledParserNotifier {
 			}
 
 			for (Element objectElement : element.getChildrenByName("object")) {
-				TiledObject tiledObject = loadObject(objectElement);
+				TiledObject tiledObject = loadObject(objectElement, tmxFile);
 				if (tiledObject != null) {
 					tiledObjectGroup.getObjects().add(tiledObject);
 				}
@@ -430,14 +437,35 @@ public class TiledParser implements TiledParserNotifier {
 		}
 	}
 
-	protected TiledObject loadObject(Element element) {
+	protected TiledObject loadObject(Element element, FileHandle tmxFile) {
 		if (element.getName().equals("object")) {
 			int id = element.getIntAttribute("id", -1);
 			float x = element.getFloatAttribute("x", 0);
 			float y = element.getFloatAttribute("y", 0);
 
-			float width = element.getFloatAttribute("width", 0);
-			float height = element.getFloatAttribute("height", 0);
+			String template = element.getAttribute("template", null);
+
+			final TiledObject objectTemplate;
+			if(template != null) {
+				final TiledObjectTemplate tiledObjectTemplate;
+				if(!objectTemplates.containsKey(template)) {
+					tiledObjectTemplate = loadObjectTemplate(template, tmxFile);
+				} else {
+					tiledObjectTemplate = objectTemplates.get(template, null);
+				}
+				if(tiledObjectTemplate == null) {
+					objectTemplate = null;
+				} else if(tiledObjectTemplate.getTiledObject() != null) {
+					objectTemplate = tiledObjectTemplate.getTiledObject();
+				} else {
+					objectTemplate = null;
+				}
+			} else {
+				objectTemplate = null;
+			}
+
+			float width = element.getFloatAttribute("width", objectTemplate != null ? objectTemplate.getWidth() : 0);
+			float height = element.getFloatAttribute("height", objectTemplate != null ? objectTemplate.getHeight() : 0);
 			
 			long rawGid = Long.parseLong(element.getAttribute("gid", "-1"));
 			if (rawGid != -1) {
@@ -447,8 +475,9 @@ public class TiledParser implements TiledParserNotifier {
 
 			TiledObject object = new TiledObject(id, x, y, width, height);
 
-			object.setName(element.getAttribute("name", null));
-			String type = element.getAttribute("type", null);
+			object.setName(element.getAttribute("name", objectTemplate != null ? objectTemplate.getName() : null));
+			String type = element.getAttribute("type", objectTemplate != null ? objectTemplate.getType() : null);
+
 			if (type != null) {
 				object.setType(type);
 			}
@@ -463,9 +492,20 @@ public class TiledParser implements TiledParserNotifier {
 				object.setGidFlipDiagonally(gidFlipDiagonally);
 				object.setGidFlipHorizontally(gidFlipHorizontally);
 				object.setGidFlipVertically(gidFlipVertically);
+			} else if(objectTemplate != null) {
+				object.setGid(objectTemplate.getGid());
+				object.setGidFlipDiagonally(objectTemplate.isGidFlipDiagonally());
+				object.setGidFlipHorizontally(objectTemplate.isGidFlipHorizontally());
+				object.setGidFlipVertically(objectTemplate.isGidFlipVertically());
 			}
 			object.setVisible(element.getIntAttribute("visible", 1) == 1);
+
 			Element properties = element.getChildByName("properties");
+			if(objectTemplate != null) {
+				for(String key : objectTemplate.getProperties().keys()) {
+					object.setProperty(key, objectTemplate.getProperties().get(key));
+				}
+			}
 			if (properties != null) {
 				for (Element property : properties.getChildrenByName("property")) {
 					String propertyName = property.getAttribute("name", null);
@@ -480,26 +520,61 @@ public class TiledParser implements TiledParserNotifier {
 			Element point = element.getChildByName("point");
 			if(point != null) {
 				object.setAsPoint();
+			} else if(objectTemplate != null && objectTemplate.getObjectShape().equals(TiledObjectShape.POINT)) {
+				object.setAsPoint();
 			}
 			Element ellipse = element.getChildByName("ellipse");
 			if(ellipse != null) {
+				object.setAsEllipse();
+			} else if(objectTemplate != null && objectTemplate.getObjectShape().equals(TiledObjectShape.ELLIPSE)) {
 				object.setAsEllipse();
 			}
 			Element polygon = element.getChildByName("polygon");
 			if(polygon != null) {
 				object.setAsPolygon(polygon.getAttribute("points", ""));
+			} else if(objectTemplate != null && objectTemplate.getObjectShape().equals(TiledObjectShape.POLYGON)) {
+				object.setAsPolygon(objectTemplate.getVertices());
 			}
 			Element polyline = element.getChildByName("polyline");
 			if(polyline != null) {
 				object.setAsPolyline(polyline.getAttribute("points", ""));
+			} else if(objectTemplate != null && objectTemplate.getObjectShape().equals(TiledObjectShape.POLYGON)) {
+				object.setAsPolyline(objectTemplate.getVertices());
 			}
 			Element text = element.getChildByName("text");
 			if(text != null) {
 				object.setAsText(text.getText(), text.getIntAttribute("wrap", 1) == 1);
+			} else if(objectTemplate != null && objectTemplate.getObjectShape().equals(TiledObjectShape.TEXT)) {
+				object.setAsText(objectTemplate.getText(), objectTemplate.isWrapText());
 			}
 			return object;
 		}
 		return null;
+	}
+
+	private TiledObjectTemplate loadObjectTemplate(String path, FileHandle tmxFile) {
+		Element root = xmlReader.parse(tmxFile.sibling(path));
+		Element tilesetElement = root.getChildByName("tileset");
+		Element objectElement = root.getChildByName("object");
+
+		final Tileset tileset;
+		if(tilesetElement != null) {
+			tileset = loadTileSet(tilesetElement, tmxFile);
+		} else {
+			tileset = null;
+		}
+
+		final TiledObject tiledObject;
+		if(objectElement != null) {
+			tiledObject = loadObject(objectElement, tmxFile);
+		} else {
+			tiledObject = null;
+		}
+
+		final TiledObjectTemplate objectTemplate = new TiledObjectTemplate(path, tileset, tiledObject);
+		objectTemplates.put(path, objectTemplate);
+		notifyObjectTemplateParsed(objectTemplate);
+		return objectTemplate;
 	}
 
 	static int unsignedByteToInt(byte b) {
@@ -569,6 +644,13 @@ public class TiledParser implements TiledParserNotifier {
 	public void notifyObjectGroupParsed(TiledObjectGroup parsedObjectGroup) {
 		for (TiledParserListener tiledParserListener : listeners) {
 			tiledParserListener.onObjectGroupParsed(parsedObjectGroup);
+		}
+	}
+
+	@Override
+	public void notifyObjectTemplateParsed(TiledObjectTemplate parsedObjectTemplate) {
+		for (TiledParserListener tiledParserListener : listeners) {
+			tiledParserListener.onObjectTemplateParsed(parsedObjectTemplate);
 		}
 	}
 

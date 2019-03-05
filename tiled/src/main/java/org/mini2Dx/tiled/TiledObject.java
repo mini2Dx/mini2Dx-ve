@@ -242,6 +242,20 @@ public class TiledObject {
 	}
 
 	/**
+	 * Marks this object as a {@link TiledObjectShape#POLYGON}
+	 * @param vertices The vertices to set
+	 */
+	public void setAsPolygon(float [] vertices) {
+		objectShape = TiledObjectShape.POLYGON;
+
+		this.vertices = new float[vertices.length];
+		for(int i = 0; i < vertices.length; i += 2) {
+			this.vertices[i] = x + vertices[i];
+			this.vertices[i + 1] = y + vertices[i + 1];
+		}
+	}
+
+	/**
 	 * Marks this object as a {@link TiledObjectShape#TEXT}
 	 * @param text The text to display
 	 * @param wrapText True if the text wraps
@@ -266,6 +280,20 @@ public class TiledObject {
 
 			this.vertices[(i * 2)] = x + Float.parseFloat(xy[0]);
 			this.vertices[(i * 2) + 1] = y + Float.parseFloat(xy[1]);
+		}
+	}
+
+	/**
+	 * Marks this object as a {@link TiledObjectShape#POLYLINE}
+	 * @param vertices The line point vertices
+	 */
+	public void setAsPolyline(float [] vertices) {
+		objectShape = TiledObjectShape.POLYLINE;
+
+		this.vertices = new float[vertices.length];
+		for(int i = 0; i < vertices.length; i += 2) {
+			this.vertices[i] = x + vertices[i];
+			this.vertices[i + 1] = y + vertices[i + 1];
 		}
 	}
 
@@ -342,6 +370,10 @@ public class TiledObject {
 			result.add(new Point(vertices[i], vertices[i + 1]));
 		}
 		return result;
+	}
+
+	public float[] getVertices() {
+		return vertices;
 	}
 
 	public String getText() {

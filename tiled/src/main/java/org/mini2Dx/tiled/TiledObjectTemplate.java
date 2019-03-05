@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 See AUTHORS file
+ * Copyright (c) 2019 See AUTHORS file
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -11,25 +11,30 @@
  */
 package org.mini2Dx.tiled;
 
-import com.badlogic.gdx.graphics.Color;
-
 /**
- * An common interface to parser listeners
+ * Represents a Tiled object template per the Tiled specification
  */
-public interface TiledParserListener {
+public class TiledObjectTemplate {
+	private final String path;
+	private final Tileset tileset;
+	private final TiledObject tiledObject;
 
-	public void onBeginParsing(String orientation, String staggerAxis, String staggerIndex, Color backgroundColor,
-			int width, int height, int tileWidth, int tileHeight, int sideLength);
+	public TiledObjectTemplate(String path, Tileset tileset, TiledObject tiledObject) {
+		super();
+		this.path = path;
+		this.tileset = tileset;
+		this.tiledObject = tiledObject;
+	}
 
-	public void onMapPropertyParsed(String propertyName, String value);
+	public String getPath() {
+		return path;
+	}
 
-	public void onTilePropertiesParsed(Tile tile);
+	public Tileset getTileset() {
+		return tileset;
+	}
 
-	public void onTilesetParsed(Tileset parsedTileset);
-
-	public void onTileLayerParsed(TileLayer parsedLayer);
-
-	public void onObjectGroupParsed(TiledObjectGroup parsedObjectGroup);
-
-	public void onObjectTemplateParsed(TiledObjectTemplate parsedObjectTemplate);
+	public TiledObject getTiledObject() {
+		return tiledObject;
+	}
 }

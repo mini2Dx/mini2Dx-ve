@@ -45,4 +45,6 @@ public interface TiledParserNotifier {
 	public void notifyTileLayerParsed(TileLayer parsedLayer);
 
 	public void notifyObjectGroupParsed(TiledObjectGroup parsedObjectGroup);
+
+	public void notifyObjectTemplateParsed(TiledObjectTemplate parsedObjectTemplate);
 }

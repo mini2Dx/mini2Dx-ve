@@ -29,6 +29,8 @@ import java.io.IOException;
  */
 public class TiledMapData implements TiledParserListener {
 	protected final FileHandle fileHandle;
+	protected static final ObjectMap<String, TiledObjectTemplate> OBJECT_TEMPLATES = new ObjectMap<String, TiledObjectTemplate>();
+
 	protected final Array<Tileset> tilesets = new Array<Tileset>(true, 2, Tileset.class);
 	protected final Array<Layer> layers = new Array<Layer>(true, 2, Layer.class);
 	protected final ObjectMap<String, TiledObjectGroup> objectGroups = new ObjectMap<String, TiledObjectGroup>();
@@ -80,25 +82,61 @@ public class TiledMapData implements TiledParserListener {
 	}
 
 	public void loadTilesetTextures() {
+		loadTilesetTextures(true);
+	}
+
+	public void loadTilesetTextures(AssetManager assetManager) {
+		loadTilesetTextures(assetManager, true);
+	}
+
+	public void loadTilesetTextures(TextureAtlas textureAtlas) {
+		loadTilesetTextures(textureAtlas, true);
+	}
+
+	public void loadTilesetTextures(boolean loadObjectTemplateTilesets) {
 		for (int i = 0; i < tilesets.size; i++) {
 			if (!tilesets.get(i).isTextureLoaded()) {
 				tilesets.get(i).loadTexture(fileHandle);
 			}
 		}
+		if(!loadObjectTemplateTilesets) {
+			return;
+		}
+		for(TiledObjectTemplate objectTemplate : OBJECT_TEMPLATES.values()) {
+			if(objectTemplate.getTileset() != null) {
+				objectTemplate.getTileset().loadTexture(fileHandle);
+			}
+		}
 	}
 
-	public void loadTilesetTextures(AssetManager assetManager) {
+	public void loadTilesetTextures(AssetManager assetManager, boolean loadObjectTemplateTilesets) {
 		for (int i = 0; i < tilesets.size; i++) {
 			if (!tilesets.get(i).isTextureLoaded()) {
 				tilesets.get(i).loadTexture(assetManager, fileHandle);
 			}
 		}
+		if(!loadObjectTemplateTilesets) {
+			return;
+		}
+		for(TiledObjectTemplate objectTemplate : OBJECT_TEMPLATES.values()) {
+			if(objectTemplate.getTileset() != null) {
+				objectTemplate.getTileset().loadTexture(assetManager, fileHandle);
+			}
+		}
 	}
 
-	public void loadTilesetTextures(TextureAtlas textureAtlas) {
+	public void loadTilesetTextures(TextureAtlas textureAtlas, boolean loadObjectTemplateTilesets) {
 		for (int i = 0; i < tilesets.size; i++) {
 			if (!tilesets.get(i).isTextureLoaded()) {
 				tilesets.get(i).loadTexture(textureAtlas);
+			}
+		}
+		if(!loadObjectTemplateTilesets) {
+			return;
+		}
+		for(TiledObjectTemplate objectTemplate : OBJECT_TEMPLATES.values()) {
+			if(objectTemplate.getTileset() != null) {
+				objectTemplate.getTileset().loadTexture(textureAtlas);
 			}
 		}
 	}
@@ -236,6 +274,11 @@ public class TiledMapData implements TiledParserListener {
 		parsedObjectGroup.setIndex(layers.size);
 		layers.add(parsedObjectGroup);
 		objectGroups.put(parsedObjectGroup.getName(), parsedObjectGroup);
+	}
+
+	@Override
+	public void onObjectTemplateParsed(TiledObjectTemplate parsedObjectTemplate) {
+		OBJECT_TEMPLATES.put(parsedObjectTemplate.getPath(), parsedObjectTemplate);
 	}
 
 	/**

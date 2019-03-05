@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 See AUTHORS file
+ * Copyright (c) 2019 See AUTHORS file
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -11,25 +11,31 @@
  */
 package org.mini2Dx.tiled;
 
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.files.FileHandle;
+import junit.framework.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mini2Dx.tiled.exception.TiledException;
 
-/**
- * An common interface to parser listeners
- */
-public interface TiledParserListener {
+public class TiledObjectTemplateTest {
+	private static TiledMap tiledMap;
 
-	public void onBeginParsing(String orientation, String staggerAxis, String staggerIndex, Color backgroundColor,
-			int width, int height, int tileWidth, int tileHeight, int sideLength);
+	@BeforeClass
+	public static void loadMap() throws TiledException {
+		FileHandle file = new FileHandle(Thread.currentThread()
+				.getContextClassLoader().getResource("orthogonal_tsx.tmx").getFile());
+		tiledMap = new TiledMap(file, false, false);
+	}
 
-	public void onMapPropertyParsed(String propertyName, String value);
+	@Test
+	public void testTiledObjectTemplate() throws TiledException  {
+		final String objectGroupName = "Objects";
+		final String propertyName = "testProperty";
 
-	public void onTilePropertiesParsed(Tile tile);
+		final TiledObject templateObject = tiledMap.getObjectGroup(objectGroupName).getObjectById(3);
+		Assert.assertEquals("SUCCESS", templateObject.getProperty(propertyName));
 
-	public void onTilesetParsed(Tileset parsedTileset);
-
-	public void onTileLayerParsed(TileLayer parsedLayer);
-
-	public void onObjectGroupParsed(TiledObjectGroup parsedObjectGroup);
-
-	public void onObjectTemplateParsed(TiledObjectTemplate parsedObjectTemplate);
+		final TiledObject overrideTemplateObject = tiledMap.getObjectGroup(objectGroupName).getObjectById(4);
+		Assert.assertEquals("FAILED", overrideTemplateObject.getProperty(propertyName));
+	}
 }

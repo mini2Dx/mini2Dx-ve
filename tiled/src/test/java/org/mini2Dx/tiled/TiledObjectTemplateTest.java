@@ -32,6 +32,8 @@ public class TiledObjectTemplateTest {
 		final String objectGroupName = "Objects";
 		final String propertyName = "testProperty";
 
+		Assert.assertEquals(1, tiledMap.getTilesets().size);
+
 		final TiledObject templateObject = tiledMap.getObjectGroup(objectGroupName).getObjectById(3);
 		Assert.assertEquals("SUCCESS", templateObject.getProperty(propertyName));
 

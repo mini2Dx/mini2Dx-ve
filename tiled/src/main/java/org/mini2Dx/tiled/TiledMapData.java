@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntSet;
 import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.tiled.exception.TiledException;
 import org.mini2Dx.tiled.exception.TiledParsingException;
@@ -32,6 +33,7 @@ public class TiledMapData implements TiledParserListener {
 	protected static final ObjectMap<String, TiledObjectTemplate> OBJECT_TEMPLATES = new ObjectMap<String, TiledObjectTemplate>();
 
 	protected final Array<Tileset> tilesets = new Array<Tileset>(true, 2, Tileset.class);
+	protected final IntSet tilesetGids = new IntSet();
 	protected final Array<Layer> layers = new Array<Layer>(true, 2, Layer.class);
 	protected final ObjectMap<String, TiledObjectGroup> objectGroups = new ObjectMap<String, TiledObjectGroup>();
 
@@ -260,7 +262,9 @@ public class TiledMapData implements TiledParserListener {
 
 	@Override
 	public void onTilesetParsed(Tileset parsedTileset) {
-		tilesets.add(parsedTileset);
+		if(tilesetGids.add(parsedTileset.getFirstGid())) {
+			tilesets.add(parsedTileset);
+		}
 	}
 
 	@Override

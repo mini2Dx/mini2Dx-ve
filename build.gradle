@@ -68,7 +68,7 @@ def docProjects() {
 	subprojects.findAll { !it.name.contains('uat') }
 }
 
-def projectVersion = '1.9.0-beta.10';
+def projectVersion = '1.9.0-SNAPSHOT';
 
 configure(docProjects()) {
 	apply plugin: "signing"
@@ -268,7 +268,7 @@ project(":" + rootProject.name + "-desktop") {
 	
     dependencies {
     	compile project(":" + rootProject.name + "-core")
-    	
+
     	compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"

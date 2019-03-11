@@ -328,9 +328,12 @@ public class MonospaceFontGlyphLayout implements FontGlyphLayout {
 		return monospaceFont;
 	}
 
-	public void transferGlyphsTo(Array<MonospaceGlyph> result) {
+	public void transferGlyphsTo(Array<MonospaceGlyph> result, float x, float y) {
 		while(glyphs.size > 0) {
-			result.add(glyphs.removeIndex(0));
+			final MonospaceGlyph glyph = glyphs.removeIndex(0);
+			glyph.x += x;
+			glyph.y += y;
+			result.add(glyph);
 		}
 	}
 

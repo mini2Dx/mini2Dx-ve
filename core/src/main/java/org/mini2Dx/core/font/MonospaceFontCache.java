@@ -33,13 +33,13 @@ public class MonospaceFontCache implements GameFontCache {
 	@Override
 	public void addText(CharSequence str, float x, float y) {
 		glyphLayout.setText(str, color, -1f, Align.left, true);
-		glyphLayout.transferGlyphsTo(glyphs);
+		glyphLayout.transferGlyphsTo(glyphs, x, y);
 	}
 
 	@Override
 	public void addText(CharSequence str, float x, float y, float targetWidth, int halign, boolean wrap) {
 		glyphLayout.setText(str, color, targetWidth, halign, wrap);
-		glyphLayout.transferGlyphsTo(glyphs);
+		glyphLayout.transferGlyphsTo(glyphs, x, y);
 	}
 
 	@Override
@@ -83,14 +83,14 @@ public class MonospaceFontCache implements GameFontCache {
 	public void setText(CharSequence str, float x, float y) {
 		clear();
 		glyphLayout.setText(str, color, -1f, Align.left, true);
-		glyphLayout.transferGlyphsTo(glyphs);
+		glyphLayout.transferGlyphsTo(glyphs, x, y);
 	}
 
 	@Override
 	public void setText(CharSequence str, float x, float y, float targetWidth, int halign, boolean wrap) {
 		clear();
 		glyphLayout.setText(str, color, targetWidth, halign, wrap);
-		glyphLayout.transferGlyphsTo(glyphs);
+		glyphLayout.transferGlyphsTo(glyphs, x, y);
 	}
 
 	@Override

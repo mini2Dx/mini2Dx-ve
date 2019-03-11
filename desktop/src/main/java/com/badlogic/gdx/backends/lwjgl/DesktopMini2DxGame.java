@@ -17,6 +17,7 @@ package com.badlogic.gdx.backends.lwjgl;
 
 import java.awt.Canvas;
 
+import com.badlogic.gdx.utils.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.mini2Dx.core.Mdx;
@@ -36,10 +37,6 @@ import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.audio.Mini2DxOpenALAudio;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Clipboard;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.ObjectMap;
 
 /**
  * Launches desktop-based mini2Dx games. Based on <a href=
@@ -58,7 +55,7 @@ public class DesktopMini2DxGame implements Application {
 	protected boolean running = true;
 	protected final Array<Runnable> runnables = new Array<Runnable>();
 	protected final Array<Runnable> executedRunnables = new Array<Runnable>();
-	protected final Array<LifecycleListener> lifecycleListeners = new Array<LifecycleListener>();
+	protected final SnapshotArray<LifecycleListener> lifecycleListeners = new SnapshotArray<LifecycleListener>();
 	protected int logLevel = LOG_INFO;
 	protected ApplicationLogger applicationLogger;
 	protected String preferencesdir;
@@ -134,7 +131,7 @@ public class DesktopMini2DxGame implements Application {
 	}
 
 	void executeGame() {
-		Array<LifecycleListener> lifecycleListeners = this.lifecycleListeners;
+		SnapshotArray<LifecycleListener> lifecycleListeners = this.lifecycleListeners;
 
 		try {
 			graphics.setupDisplay();
@@ -154,31 +151,33 @@ public class DesktopMini2DxGame implements Application {
 		float accumulator = 0f;
 		float targetTimestep = config.targetTimestep;
 
-		boolean wasActive = true;
+		boolean wasPaused = false;
 		while (running) {
 			Display.processMessages();
 			if (Display.isCloseRequested()) {
 				exit();
 			}
 
-			boolean isGameActive = Display.isActive();
-			if (wasActive && !isGameActive) { // if it's just recently minimized
-												// from active state
-				wasActive = false;
+			boolean isMinimized = config.pauseWhenMinimized && !Display.isVisible();
+			boolean isBackground = !Display.isActive();
+			boolean paused = isMinimized || (isBackground && config.pauseWhenBackground);
+			if (!wasPaused && paused) { // just been minimized
+				wasPaused = true;
 				synchronized (lifecycleListeners) {
-					for (LifecycleListener listener : lifecycleListeners) {
-						listener.pause();
-					}
+					LifecycleListener[] listeners = lifecycleListeners.begin();
+					for (int i = 0, n = lifecycleListeners.size; i < n; ++i)
+						listeners[i].pause();
+					lifecycleListeners.end();
 				}
 				listener.pause();
 			}
-			if (!wasActive && isGameActive) { // if it's just recently focused
-												// from minimized state
-				wasActive = true;
+			if (wasPaused && !paused) { // just been restore from being minimized
+				wasPaused = false;
 				synchronized (lifecycleListeners) {
-					for (LifecycleListener listener : lifecycleListeners) {
-						listener.resume();
-					}
+					LifecycleListener[] listeners = lifecycleListeners.begin();
+					for (int i = 0, n = lifecycleListeners.size; i < n; ++i)
+						listeners[i].resume();
+					lifecycleListeners.end();
 				}
 				listener.resume();
 			}
@@ -199,16 +198,14 @@ public class DesktopMini2DxGame implements Application {
 				graphics.config.x = Display.getX();
 				graphics.config.y = Display.getY();
 				if (graphics.resize || Display.wasResized()
-						|| (int) (Display.getWidth() * Display.getPixelScaleFactor()) != graphics.config.width
-						|| (int) (Display.getHeight() * Display.getPixelScaleFactor()) != graphics.config.height) {
+						|| (int)(Display.getWidth() * Display.getPixelScaleFactor()) != graphics.config.width
+						|| (int)(Display.getHeight() * Display.getPixelScaleFactor()) != graphics.config.height) {
 					graphics.resize = false;
-					graphics.config.width = (int) (Display.getWidth() * Display.getPixelScaleFactor());
-					graphics.config.height = (int) (Display.getHeight() * Display.getPixelScaleFactor());
+					graphics.config.width = (int)(Display.getWidth() * Display.getPixelScaleFactor());
+					graphics.config.height = (int)(Display.getHeight() * Display.getPixelScaleFactor());
 					Gdx.gl.glViewport(0, 0, graphics.config.width, graphics.config.height);
-					if (listener != null) {
-						listener.resize(graphics.config.width, graphics.config.height);
-					}
-					graphics.requestRendering();
+					if (listener != null) listener.resize(graphics.config.width, graphics.config.height);
+					shouldRender = true;
 				}
 			}
 
@@ -222,15 +219,17 @@ public class DesktopMini2DxGame implements Application {
 				break;
 			}
 
-			shouldRender |= graphics.shouldRender();
+			if (graphics.shouldRender()) shouldRender = true;
 			if (audio != null) {
 				audio.update();
 			}
 
-			if (!isGameActive && graphics.config.backgroundFPS == -1) {
+			if (isMinimized)
 				shouldRender = false;
-			}
-			int frameRate = isGameActive ? graphics.config.foregroundFPS : graphics.config.backgroundFPS;
+			else if (isBackground && graphics.config.backgroundFPS == -1) //
+				shouldRender = false;
+
+			int frameRate = isBackground ? graphics.config.backgroundFPS : graphics.config.foregroundFPS;
 			if (shouldRender) {
 				graphics.updateTime();
 				Mdx.performanceTracker.markFrame();

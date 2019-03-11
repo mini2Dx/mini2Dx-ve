@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.desktop;
 
+import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 /**
@@ -26,6 +27,16 @@ public class DesktopMini2DxConfig extends LwjglApplicationConfiguration {
 	 * The target timestep
 	 */
 	public float targetTimestep = (1f / targetFPS);
+	/**
+	 * {@link LifecycleListener#pause()} and don't render when the window is minimized.
+	 */
+	public boolean pauseWhenMinimized = true;
+	/**
+	 * {@link LifecycleListener#pause()} (but continue rendering) when the window
+	 * is not minimized and not the foreground window.
+	 * To stop rendering when not the foreground window, use backgroundFPS -1.
+	 */
+	public boolean pauseWhenBackground = false;
 	
 	public DesktopMini2DxConfig(String gameIdentifier) {
 		this.gameIdentifier = gameIdentifier;

@@ -99,16 +99,6 @@ public class Label extends UiElement {
 		super(id, x, y, width, height);
 	}
 
-	protected void estimateSize() {
-		if(renderNode != null) {
-			return;
-		}
-		if(!UiContainer.isThemeApplied()) {
-			return;
-		}
-		shrinkToTextSize();
-	}
-
 	public void shrinkToTextSize() {
 		if(renderNode == null || !UiContainer.isThemeApplied()) {
 			deferUntilUpdate(new Runnable() {
@@ -175,7 +165,6 @@ public class Label extends UiElement {
 			return;
 		}
 		this.text = text;
-		estimateSize();
 		
 		if(renderNode == null) {
 			return;
@@ -255,7 +244,6 @@ public class Label extends UiElement {
 			return;
 		}
 		this.styleId = styleId;
-		estimateSize();
 		
 		if(renderNode == null) {
 			return;

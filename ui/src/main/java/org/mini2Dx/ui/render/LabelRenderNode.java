@@ -163,6 +163,7 @@ public class LabelRenderNode extends RenderNode<Label, LabelStyleRule> {
 	@Override
 	protected LabelStyleRule determineStyleRule(LayoutState layoutState) {
 		if (fontCache != null) {
+			fontCache.clear();
 			fontCache = null;
 		}
 		bitmapCacheReset = true;

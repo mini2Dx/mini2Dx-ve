@@ -63,6 +63,7 @@ public class MonospaceFontUAT extends BasicGameScreen implements MonospaceFont.F
 		}
 		if(!cacheSetUp) {
 			fontCache.addText("Font cache example", 0f, 0f);
+			fontCache.addText("Font cache wrapping example", 0f, font.getLineHeight(), 32f, Align.left, true);
 			cacheSetUp = true;
 		}
 	}

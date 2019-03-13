@@ -107,15 +107,16 @@ public class TiledMap {
 	 * @return True if they have been loaded
 	 */
 	public boolean isTilesetTexturesLoaded() {
-		final Array<Tileset> tilesets = tiledMapData.getTilesets();
+		return tiledMapData.isTilesetTexturesLoaded();
+	}
 
-		boolean result = true;
-		for (int i = 0; i < tilesets.size; i++) {
-			if (!tilesets.get(i).isTextureLoaded()) {
-				return false;
-			}
-		}
-		return result;
+	/**
+	 * Returns if the {@link Tileset} images have been loaded
+	 * @param ignoreObjectTemplateTilesets True if tilesets referenced by object templates should be ignored
+	 * @return True if they have been loaded
+	 */
+	public boolean isTilesetTexturesLoaded(boolean ignoreObjectTemplateTilesets) {
+		return tiledMapData.isTilesetTexturesLoaded(ignoreObjectTemplateTilesets);
 	}
 
 	/**
@@ -139,6 +140,32 @@ public class TiledMap {
 	 */
 	public void loadTilesetTextures(TextureAtlas textureAtlas) {
 		tiledMapData.loadTilesetTextures(textureAtlas);
+	}
+
+	/**
+	 * Loads all {@link Tileset} textures for this map if they are not already loaded
+	 * @param loadObjectTemplateTilesets True if tilesets used by object templates should be loaded
+	 */
+	public void loadTilesetTextures(boolean loadObjectTemplateTilesets) {
+		tiledMapData.loadTilesetTextures(loadObjectTemplateTilesets);
+	}
+
+	/**
+	 * Loads all {@link Tileset} textures for this map if they are not already loaded
+	 * @param loadObjectTemplateTilesets True if tilesets used by object templates should be loaded
+	 * @param assetManager The {@link AssetManager} to use
+	 */
+	public void loadTilesetTextures(AssetManager assetManager, boolean loadObjectTemplateTilesets) {
+		tiledMapData.loadTilesetTextures(assetManager, loadObjectTemplateTilesets);
+	}
+
+	/**
+	 * Loads all {@link Tileset} textures for this map if they are not already loaded
+	 * @param loadObjectTemplateTilesets True if tilesets used by object templates should be loaded
+	 * @param textureAtlas The {@link TextureAtlas} to load textures from
+	 */
+	public void loadTilesetTextures(TextureAtlas textureAtlas, boolean loadObjectTemplateTilesets) {
+		tiledMapData.loadTilesetTextures(textureAtlas, loadObjectTemplateTilesets);
 	}
 
 	/**
@@ -297,7 +324,7 @@ public class TiledMap {
 
 	private void drawTileLayer(Graphics g, TileLayer layer, int renderX, int renderY, int startTileX, int startTileY,
 			int widthInTiles, int heightInTiles) {
-		if (!isTilesetTexturesLoaded()) {
+		if (!isTilesetTexturesLoaded(true)) {
 			Gdx.app.error(TiledMap.class.getSimpleName(), "Attempting to render TiledMap without its tilesets loaded");
 			return;
 		}

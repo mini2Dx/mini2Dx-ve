@@ -15,6 +15,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.XmlReader.Element;
+import org.mini2Dx.core.util.FileHandleUtils;
 import org.mini2Dx.tiled.renderer.AnimatedTileRenderer;
 import org.mini2Dx.tiled.renderer.StaticTileRenderer;
 import org.mini2Dx.tiled.renderer.TileFrame;
@@ -129,7 +130,7 @@ public class TiledParser implements TiledParserNotifier {
 		ImageTilesetSource result = new ImageTilesetSource(imageWidth, imageHeight, tileWidth, tileHeight, spacing,
 				margin);
 		result.setName(name);
-		result.setTilesetImagePath(imageSource);
+		result.setTilesetImagePath(FileHandleUtils.normalise(tsxFileHandle.sibling(imageSource).path()));
 		result.setTransparentColorValue(transparentColor);
 
 		loadTileProperties(result, element.getChildrenByName("tile"));
@@ -189,7 +190,7 @@ public class TiledParser implements TiledParserNotifier {
 						tileHeight, spacing, margin);
 				tilesetSource.setName(name);
 				tilesetSource.setTransparentColorValue(transparentColor);
-				tilesetSource.setTilesetImagePath(imageSource);
+				tilesetSource.setTilesetImagePath(FileHandleUtils.normalise(tmxFile.sibling(imageSource).path()));
 
 				tileset = new Tileset(firstGid, tilesetSource);
 
@@ -457,6 +458,11 @@ public class TiledParser implements TiledParserNotifier {
 					objectTemplate = null;
 				} else if(tiledObjectTemplate.getTiledObject() != null) {
 					objectTemplate = tiledObjectTemplate.getTiledObject();
+
+					if(tiledObjectTemplate.getTileset() != null) {
+						//Origin is bottom-left, need to adjust to top-left
+						y -= objectTemplate.getHeight();
+					}
 				} else {
 					objectTemplate = null;
 				}
@@ -553,20 +559,21 @@ public class TiledParser implements TiledParserNotifier {
 	}
 
 	private TiledObjectTemplate loadObjectTemplate(String path, FileHandle tmxFile) {
-		Element root = xmlReader.parse(tmxFile.sibling(path));
+		final FileHandle txFile = tmxFile.sibling(path);
+		Element root = xmlReader.parse(txFile);
 		Element tilesetElement = root.getChildByName("tileset");
 		Element objectElement = root.getChildByName("object");
 
 		final Tileset tileset;
 		if(tilesetElement != null) {
-			tileset = loadTileSet(tilesetElement, tmxFile);
+			tileset = loadTileSet(tilesetElement, txFile);
 		} else {
 			tileset = null;
 		}
 
 		final TiledObject tiledObject;
 		if(objectElement != null) {
-			tiledObject = loadObject(objectElement, tmxFile);
+			tiledObject = loadObject(objectElement, txFile);
 		} else {
 			tiledObject = null;
 		}

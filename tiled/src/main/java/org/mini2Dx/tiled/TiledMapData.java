@@ -20,8 +20,10 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntSet;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectSet;
 import org.mini2Dx.tiled.exception.TiledException;
 import org.mini2Dx.tiled.exception.TiledParsingException;
+import org.mini2Dx.tiled.tileset.TilesetSource;
 
 import java.io.IOException;
 
@@ -30,7 +32,7 @@ import java.io.IOException;
  */
 public class TiledMapData implements TiledParserListener {
 	protected final FileHandle fileHandle;
-	protected static final ObjectMap<String, TiledObjectTemplate> OBJECT_TEMPLATES = new ObjectMap<String, TiledObjectTemplate>();
+	static final ObjectSet<String> OBJECT_TEMPLATE_TILESET_SOURCES = new ObjectSet<String>();
 
 	protected final Array<Tileset> tilesets = new Array<Tileset>(true, 2, Tileset.class);
 	protected final IntSet tilesetGids = new IntSet();
@@ -97,49 +99,40 @@ public class TiledMapData implements TiledParserListener {
 
 	public void loadTilesetTextures(boolean loadObjectTemplateTilesets) {
 		for (int i = 0; i < tilesets.size; i++) {
-			if (!tilesets.get(i).isTextureLoaded()) {
-				tilesets.get(i).loadTexture(fileHandle);
+			final Tileset tileset = tilesets.get(i);
+			if(tileset.isTextureLoaded()) {
+				continue;
 			}
-		}
-		if(!loadObjectTemplateTilesets) {
-			return;
-		}
-		for(TiledObjectTemplate objectTemplate : OBJECT_TEMPLATES.values()) {
-			if(objectTemplate.getTileset() != null) {
-				objectTemplate.getTileset().loadTexture(fileHandle);
+			if(!loadObjectTemplateTilesets && OBJECT_TEMPLATE_TILESET_SOURCES.contains(tileset.getSourceInternalUuid())) {
+				continue;
 			}
+			tileset.loadTexture(fileHandle);
 		}
 	}
 
 	public void loadTilesetTextures(AssetManager assetManager, boolean loadObjectTemplateTilesets) {
 		for (int i = 0; i < tilesets.size; i++) {
-			if (!tilesets.get(i).isTextureLoaded()) {
-				tilesets.get(i).loadTexture(assetManager, fileHandle);
+			final Tileset tileset = tilesets.get(i);
+			if(tileset.isTextureLoaded()) {
+				continue;
 			}
-		}
-		if(!loadObjectTemplateTilesets) {
-			return;
-		}
-		for(TiledObjectTemplate objectTemplate : OBJECT_TEMPLATES.values()) {
-			if(objectTemplate.getTileset() != null) {
-				objectTemplate.getTileset().loadTexture(assetManager, fileHandle);
+			if(!loadObjectTemplateTilesets && OBJECT_TEMPLATE_TILESET_SOURCES.contains(tileset.getSourceInternalUuid())) {
+				continue;
 			}
+			tileset.loadTexture(assetManager, fileHandle);
 		}
 	}
 
 	public void loadTilesetTextures(TextureAtlas textureAtlas, boolean loadObjectTemplateTilesets) {
 		for (int i = 0; i < tilesets.size; i++) {
-			if (!tilesets.get(i).isTextureLoaded()) {
-				tilesets.get(i).loadTexture(textureAtlas);
+			final Tileset tileset = tilesets.get(i);
+			if(tileset.isTextureLoaded()) {
+				continue;
 			}
-		}
-		if(!loadObjectTemplateTilesets) {
-			return;
-		}
-		for(TiledObjectTemplate objectTemplate : OBJECT_TEMPLATES.values()) {
-			if(objectTemplate.getTileset() != null) {
-				objectTemplate.getTileset().loadTexture(textureAtlas);
+			if(!loadObjectTemplateTilesets && OBJECT_TEMPLATE_TILESET_SOURCES.contains(tileset.getSourceInternalUuid())) {
+				continue;
 			}
+			tileset.loadTexture(textureAtlas);
 		}
 	}
 
@@ -282,7 +275,7 @@ public class TiledMapData implements TiledParserListener {
 
 	@Override
 	public void onObjectTemplateParsed(TiledObjectTemplate parsedObjectTemplate) {
-		OBJECT_TEMPLATES.put(parsedObjectTemplate.getPath(), parsedObjectTemplate);
+		OBJECT_TEMPLATE_TILESET_SOURCES.add(parsedObjectTemplate.getTileset().getSourceInternalUuid());
 	}
 
 	/**
@@ -564,6 +557,33 @@ public class TiledMapData implements TiledParserListener {
 			return false;
 		}
 		return animatedTiles.size > 0;
+	}
+
+	/**
+	 * Returns if the {@link Tileset} images have been loaded
+	 *
+	 * @return True if they have been loaded
+	 */
+	public boolean isTilesetTexturesLoaded() {
+		return isTilesetTexturesLoaded(false);
+	}
+
+	/**
+	 * Returns if the {@link Tileset} images have been loaded
+	 * @param ignoreObjectTemplateTilesets True if tilesets referenced by object templates should be ignored
+	 * @return True if they have been loaded
+	 */
+	public boolean isTilesetTexturesLoaded(boolean ignoreObjectTemplateTilesets) {
+		for (int i = 0; i < tilesets.size; i++) {
+			final Tileset tileset = tilesets.get(i);
+			if (ignoreObjectTemplateTilesets && OBJECT_TEMPLATE_TILESET_SOURCES.contains(tileset.getSourceInternalUuid())) {
+				continue;
+			}
+			if (!tileset.isTextureLoaded()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

@@ -287,6 +287,11 @@ public class ImageTilesetSource extends TilesetSource {
 		this.name = name;
 	}
 
+	@Override
+	public String getInternalUuid() {
+		return tilesetImagePath;
+	}
+
 	public String getTilesetImagePath() {
 		return tilesetImagePath;
 	}

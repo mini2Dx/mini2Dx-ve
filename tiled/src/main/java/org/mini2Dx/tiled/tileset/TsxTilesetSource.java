@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.Sprite;
+import org.mini2Dx.core.util.FileHandleUtils;
 import org.mini2Dx.tiled.Tile;
 import org.mini2Dx.tiled.TiledParser;
 
@@ -43,19 +44,20 @@ public class TsxTilesetSource extends TilesetSource {
 
 	public TsxTilesetSource(FileHandle tmxPath, String tsxPath) {
 		super();
-		this.tsxPath = tsxPath;
+		final FileHandle tsxFileHandle = tmxPath.sibling(tsxPath);
+		this.tsxPath = FileHandleUtils.normalise(tsxFileHandle.path());
 
-		if (!TILESETS.containsKey(tsxPath)) {
+		if (!TILESETS.containsKey(this.tsxPath)) {
 			try {
-				TILESETS.put(tsxPath, TSX_PARSER.parseTsx(tmxPath.sibling(tsxPath)));
+				TILESETS.put(this.tsxPath, TSX_PARSER.parseTsx(tsxFileHandle));
 			} catch (IOException e) {
 				Gdx.app.error(LOGGING_TAG, "Could not parse " + tsxPath + ". " + e.getMessage(), e);
-				TILESETS.put(tsxPath, null);
+				TILESETS.put(this.tsxPath, null);
 			}
-			TILESET_REFS.put(tsxPath, new AtomicInteger(0));
+			TILESET_REFS.put(this.tsxPath, new AtomicInteger(0));
 		}
-		tileset = TILESETS.get(tsxPath);
-		TILESET_REFS.get(tsxPath).incrementAndGet();
+		tileset = TILESETS.get(this.tsxPath);
+		TILESET_REFS.get(this.tsxPath).incrementAndGet();
 	}
 	
 	@Override
@@ -166,6 +168,11 @@ public class TsxTilesetSource extends TilesetSource {
 	@Override
 	public ObjectMap<String, String> getProperties() {
 		return tileset.getProperties();
+	}
+
+	@Override
+	public String getInternalUuid() {
+		return getTsxPath();
 	}
 
 	public String getTsxPath() {

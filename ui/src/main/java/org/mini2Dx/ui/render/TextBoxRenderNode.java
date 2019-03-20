@@ -284,6 +284,9 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 
 	@Override
 	public void characterReceived(char c) {
+		if (!element.notifyTextInputListeners(c)) {
+			return;
+		}
 		if (!isValidCharacter(c)) {
 			return;
 		}

@@ -23,6 +23,7 @@ import org.mini2Dx.ui.event.EventTrigger;
 import org.mini2Dx.ui.event.params.EventTriggerParams;
 import org.mini2Dx.ui.layout.*;
 import org.mini2Dx.ui.listener.ActionListener;
+import org.mini2Dx.ui.listener.TextInputListener;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.TextBoxRenderNode;
 import org.mini2Dx.ui.render.UiContainerRenderTree;
@@ -35,6 +36,7 @@ public class TextBox extends UiElement implements Actionable, FlexUiElement {
 	private final Queue<Runnable> deferredQueue = new Queue<Runnable>();
 	
 	private Array<ActionListener> actionListeners;
+	private Array<TextInputListener> textInputListeners;
 	private String value = "";
 
 	@Field(optional=true)
@@ -253,6 +255,32 @@ public class TextBox extends UiElement implements Actionable, FlexUiElement {
 			return;
 		}
 		actionListeners.removeValue(listener, false);
+	}
+
+	public void addTextInputListener(TextInputListener listener) {
+		if(textInputListeners == null) {
+			textInputListeners = new Array<TextInputListener>(true, 1, TextInputListener.class);
+		}
+		textInputListeners.add(listener);
+	}
+
+	public void removeTextInputListener(TextInputListener listener) {
+		if(textInputListeners == null) {
+			return;
+		}
+		textInputListeners.removeValue(listener, false);
+	}
+
+	public boolean notifyTextInputListeners(char c) {
+		if(textInputListeners == null) {
+			return true;
+		}
+		for(int i = 0; i < textInputListeners.size; i++) {
+			if(!textInputListeners.get(i).textReceived(c)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override

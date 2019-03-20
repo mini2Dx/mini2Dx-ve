@@ -22,6 +22,7 @@
 - Fixed UI navigation cursor not updating when switching between controller and mouse
 - Fixed DesktopPlayerData not ensuring data directory exists when writing JSON or binary files
 - Fixed Sprite not carrying over flip status from TextureRegion
+- Fixed out of bounds error when TextBox is set to value smaller than previous value
 - (#79) Add isInterpolateRequired() to collision classes
 
 [1.8.2]

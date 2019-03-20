@@ -24,6 +24,7 @@ import org.mini2Dx.ui.event.params.EventTriggerParams;
 import org.mini2Dx.ui.layout.*;
 import org.mini2Dx.ui.listener.ActionListener;
 import org.mini2Dx.ui.listener.TextInputListener;
+import org.mini2Dx.ui.render.NodeState;
 import org.mini2Dx.ui.render.ParentRenderNode;
 import org.mini2Dx.ui.render.TextBoxRenderNode;
 import org.mini2Dx.ui.render.UiContainerRenderTree;
@@ -293,6 +294,7 @@ public class TextBox extends UiElement implements Actionable, FlexUiElement {
 			return false;
 		}
 		uiContainer.setActiveAction(renderNode);
+		renderNode.setState(NodeState.ACTION);
 		return true;
 	}
 

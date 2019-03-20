@@ -82,6 +82,10 @@ public class TextBoxRenderNode extends RenderNode<TextBox, TextBoxStyleRule> imp
 		if (cursorTimer <= 0f) {
 			cursorTimer += CURSOR_VISIBLE_DURATION * 2f;
 		}
+		if (cursor > element.getValue().length()) {
+			cursor = element.getValue().length();
+			setCursorRenderX();
+		}
 		cursorTimer -= delta;
 	}
 

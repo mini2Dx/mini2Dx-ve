@@ -12,6 +12,7 @@
 - Added method to show/hide ScrollBox scroll track
 - Added support for Tiled object templates
 - Added TextInputListener interface for TextBox
+- Added grabInput method to TextBox
 - Improved Graphics performance by reducing spritebatch flushes
 - Tilesets can now be loaded from TextureAtlas instances
 - UiContainer can now have multiple navigation action keys

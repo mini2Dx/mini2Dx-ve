@@ -283,6 +283,19 @@ public class TextBox extends UiElement implements Actionable, FlexUiElement {
 		return true;
 	}
 
+	/**
+	 * Grabs the input as if the player clicked/selected this element
+	 * @param uiContainer The {@link UiContainer} the {@link TextBox} belongs to
+	 * @return True if the input was successfully obtained
+	 */
+	public boolean grabInput(UiContainer uiContainer) {
+		if(renderNode == null) {
+			return false;
+		}
+		uiContainer.setActiveAction(renderNode);
+		return true;
+	}
+
 	@Override
 	public boolean isEnabled() {
 		return enabled;

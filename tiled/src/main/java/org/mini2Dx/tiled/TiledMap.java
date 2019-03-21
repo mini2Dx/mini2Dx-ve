@@ -26,6 +26,11 @@ import org.mini2Dx.tiled.renderer.*;
  * A Tiled map instance
  */
 public class TiledMap {
+	/**
+	 * Set to true to tell the renderer to not render layers marked as hidden in Tiled
+	 */
+	public static boolean STRICT_LAYER_VISIBILITY = false;
+
 	private final TiledMapData tiledMapData;
 
 	private TileLayerRenderer tileLayerRenderer;
@@ -329,6 +334,12 @@ public class TiledMap {
 			return;
 		}
 
+		if(STRICT_LAYER_VISIBILITY) {
+			if(!layer.isVisible()) {
+				return;
+			}
+		}
+
 		if (!preLayerRendered(g, layer, startTileX, startTileY, widthInTiles, heightInTiles))
 			return;
 
@@ -400,6 +411,25 @@ public class TiledMap {
 	 */
 	public TileLayer getTileLayer(int index) {
 		return tiledMapData.getTileLayer(index);
+	}
+
+	/**
+	 * Returns the {@link GroupLayer} with the given name
+	 * @param name The name of the layer
+	 * @return Null if the layer does not exist
+	 */
+	public GroupLayer getGroupLayer(String name) {
+		return tiledMapData.getGroupLayer(name);
+	}
+
+
+	/**
+	 * Returns the {@link GroupLayer} at the given index
+	 * @param index The index of the layer
+	 * @return Null if the index is out of bounds
+	 */
+	public GroupLayer getGroupLayer(int index) {
+		return tiledMapData.getGroupLayer(index);
 	}
 
 	/**

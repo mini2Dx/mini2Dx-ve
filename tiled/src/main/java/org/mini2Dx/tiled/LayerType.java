@@ -17,5 +17,6 @@ package org.mini2Dx.tiled;
 public enum LayerType {
 	TILE,
 	OBJECT,
-	IMAGE
+	IMAGE,
+	GROUP
 }

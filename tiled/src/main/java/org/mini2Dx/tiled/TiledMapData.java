@@ -274,6 +274,12 @@ public class TiledMapData implements TiledParserListener {
 	}
 
 	@Override
+	public void onGroupLayerParsed(GroupLayer parsedLayer) {
+		parsedLayer.setIndex(layers.size);
+		layers.add(parsedLayer);
+	}
+
+	@Override
 	public void onObjectTemplateParsed(TiledObjectTemplate parsedObjectTemplate) {
 		OBJECT_TEMPLATE_TILESET_SOURCES.add(parsedObjectTemplate.getTileset().getSourceInternalUuid());
 	}
@@ -321,6 +327,36 @@ public class TiledMapData implements TiledParserListener {
 	 */
 	public TiledObjectGroup getObjectGroup(String name) {
 		return objectGroups.get(name);
+	}
+
+	/**
+	 * Returns the {@link GroupLayer} with the given name
+	 * @param name The name of the layer
+	 * @return Null if the layer does not exist
+	 */
+	public GroupLayer getGroupLayer(String name) {
+		for (Layer layer : layers) {
+			if (layer.getName().compareTo(name) != 0) {
+				continue;
+			}
+			if (!layer.getLayerType().equals(LayerType.GROUP)) {
+				continue;
+			}
+			return (GroupLayer) layer;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@link GroupLayer} at the given index
+	 * @param index The index of the layer
+	 * @return Null if the index is out of bounds
+	 */
+	public GroupLayer getGroupLayer(int index) {
+		if (index < 0 || index >= layers.size) {
+			return null;
+		}
+		return (GroupLayer) layers.get(index);
 	}
 
 	/**

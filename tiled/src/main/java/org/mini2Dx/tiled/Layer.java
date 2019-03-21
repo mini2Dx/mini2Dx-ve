@@ -25,6 +25,7 @@ public abstract class Layer {
 	private boolean visible;
 
 	public Layer(LayerType layerType) {
+		super();
 		this.layerType = layerType;
 	}
 

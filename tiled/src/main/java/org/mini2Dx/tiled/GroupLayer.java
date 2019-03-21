@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 See AUTHORS file
+ * Copyright (c) 2019 See AUTHORS file
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -11,27 +11,19 @@
  */
 package org.mini2Dx.tiled;
 
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Array;
 
 /**
- * An common interface to parser listeners
+ * Represents a group layer per the Tiled specification
  */
-public interface TiledParserListener {
+public class GroupLayer extends Layer {
+	protected final Array<Layer> layers = new Array<Layer>(true, 2, Layer.class);
 
-	public void onBeginParsing(String orientation, String staggerAxis, String staggerIndex, Color backgroundColor,
-			int width, int height, int tileWidth, int tileHeight, int sideLength);
+	public GroupLayer() {
+		super(LayerType.GROUP);
+	}
 
-	public void onMapPropertyParsed(String propertyName, String value);
-
-	public void onTilePropertiesParsed(Tile tile);
-
-	public void onTilesetParsed(Tileset parsedTileset);
-
-	public void onTileLayerParsed(TileLayer parsedLayer);
-
-	public void onObjectGroupParsed(TiledObjectGroup parsedObjectGroup);
-
-	public void onGroupLayerParsed(GroupLayer parsedLayer);
-
-	public void onObjectTemplateParsed(TiledObjectTemplate parsedObjectTemplate);
+	public Array<Layer> getLayers() {
+		return layers;
+	}
 }

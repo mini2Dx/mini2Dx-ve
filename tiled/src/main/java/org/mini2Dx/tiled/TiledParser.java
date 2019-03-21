@@ -102,6 +102,8 @@ public class TiledParser implements TiledParserNotifier {
 				loadTileLayer(element);
 			} else if (name.equals("objectgroup")) {
 				loadObjectGroup(element, tmxFileHandle);
+			} else if (name.equals("group")) {
+				loadGroupLayer(element, tmxFileHandle);
 			}
 		}
 	}
@@ -295,7 +297,54 @@ public class TiledParser implements TiledParserNotifier {
 		}
 	}
 
-	protected void loadTileLayer(Element element) {
+	protected GroupLayer loadGroupLayer(Element layerElement, FileHandle tmxFileHandle) {
+		if (!layerElement.getName().equals("group")) {
+			return null;
+		}
+
+		final String groupName = layerElement.getAttribute("name", null);
+		final boolean visible = layerElement.getIntAttribute("visible", 1) == 1;
+
+		final GroupLayer groupLayer = new GroupLayer();
+		groupLayer.setName(groupName);
+		groupLayer.setVisible(visible);
+
+		Element properties = layerElement.getChildByName("properties");
+		if (properties != null) {
+			for (Element property : properties.getChildrenByName("property")) {
+				String propertyName = property.getAttribute("name", null);
+				String propertyValue = property.getAttribute("value", null);
+				if (propertyValue == null) {
+					propertyValue = property.getText();
+				}
+				groupLayer.setProperty(propertyName, propertyValue);
+			}
+		}
+
+		for (int i = 0, j = layerElement.getChildCount(); i < j; i++) {
+			Element element = layerElement.getChild(i);
+			String name = element.getName();
+
+			final Layer layer;
+			if (name.equals("layer")) {
+				layer = loadTileLayer(element);
+			} else if (name.equals("objectgroup")) {
+				layer = loadObjectGroup(element, tmxFileHandle);
+			} else if (name.equals("group")) {
+				layer = loadGroupLayer(element, tmxFileHandle);
+			} else {
+				layer = null;
+			}
+			if(layer != null) {
+				groupLayer.getLayers().add(layer);
+			}
+		}
+
+		notifyGroupLayerParsed(groupLayer);
+		return groupLayer;
+	}
+
+	protected TileLayer loadTileLayer(Element element) {
 		if (element.getName().equals("layer")) {
 			String name = element.getAttribute("name", null);
 			int width = element.getIntAttribute("width", 0);
@@ -408,10 +457,12 @@ public class TiledParser implements TiledParserNotifier {
 				}
 			}
 			notifyTileLayerParsed(layer);
+			return layer;
 		}
+		return null;
 	}
 
-	protected void loadObjectGroup(Element element, FileHandle tmxFile) {
+	protected TiledObjectGroup loadObjectGroup(Element element, FileHandle tmxFile) {
 		if (element.getName().equals("objectgroup")) {
 			String name = element.getAttribute("name", null);
 			TiledObjectGroup tiledObjectGroup = new TiledObjectGroup();
@@ -435,7 +486,9 @@ public class TiledParser implements TiledParserNotifier {
 				}
 			}
 			notifyObjectGroupParsed(tiledObjectGroup);
+			return tiledObjectGroup;
 		}
+		return null;
 	}
 
 	protected TiledObject loadObject(Element element, FileHandle tmxFile) {
@@ -651,6 +704,13 @@ public class TiledParser implements TiledParserNotifier {
 	public void notifyObjectGroupParsed(TiledObjectGroup parsedObjectGroup) {
 		for (TiledParserListener tiledParserListener : listeners) {
 			tiledParserListener.onObjectGroupParsed(parsedObjectGroup);
+		}
+	}
+
+	@Override
+	public void notifyGroupLayerParsed(GroupLayer parsedGroupLayer) {
+		for (TiledParserListener tiledParserListener : listeners) {
+			tiledParserListener.onGroupLayerParsed(parsedGroupLayer);
 		}
 	}
 

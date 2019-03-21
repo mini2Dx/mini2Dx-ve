@@ -24,6 +24,7 @@ public class TileLayer extends Layer {
 
 	public TileLayer(int width, int height) {
 		super(LayerType.TILE);
+
 		tiles = new int[width][height];
 		flipHorizontally = new BitSet(width * height);
 		flipVertically = new BitSet(width * height);

@@ -11,6 +11,8 @@
  */
 package org.mini2Dx.tiled;
 
+import com.badlogic.gdx.math.MathUtils;
+
 import java.util.BitSet;
 
 /**
@@ -156,5 +158,49 @@ public class TileLayer extends Layer {
 	
 	private int getBitIndex(int x, int y) {
 		return (y * tiles.length) + x;
+	}
+
+	/**
+	 * Returns if the majority of the {@link TileLayer} consists of empty tiles
+	 * @return False if &gt;50% of the layer contains tiles
+	 */
+	public boolean isMostlyEmptyTiles() {
+		return MathUtils.round((getTotalEmptyTiles() * 1f) / (getWidth() * getHeight() * 1f)) == 1;
+	}
+
+	/**
+	 * Returns the total number of empty tiles on this layer
+	 * @return
+	 */
+	public int getTotalEmptyTiles() {
+		int result = 0;
+
+		for(int x = 0; x < getWidth(); x++) {
+			for(int y = 0; y < getHeight(); y++) {
+				if(getTileId(x, y) >= 1) {
+					continue;
+				}
+				result++;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Returns the total number of tiles that have content on this layer
+	 * @return
+	 */
+	public int getTotalFilledTiles() {
+		int result = 0;
+
+		for(int x = 0; x < getWidth(); x++) {
+			for(int y = 0; y < getHeight(); y++) {
+				if(getTileId(x, y) < 1) {
+					continue;
+				}
+				result++;
+			}
+		}
+		return result;
 	}
 }

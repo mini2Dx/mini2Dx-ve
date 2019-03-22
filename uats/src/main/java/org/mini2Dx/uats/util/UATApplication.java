@@ -37,6 +37,8 @@ public class UATApplication extends ScreenBasedGame {
 
 	@Override
 	public void initialise() {
+		TiledMap.FAST_RENDER_EMPTY_LAYERS = true;
+
 		FallbackFileHandleResolver fallbackFileHandleResolver = new FallbackFileHandleResolver(
 				new ClasspathFileHandleResolver(), new InternalFileHandleResolver());
 		assetManager = new AssetManager(fallbackFileHandleResolver);

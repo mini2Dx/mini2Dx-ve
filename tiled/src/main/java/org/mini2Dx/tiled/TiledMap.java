@@ -30,6 +30,10 @@ public class TiledMap {
 	 * Set to true to tell the renderer to not render layers marked as hidden in Tiled
 	 */
 	public static boolean STRICT_LAYER_VISIBILITY = false;
+	/**
+	 * Set to true to optimise CPU time (at cost of memory usage) for rendering tile layers that are mostly empty
+	 */
+	public static boolean FAST_RENDER_EMPTY_LAYERS = false;
 
 	private final TiledMapData tiledMapData;
 

@@ -14,11 +14,10 @@ package org.mini2Dx.tiled.renderer;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.IntIntMap;
+import com.badlogic.gdx.utils.IntMap;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.tiled.TileLayer;
-import org.mini2Dx.tiled.TiledMap;
-import org.mini2Dx.tiled.Tileset;
+import org.mini2Dx.tiled.*;
 
 /**
  * Renders orthogonal {@link TileLayer}s
@@ -27,6 +26,7 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 	private TiledMapRenderArea mapClip, tmpClip;
 	private SpriteCache layerCache;
 	private IntIntMap layerCacheIds;
+	private IntMap<OrthogonalEmptyTileLayerRenderer> emptyTileLayerRenderers;
 
 	private final boolean cacheLayers;
 	private final TiledMap tiledMap;
@@ -43,11 +43,34 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 		}
 		mapClip = new TiledMapRenderArea();
 		tmpClip = new TiledMapRenderArea();
+
+		System.out.println("HERE!!! " + TiledMap.FAST_RENDER_EMPTY_LAYERS  + " " + cacheLayers);
+		if(TiledMap.FAST_RENDER_EMPTY_LAYERS && !cacheLayers) {
+			emptyTileLayerRenderers = new IntMap<OrthogonalEmptyTileLayerRenderer>();
+			for(Layer layer : tiledMap.getLayers()) {
+				if(!layer.getLayerType().equals(LayerType.TILE)) {
+					continue;
+				}
+				final TileLayer tileLayer = tiledMap.getTileLayer(layer.getIndex());
+				if(!tileLayer.isMostlyEmptyTiles()) {
+					continue;
+				}
+				emptyTileLayerRenderers.put(tileLayer.getIndex(), new OrthogonalEmptyTileLayerRenderer(tiledMap, tileLayer));
+			}
+		}
 	}
 
 	@Override
 	public void drawLayer(Graphics g, TileLayer layer, int renderX, int renderY, int startTileX, int startTileY,
 			int widthInTiles, int heightInTiles) {
+		if(TiledMap.FAST_RENDER_EMPTY_LAYERS && emptyTileLayerRenderers != null) {
+			System.out.println(emptyTileLayerRenderers + " " + layer);
+			final OrthogonalEmptyTileLayerRenderer renderer = emptyTileLayerRenderers.get(layer.getIndex(), null);
+			if(renderer != null) {
+				renderer.drawLayer(g, layer, renderX, renderY, startTileX, startTileY, widthInTiles, heightInTiles);
+				return;
+			}
+		}
 		if(cacheLayers) {
 			renderWithClipAndTranslate(g, layer, renderX, renderY, startTileX, startTileY, widthInTiles, heightInTiles);
 		} else {
@@ -192,6 +215,13 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 
 	@Override
 	public void dispose() {
+		if (emptyTileLayerRenderers != null) {
+			for(OrthogonalEmptyTileLayerRenderer renderer : emptyTileLayerRenderers.values()) {
+				renderer.dispose();
+			}
+			emptyTileLayerRenderers.clear();
+			emptyTileLayerRenderers = null;
+		}
 		if (layerCache == null) {
 			return;
 		}

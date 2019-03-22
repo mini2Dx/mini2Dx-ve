@@ -455,6 +455,9 @@ public class LibGdxGraphics implements Graphics {
 
 	@Override
 	public void rotate(float degrees, float x, float y) {
+		if (MathUtils.isZero(degrees)) {
+			return;
+		}
 		if (rendering) {
 			endRendering();
 		}
@@ -467,6 +470,12 @@ public class LibGdxGraphics implements Graphics {
 	
 	@Override
 	public void setRotation(float degrees, float x, float y) {
+		if(MathUtils.isEqual(this.rotation, degrees) &&
+				MathUtils.isEqual(this.rotationX, x) &&
+				MathUtils.isEqual(this.rotationY, y)) {
+			return;
+		}
+
 		if (rendering) {
 			endRendering();
 		}
@@ -479,6 +488,9 @@ public class LibGdxGraphics implements Graphics {
 
 	@Override
 	public void scale(float scaleX, float scaleY) {
+		if (MathUtils.isEqual(1f, scaleX) && MathUtils.isEqual(1f, scaleY)) {
+			return;
+		}
 		if (rendering) {
 			endRendering();
 		}
@@ -489,6 +501,9 @@ public class LibGdxGraphics implements Graphics {
 	
 	@Override
 	public void setScale(float scaleX, float scaleY) {
+		if (MathUtils.isEqual(this.scaleX, scaleX) && MathUtils.isEqual(this.scaleY, scaleY)) {
+			return;
+		}
 		if (rendering) {
 			endRendering();
 		}
@@ -499,6 +514,9 @@ public class LibGdxGraphics implements Graphics {
 
 	@Override
 	public void clearScaling() {
+		if (MathUtils.isEqual(this.scaleX, 1f) && MathUtils.isEqual(this.scaleY, 1f)) {
+			return;
+		}
 		if (rendering) {
 			endRendering();
 		}
@@ -509,6 +527,9 @@ public class LibGdxGraphics implements Graphics {
 
 	@Override
 	public void translate(float translateX, float translateY) {
+		if (MathUtils.isZero(translateX) && MathUtils.isZero(translateY)) {
+			return;
+		}
 		if (rendering) {
 			endRendering();
 		}
@@ -519,6 +540,9 @@ public class LibGdxGraphics implements Graphics {
 	
 	@Override
 	public void setTranslation(float translateX, float translateY) {
+		if (MathUtils.isEqual(this.translationX, translateX) && MathUtils.isEqual(this.translationY, translateY)) {
+			return;
+		}
 		if (rendering) {
 			endRendering();
 		}
@@ -551,6 +575,9 @@ public class LibGdxGraphics implements Graphics {
 
 	@Override
 	public Rectangle removeClip() {
+		if (clip == null) {
+			return null;
+		}
 		if (rendering) {
 			endRendering();
 		}

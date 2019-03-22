@@ -48,6 +48,26 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 	@Override
 	public void drawLayer(Graphics g, TileLayer layer, int renderX, int renderY, int startTileX, int startTileY,
 			int widthInTiles, int heightInTiles) {
+		if(cacheLayers) {
+			renderWithClipAndTranslate(g, layer, renderX, renderY, startTileX, startTileY, widthInTiles, heightInTiles);
+		} else {
+			renderWithoutClipAndTranslate(g, layer, renderX, renderY, startTileX, startTileY, widthInTiles, heightInTiles);
+		}
+	}
+
+	private void renderWithoutClipAndTranslate(Graphics g, TileLayer layer, int renderX, int renderY, int startTileX, int startTileY,
+	                                        int widthInTiles, int heightInTiles) {
+		int startTileRenderX = (startTileX * tiledMap.getTileWidth());
+		int startTileRenderY = (startTileY * tiledMap.getTileHeight());
+
+		int tileRenderX = MathUtils.round(renderX - startTileRenderX);
+		int tileRenderY = MathUtils.round(renderY - startTileRenderY);
+
+		renderLayer(g, layer, tileRenderX, tileRenderY, startTileX, startTileY, widthInTiles, heightInTiles);
+	}
+
+	private void renderWithClipAndTranslate(Graphics g, TileLayer layer, int renderX, int renderY, int startTileX, int startTileY,
+	                                        int widthInTiles, int heightInTiles) {
 		int startTileRenderX = (startTileX * tiledMap.getTileWidth());
 		int startTileRenderY = (startTileY * tiledMap.getTileHeight());
 
@@ -70,11 +90,7 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 			g.setClip(graphicsClip);
 		}
 
-		if (cacheLayers) {
-			renderCachedLayer(g, layer, tileRenderX, tileRenderY, startTileX, startTileY, widthInTiles, heightInTiles);
-		} else {
-			renderLayer(g, layer, tileRenderX, tileRenderY, startTileX, startTileY, widthInTiles, heightInTiles);
-		}
+		renderCachedLayer(g, layer, 0, 0, startTileX, startTileY, widthInTiles, heightInTiles);
 
 		g.removeClip();
 		g.translate(tileRenderX, tileRenderY);
@@ -116,8 +132,8 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 				boolean flipVertically = layer.isFlippedVertically(x, y);
 				boolean flipDiagonally = layer.isFlippedDiagonally(x, y);
 
-				int tileRenderX = x * tiledMap.getTileWidth();
-				int tileRenderY = y * tiledMap.getTileHeight();
+				int tileRenderX = renderX + (x * tiledMap.getTileWidth());
+				int tileRenderY = renderY + (y * tiledMap.getTileHeight());
 
 				if (tileRenderX + tiledMap.getTileWidth() < g.getTranslationX()) {
 					continue;
@@ -158,8 +174,8 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 				boolean flipVertically = layer.isFlippedVertically(x, y);
 				boolean flipDiagonally = layer.isFlippedDiagonally(x, y);
 				
-				int tileRenderX = x * tiledMap.getTileWidth();
-				int tileRenderY = y * tiledMap.getTileHeight();
+				int tileRenderX = renderX + (x * tiledMap.getTileWidth());
+				int tileRenderY = renderY + (y * tiledMap.getTileHeight());
 
 				for (int i = 0; i < tiledMap.getTilesets().size; i++) {
 					Tileset tileset = tiledMap.getTilesets().get(i);

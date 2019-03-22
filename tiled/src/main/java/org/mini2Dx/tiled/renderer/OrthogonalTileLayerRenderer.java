@@ -44,7 +44,6 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 		mapClip = new TiledMapRenderArea();
 		tmpClip = new TiledMapRenderArea();
 
-		System.out.println("HERE!!! " + TiledMap.FAST_RENDER_EMPTY_LAYERS  + " " + cacheLayers);
 		if(TiledMap.FAST_RENDER_EMPTY_LAYERS && !cacheLayers) {
 			emptyTileLayerRenderers = new IntMap<OrthogonalEmptyTileLayerRenderer>();
 			for(Layer layer : tiledMap.getLayers()) {
@@ -64,7 +63,6 @@ public class OrthogonalTileLayerRenderer implements TileLayerRenderer {
 	public void drawLayer(Graphics g, TileLayer layer, int renderX, int renderY, int startTileX, int startTileY,
 			int widthInTiles, int heightInTiles) {
 		if(TiledMap.FAST_RENDER_EMPTY_LAYERS && emptyTileLayerRenderers != null) {
-			System.out.println(emptyTileLayerRenderers + " " + layer);
 			final OrthogonalEmptyTileLayerRenderer renderer = emptyTileLayerRenderers.get(layer.getIndex(), null);
 			if(renderer != null) {
 				renderer.drawLayer(g, layer, renderX, renderY, startTileX, startTileY, widthInTiles, heightInTiles);

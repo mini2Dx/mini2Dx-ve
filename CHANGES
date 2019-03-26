@@ -21,6 +21,7 @@
 - Mdx.playerData now uses temp files to write before moving files to target filename
 - Fixed ScrollBox not using disabled button state when thumb cannot scroll
 - Fixed Graphics#tint not being reset each frame
+- Fixed UI element clipping when UI animation is playing
 - Fixed UI navigation cursor not updating when switching between controller and mouse
 - Fixed DesktopPlayerData not ensuring data directory exists when writing JSON or binary files
 - Fixed Sprite not carrying over flip status from TextureRegion

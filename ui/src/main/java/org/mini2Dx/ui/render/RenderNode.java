@@ -535,6 +535,16 @@ public abstract class RenderNode<T extends UiElement, S extends StyleRule> imple
 		return initialUpdateOccurred;
 	}
 
+	public boolean isChildOfUiContainer() {
+		if(parent == null) {
+			return false;
+		}
+		if(rootNode == null) {
+			return false;
+		}
+		return parent.getId().equals(rootNode.getId());
+	}
+
 	@Override
 	public String toString() {
 		return "RenderNode [outerArea=" + outerArea + ", targetOuterArea=" + targetOuterArea + ", parent=" + parent.getId()

@@ -17,6 +17,9 @@ public class FileHandleUtils {
 		while(path.contains("..")) {
 			path = path.replaceAll("[^\\/]+\\/\\.\\.\\/", "");
 		}
+		while(path.contains("./")) {
+			path = path.replaceAll("\\.\\/", "");
+		}
 		return path;
 	}
 }

@@ -18,6 +18,8 @@ public class FileHandleUtilsTest {
 
 	@Test
 	public void testNormalise() {
+		Assert.assertEquals("test.txt", FileHandleUtils.normalise("./test.txt"));
+		Assert.assertEquals("dir1/test.txt", FileHandleUtils.normalise("dir1/./test.txt"));
 		Assert.assertEquals("test.txt", FileHandleUtils.normalise("./../test.txt"));
 		Assert.assertEquals("dir2/test.txt", FileHandleUtils.normalise("dir/../dir2/test.txt"));
 		Assert.assertEquals("dir3/test.txt", FileHandleUtils.normalise("dir/../dir2/../dir3/test.txt"));

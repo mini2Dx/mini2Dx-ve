@@ -1,4 +1,4 @@
-[1.9.0-SNAPSHOT]
+[1.9.0]
 - Update to LibGDX 1.9.8
 - [BREAKING] UiContainer can now select a NavigationMode instead of only enabling/disabling keyboard
 - [BREAKING] Font loading split into BitmapFont and MonospaceFont
@@ -26,6 +26,7 @@
 - Fixed DesktopPlayerData not ensuring data directory exists when writing JSON or binary files
 - Fixed Sprite not carrying over flip status from TextureRegion
 - Fixed out of bounds error when TextBox is set to value smaller than previous value
+- Fixed LibGDX stages rendering upside-down
 - (#79) Add isInterpolateRequired() to collision classes
 
 [1.8.2]

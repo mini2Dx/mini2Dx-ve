@@ -71,6 +71,7 @@ public class UATApplication extends ScreenBasedGame {
 		addScreen(new FlexUiUAT(assetManager));
 		addScreen(new PixelUiUAT(assetManager));
 		addScreen(new UiSerializationUAT(assetManager));
+		addScreen(new StageUAT(assetManager));
 	}
 
 	@Override

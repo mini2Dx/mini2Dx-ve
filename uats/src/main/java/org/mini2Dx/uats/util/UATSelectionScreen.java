@@ -316,7 +316,7 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 				nextScreenId = ScreenIds.getScreenId(ControllerUAT.class);
 			}
 		})));
-		uatsDialog.add(FlexRow.withElements("row-ui", UiUtils.createButton(uiNavigation, "Flex UI Layout", new ActionListener() {
+		uatsDialog.add(FlexRow.withElements("row-ui-flex", UiUtils.createButton(uiNavigation, "Flex UI Layout", new ActionListener() {
 			@Override
 			public void onActionBegin(ActionEvent event) {
 			}
@@ -326,7 +326,7 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 				nextScreenId = ScreenIds.getScreenId(FlexUiUAT.class);
 			}
 		})));
-		uatsDialog.add(FlexRow.withElements("row-ui", UiUtils.createButton(uiNavigation, "Pixel UI Layout", new ActionListener() {
+		uatsDialog.add(FlexRow.withElements("row-ui-pixel", UiUtils.createButton(uiNavigation, "Pixel UI Layout", new ActionListener() {
 			@Override
 			public void onActionBegin(ActionEvent event) {
 			}
@@ -344,6 +344,16 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 			@Override
 			public void onActionEnd(ActionEvent event) {
 				nextScreenId = ScreenIds.getScreenId(UiSerializationUAT.class);
+			}
+		})));
+		uatsDialog.add(FlexRow.withElements("row-stage", UiUtils.createButton(uiNavigation, "LibGDX Stage", new ActionListener() {
+			@Override
+			public void onActionBegin(ActionEvent event) {
+			}
+
+			@Override
+			public void onActionEnd(ActionEvent event) {
+				nextScreenId = ScreenIds.getScreenId(StageUAT.class);
 			}
 		})));
 		uatsDialog.add(FlexRow.withElements("row-utilities", UiUtils.createHeader("Utilities")));

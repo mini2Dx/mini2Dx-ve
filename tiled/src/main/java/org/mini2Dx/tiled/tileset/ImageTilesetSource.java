@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.tiled.tileset;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
@@ -92,7 +93,7 @@ public class ImageTilesetSource extends TilesetSource {
 	@Override
 	public Array<AssetDescriptor> getDependencies(FileHandle tmxPath) {
 		Array<AssetDescriptor> dependencies = new Array<AssetDescriptor>();
-		dependencies.add(new AssetDescriptor(tmxPath.sibling(tilesetImagePath).path(), Pixmap.class));
+		dependencies.add(new AssetDescriptor(tilesetImagePath, Pixmap.class));
 		return dependencies;
 	}
 
@@ -101,7 +102,23 @@ public class ImageTilesetSource extends TilesetSource {
 		if(textureRegion != null) {
 			return;
 		}
-		loadTileImages(new Pixmap(tmxPath.sibling(tilesetImagePath)));
+		switch(tmxPath.type()) {
+		case Classpath:
+			loadTileImages(new Pixmap(Gdx.files.classpath(tilesetImagePath)));
+			break;
+		case Internal:
+			loadTileImages(new Pixmap(Gdx.files.internal(tilesetImagePath)));
+			break;
+		case External:
+			loadTileImages(new Pixmap(Gdx.files.external(tilesetImagePath)));
+			break;
+		case Absolute:
+			loadTileImages(new Pixmap(Gdx.files.absolute(tilesetImagePath)));
+			break;
+		case Local:
+			loadTileImages(new Pixmap(Gdx.files.local(tilesetImagePath)));
+			break;
+		}
 	}
 	
 	@Override
@@ -109,7 +126,7 @@ public class ImageTilesetSource extends TilesetSource {
 		if(textureRegion != null) {
 			return;
 		}
-		loadTileImages(assetManager.get(tmxPath.sibling(tilesetImagePath).path(), Pixmap.class));
+		loadTileImages(assetManager.get(tilesetImagePath, Pixmap.class));
 	}
 
 	@Override
@@ -118,7 +135,7 @@ public class ImageTilesetSource extends TilesetSource {
 			return;
 		}
 		final TextureAtlas.AtlasRegion atlasRegion = textureAtlas.findRegion(tilesetImagePath);
-		if(atlasRegion == null && tilesetImagePath.indexOf('.') > -1) {
+		if(atlasRegion == null && tilesetImagePath.lastIndexOf('.') > -1) {
 			loadTileImages(new TextureRegion(textureAtlas.findRegion(
 					tilesetImagePath.substring(0, tilesetImagePath.lastIndexOf('.')))));
 		} else {

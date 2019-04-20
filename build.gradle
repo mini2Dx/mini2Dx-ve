@@ -68,7 +68,7 @@ def docProjects() {
 	subprojects.findAll { !it.name.contains('uat') }
 }
 
-def projectVersion = '1.9.0';
+def projectVersion = '1.9.1-SNAPSHOT';
 
 configure(docProjects()) {
 	apply plugin: "signing"

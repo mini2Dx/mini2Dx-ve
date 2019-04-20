@@ -398,11 +398,6 @@ public class LibGdxGraphics implements Graphics {
 	@Override
 	public void drawStage(Stage stage) {
 		endRendering();
-		
-		Camera stageCamera = stage.getViewport().getCamera();
-		stageCamera.up.set(0, -1, 0);
-		stageCamera.direction.set(0, 0, 1);
-		stageCamera.update();
 
 		if (!stage.getRoot().isVisible()) {
 			return;
@@ -410,7 +405,8 @@ public class LibGdxGraphics implements Graphics {
 
 		renderingStage = true;
 		beginRendering();
-		
+
+		Camera stageCamera = stage.getViewport().getCamera();
 		spriteBatch.setProjectionMatrix(stageCamera.combined);
 		polygonSpriteBatch.setProjectionMatrix(stageCamera.combined);
 		shapeRenderer.setProjectionMatrix(stageCamera.combined);

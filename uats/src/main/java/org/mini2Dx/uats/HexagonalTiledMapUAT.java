@@ -32,6 +32,9 @@ import com.badlogic.gdx.graphics.Color;
  *
  */
 public class HexagonalTiledMapUAT extends BasicGameScreen {
+    private static final String STAGGER_X_MAP = "hexagonal_x.tmx";
+    private static final String STAGGER_Y_MAP = "hexagonal_y.tmx";
+
 	private final AssetManager assetManager;
 	
     private TiledMap staggerXTiledMap, staggerYTiledMap;
@@ -39,16 +42,16 @@ public class HexagonalTiledMapUAT extends BasicGameScreen {
     public HexagonalTiledMapUAT(AssetManager assetManager) {
     	super();
 		this.assetManager = assetManager;
-		assetManager.load("hexagonal_x.tmx", TiledMap.class);
-		assetManager.load("hexagonal_y.tmx", TiledMap.class);
+		assetManager.load(STAGGER_X_MAP, TiledMap.class);
+		assetManager.load(STAGGER_Y_MAP, TiledMap.class);
 	}
 
     @Override
     public void initialise(GameContainer gc) {
     	assetManager.finishLoading();
         try {
-            staggerXTiledMap = assetManager.get("hexagonal_x.tmx", TiledMap.class);
-            staggerYTiledMap = assetManager.get("hexagonal_y.tmx", TiledMap.class);
+            staggerXTiledMap = assetManager.get(STAGGER_X_MAP, TiledMap.class);
+            staggerYTiledMap = assetManager.get(STAGGER_Y_MAP, TiledMap.class);
         } catch (TiledException e) {
             e.printStackTrace();
         }

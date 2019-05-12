@@ -25,6 +25,7 @@ public class HexagonalTileLayerRenderer implements TileLayerRenderer {
 	private final TiledMap tiledMap;
 
 	private final int hexWidth, hexHeight;
+	private final int sideOffsetX, sideOffsetY;
 	private final int quarterHexWidth, quarterHexHeight, halfHexWidth, halfHexHeight, threeQuarterHexWidth,
 			threeQuarterHexHeight;
 
@@ -33,15 +34,18 @@ public class HexagonalTileLayerRenderer implements TileLayerRenderer {
 		this.cacheLayers = cacheLayers;
 		this.tiledMap = tiledMap;
 
+		sideOffsetX = (tiledMap.getTileWidth() - (tiledMap.getSideLength() * 2)) / 2;
+		sideOffsetY = (tiledMap.getTileHeight() - (tiledMap.getSideLength() * 2)) / 2;
+
 		switch (tiledMap.getStaggerAxis()) {
 		case X:
-			hexWidth = tiledMap.getSideLength() * 2;
+			hexWidth = (tiledMap.getSideLength() * 2) + sideOffsetX;
 			hexHeight = tiledMap.getTileHeight();
 			break;
 		case Y:
 		default:
-			hexHeight = tiledMap.getSideLength() * 2;
 			hexWidth = tiledMap.getTileWidth();
+			hexHeight = (tiledMap.getSideLength() * 2) + sideOffsetY;
 			break;
 		}
 

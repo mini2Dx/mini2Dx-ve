@@ -53,9 +53,9 @@ public class DesktopMini2DxGame implements Application {
 	protected final ApplicationListener listener;
 	protected Thread mainLoopThread;
 	protected boolean running = true;
-	protected final Array<Runnable> runnables = new Array<Runnable>();
-	protected final Array<Runnable> executedRunnables = new Array<Runnable>();
-	protected final SnapshotArray<LifecycleListener> lifecycleListeners = new SnapshotArray<LifecycleListener>();
+	protected final Array<Runnable> runnables = new Array<Runnable>(Runnable.class);
+	protected final Array<Runnable> executedRunnables = new Array<Runnable>(Runnable.class);
+	protected final SnapshotArray<LifecycleListener> lifecycleListeners = new SnapshotArray<LifecycleListener>(LifecycleListener.class);
 	protected int logLevel = LOG_INFO;
 	protected ApplicationLogger applicationLogger;
 	protected String preferencesdir;

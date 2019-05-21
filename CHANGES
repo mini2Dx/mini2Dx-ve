@@ -1,4 +1,4 @@
-[1.9.2-SNAPSHOT]
+[1.9.2]
 - (#86) Fix cast exception when minimizing desktop-based games
 
 [1.9.1]

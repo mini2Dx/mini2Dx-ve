@@ -1,4 +1,5 @@
 [1.9.3-SNAPSHOT]
+- BasicGame now implements GameResizeListener
 
 [1.9.2]
 - (#86) Fix cast exception when minimizing desktop-based games

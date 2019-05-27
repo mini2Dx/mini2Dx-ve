@@ -18,11 +18,12 @@ import org.mini2Dx.core.graphics.Graphics;
 /**
  * A simplified {@link GameContainer} for beginners to build upon
  */
-public abstract class BasicGame extends GameContainer implements InputProcessor {
+public abstract class BasicGame extends GameContainer implements InputProcessor, GameResizeListener {
 	@Override
 	protected void preinit(Graphics g) {
 		super.preinit(g);
 		Gdx.input.setInputProcessor(this);
+		addResizeListener(this);
 	}
 	
 	@Override
@@ -34,7 +35,12 @@ public abstract class BasicGame extends GameContainer implements InputProcessor 
 	public void onResume() {
 		Gdx.app.log("INFO", "Game window resumed");
 	}
-	
+
+	@Override
+	public void onResize(int width, int height) {
+		Gdx.app.log("INFO", "Game window resized to " + width + "x" + height);
+	}
+
 	@Override
 	public boolean keyDown(int keycode) {
 		return false;

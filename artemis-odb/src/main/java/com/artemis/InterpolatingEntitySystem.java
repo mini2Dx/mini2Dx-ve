@@ -81,9 +81,13 @@ public abstract class InterpolatingEntitySystem extends EntitySystem implements 
 		if(mdxWorld == null) {
 			return;
 		}
+		activeEntityBag = subscription.getEntities();
+
 		if(activeEntityBag == null) {
 			return;
 		}
+		activeEntityIds = activeEntityBag.getData();
+
 		preInterpolate();
 		for (int i = 0, s = activeEntityBag.size(); s > i; i++) {
 			interpolate(activeEntityIds[i], mdxWorld.alpha);

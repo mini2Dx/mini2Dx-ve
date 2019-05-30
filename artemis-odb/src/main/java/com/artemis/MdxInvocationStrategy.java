@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015 See AUTHORS file
  * All rights reserved.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
- *
+ * <p>
  * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
  * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
  * Neither the name of the mini2Dx nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
@@ -19,25 +19,31 @@ import org.mini2Dx.core.graphics.Graphics;
  */
 public class MdxInvocationStrategy extends InvocationStrategy {
 
-    protected void interpolate(Bag<InterpolatingSystem> systemsBag) {
-	Object[] systems = systemsBag.getData();
-	for (int i = 0, s = systemsBag.size(); s > i; i++) {
-	    if (disabled.get(i)) {
-		continue;
-	    }
-	    InterpolatingSystem system = (InterpolatingSystem) systems[i];
-	    system.interpolateSystem();
-	}
-    }
+	protected void interpolate(Bag<InterpolatingSystem> systemsBag) {
+		Object[] systems = systemsBag.getData();
+		for (int i = 0, s = systemsBag.size(); s > i; i++) {
+			if (disabled.get(i)) {
+				continue;
+			}
+			updateEntityStates();
 
-    protected void render(Bag<RenderingSystem> systemsBag, Graphics g) {
-	Object[] systems = systemsBag.getData();
-	for (int i = 0, s = systemsBag.size(); s > i; i++) {
-	    if (disabled.get(i)) {
-		continue;
-	    }
-	    RenderingSystem system = (RenderingSystem) systems[i];
-	    system.renderSystem(g);
+			InterpolatingSystem system = (InterpolatingSystem) systems[i];
+			system.interpolateSystem();
+		}
+
+		updateEntityStates();
 	}
-    }
+
+	protected void render(Bag<RenderingSystem> systemsBag, Graphics g) {
+		Object[] systems = systemsBag.getData();
+		for (int i = 0, s = systemsBag.size(); s > i; i++) {
+			if (disabled.get(i)) {
+				continue;
+			}
+			updateEntityStates();
+
+			RenderingSystem system = (RenderingSystem) systems[i];
+			system.renderSystem(g);
+		}
+	}
 }

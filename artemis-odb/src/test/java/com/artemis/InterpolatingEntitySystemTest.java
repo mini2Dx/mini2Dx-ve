@@ -32,6 +32,8 @@ public class InterpolatingEntitySystemTest extends InterpolatingEntitySystem {
 	
 	private static Set<Integer> updatedIds, interpolatedIds;
 	private static float expectedDelta, expectedAlpha;
+
+	private static int deleteEntityId = -1;
 	
 	public InterpolatingEntitySystemTest() {
 		super(Aspect.all(DummyComponent.class));
@@ -72,6 +74,23 @@ public class InterpolatingEntitySystemTest extends InterpolatingEntitySystem {
 		expectedDelta = MathUtils.random();
 		world.setDelta(expectedDelta);
 		world.process();
+	}
+
+	@Test
+	public void testDeleteEntity() {
+		Entity entity1 = world.createEntity();
+		entity1.edit().add(new DummyComponent());
+
+		Entity entity2 = world.createEntity();
+		entity2.edit().add(new DummyComponent());
+
+		deleteEntityId = entity2.getId();
+
+		world.process();
+		world.interpolate();
+
+		Assert.assertEquals(true, interpolatedIds.contains(entity1.getId()));
+		Assert.assertEquals(false, interpolatedIds.contains(entity2.getId()));
 	}
 	
 	@Test
@@ -123,6 +142,10 @@ public class InterpolatingEntitySystemTest extends InterpolatingEntitySystem {
 	protected void update(int entityId, float delta) {
 		updatedIds.add(entityId);
 		Assert.assertEquals(expectedDelta, delta);
+
+		if(deleteEntityId == entityId) {
+			getWorld().delete(entityId);
+		}
 	}
 
 	@Override

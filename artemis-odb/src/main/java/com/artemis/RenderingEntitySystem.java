@@ -54,8 +54,6 @@ public abstract class RenderingEntitySystem extends EntitySystem implements Rend
 	
 	@Override
 	protected void processSystem() {
-		activeEntityBag = subscription.getEntities();
-		activeEntityIds = activeEntityBag.getData();
 	}
 	
 	@Override
@@ -63,9 +61,13 @@ public abstract class RenderingEntitySystem extends EntitySystem implements Rend
 		if(mdxWorld == null) {
 			return;
 		}
+		activeEntityBag = subscription.getEntities();
+
 		if(activeEntityBag == null) {
 			return;
 		}
+		activeEntityIds = activeEntityBag.getData();
+
 		preRender(g);
 		for (int i = 0, s = activeEntityBag.size(); s > i; i++) {
 			render(activeEntityIds[i], g);

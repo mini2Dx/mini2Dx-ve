@@ -1,4 +1,6 @@
-[1.9.3-SNAPSHOT]
+[1.9.3]
+- Fixed crash on Android when playing sounds (thanks Dan Allen)
+- Fixed entities being scheduled for interpolate/render after being removed during update
 - BasicGame now implements GameResizeListener
 
 [1.9.2]

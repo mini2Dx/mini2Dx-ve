@@ -49,7 +49,7 @@ import java.util.List;
 public class AndroidMini2DxAudio implements Mini2DxAudio {
 	private final SoundPool soundPool;
 	private final AudioManager manager;
-	private LongArray recentSoundIds;
+	private final LongArray recentSoundIds = new LongArray();
 	protected final List<AndroidMini2DxMusic> musics = new ArrayList<AndroidMini2DxMusic>();
 	private final Array<SoundCompletionListener> soundCompletionListeners = new Array<SoundCompletionListener>(false, 1, SoundCompletionListener.class);
 

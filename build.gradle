@@ -374,7 +374,7 @@ project(":" + rootProject.name + "-uats") {
 	}
 
 	if(!projectVersion.contains("SNAPSHOT")) {
-		def docDirectory = new File(project.parent.projectDir.getParentFile(), "mini2Dx/docs/javadoc/${projectVersion}");
+		def docDirectory = new File(project.parent.projectDir.getParentFile(), "mini2Dx-website/docs/javadoc/${projectVersion}");
 		println docDirectory.absolutePath
 
 		task docs(type: Javadoc) {

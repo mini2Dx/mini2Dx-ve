@@ -275,6 +275,20 @@ public class RectangleTest {
 	}
 
 	@Test
+	public void testIntersectsRotatedRectangleFalse() {
+		rectangle1 = new Rectangle(0,0,80,80);
+		rectangle2 = new Rectangle(120, 0, 20, 160);
+
+		Assert.assertEquals(false, rectangle1.intersects(rectangle2));
+		Assert.assertEquals(false, rectangle2.intersects(rectangle1));
+
+		rectangle2.rotateAround(130, 80, 45);
+
+		Assert.assertEquals(false, rectangle1.intersects(rectangle2));
+		Assert.assertEquals(false, rectangle2.intersects(rectangle1));
+	}
+
+	@Test
 	public void testIntersectsLineWhenNotRotated() {
 		rectangle1 = new Rectangle(100f, 100f, 50f, 50f);
 		LineSegment line = new LineSegment(0, 100, 0, 200);

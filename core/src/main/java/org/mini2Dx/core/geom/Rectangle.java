@@ -134,27 +134,16 @@ public class Rectangle extends Shape implements
 
 	/**
 	 * Returns if the specified {@link Rectangle} intersects this one
-	 * 
+	 *
 	 * @param rectangle
 	 *            The {@link Rectangle} to test for intersection
 	 * @return True if the {@link Rectangle}s intersect
 	 */
 	public boolean intersects(Rectangle rectangle) {
-		boolean xAxisOverlaps = true;
-		boolean yAxisOverlaps = true;
-
-		if (polygon.getMaxX() < rectangle.getMinX())
-			xAxisOverlaps = false;
-		if (rectangle.getMaxX() < polygon.getMinX())
-			xAxisOverlaps = false;
-		if (polygon.getMaxY() < rectangle.getMinY())
-			yAxisOverlaps = false;
-		if (rectangle.getMaxY() < polygon.getMinY())
-			yAxisOverlaps = false;
-
-		return xAxisOverlaps && yAxisOverlaps;
+		return polygon.intersects(rectangle.polygon);
 	}
-	
+
+
 	public boolean intersects(Parallelogram parallelogram) {
 		TMP_RECTANGLE.set(parallelogram.getX(),
 				parallelogram.getY(), parallelogram.getWidth(),

@@ -144,7 +144,9 @@ public class GridUiNavigation implements UiNavigation {
 			break;
 		case Keys.S:
 		case Keys.DOWN:
-			if (cursorY < getTotalRows() - 1) {
+			if (getIndex(cursorX, cursorY + 1) >= navigation.size){
+				navigation.get(getIndex(cursorX, cursorY)).invokeEndHover();
+			}else if (cursorY < getTotalRows() - 1) {
 				navigation.get(getIndex(cursorX, cursorY)).invokeEndHover();
 				cursorY++;
 			} else {
@@ -161,7 +163,9 @@ public class GridUiNavigation implements UiNavigation {
 			break;
 		case Keys.D:
 		case Keys.RIGHT:
-			if (cursorX < columns - 1) {
+			if (getIndex(cursorX + 1, cursorY) >= navigation.size) {
+				navigation.get(getIndex(cursorX, cursorY)).invokeEndHover();
+			}else if (cursorX < columns - 1) {
 				navigation.get(getIndex(cursorX, cursorY)).invokeEndHover();
 				cursorX++;
 			} else {

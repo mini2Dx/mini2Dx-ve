@@ -24,9 +24,11 @@ import org.mini2Dx.core.geom.Rectangle;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Unit tests for {@link ConcurrentRegionQuadTree}
@@ -48,6 +50,8 @@ public class ConcurrentRegionQuadTreeTest implements Runnable {
 	private final AtomicInteger collisionsFound = new AtomicInteger(0);
 	private final AtomicInteger collisionsMoved = new AtomicInteger(0);
 	private final Queue<CollisionBox> threadCollisions = new ConcurrentLinkedQueue<CollisionBox>();
+
+	private final CountDownLatch concurrentTestStartLatch = new CountDownLatch(1);
 
 	@Before
 	public void setup() {
@@ -71,6 +75,41 @@ public class ConcurrentRegionQuadTreeTest implements Runnable {
 		}
 		long duration = System.nanoTime() - startTime;
 		System.out.println("Took " + duration + "ns to add " + totalElements + " elements individually to "
+				+ ConcurrentRegionQuadTree.class.getSimpleName());
+	}
+
+	@Test
+	public void testConcurrentAdd() throws TimeoutException {
+		final int totalThreads = 4;
+		final int elementsPerThread = 1000;
+		final int expectedTotalElements = totalThreads * elementsPerThread;
+
+		for(int i = 0; i < totalThreads; i++) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						concurrentTestStartLatch.await();
+					} catch (Exception e) {}
+
+					Random random = new Random();
+					for (int i = 0; i < elementsPerThread; i++) {
+						CollisionBox rect = new CollisionBox(random.nextInt(96), random.nextInt(96), 32f, 32f);
+						Assert.assertEquals(true, rootQuad.add(rect));
+					}
+					waiter.resume();
+				}
+			}).start();
+		}
+
+		final long startTime = System.nanoTime();
+		concurrentTestStartLatch.countDown();
+		waiter.await(CONCURRENCY_TEST_TIMEOUT, totalThreads);
+
+		Assert.assertEquals(expectedTotalElements, rootQuad.getElements().size);
+
+		long duration = System.nanoTime() - startTime;
+		System.out.println("Took " + duration + "ns to add " + expectedTotalElements + " elements individually to "
 				+ ConcurrentRegionQuadTree.class.getSimpleName());
 	}
 
@@ -359,6 +398,7 @@ public class ConcurrentRegionQuadTreeTest implements Runnable {
 			new Thread(this).start();
 		}
 
+		concurrentTestStartLatch.countDown();
 		waiter.await(CONCURRENCY_TEST_TIMEOUT);
 
 		System.out.println(rootQuad.getTotalMergeOperations() + " total merge operations.");
@@ -389,6 +429,8 @@ public class ConcurrentRegionQuadTreeTest implements Runnable {
 
 		while (rootQuad.getTotalMergeOperations() < 20 || collisionsFound.get() == 0) {
 			try {
+				concurrentTestStartLatch.await();
+
 				if (threadCollisions.isEmpty()) {
 					int totalCollisions = MathUtils.random(1, MathUtils.round(CONCURRENCY_TREE_WIDTH));
 					

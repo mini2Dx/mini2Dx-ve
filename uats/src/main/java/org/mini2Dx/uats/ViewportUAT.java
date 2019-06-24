@@ -13,6 +13,7 @@ package org.mini2Dx.uats;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import org.mini2Dx.core.game.GameContainer;
@@ -34,14 +35,20 @@ public class ViewportUAT extends BasicGameScreen {
 	private static final int VIEWPORT_WIDTH = 320;
 	private static final int VIEWPORT_HEIGHT = 240;
 
+	private final FileHandleResolver fileHandleResolver;
+
 	private final Viewport[] viewports = new Viewport[5];
 
 	private Texture texture;
 	private int viewportIndex;
 
+	public ViewportUAT(FileHandleResolver fileHandleResolver) {
+		this.fileHandleResolver = fileHandleResolver;
+	}
+
 	@Override
 	public void initialise(GameContainer gc) {
-		texture = new Texture(Gdx.files.classpath(TEXTURE_PACK + ".png"));
+		texture = new Texture(fileHandleResolver.resolve(TEXTURE_PACK + ".png"));
 
 		viewports[0] = new FillViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 		viewports[1] = new FitViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);

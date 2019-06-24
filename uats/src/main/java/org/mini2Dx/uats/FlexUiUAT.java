@@ -12,6 +12,7 @@
 package org.mini2Dx.uats;
 
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import org.mini2Dx.core.Mdx;
 import org.mini2Dx.core.exception.ControllerPlatformException;
 import org.mini2Dx.core.game.GameContainer;
@@ -49,7 +50,8 @@ import com.badlogic.gdx.graphics.Color;
  */
 public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 	private final AssetManager assetManager;
-	
+	private final FileHandleResolver fileHandleResolver;
+
 	private UiContainer uiContainer;
 	private ControllerUiInput<?> controllerInput;
 	
@@ -65,9 +67,10 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 	
 	private int nextScreenId = -1;
 
-	public FlexUiUAT(AssetManager assetManager) {
+	public FlexUiUAT(AssetManager assetManager, FileHandleResolver fileHandleResolver) {
 		super();
 		this.assetManager = assetManager;
+		this.fileHandleResolver = fileHandleResolver;
 	}
 
 	@Override
@@ -127,7 +130,7 @@ public class FlexUiUAT extends BasicGameScreen implements GameResizeListener {
 			UiContainer.setTheme(assetManager.get(UiTheme.DEFAULT_THEME_FILENAME, UiTheme.class));
 		}
 		final InputMultiplexer inputMultiplexer = new InputMultiplexer();
-		inputMultiplexer.addProcessor(UiUtils.getCustomCursor());
+		inputMultiplexer.addProcessor(UiUtils.getCustomCursor(fileHandleResolver));
 		inputMultiplexer.addProcessor(uiContainer);
 		Gdx.input.setInputProcessor(inputMultiplexer);
 

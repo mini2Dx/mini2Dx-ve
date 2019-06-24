@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.uats;
 
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import org.mini2Dx.core.Mdx;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
@@ -36,17 +37,23 @@ import com.badlogic.gdx.utils.Array;
  */
 public class ParticleEffectsUAT extends BasicGameScreen {
 	private static final Color WHITE = ColorUtils.rgbToColor("254,254,254");
-	
+
+	private final FileHandleResolver fileHandleResolver;
+
 	private ParticleEffect prototype;
 	private ParticleEffectPool pool;
 	private Array<PooledParticleEffect> effects;
 	
 	private float timer = -1f;
 
+	public ParticleEffectsUAT(FileHandleResolver fileHandleResolver) {
+		this.fileHandleResolver = fileHandleResolver;
+	}
+
 	@Override
 	public void initialise(GameContainer gc) {		
 		prototype = new ParticleEffect();
-		prototype.load(Gdx.files.classpath("explosion.p"), Gdx.files.classpath("particles"));
+		prototype.load(fileHandleResolver.resolve("explosion.p"), fileHandleResolver.resolve("particles"));
 		prototype.setPosition(gc.getWidth() / 2f, gc.getHeight() / 2f);
 		prototype.start();
 		

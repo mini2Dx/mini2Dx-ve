@@ -13,6 +13,7 @@ package org.mini2Dx.uats;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -27,19 +28,21 @@ import org.mini2Dx.uats.util.ScreenIds;
 public class StageUAT extends BasicGameScreen {
 	public static final String TEXTURE_PACK = "texture-region-uat";
 	private final AssetManager assetManager;
+	private final FileHandleResolver fileHandleResolver;
 
 	private Stage stage;
 
-	public StageUAT(AssetManager assetManager) {
+	public StageUAT(AssetManager assetManager, FileHandleResolver fileHandleResolver) {
 		super();
 		this.assetManager = assetManager;
+		this.fileHandleResolver = fileHandleResolver;
 	}
 
 	@Override
 	public void initialise(GameContainer gc) {
 		stage = gc.createStage(new ScreenViewport());
 
-		Image image1 = new Image(new Texture(Gdx.files.classpath(TEXTURE_PACK + ".png")));
+		Image image1 = new Image(new Texture(fileHandleResolver.resolve(TEXTURE_PACK + ".png")));
 		image1.setPosition(0,0);
 		image1.setOrigin(image1.getWidth()/2,image1.getHeight()/2);
 		stage.addActor(image1);

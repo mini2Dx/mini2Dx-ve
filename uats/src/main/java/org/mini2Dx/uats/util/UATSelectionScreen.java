@@ -13,6 +13,7 @@ package org.mini2Dx.uats.util;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import org.mini2Dx.core.Mdx;
 import org.mini2Dx.core.exception.ControllerPlatformException;
 import org.mini2Dx.core.game.GameContainer;
@@ -54,6 +55,7 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 	public static final int SCREEN_ID = 1;
 
 	private final AssetManager assetManager;
+	private final FileHandleResolver fileHandleResolver;
 
 	private UiContainer uiContainer;
 	private VerticalUiNavigation uiNavigation;
@@ -62,8 +64,9 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 	private InputSource lastInputSource = InputSource.KEYBOARD_MOUSE;
 	private int nextScreenId = -1;
 
-	public UATSelectionScreen(AssetManager assetManager) {
+	public UATSelectionScreen(AssetManager assetManager, FileHandleResolver fileHandleResolver) {
 		this.assetManager = assetManager;
+		this.fileHandleResolver = fileHandleResolver;
 	}
 
 	@Override
@@ -121,7 +124,7 @@ public class UATSelectionScreen extends BasicGameScreen implements ScreenSizeLis
 		}
 
 		final InputMultiplexer inputMultiplexer = new InputMultiplexer();
-		inputMultiplexer.addProcessor(UiUtils.getCustomCursor());
+		inputMultiplexer.addProcessor(UiUtils.getCustomCursor(fileHandleResolver));
 		inputMultiplexer.addProcessor(uiContainer);
 		Gdx.input.setInputProcessor(inputMultiplexer);
 

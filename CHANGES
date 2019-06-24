@@ -1,4 +1,5 @@
 [1.9.5-SNAPSHOT]
+- Fixed duplicate Y value correction on flipped Tiled object templates that reference tiles
 
 [1.9.4]
 - Fixed for ArrayOutOfBoundsException in GridUiNavigation (thanks Dan Allen)

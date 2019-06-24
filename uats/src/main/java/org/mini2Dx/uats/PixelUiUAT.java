@@ -15,6 +15,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
@@ -51,6 +52,7 @@ import org.mini2Dx.ui.style.UiTheme;
  */
 public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 	private final AssetManager assetManager;
+	private final FileHandleResolver fileHandleResolver;
 
 	private UiContainer uiContainer;
 	private ControllerUiInput<?> controllerInput;
@@ -68,9 +70,10 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 
 	private int nextScreenId = -1;
 
-	public PixelUiUAT(AssetManager assetManager) {
+	public PixelUiUAT(AssetManager assetManager, FileHandleResolver fileHandleResolver) {
 		super();
 		this.assetManager = assetManager;
+		this.fileHandleResolver = fileHandleResolver;
 	}
 
 	@Override
@@ -147,7 +150,7 @@ public class PixelUiUAT extends BasicGameScreen implements GameResizeListener {
 		centerContainer.applyEffect(new SlideIn(SlideDirection.UP, 0.5f));
 
 		final InputMultiplexer inputMultiplexer = new InputMultiplexer();
-		inputMultiplexer.addProcessor(UiUtils.getCustomCursor());
+		inputMultiplexer.addProcessor(UiUtils.getCustomCursor(fileHandleResolver));
 		inputMultiplexer.addProcessor(uiContainer);
 		Gdx.input.setInputProcessor(inputMultiplexer);
 	}

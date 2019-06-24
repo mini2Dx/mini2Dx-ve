@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.uats;
 
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
@@ -35,6 +36,8 @@ public class TextureRegionUAT extends BasicGameScreen {
 	private static final float MARGIN = 4f;
 	public static final String TEXTURE_PACK = "texture-region-uat";
 
+	private final FileHandleResolver fileHandleResolver;
+
 	private Texture texture;
 	private TextureRegion fullSizeFromTexture, regionFromTexture;
 	private TextureRegion fullSizeFromTextureRegion, regionFromTextureRegion;
@@ -45,9 +48,13 @@ public class TextureRegionUAT extends BasicGameScreen {
 	private NinePatch ninePatchFromTextureRegion;
 	private NinePatch ninePatchFromTextureAtlas;
 
+	public TextureRegionUAT(FileHandleResolver fileHandleResolver) {
+		this.fileHandleResolver = fileHandleResolver;
+	}
+
 	@Override
 	public void initialise(GameContainer gc) {
-		texture = new Texture(Gdx.files.classpath(TEXTURE_PACK + ".png"));
+		texture = new Texture(fileHandleResolver.resolve(TEXTURE_PACK + ".png"));
 		fullSizeFromTexture = new TextureRegion(texture);
 		debug("fullSizeFromTexture", fullSizeFromTexture);
 
@@ -60,7 +67,7 @@ public class TextureRegionUAT extends BasicGameScreen {
 		regionFromTextureRegion = new TextureRegion(regionFromTexture, 2, 2, 30, 44);
 		debug("regionFromTextureRegion", regionFromTextureRegion);
 
-		textureAtlas = new TextureAtlas(Gdx.files.classpath(TEXTURE_PACK + ".atlas"));
+		textureAtlas = new TextureAtlas(fileHandleResolver.resolve(TEXTURE_PACK + ".atlas"));
 
 		regionFromTextureAtlas = new TextureRegion(textureAtlas.findRegion("cardDiamondsJ"));
 		debug("regionFromTextureAtlas", regionFromTextureAtlas);

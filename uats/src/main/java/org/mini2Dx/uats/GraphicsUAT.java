@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.uats;
 
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.geom.Polygon;
 import org.mini2Dx.core.graphics.Animation;
@@ -41,6 +42,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
  */
 public class GraphicsUAT extends BasicGameScreen {
 	private final AssetManager assetManager;
+	private final FileHandleResolver fileHandleResolver;
 
 	private int playerX, playerY;
 	private float scaleX, scaleY;
@@ -55,8 +57,9 @@ public class GraphicsUAT extends BasicGameScreen {
 	private NinePatch ninePatch;
 	private RepeatedNinePatch repeatedNinePatch;
 
-	public GraphicsUAT(AssetManager assetManager) {
+	public GraphicsUAT(AssetManager assetManager, FileHandleResolver fileHandleResolver) {
 		this.assetManager = assetManager;
+		this.fileHandleResolver = fileHandleResolver;
 	}
 
 	@Override
@@ -67,7 +70,7 @@ public class GraphicsUAT extends BasicGameScreen {
 		scaleY = 2f;
 		rotation = 0;
 
-		texture = new Texture(Gdx.files.classpath("tank.png"));
+		texture = new Texture(fileHandleResolver.resolve("tank.png"));
 		textureRegion = new TextureRegion(texture);
 
 		spriteWithTexture = new Sprite(texture);
@@ -92,7 +95,7 @@ public class GraphicsUAT extends BasicGameScreen {
 		}
 		if (repeatedNinePatch == null) {
 			repeatedNinePatch = new RepeatedNinePatch(
-					new TextureRegion(new Texture(Gdx.files.internal("repeatedNinePatch.png"))), 4, 4, 4, 4);
+					new TextureRegion(new Texture(fileHandleResolver.resolve("repeatedNinePatch.png"))), 4, 4, 4, 4);
 		}
 
 		detectKeyPress(screenManager);

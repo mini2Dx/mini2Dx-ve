@@ -499,6 +499,8 @@ public class TiledParser implements TiledParserNotifier {
 
 			String template = element.getAttribute("template", null);
 
+			boolean yAdjusted = false;
+
 			final TiledObject objectTemplate;
 			if(template != null) {
 				final TiledObjectTemplate tiledObjectTemplate;
@@ -515,6 +517,7 @@ public class TiledParser implements TiledParserNotifier {
 					if(tiledObjectTemplate.getTileset() != null) {
 						//Origin is bottom-left, need to adjust to top-left
 						y -= objectTemplate.getHeight();
+						yAdjusted= true;
 					}
 				} else {
 					objectTemplate = null;
@@ -527,9 +530,10 @@ public class TiledParser implements TiledParserNotifier {
 			float height = element.getFloatAttribute("height", objectTemplate != null ? objectTemplate.getHeight() : 0);
 			
 			long rawGid = Long.parseLong(element.getAttribute("gid", "-1"));
-			if (rawGid != -1) {
+			if (rawGid != -1 && !yAdjusted) {
 				// Workaround for Tiled issue #386
 				y -= height;
+				yAdjusted= true;
 			}
 
 			TiledObject object = new TiledObject(id, x, y, width, height);

@@ -51,27 +51,27 @@ public class UATApplication extends ScreenBasedGame {
 		assetManager.finishLoading();
 
 		addScreen(new LoadingScreen(assetManager));
-		addScreen(new UATSelectionScreen(assetManager));
+		addScreen(new UATSelectionScreen(assetManager, fallbackFileHandleResolver));
 		addScreen(new BlendingUAT(assetManager));
 		addScreen(new ClippingUAT(assetManager));
 		addScreen(new GeometryUAT());
-		addScreen(new GraphicsUAT(assetManager));
-		addScreen(new TextureRegionUAT());
-		addScreen(new SpriteUAT());
-		addScreen(new ViewportUAT());
+		addScreen(new GraphicsUAT(assetManager, fallbackFileHandleResolver));
+		addScreen(new TextureRegionUAT(fallbackFileHandleResolver));
+		addScreen(new SpriteUAT(fallbackFileHandleResolver));
+		addScreen(new ViewportUAT(fallbackFileHandleResolver));
 		addScreen(new MonospaceFontUAT(assetManager));
-		addScreen(new AudioUAT());
+		addScreen(new AudioUAT(fallbackFileHandleResolver));
 		addScreen(new OrthogonalTiledMapNoCachingUAT(assetManager));
 		addScreen(new OrthogonalTiledMapWithCachingUAT(assetManager));
 		addScreen(new IsometricTiledMapUAT(assetManager));
 		addScreen(new HexagonalTiledMapUAT(assetManager));
-		addScreen(new ParticleEffectsUAT());
+		addScreen(new ParticleEffectsUAT(fallbackFileHandleResolver));
 		addScreen(new ControllerUAT());
 		addScreen(new ControllerMapping());
-		addScreen(new FlexUiUAT(assetManager));
-		addScreen(new PixelUiUAT(assetManager));
+		addScreen(new FlexUiUAT(assetManager, fallbackFileHandleResolver));
+		addScreen(new PixelUiUAT(assetManager, fallbackFileHandleResolver));
 		addScreen(new UiSerializationUAT(assetManager));
-		addScreen(new StageUAT(assetManager));
+		addScreen(new StageUAT(assetManager, fallbackFileHandleResolver));
 	}
 
 	@Override

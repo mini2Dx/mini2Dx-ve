@@ -14,6 +14,7 @@ package org.mini2Dx.uats.util;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.graphics.Pixmap;
 import org.mini2Dx.core.controller.*;
 import org.mini2Dx.core.controller.deadzone.RadialDeadZone;
@@ -47,10 +48,10 @@ public class UiUtils {
 	private static Map<String, ControllerUiInput<?>> MAPPED_CONTROLLER_INPUT = new ConcurrentHashMap<String, ControllerUiInput<?>>();
 	private static CustomCursor customCursor;
 
-	public static CustomCursor getCustomCursor() {
+	public static CustomCursor getCustomCursor(FileHandleResolver fileHandleResolver) {
 		if(customCursor == null) {
-			customCursor = new CustomCursor(new Pixmap(Gdx.files.classpath("default-mdx-cursor-up.png")),
-					new Pixmap(Gdx.files.classpath("default-mdx-cursor-down.png")), 0, 0);
+			customCursor = new CustomCursor(new Pixmap(fileHandleResolver.resolve("default-mdx-cursor-up.png")),
+					new Pixmap(fileHandleResolver.resolve("default-mdx-cursor-down.png")), 0, 0);
 		}
 		return customCursor;
 	}

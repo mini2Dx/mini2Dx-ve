@@ -11,6 +11,7 @@
  */
 package org.mini2Dx.uats;
 
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import org.mini2Dx.core.Mdx;
 import org.mini2Dx.core.audio.Mini2DxAudio;
 import org.mini2Dx.core.audio.SoundCompletionListener;
@@ -35,7 +36,9 @@ import org.mini2Dx.uats.util.UATSelectionScreen;
  */
 public class AudioUAT extends BasicGameScreen implements SoundCompletionListener {
 	private static final String LOGGING_TAG = AudioUAT.class.getSimpleName();
-	
+
+	private final FileHandleResolver fileHandleResolver;
+
 	private Sound sound;
 	private Music music;
 	
@@ -43,11 +46,15 @@ public class AudioUAT extends BasicGameScreen implements SoundCompletionListener
 	private long expectedSoundId, completionSoundId;
 	private long lastSoundCompletionEvent;
 
+	public AudioUAT(FileHandleResolver fileHandleResolver) {
+		this.fileHandleResolver = fileHandleResolver;
+	}
+
 	@Override
 	public void initialise(GameContainer gc) {
 		Mdx.audio.addSoundCompletionListener(this);
-		sound = Gdx.audio.newSound(Gdx.files.internal("sound.ogg"));
-		music = Gdx.audio.newMusic(Gdx.files.internal("music.ogg"));
+		sound = Gdx.audio.newSound(fileHandleResolver.resolve("sound.ogg"));
+		music = Gdx.audio.newMusic(fileHandleResolver.resolve("music.ogg"));
 		music.setLooping(true);
 	}
 

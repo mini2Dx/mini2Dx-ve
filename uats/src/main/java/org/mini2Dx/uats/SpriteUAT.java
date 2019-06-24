@@ -12,6 +12,7 @@
 package org.mini2Dx.uats;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
@@ -32,15 +33,21 @@ public class SpriteUAT extends BasicGameScreen {
 	private static final float MARGIN = 4f;
 	public static final String TEXTURE_PACK = "texture-region-uat";
 
+	private final FileHandleResolver fileHandleResolver;
+
 	private Texture texture;
 	private TextureRegion textureRegion, flipHRegion, flipVRegion, flipHVRegion;
 
 	private Sprite spriteFullTexture;
 	private Sprite spriteTextureRegion, spriteFlipHRegion, spriteFlipVRegion, spriteFlipHVRegion;
 
+	public SpriteUAT(FileHandleResolver fileHandleResolver) {
+		this.fileHandleResolver = fileHandleResolver;
+	}
+
 	@Override
 	public void initialise(GameContainer gc) {
-		texture = new Texture(Gdx.files.classpath(TEXTURE_PACK + ".png"));
+		texture = new Texture(fileHandleResolver.resolve(TEXTURE_PACK + ".png"));
 		textureRegion = new TextureRegion(texture, 2, 2, 34, 48);
 		flipHRegion = new TextureRegion(texture, 2, 2, 34, 48);
 		flipHRegion.setFlipX(true);

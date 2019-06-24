@@ -1,4 +1,5 @@
 [1.9.5-SNAPSHOT]
+- Added UiContainer setting to passthrough mouse movements to subsequent input handlers
 - Fixed duplicate Y value correction on flipped Tiled object templates that reference tiles
 
 [1.9.4]

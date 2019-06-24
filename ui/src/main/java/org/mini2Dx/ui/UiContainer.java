@@ -93,6 +93,8 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	private boolean textInputIgnoredFirstEnter = false;
 	private ScreenSizeScaleMode screenSizeScaleMode = ScreenSizeScaleMode.NO_SCALING;
 
+	private boolean passThroughMouseMovement = false;
+
 	/**
 	 * Constructor
 	 * 
@@ -413,6 +415,10 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		lastMouseX = screenX;
 		lastMouseY = screenY;
 
+		if(passThroughMouseMovement) {
+			renderTree.mouseMoved(screenX, screenY);
+			return false;
+		}
 		return renderTree.mouseMoved(screenX, screenY);
 	}
 
@@ -427,6 +433,10 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		lastMouseY = screenY;
 
 		if (!pointerNavigationAllowed()) {
+			return false;
+		}
+		if(passThroughMouseMovement) {
+			renderTree.mouseMoved(screenX, screenY);
 			return false;
 		}
 		return renderTree.mouseMoved(screenX, screenY);
@@ -985,6 +995,14 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	 */
 	public void clearActionKeys() {
 		actionKeys.clear();
+	}
+
+	/**
+	 * Set to true if mouseMoved() events to should pass through this input handler regardless
+	 * @param passThroughMouseMovement
+	 */
+	public void setPassThroughMouseMovement(boolean passThroughMouseMovement) {
+		this.passThroughMouseMovement = passThroughMouseMovement;
 	}
 
 	/**

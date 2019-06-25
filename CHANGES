@@ -1,4 +1,5 @@
 [1.9.6-SNAPSHOT]
+- Fixed crash when Tiled object templates have no properties
 
 [1.9.5]
 - Added UiContainer setting to passthrough mouse movements to subsequent input handlers

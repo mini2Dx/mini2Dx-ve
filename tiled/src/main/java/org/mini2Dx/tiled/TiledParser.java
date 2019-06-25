@@ -564,7 +564,7 @@ public class TiledParser implements TiledParserNotifier {
 			object.setVisible(element.getIntAttribute("visible", 1) == 1);
 
 			Element properties = element.getChildByName("properties");
-			if(objectTemplate != null) {
+			if(objectTemplate != null && objectTemplate.getProperties() != null) {
 				for(String key : objectTemplate.getProperties().keys()) {
 					object.setProperty(key, objectTemplate.getProperties().get(key));
 				}

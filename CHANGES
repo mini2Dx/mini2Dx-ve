@@ -1,3 +1,5 @@
+[1.9.7-SNAPSHOT]
+
 [1.9.6]
 - Fixed crash when Tiled object templates have no properties
 

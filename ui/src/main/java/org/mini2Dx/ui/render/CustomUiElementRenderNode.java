@@ -95,6 +95,7 @@ public class CustomUiElementRenderNode extends RenderNode<CustomUiElement, Style
 		}
 		if (innerArea.contains(screenX, screenY)) {
 			setState(NodeState.ACTION);
+			element.onMouseDown(screenX, screenY, pointer, button);
 			return this;
 		}
 		return null;
@@ -111,6 +112,8 @@ public class CustomUiElementRenderNode extends RenderNode<CustomUiElement, Style
 			setState(NodeState.NORMAL);
 		}
 
+		element.onMouseUp(screenX, screenY, pointer, button);
+
 		MouseEventTriggerParams params = EventTriggerParamsPool.allocateMouseParams();
 		params.setMouseX(screenX);
 		params.setMouseY(screenY);
@@ -123,7 +126,9 @@ public class CustomUiElementRenderNode extends RenderNode<CustomUiElement, Style
 		if (getState() == NodeState.ACTION) {
 			return true;
 		}
-		return super.mouseMoved(screenX, screenY);
+		final boolean result = super.mouseMoved(screenX, screenY);
+		element.onMouseMoved(screenX, screenY);
+		return result;
 	}
 
 	@Override

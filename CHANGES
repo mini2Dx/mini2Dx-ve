@@ -1,4 +1,5 @@
 [1.9.7-SNAPSHOT]
+- Added overridable onMouseMoved, onMouseDown, onMouseUp events to CustomUiElement
 
 [1.9.6]
 - Fixed crash when Tiled object templates have no properties

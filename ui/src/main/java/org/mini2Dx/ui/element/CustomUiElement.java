@@ -105,6 +105,31 @@ public abstract class CustomUiElement extends UiElement implements Actionable {
 	 */
 	public abstract void render(Graphics g, CustomUiElementRenderNode renderNode);
 
+	/**
+	 * An overridable method that is called when the mouse moves
+	 * @param mouseX The mouse screen X coordinate
+	 * @param mouseY The mouse screen Y coordinate
+	 */
+	public void onMouseMoved(int mouseX, int mouseY) {}
+
+	/**
+	 * An overridable method that is called when the mouse/touch is pressed down on this element
+	 * @param mouseX The mouse/touch screen X coordinate
+	 * @param mouseY The mouse/touch screen Y coordinate
+	 * @param pointer The pointer ID
+	 * @param button The button ID (see Input.buttons)
+	 */
+	public void onMouseDown(int mouseX, int mouseY, int pointer, int button) {}
+
+	/**
+	 * An overridable method that is called when the mouse/touch is released after being pressed down on this element
+	 * @param mouseX The mouse/touch screen X coordinate
+	 * @param mouseY The mouse/touch screen Y coordinate
+	 * @param pointer The pointer ID
+	 * @param button The button ID (see Input.buttons)
+	 */
+	public void onMouseUp(int mouseX, int mouseY, int pointer, int button) {}
+
 	@Override
 	public void attach(ParentRenderNode<?, ?> parentRenderNode) {
 		if (renderNode != null) {

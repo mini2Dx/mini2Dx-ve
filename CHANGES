@@ -1,4 +1,6 @@
-[1.9.7-SNAPSHOT]
+[1.9.8-SNAPSHOT]
+
+[1.9.7]
 - Added overridable onMouseMoved, onMouseDown, onMouseUp events to CustomUiElement
 
 [1.9.6]

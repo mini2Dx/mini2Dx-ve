@@ -11,6 +11,8 @@
  */
 package org.mini2Dx.tiled;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.headless.HeadlessFiles;
 import org.junit.Test;
 import org.mini2Dx.tiled.exception.TiledException;
 
@@ -25,6 +27,7 @@ public class SharedParserTiledMapTest {
 	
 	@Test
 	public void testSharedParser() throws TiledException  {
+		Gdx.files = new HeadlessFiles();
 		TiledParser parser = new TiledParser();
 		
 		FileHandle orthogonalFile = new FileHandle(Thread.currentThread()

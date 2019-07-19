@@ -304,7 +304,8 @@ project(":" + rootProject.name + "-tiled") {
 	
     dependencies {
 		compile project(":" + rootProject.name + "-core")
-		
+
+		testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
 		testCompile "junit:junit:$junitVersion"
 		testCompile "org.jmock:jmock-junit4:$jmockVersion"
 		testCompile "org.jmock:jmock-legacy:$jmockVersion"

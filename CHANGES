@@ -1,5 +1,7 @@
+[1.9.9-SNAPSHOT]
+
 [1.9.8]
-- Fix Tiled object template paths not being normalised
+- Fixed Tiled object template paths not being normalised
 
 [1.9.7]
 - Added overridable onMouseMoved, onMouseDown, onMouseUp events to CustomUiElement

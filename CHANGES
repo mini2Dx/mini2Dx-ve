@@ -1,4 +1,4 @@
-[1.9.8-SNAPSHOT]
+[1.9.8]
 - Fix Tiled object template paths not being normalised
 
 [1.9.7]

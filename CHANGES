@@ -1,3 +1,5 @@
+[1.9.10-SNAPSHOT]
+
 [1.9.9]
 - Fixed TSX paths not being normalised
 

@@ -44,8 +44,28 @@ public class TsxTilesetSource extends TilesetSource {
 
 	public TsxTilesetSource(FileHandle tmxPath, String tsxPath) {
 		super();
-		final FileHandle tsxFileHandle = tmxPath.sibling(tsxPath);
-		this.tsxPath = FileHandleUtils.normalise(tsxFileHandle.path());
+		final FileHandle tsxFileHandle;
+		switch(tmxPath.type())
+		{
+		case Classpath:
+			tsxFileHandle = Gdx.files.classpath(FileHandleUtils.normalise(tmxPath.sibling(tsxPath).path()));
+			break;
+		default:
+		case Internal:
+			tsxFileHandle = Gdx.files.internal(FileHandleUtils.normalise(tmxPath.sibling(tsxPath).path()));
+			break;
+		case External:
+			tsxFileHandle = Gdx.files.external(FileHandleUtils.normalise(tmxPath.sibling(tsxPath).path()));
+			break;
+		case Absolute:
+			tsxFileHandle = Gdx.files.absolute(FileHandleUtils.normalise(tmxPath.sibling(tsxPath).path()));
+			break;
+		case Local:
+			tsxFileHandle = Gdx.files.local(FileHandleUtils.normalise(tmxPath.sibling(tsxPath).path()));
+			break;
+		}
+
+		this.tsxPath = tsxFileHandle.path();
 
 		if (!TILESETS.containsKey(this.tsxPath)) {
 			try {

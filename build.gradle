@@ -9,14 +9,16 @@ buildscript {
         jcenter()
         maven { url 'https://maven.google.com' }
         maven { url 'https://plugins.gradle.org/m2/' }
+		//maven { url 'https://repo.spring.io/plugins-release/' }
     }
     dependencies {
 		classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'		
-		classpath 'com.android.tools.build:gradle:3.0.1'
+		classpath 'com.android.tools.build:gradle:3.1.0'
 		classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.3'
 		classpath 'gradle.plugin.me.champeau.gradle:jmh-gradle-plugin:0.3.0'
 		classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.9.0'
 		classpath 'com.badlogicgames.gdx:gdx-tools:1.9.8'
+		//classpath 'org.jetbrains.trove4j:trove4j:20160824'
     }
 }
 
@@ -61,6 +63,7 @@ subprojects {
 		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 		maven { url "https://oss.sonatype.org/content/repositories/releases/" }
 		maven { url 'https://maven.google.com' }
+		maven { url 'https://repo.spring.io/plugins-release/' }
 	}
 }
 
@@ -80,6 +83,10 @@ configure(docProjects()) {
 	if(project.name.contains("android")) {
 		apply plugin: "com.android.library"
 		
+		dependencies {
+			implementation 'org.jetbrains.trove4j:trove4j:20160824'
+		}
+
 		task javadoc(type: Javadoc) {
 			failOnError = false
 			source = android.sourceSets.main.java.srcDirs

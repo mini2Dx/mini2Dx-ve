@@ -1,5 +1,4 @@
 android {
-    buildToolsVersion "27.0.3"
     compileSdkVersion 21
 	defaultConfig {
 		testApplicationId "org.mini2Dx.uats.android.test"
@@ -34,7 +33,7 @@ android {
 	}
 }
 
-task(':mini2Dx-uats-android:installDebug').dependsOn ':mini2Dx-uats:processResources'
+//task(':mini2Dx-uats-android:installDebug').dependsOn ':mini2Dx-uats:processResources'
 
 // called every time gradle gets executed, takes the native dependencies of
 // the natives configuration, and extracts them to the proper libs/ folders

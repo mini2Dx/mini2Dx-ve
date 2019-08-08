@@ -13,9 +13,9 @@ buildscript {
     }
     dependencies {
 		classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'		
-		classpath 'com.android.tools.build:gradle:3.1.0'
-		classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.3'
-		classpath 'gradle.plugin.me.champeau.gradle:jmh-gradle-plugin:0.3.0'
+		classpath 'com.android.tools.build:gradle:3.4.2'
+		classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.7'
+		classpath 'me.champeau.gradle:jmh-gradle-plugin:0.5.0-rc-2'
 		classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.9.0'
 		classpath 'com.badlogicgames.gdx:gdx-tools:1.9.8'
 		//classpath 'org.jetbrains.trove4j:trove4j:20160824'
@@ -42,7 +42,7 @@ ext {
 	multiDexVersion="1.0.1"
 	nativesLoaderVersion="1.0.0"
 	reflectionsVersion="0.9.10"
-	roboVMVersion="2.3.3"
+	roboVMVersion="2.3.7"
 	
 	junitVersion="4.8.1"
 	jmockVersion="2.5.1"
@@ -255,19 +255,19 @@ project(":" + rootProject.name + "-core") {
 		jvmArgsPrepend = '-Xmx1024m'
 	}
     
-  jacocoTestReport {
-    group = "Reporting"
-    reports {
-      xml.enabled true
-      csv.enabled false
-      html.destination "${buildDir}/reports/coverage"
-    }
-    afterEvaluate {
-      classDirectories = files(classDirectories.files.collect {
-        fileTree(dir: it)
-      })
-    }
-  }
+	jacocoTestReport {
+		group = "Reporting"
+		reports {
+			xml.enabled true
+			csv.enabled false
+			html.destination file("${buildDir}/reports/coverage")
+		}
+		afterEvaluate {
+			classDirectories = files(classDirectories.files.collect {
+				fileTree(dir: it)
+			})
+		}
+	}
 }
 
 project(":" + rootProject.name + "-desktop") {
@@ -522,10 +522,6 @@ if (Os.isFamily(Os.FAMILY_MAC)) {
 			compile project(":" + rootProject.name + "-ios")
 		}
 	}
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.5'
 }
 
 boolean hasAndroidSdk() {

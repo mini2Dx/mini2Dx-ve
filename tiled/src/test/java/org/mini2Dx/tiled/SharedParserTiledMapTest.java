@@ -31,11 +31,11 @@ public class SharedParserTiledMapTest {
 		TiledParser parser = new TiledParser();
 		
 		FileHandle orthogonalFile = new FileHandle(Thread.currentThread()
-				.getContextClassLoader().getResource("orthogonal.tmx").getFile());
+				.getContextClassLoader().getResource("orthogonal.tmx").getFile().replaceAll("%20", " "));
 		FileHandle orthogonalTsxFile = new FileHandle(Thread.currentThread()
-				.getContextClassLoader().getResource("orthogonal_tsx.tmx").getFile());
+				.getContextClassLoader().getResource("orthogonal_tsx.tmx").getFile().replaceAll("%20", " "));
 		FileHandle isometricFile = new FileHandle(Thread.currentThread()
-				.getContextClassLoader().getResource("isometric.tmx").getFile());
+				.getContextClassLoader().getResource("isometric.tmx").getFile().replaceAll("%20", " "));
 		
 		TiledMap orthogonalTiledMap = new TiledMap(parser, orthogonalFile, false, false);
 		TiledMap orthogonalTsxTiledMap = new TiledMap(parser, orthogonalTsxFile, false, false);

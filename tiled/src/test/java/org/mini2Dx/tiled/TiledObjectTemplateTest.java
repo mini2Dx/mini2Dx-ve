@@ -11,6 +11,8 @@
  */
 package org.mini2Dx.tiled;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.headless.HeadlessFiles;
 import com.badlogic.gdx.files.FileHandle;
 import junit.framework.Assert;
 import org.junit.BeforeClass;
@@ -22,8 +24,9 @@ public class TiledObjectTemplateTest {
 
 	@BeforeClass
 	public static void loadMap() throws TiledException {
+		Gdx.files = new HeadlessFiles();
 		FileHandle file = new FileHandle(Thread.currentThread()
-				.getContextClassLoader().getResource("orthogonal_tsx.tmx").getFile());
+				.getContextClassLoader().getResource("orthogonal_tsx.tmx").getFile().replaceAll("%20", " "));
 		tiledMap = new TiledMap(file, false, false);
 	}
 

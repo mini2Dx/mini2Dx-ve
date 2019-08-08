@@ -27,3 +27,5 @@ uats-android/assets/default-mdx-theme.png
 uats-android/assets/kenvector_future.ttf
 uats-android/assets/orthogonal_no_cache.tmx
 uats-android/libs/
+ui/src/main/resources/default-mdx-theme.atlas
+ui/src/main/resources/default-mdx-theme.png

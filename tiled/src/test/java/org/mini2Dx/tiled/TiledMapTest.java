@@ -29,7 +29,7 @@ public class TiledMapTest {
 	@BeforeClass
 	public static void loadMap() throws TiledException {
 		FileHandle file = new FileHandle(Thread.currentThread()
-				.getContextClassLoader().getResource("orthogonal.tmx").getFile());
+				.getContextClassLoader().getResource("orthogonal.tmx").getFile().replaceAll("%20", " "));
 		tiledMap = new TiledMap(file, false, false);
 	}
 	

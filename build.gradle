@@ -463,20 +463,20 @@ if (hasAndroidSdk()) {
 			natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
 			natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
 			
-			androidTestCompile (project(path: ":" + rootProject.name + "-core", configuration: 'testOutput')) {
+			androidTestImplementation (project(path: ":" + rootProject.name + "-core", configuration: 'testOutput')) {
 				exclude group: 'junit'
 				exclude group: 'org.hamcrest'
 			}
-			androidTestCompile ("org.jmock:jmock-junit4:$jmockVersion") {
+            androidTestImplementation ("org.jmock:jmock-junit4:$jmockVersion") {
 				exclude group: 'junit'
 				exclude group: 'org.hamcrest'
 			}
-			androidTestCompile ("org.jmock:jmock-legacy:$jmockVersion") {
+            androidTestImplementation ("org.jmock:jmock-legacy:$jmockVersion") {
 				exclude group: 'junit'
 				exclude group: 'org.hamcrest'
 			}
-			androidTestCompile 'com.android.support.test:runner:0.4'
-			androidTestCompile 'com.android.support.test:rules:0.4'
+            androidTestImplementation 'com.android.support.test:runner:0.4'
+            androidTestImplementation 'com.android.support.test:rules:0.4'
 		}
 	}
 }

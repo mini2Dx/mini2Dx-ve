@@ -112,7 +112,7 @@ public class IOSMini2DxGraphics extends NSObject implements Graphics, GLKViewDel
 		}
 
 		@Override
-		public UIRectEdge preferredScreenEdgesDeferringSystemGestures() {
+		public UIRectEdge getPreferredScreenEdgesDeferringSystemGestures() {
 			return app.config.screenEdgesDeferringSystemGestures;
 		}
 

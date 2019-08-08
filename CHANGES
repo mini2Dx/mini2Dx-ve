@@ -1,4 +1,6 @@
-[1.9.10-SNAPSHOT]
+[1.9.11-SNAPSHOT]
+
+[1.9.10]
 - Update to latest RoboVM to support iOS 12
 - Fixed clipping not working when rendering shapes
 

@@ -1,4 +1,6 @@
 [1.9.10-SNAPSHOT]
+- Update to latest RoboVM to support iOS 12
+- Fixed clipping not working when rendering shapes
 
 [1.9.9]
 - Fixed TSX paths not being normalised

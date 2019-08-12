@@ -146,84 +146,91 @@ public class RectangleTest {
 	public void testContainsPoint() {
 		rectangle1 = new Rectangle(0, 0, 50, 50);
 		Point point = new Point(5, 1);
-		
-		Assert.assertEquals(true, rectangle1.contains(point));
+
+		Assert.assertTrue(rectangle1.contains(point));
 		
 		point.set(5, -1);
-		Assert.assertEquals(false, rectangle1.contains(point));
+		Assert.assertFalse(rectangle1.contains(point));
 		
 		point.set(51, 1);
-		Assert.assertEquals(false, rectangle1.contains(point));
+		Assert.assertFalse(rectangle1.contains(point));
 		
 		point.set(5, 51);
-		Assert.assertEquals(false, rectangle1.contains(point));
+		Assert.assertFalse(rectangle1.contains(point));
 		
 		point.set(-5, 1);
-		Assert.assertEquals(false, rectangle1.contains(point));
+		Assert.assertFalse(rectangle1.contains(point));
 		
 		point.set(5, 1);
 		rectangle1.rotate(45f);
-		Assert.assertEquals(false, rectangle1.contains(point));
+		Assert.assertFalse(rectangle1.contains(point));
 		
 		point.set(-5, 1);
-		Assert.assertEquals(false, rectangle1.contains(point));
+		Assert.assertFalse(rectangle1.contains(point));
 	}
 	
 	@Test
 	public void testContainsRectangle() {
 		rectangle1 = new Rectangle(0, 0, 50, 50);
 		rectangle2 = new Rectangle(50, 50, 50, 50);
-		
-		Assert.assertEquals(false, rectangle1.contains(rectangle2));
-		Assert.assertEquals(false, rectangle2.contains(rectangle1));
+
+		Assert.assertFalse(rectangle1.contains(rectangle2));
+		Assert.assertFalse(rectangle2.contains(rectangle1));
 		
 		rectangle2 = new Rectangle(25, 25, 50, 50);
-		Assert.assertEquals(false, rectangle1.contains(rectangle2));
-		Assert.assertEquals(false, rectangle2.contains(rectangle1));
+		Assert.assertFalse(rectangle1.contains(rectangle2));
+		Assert.assertFalse(rectangle2.contains(rectangle1));
 		
 		rectangle2 = new Rectangle(0, 0, 25, 25);
-		Assert.assertEquals(true, rectangle1.contains(rectangle2));
-		Assert.assertEquals(false, rectangle2.contains(rectangle1));
+		Assert.assertTrue(rectangle1.contains(rectangle2));
+		Assert.assertFalse(rectangle2.contains(rectangle1));
 		
 		rectangle2 = new Rectangle(15, 15, 25, 25);
-		Assert.assertEquals(true, rectangle1.contains(rectangle2));
-		Assert.assertEquals(false, rectangle2.contains(rectangle1));
+		Assert.assertTrue(rectangle1.contains(rectangle2));
+		Assert.assertFalse(rectangle2.contains(rectangle1));
 		
 		rectangle2 = new Rectangle(48, 48, 25, 25);
-		Assert.assertEquals(false, rectangle1.contains(rectangle2));
-		Assert.assertEquals(false, rectangle2.contains(rectangle1));
+		Assert.assertFalse(rectangle1.contains(rectangle2));
+		Assert.assertFalse(rectangle2.contains(rectangle1));
 		
 		rectangle1 = new Rectangle(0, 0, 128, 128);
 		rectangle2 = new Rectangle(42, 72, 32, 32);
-		Assert.assertEquals(true, rectangle1.contains(rectangle2));
-		Assert.assertEquals(false, rectangle2.contains(rectangle1));
+		Assert.assertTrue(rectangle1.contains(rectangle2));
+		Assert.assertFalse(rectangle2.contains(rectangle1));
+	}
+
+	@Test
+	public void testContainsZeroSizeRectangle() {
+		rectangle1 = new Rectangle(0, 0, 10, 10);
+		rectangle2 = new Rectangle(50, 50, 0, 0);
+		Assert.assertFalse(rectangle2.contains(rectangle1));
 	}
 	
 	@Test
 	public void testIntersectsLineSegement() {
 		rectangle1 = new Rectangle(2, 2, 4, 4);
 		LineSegment segment = new LineSegment(0, 0, 10, 10);
-		
-		Assert.assertEquals(true, rectangle1.intersects(segment));
+
+		Assert.assertTrue(rectangle1.intersects(segment));
 		
 		segment.getPointA().set(10, 2);
-		
-		Assert.assertEquals(false, rectangle1.intersects(segment));
+
+		Assert.assertFalse(rectangle1.intersects(segment));
 		
 		rectangle1 = new Rectangle(96, 0, 32, 32);
 		segment = new LineSegment(0, 0, 128, 128);
-		Assert.assertEquals(false, rectangle1.intersects(segment));
+		Assert.assertFalse(rectangle1.intersects(segment));
 		
 		rectangle1 = new Rectangle(0, 0, 32, 32);
-		Assert.assertEquals(true, rectangle1.intersects(new LineSegment(0f, 0f, -1f, -1f)));
-		Assert.assertEquals(true, rectangle1.intersects(new LineSegment(-1f, -1f, 0f, 0f)));
-		Assert.assertEquals(true, rectangle1.intersects(new LineSegment(0f, 0f, 1f, 1f)));
-		Assert.assertEquals(true, rectangle1.intersects(new LineSegment(1f, 1f, 0f, 0f)));
-		
-		Assert.assertEquals(true, rectangle1.intersects(new LineSegment(32f, 32f, 31f, 31f)));
-		Assert.assertEquals(true, rectangle1.intersects(new LineSegment(31f, 31f, 32f, 32f)));
-		Assert.assertEquals(true, rectangle1.intersects(new LineSegment(33f, 33f, 32f, 32f)));
-		Assert.assertEquals(true, rectangle1.intersects(new LineSegment(32f, 32f, 33f, 33f)));
+		Assert.assertTrue(rectangle1.intersects(new LineSegment(0f, 0f, -1f, -1f)));
+		Assert.assertTrue(rectangle1.intersects(new LineSegment(-1f, -1f, 0f, 0f)));
+		Assert.assertTrue(rectangle1.intersects(new LineSegment(0f, 0f, 1f, 1f)));
+		Assert.assertTrue(rectangle1.intersects(new LineSegment(1f, 1f, 0f, 0f)));
+
+		Assert.assertTrue(rectangle1.intersects(new LineSegment(32f, 32f, 31f, 31f)));
+		Assert.assertTrue(rectangle1.intersects(new LineSegment(31f, 31f, 32f, 32f)));
+		Assert.assertTrue(rectangle1.intersects(new LineSegment(33f, 33f, 32f, 32f)));
+		Assert.assertTrue(rectangle1.intersects(new LineSegment(32f, 32f, 33f, 33f)));
 	}
 	
 	@Test
@@ -232,23 +239,23 @@ public class RectangleTest {
 		
 		Circle intersectingCircle = new Circle(75f, 75f, 50f);
 		Circle nonIntersectingCircle = new Circle(500f, 500f, 50f);
-		
-		Assert.assertEquals(true, rectangle1.intersects(intersectingCircle));
-		Assert.assertEquals(false, rectangle1.intersects(nonIntersectingCircle));
+
+		Assert.assertTrue(rectangle1.intersects(intersectingCircle));
+		Assert.assertFalse(rectangle1.intersects(nonIntersectingCircle));
 	}
 
 	@Test
 	public void testIntersectsRectangle() {
 		rectangle1 = new Rectangle(100f, 100f, 75f, 75f);
 		rectangle2 = new Rectangle(50f, 50f, 100f, 100f);
-		
-		Assert.assertEquals(true, rectangle1.intersects(rectangle2));
-		Assert.assertEquals(true, rectangle2.intersects(rectangle1));
+
+		Assert.assertTrue(rectangle1.intersects(rectangle2));
+		Assert.assertTrue(rectangle2.intersects(rectangle1));
 
 		rectangle2 = new Rectangle(0f, 0f, 50f, 50f);
 
-		Assert.assertEquals(false, rectangle1.intersects(rectangle2));
-		Assert.assertEquals(false, rectangle2.intersects(rectangle1));
+		Assert.assertFalse(rectangle1.intersects(rectangle2));
+		Assert.assertFalse(rectangle2.intersects(rectangle1));
 	}
 	
 	@Test
@@ -256,22 +263,22 @@ public class RectangleTest {
 		rectangle1 = new Rectangle(0f, 0f, 32f, 32f);
 		rectangle2 = new Rectangle(0f, 0f, 32f, 32f);
 
-		Assert.assertEquals(true, rectangle1.intersects(rectangle2));
-		Assert.assertEquals(true, rectangle2.intersects(rectangle1));
+		Assert.assertTrue(rectangle1.intersects(rectangle2));
+		Assert.assertTrue(rectangle2.intersects(rectangle1));
 	}
 	
 	@Test
 	public void testIntersectsRotatedRectangle() {
 		rectangle1 = new Rectangle(100f, 100f, 50f, 50f);
 		rectangle2 = new Rectangle(100f, 50f, 75f, 40f);
-		
-		Assert.assertEquals(false, rectangle1.intersects(rectangle2));
-		Assert.assertEquals(false, rectangle2.intersects(rectangle1));
+
+		Assert.assertFalse(rectangle1.intersects(rectangle2));
+		Assert.assertFalse(rectangle2.intersects(rectangle1));
 
 		rectangle2.rotate(45);
-		
-		Assert.assertEquals(true, rectangle1.intersects(rectangle2));
-		Assert.assertEquals(true, rectangle2.intersects(rectangle1));
+
+		Assert.assertTrue(rectangle1.intersects(rectangle2));
+		Assert.assertTrue(rectangle2.intersects(rectangle1));
 	}
 
 	@Test
@@ -279,13 +286,13 @@ public class RectangleTest {
 		rectangle1 = new Rectangle(0,0,80,80);
 		rectangle2 = new Rectangle(120, 0, 20, 160);
 
-		Assert.assertEquals(false, rectangle1.intersects(rectangle2));
-		Assert.assertEquals(false, rectangle2.intersects(rectangle1));
+		Assert.assertFalse(rectangle1.intersects(rectangle2));
+		Assert.assertFalse(rectangle2.intersects(rectangle1));
 
 		rectangle2.rotateAround(130, 80, 45);
 
-		Assert.assertEquals(false, rectangle1.intersects(rectangle2));
-		Assert.assertEquals(false, rectangle2.intersects(rectangle1));
+		Assert.assertFalse(rectangle1.intersects(rectangle2));
+		Assert.assertFalse(rectangle2.intersects(rectangle1));
 	}
 
 	@Test
@@ -296,41 +303,41 @@ public class RectangleTest {
 		for (float x = 0; x < rectangle1.getX(); x++) {
 			line.setPointA(new Point(x, 100));
 			line.setPointB(new Point(x, 200));
-			Assert.assertEquals(false, rectangle1.intersects(line));
+			Assert.assertFalse(rectangle1.intersects(line));
 		}
 
 		for (float y = 0; y < rectangle1.getY(); y++) {
 			line.setPointA(new Point(100, y));
 			line.setPointB(new Point(200, y));
-			Assert.assertEquals(false, rectangle1.intersects(line));
+			Assert.assertFalse(rectangle1.intersects(line));
 		}
 
 		for (float x = rectangle1.getX(); x <= rectangle1.getX()
 				+ rectangle1.getWidth(); x++) {
 			line.setPointA(new Point(x, 100));
 			line.setPointB(new Point(x, 200));
-			Assert.assertEquals(true, rectangle1.intersects(line));
+			Assert.assertTrue(rectangle1.intersects(line));
 		}
 
 		for (float y = rectangle1.getY(); y <= rectangle1.getY()
 				+ rectangle1.getHeight(); y++) {
 			line.setPointA(new Point(100, y));
 			line.setPointB(new Point(200, y));
-			Assert.assertEquals(true, rectangle1.intersects(line));
+			Assert.assertTrue(rectangle1.intersects(line));
 		}
 
 		for (float x = rectangle1.getX() + rectangle1.getWidth() + 1; x < (rectangle1
 				.getX() + rectangle1.getWidth()) * 2; x++) {
 			line.setPointA(new Point(x, 100));
 			line.setPointB(new Point(x, 200));
-			Assert.assertEquals(false, rectangle1.intersects(line));
+			Assert.assertFalse(rectangle1.intersects(line));
 		}
 
 		for (float y = rectangle1.getY() + rectangle1.getHeight() + 1; y < (rectangle1
 				.getY() + rectangle1.getHeight()) * 2; y++) {
 			line.setPointA(new Point(100, y));
 			line.setPointB(new Point(200, y));
-			Assert.assertEquals(false, rectangle1.intersects(line));
+			Assert.assertFalse(rectangle1.intersects(line));
 		}
 	}
 	
@@ -402,21 +409,21 @@ public class RectangleTest {
 	public void testIntersectsXYWidthHeight() {
 		rectangle1 = new Rectangle(100f, 100f, 75f, 75f);
 
-		Assert.assertEquals(true, rectangle1.intersects(50f, 50f, 100f, 100f));
-		Assert.assertEquals(false, rectangle1.intersects(0f, 0f, 50f, 50f));
+		Assert.assertTrue(rectangle1.intersects(50f, 50f, 100f, 100f));
+		Assert.assertFalse(rectangle1.intersects(0f, 0f, 50f, 50f));
 	}
 	
 	@Test
 	public void testEquals() {
 		rectangle1 = new Rectangle(0, 0, 50, 50);
 		rectangle2 = new Rectangle(0, 0, 50, 50);
-		
-		Assert.assertEquals(true, rectangle1.equals(rectangle2));
+
+		Assert.assertEquals(rectangle1, rectangle2);
 		
 		rectangle2.rotate(1f);
-		Assert.assertEquals(false, rectangle1.equals(rectangle2));
+		Assert.assertFalse(rectangle1.equals(rectangle2));
 		
 		rectangle2 = new Rectangle(0.001f, 0, 50, 50);
-		Assert.assertEquals(false, rectangle1.equals(rectangle2));
+		Assert.assertFalse(rectangle1.equals(rectangle2));
 	}
 }

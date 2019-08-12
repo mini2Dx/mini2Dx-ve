@@ -11,9 +11,12 @@
  */
 package org.mini2Dx.ui;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.IntSet;
@@ -23,12 +26,9 @@ import org.mini2Dx.core.controller.ControllerType;
 import org.mini2Dx.core.controller.button.ControllerButton;
 import org.mini2Dx.core.game.GameContainer;
 import org.mini2Dx.core.graphics.Graphics;
+import org.mini2Dx.core.graphics.viewport.Viewport;
 import org.mini2Dx.ui.controller.ControllerUiInput;
-import org.mini2Dx.ui.element.Actionable;
-import org.mini2Dx.ui.element.Navigatable;
-import org.mini2Dx.ui.element.ParentUiElement;
-import org.mini2Dx.ui.element.UiElement;
-import org.mini2Dx.ui.element.Visibility;
+import org.mini2Dx.ui.element.*;
 import org.mini2Dx.ui.event.EventTrigger;
 import org.mini2Dx.ui.event.params.ControllerEventTriggerParams;
 import org.mini2Dx.ui.event.params.EventTriggerParamsPool;
@@ -39,21 +39,12 @@ import org.mini2Dx.ui.layout.ScreenSize;
 import org.mini2Dx.ui.listener.ScreenSizeListener;
 import org.mini2Dx.ui.listener.UiContainerListener;
 import org.mini2Dx.ui.navigation.UiNavigation;
-import org.mini2Dx.ui.render.ActionableRenderNode;
-import org.mini2Dx.ui.render.NodeState;
-import org.mini2Dx.ui.render.ParentRenderNode;
-import org.mini2Dx.ui.render.RenderNode;
-import org.mini2Dx.ui.render.TextInputableRenderNode;
-import org.mini2Dx.ui.render.UiContainerRenderTree;
+import org.mini2Dx.ui.render.*;
 import org.mini2Dx.ui.style.StyleRule;
 import org.mini2Dx.ui.style.UiTheme;
 import org.mini2Dx.ui.util.IdAllocator;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.math.MathUtils;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The container for all UI elements. {@link #update(float)},
@@ -62,6 +53,7 @@ import com.badlogic.gdx.math.MathUtils;
  */
 public class UiContainer extends ParentUiElement implements InputProcessor {
 	private static final String LOGGING_TAG = UiContainer.class.getSimpleName();
+    private static final Vector2 SHARED_VECTOR = new Vector2();
 	private static final Array<UiContainer> uiContainerInstances = new Array<UiContainer>(true, 2, UiContainer.class);
 	private static Visibility defaultVisibility = Visibility.HIDDEN;
 	private static UiTheme UI_THEME;
@@ -94,6 +86,8 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 	private ScreenSizeScaleMode screenSizeScaleMode = ScreenSizeScaleMode.NO_SCALING;
 
 	private boolean passThroughMouseMovement = false;
+
+	private Viewport viewport;
 
 	/**
 	 * Constructor
@@ -344,8 +338,14 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		if (!pointerNavigationAllowed()) {
 			return false;
 		}
-		screenX = MathUtils.round(screenX / scaleX);
-		screenY = MathUtils.round(screenY / scaleY);
+
+		if (viewport != null){
+			SHARED_VECTOR.x = screenX;
+			SHARED_VECTOR.y = screenY;
+			viewport.toWorldCoordinates(SHARED_VECTOR);
+			screenX = MathUtils.round(SHARED_VECTOR.x);
+			screenY = MathUtils.round(SHARED_VECTOR.y);
+		}
 
 		updateLastInputSource(screenX, screenY);
 
@@ -386,8 +386,14 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		if (!pointerNavigationAllowed()) {
 			return false;
 		}
-		screenX = MathUtils.round(screenX / scaleX);
-		screenY = MathUtils.round(screenY / scaleY);
+
+		if (viewport != null){
+			SHARED_VECTOR.x = screenX;
+			SHARED_VECTOR.y = screenY;
+			viewport.toWorldCoordinates(SHARED_VECTOR);
+            screenX = MathUtils.round(SHARED_VECTOR.x);
+            screenY = MathUtils.round(SHARED_VECTOR.y);
+		}
 
 		updateLastInputSource(screenX, screenY);
 
@@ -407,8 +413,14 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 		if (!pointerNavigationAllowed()) {
 			return false;
 		}
-		screenX = MathUtils.round(screenX / scaleX);
-		screenY = MathUtils.round(screenY / scaleY);
+
+		if (viewport != null){
+			SHARED_VECTOR.x = screenX;
+			SHARED_VECTOR.y = screenY;
+			viewport.toWorldCoordinates(SHARED_VECTOR);
+            screenX = MathUtils.round(SHARED_VECTOR.x);
+            screenY = MathUtils.round(SHARED_VECTOR.y);
+		}
 
 		updateLastInputSource(screenX, screenY);
 
@@ -424,8 +436,13 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		screenX = MathUtils.round(screenX / scaleX);
-		screenY = MathUtils.round(screenY / scaleY);
+		if (viewport != null){
+			SHARED_VECTOR.x = screenX;
+			SHARED_VECTOR.y = screenY;
+			viewport.toWorldCoordinates(SHARED_VECTOR);
+            screenX = MathUtils.round(SHARED_VECTOR.x);
+            screenY = MathUtils.round(SHARED_VECTOR.y);
+		}
 
 		updateLastInputSource(screenX, screenY);
 
@@ -1188,5 +1205,9 @@ public class UiContainer extends ParentUiElement implements InputProcessor {
 			return;
 		}
 		UiContainer.defaultVisibility = defaultVisibility;
+	}
+
+	public void setViewport(Viewport viewport) {
+		this.viewport = viewport;
 	}
 }
